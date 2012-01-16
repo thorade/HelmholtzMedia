@@ -3,3 +3,4 @@ The purpose of this library is to calculate fluid properties from an equation of
 It supports EoS of the form Helmholtz energy as a funtion of temperature and density, f=f(T,d).
 In addition to all state properties, this library will also calculate viscosity and thermal conductivity.
 So far, only n-Butane is implemented. The next fluid to be implemented is R134a.
+If possible, this will be done before May, because I would like to submit this library to the Modelica 2012 conference.
