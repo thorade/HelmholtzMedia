@@ -2,11 +2,11 @@ within HelmholtzFluids.PartialHelmholtzFluid;
 record HelmholtzCoefficients
   "Coefficients for Helmholtz energy equations of state"
 
-  //ideal gas: n-butane substance specific coefficients
+  //ideal gas: substance specific coefficients
   constant Real[:] n_ideal;
   constant Real[:] Theta;
 
-  //residual part: n-butane substance specific coefficients
+  //residual part: substance specific coefficients
   constant Real[:] n_residual;
 
   //residual part functional form exponents
