@@ -2,24 +2,12 @@ within HelmholtzFluids.PartialHelmholtzFluid;
 record HelmholtzCoefficients
   "Coefficients for Helmholtz energy equations of state"
 
-  //ideal gas: substance specific coefficients
-  constant Real[:] n_ideal;
-  constant Real[:] Theta;
+  //ideal gas part: substance specific coefficients
+  constant Real[:,2] ideal;
 
   //residual part: substance specific coefficients
-  constant Real[:] n_residual;
+  constant Real[:,4] residualPoly;
+  constant Real[:,4] residualBwr;
+  constant Real[:,12] residualGauss;
 
-  //residual part functional form exponents
-  constant Integer[:] c "dimensionless density exponents in exponential term";
-  constant Integer[:] d "dimensionless density exponents";
-  constant Real[:] t "dimensionless temperature exponents";
-
-  constant Integer[:] crit_eta
-    "dimensionless coefficients for critical region correction";
-  constant Integer[:] crit_beta
-    "dimensionless coefficients for critical region correction";
-  constant Real[:] crit_epsilon
-    "dimensionless coefficients for critical region correction";
-  constant Real[:] crit_gamma
-    "dimensionless coefficients for critical region correction";
 end HelmholtzCoefficients;
