@@ -9,3 +9,4 @@ StateRec_ph_sine
 StateRec_ps_sine
 BaseProps_Tester
 Test_inverse
+Test_HelmholtzDerivatives
