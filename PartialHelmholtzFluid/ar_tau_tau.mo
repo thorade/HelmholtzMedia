@@ -3,7 +3,8 @@ function ar_tau_tau "residual part of dimensionless Helmholtz energy"
 
   input Real delta;
   input Real tau;
-  output Real alpha_residual_tau_tau "residual part of dimensionless Helmholtz energy";
+  output Real alpha_residual_tau_tau
+    "residual part of dimensionless Helmholtz energy";
 
 protected
   Integer nPoly = size(helmholtzCoefficients.residualPoly,1);

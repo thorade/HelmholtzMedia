@@ -16,15 +16,6 @@ partial package PartialHelmholtzFluid
   constant SurfaceTensionCoefficients surfaceTensionCoefficients;
 
 
-
-
-
-
-
-
-
-
-
   redeclare function setSat_T
   "iterative calculation of saturation properties from EoS with Newton-Raphson algorithm"
     input Temperature T;
@@ -150,9 +141,6 @@ protected
   end setSat_p;
 
 
-
-
-
   redeclare function extends saturationPressure
   "ancillary function: calculate saturation pressure for a given Temperature"
     // inherits input T and output p
@@ -162,12 +150,14 @@ protected
     Real tau=T_crit/T "inverse reduced temperature";
     Real T_theta=1 - T/T_crit;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
-    Real[size(ancillaryCoefficients.n_vapor,1)] n=ancillaryCoefficients.n_vapor;
-    Real[size(ancillaryCoefficients.theta_vapor,1)] theta=ancillaryCoefficients.theta_vapor;
+
+    Integer nPressureSaturation = size(ancillaryCoefficients.pressureSaturation,1);
+    Real[nPressureSaturation] n = ancillaryCoefficients.pressureSaturation[:,1];
+    Real[nPressureSaturation] theta = ancillaryCoefficients.pressureSaturation[:,2];
 
   algorithm
     assert(T <= T_crit, "saturationPressure error: Temperature is higher than critical temperature");
-    p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:4));
+    p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation));
 
     // this is an ancillary forward function
     // the corresponding iterative backward function is saturationTemperature(p)
@@ -217,7 +207,6 @@ protected
     // the corresponding ancillary forward function is saturationPressure(T)
     annotation(inverse(p = saturationPressure(T=T)));
   end saturationTemperature;
-
 
 
   redeclare function vapourQuality "returns the vapour quality"
@@ -288,7 +277,6 @@ protected
     s :=state.s;
     u :=h - p/d;
   end BaseProperties;
-
 
 
   redeclare function extends setState_dTX
@@ -466,7 +454,6 @@ protected
   end setState_phX;
 
 
-
   redeclare function extends setState_psX
   "Return thermodynamic state as function of p, s and composition X or Xi"
 
@@ -553,7 +540,6 @@ protected
   end setState_psX;
 
 
-
   redeclare function density_pT
   "iteratively finds the density for a given p and T (works for single-phase only)"
 
@@ -617,7 +603,6 @@ protected
   end density_pT;
 
 
-
   redeclare function specificEnthalpy_pT
   "iteratively finds the specific enthalpy for a given p and T"
 
@@ -646,7 +631,6 @@ protected
     // the two inverse functions are Temperature_ph and pressure_Th
     // annotation (inverse(p=pressure_dT(d=d, T=T, phase=phase)));
   end specificEnthalpy_pT;
-
 
 
   redeclare function extends specificHeatCapacityCp
@@ -1026,6 +1010,5 @@ The extended version has up to three terms with two parameters each.
 </dl>
 </html>"));
   end surfaceTension;
-
 
 end PartialHelmholtzFluid;

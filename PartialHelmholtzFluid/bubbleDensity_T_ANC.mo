@@ -9,9 +9,12 @@ protected
   Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
   Temperature T_crit=fluidConstants[1].criticalTemperature;
   Real T_theta=1 - T/T_crit;
-  Real[size(ancillaryCoefficients.n_dliq,1)] n=ancillaryCoefficients.n_dliq;
-  Real[size(ancillaryCoefficients.theta_dliq,1)] theta=ancillaryCoefficients.theta_dliq;
+  //
+
+  Integer nDliq = size(ancillaryCoefficients.densityLiquid,1);
+  Real[nDliq] n = ancillaryCoefficients.densityLiquid[:,1];
+  Real[nDliq] theta = ancillaryCoefficients.densityLiquid[:,2];
 
 algorithm
-    dliq := d_crit*(1 + sum(n[i]*T_theta^theta[i] for i in 1:4));
+    dliq := d_crit*(1 + sum(n[i]*T_theta^theta[i] for i in 1:nDliq));
 end bubbleDensity_T_ANC;

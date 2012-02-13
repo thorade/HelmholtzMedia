@@ -98,13 +98,28 @@ package Butane "Butane data, copied from RefProp Butane.fld"
   "Coefficients of the Helmholtz EoS";
 
   final constant PartialHelmholtzFluid.AncillaryCoefficients ancillaryCoefficientsButane(
-    n_vapor={-7.17616903,2.53635336,-2.07532869,-2.82241113},
-    theta_vapor={1.0,1.5,2.0,4.5},
-    n_dliq={1.97874515,0.856799510,-0.341871887,0.304337558},
-    theta_dliq={0.345,1.0,1.5,3.0},
-    n_dvap={-2.07770057,-3.08362490,-0.485645266,-3.83167519},
-    theta_dvap={0.345,5/6,19/6,25/6})
-  "Coefficients for the ancillary equations";
+    pressureSaturation=[
+      -0.71897E+01,   1.0;
+       0.26122E+01,   1.5;
+      -0.21729E+01,   2.0;
+      -0.27230E+01,   4.5],
+    densityLiquid=[
+       0.52341E+01,   0.44;
+      -0.62011E+01,   0.60;
+       0.36063E+01,   0.76;
+       0.22137E+00,   5.00],
+    densityVapor=[
+      -0.27390E+01,   0.391;
+      -0.57347E+01,   1.14;
+      -0.16408E+02,   3.0;
+      -0.46986E+02,   6.5;
+      -0.10090E+03,  14.0]) "Coefficients for the ancillary equations";
+/*  densityVapor=[
+      -2.07770057,          0.345;
+      -3.08362490,          5/6;
+      -0.485645266,         19/6;
+      -3.83167519,         25/6]) "Coefficients for the ancillary equations";
+*/
 
   final constant PartialHelmholtzFluid.ThermalConductivityCoefficients thermalConductivityCoefficientsButane(
     reducingTemperature=425.16,
