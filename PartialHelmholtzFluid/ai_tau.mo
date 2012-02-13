@@ -6,11 +6,21 @@ function ai_tau "ideal part of dimensionless Helmholtz energy"
   output Real alpha_ideal_tau "ideal part of dimensionless Helmholtz energy";
 
 protected
-  Integer nIdeal=size(helmholtzCoefficients.ideal, 1);
-  Real[nIdeal, 2] n=helmholtzCoefficients.ideal;
+  Integer nLog=size(helmholtzCoefficients.idealLog, 1);
+  Integer nPower=size(helmholtzCoefficients.idealPower, 1);
+  Integer nEinstein=size(helmholtzCoefficients.idealEinstein, 1);
+//  Integer nCosh=size(helmholtzCoefficients.idealCosh, 1);
+//  Integer nSinh=size(helmholtzCoefficients.idealSinh, 1);
+
+  Real[nLog, 2] l=helmholtzCoefficients.idealLog;
+  Real[nPower, 2] p=helmholtzCoefficients.idealPower;
+  Real[nEinstein, 2] e=helmholtzCoefficients.idealEinstein;
+//  Real[nCosh, 2] c=helmholtzCoefficients.idealCosh;
+//  Real[nSinh, 2] s=helmholtzCoefficients.idealSinh;
 
 algorithm
   alpha_ideal_tau :=
-    n[1,1]/tau + n[3,1]
-    + sum(n[i,1]*(-n[i,2])*((1 - exp(n[i,2]*tau))^(-1) - 1) for i in 4:nIdeal);
+      sum(l[i,1]*tau^(l[i,2]-1)/(tau^l[i,2]) for i in 1:nLog)
+    + sum(p[i,1]*tau^(p[i,2]-1)*p[i,2] for i in 1:nPower)
+    + sum(e[i,1]*(-e[i,2])*((1 - exp(e[i,2]*tau))^(-1) - 1) for i in 1:nEinstein);
 end ai_tau;

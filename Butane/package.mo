@@ -59,10 +59,12 @@ package Butane "Butane data, copied from RefProp Butane.fld"
     SMAX=9283) "Helmholtz EoS Limits";
 
   final constant PartialHelmholtzFluid.HelmholtzCoefficients helmholtzCoefficientsButane(
-    ideal=[
-      +3.24680487,         1.;
+    idealLog=[
+      +3.24680487,         1.],
+    idealPower=[
       +12.54882924,        0.;
-      -5.46976878,         1.;
+      -5.46976878,         1.],
+    idealEinstein=[
       +5.54913289,        -0.7748404445;
       +11.4648996,        -3.3406025522;
       +7.59987584,        -4.9705130961;

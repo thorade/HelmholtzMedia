@@ -6,14 +6,25 @@ function ai "ideal part of dimensionless Helmholtz energy"
   output Real alpha_ideal "ideal part of dimensionless Helmholtz energy";
 
 protected
-  Integer nIdeal=size(helmholtzCoefficients.ideal, 1);
-  Real[nIdeal, 2] n=helmholtzCoefficients.ideal;
+  Integer nLog=size(helmholtzCoefficients.idealLog, 1);
+  Integer nPower=size(helmholtzCoefficients.idealPower, 1);
+  Integer nEinstein=size(helmholtzCoefficients.idealEinstein, 1);
+//  Integer nCosh=size(helmholtzCoefficients.idealCosh, 1);
+//  Integer nSinh=size(helmholtzCoefficients.idealSinh, 1);
+
+  Real[nLog, 2] l=helmholtzCoefficients.idealLog;
+  Real[nPower, 2] p=helmholtzCoefficients.idealPower;
+  Real[nEinstein, 2] e=helmholtzCoefficients.idealEinstein;
+//  Real[nCosh, 2] c=helmholtzCoefficients.idealCosh;
+//  Real[nSinh, 2] s=helmholtzCoefficients.idealSinh;
 
 algorithm
   if delta>0 then
     alpha_ideal :=
-      log(delta) + n[1,1]*log(tau) + n[2,1] + n[3,1]*tau
-      + sum(n[i,1]*log(1 - exp(n[i,2]*tau)) for i in 4:nIdeal);
+      log(delta)
+      + sum(l[i,1]*log(tau^l[i,2]) for i in 1:nLog)
+      + sum(p[i,1]*tau^p[i,2] for i in 1:nPower)
+      + sum(e[i,1]*log(1 - exp(e[i,2]*tau)) for i in 1:nEinstein);
   else
     alpha_ideal := -Modelica.Constants.inf;
   end if;
