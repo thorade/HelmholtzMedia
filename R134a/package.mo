@@ -112,8 +112,9 @@ package R134a "R134a data, copied from RefProp R134a.fld"
       -0.71821E+02,   7.0]) "Coefficients for the ancillary equations";
 
   final constant PartialHelmholtzFluid.ThermalConductivityCoefficients thermalConductivityCoefficientsR134a(
-    reducingTemperature=425.16,
-    reducingDensity=3920*0.0581222,
+    reducingTemperature=1,
+    reducingDensity=5049.886*0.102032,
+    reducingThermalConductivity=2.055E-3,
     lambda_0_coeffs=[
     -1.05248E-2,    0;
      8.00982E-5,    1],
@@ -127,55 +128,50 @@ package R134a "R134a data, copied from RefProp R134a.fld"
     R0=1.03,
     z=0.063,
     c=1,
-    xi_0=0.194E-9,
+    xi_0=1.94E-10,
     Gamma_0=0.0496,
-    qd_inverse=0.875350E-9,
-    T_ref=637.68) "Coefficients for the thermal conductivity";
+    qd_inverse=5.285356E-10,
+    T_ref=561.411) "Coefficients for the thermal conductivity";
 
   final constant PartialHelmholtzFluid.DynamicViscosityCoefficients dynamicViscosityCoefficientsR134a(
-    criticalTemperature=425.125,
-    criticalMolarVolume=1/3920,
-    molarMass=0.0581222,
-    epsilon_kappa=280.51,
-    sigma=0.57335,
+    criticalTemperature=374.21,
+    criticalMolarVolume=1/5049.886,
+    molarMass=0.102032,
+    sigma=0.468932,
+    epsilon_kappa=299.363,
     CET=[
-    0.1628213, 0.5],
+     0.215729E0, 0.5],
     a=[
-     0.17067154,    0;
-    -0.48879666,    1;
-     0.039038856,   2],
+      0.355404E+0,  0;
+     -0.464337E+0,  1;
+      0.257353E-1,  2],
     b=[
-    -19.572881,       0.00;
-     219.73999,      -0.25;
-    -1015.3226,      -0.50;
-     2471.01251,     -0.75;
-    -3375.1717,      -1.00;
-     2491.6597,      -1.25;
-    -787.26086,      -1.50;
-     14.085455,      -2.50;
-    -0.34664158,     -5.50],
+    -0.19572881E+2,   0.00;
+     0.21973999E+3,  -0.25;
+    -0.10153226E+4,  -0.50;
+     0.24710125E+4,  -0.75;
+    -0.33751717E+4,  -1.00;
+     0.24916597E+4,  -1.25;
+    -0.78726086E+3,  -1.50;
+     0.14085455E+2,  -2.50;
+    -0.34664158E+0,  -5.50],
     g=[
-     2.30873963359,      0.0,    0,  0,  0;
-     2.03404037254,      0.5,    0,  0,  0],
+     3.163695635587490,      0.00,  0.00,  0.00,  0;
+    -0.8901733752064137E-1,  1.00,  0.00,  0.00,  0;
+     0.1000352946668359,     2.00,  0.00,  0.00,  0],
     e=[
-    -54.7737770846,      0.0,    2,  0,  0;
-     58.0898623034,     -1.0,    2,  0,  0;
-     0,                 -2.0,    2,  0,  0;
-     35.2658446259,      0.0,    3,  0,  0;
-    -39.6682203832,     -1.0,    3,  0,  0;
-     0,                 -2.0,    3,  0,  0;
-    -1.83729542151,      0.0,    4,  0,  0;
-     0,                 -1.0,    4,  0,  0;
-     0,                 -2.0,    4,  0,  0;
-    -0.833262985358,     0.0,    5,  0,  0;
-     1.93837020663,     -1.0,    5,  0,  0;
-     0,                 -2.0,    5,  0,  0;
-    -188.075903903,      0.0,    1, -1,  0],
+    -0.2069007192080741E-1,  0.00,  1.00,  0.00,  0;
+     0.3560295489828222E-3, -6.00,  2.00,  0.00,  0;
+     0.2111018162451597E-2, -2.00,  2.00,  0.00,  0;
+     0.1396014148308975E-1, -0.50,  2.00,  0.00,  0;
+    -0.4564350196734897E-2,  2.00,  2.00,  0.00,  0;
+    -0.3515932745836890E-2,  0.00,  3.00,  0.00,  0;
+    -0.2147633195397038,     0.00,  0.00, -1.00,  0],
     nu_po=[
-     188.075903903,      0.0,    1,  0,  0],
+     0.2147633195397038,     0.00,  0.00,  0.00,  0],
     de_po=[
-     1.,                 0.0,    0,  1,  0;
-    -1.,                 0.0,    1,  0,  0])
+     1.00,                   0.00,  0.00,  1.00,  0;
+    -1.00,                   0.00,  1.00,  0.00,  0])
   "Coefficients for the dynamic viscosity";
 
     final constant PartialHelmholtzFluid.SurfaceTensionCoefficients surfaceTensionCoefficientsR134a(
