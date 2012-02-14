@@ -713,6 +713,7 @@ protected
     // values from thermal conductivity
     Density d_red=thermalConductivityCoefficients.reducingDensity; // almost identical to critical density
     Temperature T_red=thermalConductivityCoefficients.reducingTemperature; // almost identical to critical temperature
+    Real TCX_red=thermalConductivityCoefficients.reducingThermalConductivity; // usually 1e3, sometimes different value
     Real delta "reduced density";
     Real tau "reduced temperature";
 
@@ -797,8 +798,8 @@ protected
       end if;
     end if;
 
-    // results are in mW/m·K but SI default is W/m·K
-    lambda := 1e3*(lambda_0 + lambda_r + lambda_c);
+    // multiply with reducingTCX (caution: RefPropresults are in mW/m·K but SI default is W/m·K)
+    lambda := TCX_red*(lambda_0 + lambda_r + lambda_c);
 
     /*
   Modelica.Utilities.Streams.print("===========================================");
