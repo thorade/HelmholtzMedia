@@ -4,7 +4,7 @@ record ThermalConductivityCoefficients
     "reducing temperature (very close to critical temperature)";
   Density reducingDensity "reducing density (very close to critical density";
   constant Real[:,2] lambda_0_coeffs "coeffs for dilute contribution";
-  constant Real[:,3] lambda_r_coeffs "coeffs for residual contribution";
+  constant Real[:,4] lambda_r_coeffs "coeffs for residual contribution";
 
   Real nu "universal exponent";
   Real gamma "universal exponent";
