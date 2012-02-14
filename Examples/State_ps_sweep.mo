@@ -1,5 +1,5 @@
 within HelmholtzFluids.Examples;
-model StateRec_ps_sine
+model State_ps_sweep
   package medium = HelmholtzFluids.R134a;
   medium.AbsolutePressure p;
   medium.SpecificEntropy s;
@@ -37,4 +37,4 @@ equation
   annotation (experiment(StopTime=10, NumberOfIntervals=1000),
       __Dymola_experimentSetupOutput,
     Diagram(graphics));
-end StateRec_ps_sine;
+end State_ps_sweep;
