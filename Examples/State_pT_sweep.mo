@@ -1,5 +1,5 @@
 within HelmholtzFluids.Examples;
-model StateRec_pT_sine
+model State_pT_sweep
   package medium = HelmholtzFluids.R134a;
   medium.AbsolutePressure p;
   medium.Temperature T;
@@ -48,4 +48,4 @@ equation
 
   annotation (experiment(StopTime=10, NumberOfIntervals=1000),
       __Dymola_experimentSetupOutput);
-end StateRec_pT_sine;
+end State_pT_sweep;

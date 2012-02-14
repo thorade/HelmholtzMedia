@@ -1,5 +1,5 @@
 within HelmholtzFluids.Examples;
-model StateRec_ph_sine
+model State_ph_sweep
   package medium = HelmholtzFluids.R134a;
   medium.AbsolutePressure p;
   medium.SpecificEnthalpy h;
@@ -36,4 +36,4 @@ equation
   inletState=medium.setState_phX(p=p, h=h, phase=0, X={1});
   annotation (experiment(StopTime=10, NumberOfIntervals=1000),
       __Dymola_experimentSetupOutput);
-end StateRec_ph_sine;
+end State_ph_sweep;

@@ -1,5 +1,5 @@
 within HelmholtzFluids.Examples;
-model BaseProps_Tester
+model BaseProps_sweep "calculate BaseProperties from any two given inputs"
   package medium = HelmholtzFluids.Butane;
   medium.BaseProperties props;
 
@@ -50,4 +50,4 @@ equation
   annotation (experiment(StopTime=10, NumberOfIntervals=1000),
       __Dymola_experimentSetupOutput,
     Diagram(graphics));
-end BaseProps_Tester;
+end BaseProps_sweep;

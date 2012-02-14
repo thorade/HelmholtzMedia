@@ -1,5 +1,5 @@
 within HelmholtzFluids.Examples;
-model StateRec_dT_sine
+model State_dT_sweep
   package medium = HelmholtzFluids.R134a;
   medium.Density d;
   medium.Temperature T;
@@ -42,4 +42,4 @@ equation
 
   annotation (experiment(StopTime=10, NumberOfIntervals=1000),
       __Dymola_experimentSetupOutput);
-end StateRec_dT_sine;
+end State_dT_sweep;
