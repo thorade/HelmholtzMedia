@@ -1,18 +1,20 @@
 within HelmholtzFluids.Examples;
 model Test_AncillaryFunctions
-  package medium = HelmholtzFluids.Butane;
+  package medium = HelmholtzFluids.R134a;
   medium.Temperature Tsat;
   medium.AbsolutePressure psat;
   medium.Density dliq;
   medium.Density dvap;
+
+protected
   constant medium.Temperature T_trip=medium.fluidConstants[1].triplePointTemperature;
   constant medium.Temperature T_crit=medium.fluidConstants[1].criticalTemperature;
 
   Modelica.Blocks.Sources.Ramp Temp_ramp(
-    height=T_crit-T_trip,
-    duration=8,
+    height=T_crit-T_trip-(1e-12),
+    duration=5,
     offset=T_trip,
-    startTime=1)
+    startTime=2)
     annotation (Placement(transformation(extent={{-60,20},{-40,40}})));
 
 algorithm

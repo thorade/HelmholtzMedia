@@ -1,6 +1,6 @@
 within HelmholtzFluids.Examples;
 model Test_StateRec_pT_parameter
-  package medium = HelmholtzFluids.Butane;
+  package medium = HelmholtzFluids.R134a;
   parameter medium.AbsolutePressure p=101325;
   parameter medium.Temperature T=298.15;
   medium.ThermodynamicState inletState;
