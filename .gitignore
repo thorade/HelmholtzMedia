@@ -10,3 +10,15 @@ dymosim.exp
 dymosim.lib
 *.mat
 *.bak-mo
+
+
+# ignore Microsoft Office files
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.xlsm
+
+
+# ignore RefProp files
+*.rfp
