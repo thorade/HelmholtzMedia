@@ -19,13 +19,13 @@ model State_pT_parameter "calculate state record from pT input"
 equation
   inletState=medium.setState_pTX(p=p, T=T, phase=0, X={1});
 
-  cp=medium.specificHeatCapacityCp(inlet);
-  cv=medium.specificHeatCapacityCv(inlet);
-  a=medium.velocityOfSound(inlet);
+  cp=medium.specificHeatCapacityCp(inletState);
+  cv=medium.specificHeatCapacityCv(inletState);
+  a=medium.velocityOfSound(inletState);
 
-  eta=medium.dynamicViscosity(inlet);
-  lambda=medium.thermalConductivity(inlet);
+  eta=medium.dynamicViscosity(inletState);
+  lambda=medium.thermalConductivity(inletState);
 
-  Pr=medium.prandtlNumber(inlet);
+  Pr=medium.prandtlNumber(inletState);
 
 end State_pT_parameter;
