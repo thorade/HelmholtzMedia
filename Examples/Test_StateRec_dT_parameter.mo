@@ -1,7 +1,7 @@
 within HelmholtzFluids.Examples;
 model Test_StateRec_dT_parameter
-  package medium = HelmholtzFluids.Butane;
-  parameter medium.Density d=228;
+  package medium = HelmholtzFluids.R134a;
+  parameter medium.Density d=250;
   parameter medium.Temperature T=298.15;
   medium.ThermodynamicState inlet;
   // medium.SpecificHeatCapacity cp;

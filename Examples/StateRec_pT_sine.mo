@@ -1,6 +1,6 @@
 within HelmholtzFluids.Examples;
 model StateRec_pT_sine
-  package medium = HelmholtzFluids.Butane;
+  package medium = HelmholtzFluids.R134a;
   medium.AbsolutePressure p;
   medium.Temperature T;
   medium.ThermodynamicState inletState;
@@ -10,23 +10,35 @@ model StateRec_pT_sine
   medium.ThermalConductivity lambda;
   medium.PrandtlNumber Pr;
 
-  Modelica.Blocks.Sources.ExpSine expSine_p(
-    offset=2e6,
-    damping=0.5,
-    startTime=3,
-    amplitude=1.99e6,
-    freqHz=1)
+protected
+  constant medium.Temperature Tmin=medium.fluidLimits.TMIN;
+  constant medium.Temperature Tcrit=medium.fluidConstants[1].criticalTemperature;
+  constant medium.Temperature Tmax=medium.fluidLimits.TMAX;
+  constant medium.AbsolutePressure pmin=medium.fluidLimits.PMIN;
+  constant medium.AbsolutePressure pcrit=medium.fluidConstants[1].criticalPressure;
+  constant medium.AbsolutePressure pmax=medium.fluidLimits.PMAX;
+
+Modelica.Blocks.Sources.Ramp ramp(
+    height=1,
+    duration=5,
+    offset=0,
+    startTime=1)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
-  Modelica.Blocks.Sources.Sine sine_T(
-    startTime=1,
-    freqHz=4,
-    amplitude=150,
-    offset=298.15)
+Modelica.Blocks.Sources.ExpSine expSine(
+    amplitude=0.99,
+    offset=1,
+    damping=0.5)
     annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
+Modelica.Blocks.Sources.Sine sine(
+    offset=1,
+    amplitude=0.999,
+    phase=1.5707963267949)
+    annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
 
 equation
-  p = expSine_p.y;
-  T = sine_T.y;
+  p = pcrit + pcrit*(ramp.y*sine.y - ramp.y);
+  T = 0.7*Tcrit + expSine.y*(Tcrit-Tmin);
+
   inletState=medium.setState_pTX(p=p, T=T, phase=0, X={1});
   d_in=inletState.d;
   h_in=inletState.h;

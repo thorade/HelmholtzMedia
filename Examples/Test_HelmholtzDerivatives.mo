@@ -1,6 +1,6 @@
 within HelmholtzFluids.Examples;
 model Test_HelmholtzDerivatives
-  package medium = HelmholtzFluids.Butane;
+  package medium = HelmholtzFluids.R134a;
   Real tau;
   Real delta;
 
@@ -27,8 +27,8 @@ model Test_HelmholtzDerivatives
               annotation (Placement(transformation(extent={{-58,-20},{-38,0}})));
 
 algorithm
-    tau := 1; //tau_ramp.y;
-    delta := 1; //delta_ramp.y;
+    tau := tau_ramp.y;
+    delta := delta_ramp.y;
 
     ai :=medium.ai(delta=delta, tau=tau);
     ai_tau :=medium.ai_tau(delta=delta, tau=tau);
