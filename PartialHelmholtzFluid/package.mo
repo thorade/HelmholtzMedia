@@ -720,7 +720,7 @@ protected
     Real[size(thermalConductivityCoefficients.lambda_0_coeffs,1),2] A=thermalConductivityCoefficients.lambda_0_coeffs;
 
     // coeffs for residual contribution
-    Real[size(thermalConductivityCoefficients.lambda_r_coeffs,1),3] B=thermalConductivityCoefficients.lambda_r_coeffs;
+    Real[size(thermalConductivityCoefficients.lambda_r_coeffs,1),4] B=thermalConductivityCoefficients.lambda_r_coeffs;
 
     // coeffs for critical enhancement
     Real nu=thermalConductivityCoefficients.nu;
@@ -758,11 +758,11 @@ protected
 
     // dilute gas contribution
     tau := state.T/T_red;
-    lambda_0 := sum(A[i,1]*(tau)^A[i,2] for i in 1:size(A,1));
+    lambda_0 := sum(A[i,1]*tau^A[i,2] for i in 1:size(A,1));
 
     // residual contribution; RefProp uses the name background contribution
     delta:=state.d/d_red;
-    lambda_r := sum((B[i,1] + B[i,2]*(tau))*(delta)^B[i,3] for i in 1:size(B,1));
+    lambda_r := sum((B[i,1]*tau^B[i,2])*(delta)^B[i,3] for i in 1:size(B,1));
 
     // crtical enhancement by the simplified crossover model by Olchowy and Sengers
     if ((state.T > T_ref) or (state.d < 1e-6)) then

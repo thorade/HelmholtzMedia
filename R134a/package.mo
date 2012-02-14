@@ -115,15 +115,13 @@ package R134a "R134a data, copied from RefProp R134a.fld"
     reducingTemperature=425.16,
     reducingDensity=3920*0.0581222,
     lambda_0_coeffs=[
-     1.62676E-03,    0;
-     9.75703E-04,    1;
-     2.89887E-02,    2],
+    -1.05248E-2,    0;
+     8.00982E-5,    1],
     lambda_r_coeffs=[
-    -3.04337E-02,    4.18357E-02,    1;
-     1.65820E-01,   -1.47163E-01,    2;
-    -1.48144E-01,    1.33542E-01,    3;
-     5.25500E-02,   -4.85489E-02,    4;
-    -6.29367E-03,    6.44307E-03,    5],
+     1.836526E+0,   0,   1,   0;
+     5.126143E+0,   0,   2,   0;
+    -1.436883E+0,   0,   3,   0;
+     6.261441E-1,   0,   4,   0],
     nu=0.63,
     gamma=1.239,
     R0=1.03,
@@ -182,7 +180,7 @@ package R134a "R134a data, copied from RefProp R134a.fld"
 
     final constant PartialHelmholtzFluid.SurfaceTensionCoefficients surfaceTensionCoefficientsR134a(
     coeffs=[
-      0.05418,    1.26]) "Coefficients for the surface tension";
+      0.06016,    1.26]) "Coefficients for the surface tension";
 
 
   annotation (Documentation(info="<html>
