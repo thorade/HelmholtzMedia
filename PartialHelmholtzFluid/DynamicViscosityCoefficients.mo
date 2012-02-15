@@ -13,7 +13,7 @@ record DynamicViscosityCoefficients
   constant Real[:,2] b "coefficients for second viscosity virial coefficent B";
 
   // coefficients for high density viscosity contribution
-  constant Real[:,5] g "close-packed density delta_0";
+  constant Real[:,2] g "close-packed density delta_0";
   constant Real[:,5] e "simple poly";
   constant Real[:,5] nu_po "  numerator of rational poly";
   constant Real[:,5] de_po "denominator of rational poly";

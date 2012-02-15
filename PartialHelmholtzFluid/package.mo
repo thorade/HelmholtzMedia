@@ -857,7 +857,7 @@ protected
     Real[size(dynamicViscosityCoefficients.a,1),2] a=dynamicViscosityCoefficients.a;
     Real[size(dynamicViscosityCoefficients.b,1),2] b=dynamicViscosityCoefficients.b;
 
-    Real[size(dynamicViscosityCoefficients.g,1),5] g=dynamicViscosityCoefficients.g;
+    Real[size(dynamicViscosityCoefficients.g,1),2] g=dynamicViscosityCoefficients.g;
     Real[size(dynamicViscosityCoefficients.e,1),5] e=dynamicViscosityCoefficients.e;
     Real[size(dynamicViscosityCoefficients.nu_po,1),5] nu_po=dynamicViscosityCoefficients.nu_po;
     Real[size(dynamicViscosityCoefficients.de_po,1),5] de_po=dynamicViscosityCoefficients.de_po;
@@ -901,7 +901,8 @@ protected
     // using the reduced close-packed density delta_0,
     // a simple polynominal, a rational polynominal and an exponential term
     tau := state.T/T_crit;
-    delta_0 := sum(g[i,1]*tau^g[i,2] for i in 1:size(g,1)); // generalized RefProp algorithm, be careful with coeffs: they may differ from article
+    //delta_0 := sum(g[i,1]*tau^g[i,2] for i in 1:size(g,1)); // generalized RefProp algorithm, be careful with coeffs: they may differ from article
+    delta_0 := g[1,1]/(1+sum(g[i,1]*tau^g[i,2] for i in 2:size(g,1))); // alternative inverse form
     eta_r := sum(e[i,1]*tau^e[i,2]*delta^e[i,3]*delta_0^e[i,4] for i in 1:size(e,1)); // simple polynominal terms
     for i in 1:size(nu_po,1) loop
       // numerator of rational poly terms, RefProp algorithm
@@ -923,19 +924,17 @@ protected
     // results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
     eta := micro*(eta_0 + eta_1 + eta_r);
 
-    /*
-  Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("  Omega = " + String(Omega));
-  Modelica.Utilities.Streams.print("  eta_0 = " + String(eta_0));
-  Modelica.Utilities.Streams.print(" B_star = " + String(B_star));
-  Modelica.Utilities.Streams.print("      B = " + String(B));
-  Modelica.Utilities.Streams.print("  eta_1 = " + String(eta_1));
-  Modelica.Utilities.Streams.print("delta_0 = " + String(delta_0));
-  Modelica.Utilities.Streams.print("   xnum = " + String(xnum) + " and xden = " + String(xden));
-  Modelica.Utilities.Streams.print("  eta_r = " + String(eta_r));
-  Modelica.Utilities.Streams.print("    eta = " + String(eta));
-  Modelica.Utilities.Streams.print("===========================================");
-  */
+    Modelica.Utilities.Streams.print("===========================================");
+    Modelica.Utilities.Streams.print("  Omega = " + String(Omega));
+    Modelica.Utilities.Streams.print("  eta_0 = " + String(eta_0));
+    Modelica.Utilities.Streams.print(" B_star = " + String(B_star));
+    Modelica.Utilities.Streams.print("      B = " + String(B));
+    Modelica.Utilities.Streams.print("  eta_1 = " + String(eta_1));
+    Modelica.Utilities.Streams.print("delta_0 = " + String(delta_0));
+    Modelica.Utilities.Streams.print("   xnum = " + String(xnum) + " and xden = " + String(xden));
+    Modelica.Utilities.Streams.print("  eta_r = " + String(eta_r));
+    Modelica.Utilities.Streams.print("    eta = " + String(eta));
+    Modelica.Utilities.Streams.print("===========================================");
 
     annotation (Documentation(info="<html>
 <p>

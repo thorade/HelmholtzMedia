@@ -53,10 +53,10 @@ package R134a "R134a data, copied from RefProp R134a.fld"
     PMIN=Modelica.Constants.small,
     PNOM=101325,
     PMAX=70e6,
-    HMIN=71.455e3,
-    HMAX=577.754e3,
-    SMIN=0.412e3,
-    SMAX=10e3) "Helmholtz EoS Limits";
+    HMIN=0,
+    HMAX=600e3,
+    SMIN=0,
+    SMAX=Modelica.Constants.inf) "Helmholtz EoS Limits";
 
   final constant PartialHelmholtzFluid.HelmholtzCoefficients helmholtzCoefficientsR134a(
     idealLog=[
@@ -156,9 +156,9 @@ package R134a "R134a data, copied from RefProp R134a.fld"
      0.14085455E+2,  -2.50;
     -0.34664158E+0,  -5.50],
     g=[
-     3.163695635587490,      0.00,  0.00,  0.00,  0;
-    -0.8901733752064137E-1,  1.00,  0.00,  0.00,  0;
-     0.1000352946668359,     2.00,  0.00,  0.00,  0],
+     3.163695635587490,      0.00;
+    -0.8901733752064137E-1,  1.00;
+     0.1000352946668359,     2.00],
     e=[
     -0.2069007192080741E-1,  0.00,  1.00,  0.00,  0;
      0.3560295489828222E-3, -6.00,  2.00,  0.00,  0;
