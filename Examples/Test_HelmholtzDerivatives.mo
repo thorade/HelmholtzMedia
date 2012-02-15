@@ -1,6 +1,6 @@
 within HelmholtzFluids.Examples;
 model Test_HelmholtzDerivatives
-  package medium = HelmholtzFluids.R134a;
+  package medium = HelmholtzFluids.Butane;
   Real tau;
   Real delta;
 
@@ -16,14 +16,16 @@ model Test_HelmholtzDerivatives
   Real ar_tau_tau;
 
   Modelica.Blocks.Sources.Ramp tau_ramp(
-    duration=6,
     height=2,
-    offset=Modelica.Constants.eps)
+    offset=Modelica.Constants.eps,
+    startTime=1,
+    duration=8)
     annotation (Placement(transformation(extent={{-60,22},{-40,42}})));
   Modelica.Blocks.Sources.Ramp delta_ramp(
-    duration=7,
     height=2,
-    offset=Modelica.Constants.eps)
+    offset=Modelica.Constants.eps,
+    duration=8,
+    startTime=1)
               annotation (Placement(transformation(extent={{-58,-20},{-38,0}})));
 
 algorithm
