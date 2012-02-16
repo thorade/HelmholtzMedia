@@ -702,6 +702,7 @@ protected
   redeclare replaceable function extends thermalConductivity
   "Return thermal conductivity"
     // inherits input state and output lambda
+    // depends on dynamicViscosity, specificHeatCapacityCp, specificHeatCapacityCv and dpdd=1/dddp
 
 protected
     SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
@@ -711,7 +712,7 @@ protected
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
     // values from thermal conductivity
-    Density d_red=thermalConductivityCoefficients.reducingDensity; // almost identical to critical density
+    Density d_red=fluidConstants[1].molarMass/thermalConductivityCoefficients.reducingMolarVolume; // almost identical to critical density
     Temperature T_red=thermalConductivityCoefficients.reducingTemperature; // almost identical to critical temperature
     Real TCX_red=thermalConductivityCoefficients.reducingThermalConductivity; // usually 1e3, sometimes different value
     Real delta "reduced density";
@@ -773,7 +774,7 @@ protected
       // watch out: algorithm for chi and chi_ref are different (chi_ref is multiplied with T_ref/state.T)
       delta := state.d/d_crit;
       tau := T_crit/state.T;
-      dpdd := R*state.T*(1+2*delta*ar_delta(delta=delta, tau=tau)+delta^2*ar_delta_delta(delta=delta, tau=tau));
+      dpdd := R*state.T*(1+2*delta*ar_delta(delta=delta, tau=tau)+delta^2*ar_delta_delta(delta=delta, tau=tau)); // =dddp^-1
       chi := p_crit/d_crit^2*state.d/dpdd;
 
       tau := T_crit/T_ref;
@@ -847,12 +848,17 @@ Here, the simplified approach as suggested by Olchowy and Sengers is implemented
     // inherits input state and output eta
 
 protected
-    Density d_crit=dynamicViscosityCoefficients.molarMass/dynamicViscosityCoefficients.criticalMolarVolume;
-    Temperature T_crit=dynamicViscosityCoefficients.criticalTemperature;
-    Real delta=state.d/d_crit "reduced density";
-    Real dm=state.d/(1000*dynamicViscosityCoefficients.molarMass)
-    "molar density in mol/l";
+    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    Temperature T_red=dynamicViscosityCoefficients.reducingTemperature;
+    Real T_star "reduced temperature";
     Real tau "reduced temperature";
+
+    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    Density d_red=fluidConstants[1].molarMass/dynamicViscosityCoefficients.reducingMolarVolume;
+    Real delta "reduced density";
+    Real delta_exp "reduced density in exponential term";
+    Real delta_0 "close packed density";
+    Real dm=state.d/(1000*fluidConstants[1].molarMass) "molar density in mol/l";
 
     Real[size(dynamicViscosityCoefficients.a,1),2] a=dynamicViscosityCoefficients.a;
     Real[size(dynamicViscosityCoefficients.b,1),2] b=dynamicViscosityCoefficients.b;
@@ -865,15 +871,13 @@ protected
     // Real[size(dynamicViscosityCoefficients.de_ex,1),5] de_ex=dynamicViscosityCoefficients.de_ex;
 
     Real[1,2] CET=dynamicViscosityCoefficients.CET; // Chapman-Enskog-Term
-    Real Omega
-    "reduced effective cross section, RefProp Omega collision integral";
-    Real T_star "reduced temperature";
+    Real Omega "reduced effective cross section / Omega collision integral";
     Real sigma=dynamicViscosityCoefficients.sigma;
-    Real delta_0;
     Real B_star "reduced second viscosity virial coefficient";
     Real B "second viscosity virial coefficient, l/mol";
-    Real xnum "RefProp   numerator temporary variable";
-    Real xden "RefProp denominator temporary variable";
+    Real visci=0 "RefProp      visci temporary variable";
+    Real xnum=0 "RefProp   numerator temporary variable";
+    Real xden=0 "RefProp denominator temporary variable";
 
     DynamicViscosity eta_0= 0 "zero density contribution";
     DynamicViscosity eta_1= 0 "initial density contribution";
@@ -900,22 +904,36 @@ protected
     // residual contribution
     // using the reduced close-packed density delta_0,
     // a simple polynominal, a rational polynominal and an exponential term
-    tau := state.T/T_crit;
+    tau := state.T/T_red;
+    delta := state.d/d_red;
+    if (abs(d_red-1)>0.001) then
+      delta_exp := state.d/d_crit;
+    else
+      delta_exp := delta;
+    end if;
     //delta_0 := sum(g[i,1]*tau^g[i,2] for i in 1:size(g,1)); // generalized RefProp algorithm, be careful with coeffs: they may differ from article
     delta_0 := g[1,1]/(1+sum(g[i,1]*tau^g[i,2] for i in 2:size(g,1))); // alternative inverse form
-    eta_r := sum(e[i,1]*tau^e[i,2]*delta^e[i,3]*delta_0^e[i,4] for i in 1:size(e,1)); // simple polynominal terms
+
+    for i in 1:size(e,1) loop
+      visci := e[i,1]*tau^e[i,2]*delta^e[i,3]*delta_0^e[i,4]; // simple polynominal terms
+      if (e[i,5]>0) then
+        visci := visci*exp(-delta_exp^e[i,5]);
+      end if;
+      eta_r := eta_r+visci;
+    end for;
+
     for i in 1:size(nu_po,1) loop
       // numerator of rational poly terms, RefProp algorithm
       xnum := xnum + (nu_po[i,1]*tau^nu_po[i,2]*delta^nu_po[i,3]*delta_0^nu_po[i,4]);
       if (nu_po[i,5]>0) then
-        xnum := xnum*exp(-delta^nu_po[i,5]);
+        xnum := xnum*exp(-delta_exp^nu_po[i,5]);
       end if;
     end for;
     for i in 1:size(de_po,1) loop
       // denominator of rational poly terms, RefProp algorithm
       xden := xden + (de_po[i,1]*tau^de_po[i,2]*delta^de_po[i,3]*delta_0^de_po[i,4]);
       if (de_po[i,5]>0) then
-        xden := xden*exp(-delta^de_po[i,5]);
+        xden := xden*exp(-delta_exp^de_po[i,5]);
       end if;
     end for;
     eta_r := eta_r+xnum/xden;
@@ -925,15 +943,26 @@ protected
     eta := micro*(eta_0 + eta_1 + eta_r);
 
     Modelica.Utilities.Streams.print("===========================================");
-    Modelica.Utilities.Streams.print("  Omega = " + String(Omega));
-    Modelica.Utilities.Streams.print("  eta_0 = " + String(eta_0));
-    Modelica.Utilities.Streams.print(" B_star = " + String(B_star));
-    Modelica.Utilities.Streams.print("      B = " + String(B));
-    Modelica.Utilities.Streams.print("  eta_1 = " + String(eta_1));
-    Modelica.Utilities.Streams.print("delta_0 = " + String(delta_0));
-    Modelica.Utilities.Streams.print("   xnum = " + String(xnum) + " and xden = " + String(xden));
-    Modelica.Utilities.Streams.print("  eta_r = " + String(eta_r));
-    Modelica.Utilities.Streams.print("    eta = " + String(eta));
+    Modelica.Utilities.Streams.print("        T = " + String(state.T));
+    Modelica.Utilities.Streams.print("   T_crit = " + String(T_crit));
+    Modelica.Utilities.Streams.print("    T_red = " + String(T_red));
+    Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
+    Modelica.Utilities.Streams.print("      tau = " + String(tau));
+    Modelica.Utilities.Streams.print("        d = " + String(state.d));
+    Modelica.Utilities.Streams.print("   d_crit = " + String(d_crit));
+    Modelica.Utilities.Streams.print("    d_red = " + String(d_red));
+    Modelica.Utilities.Streams.print("    delta = " + String(delta));
+    Modelica.Utilities.Streams.print("delta_exp = " + String(delta_exp));
+    Modelica.Utilities.Streams.print("===========================================");
+    Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
+    Modelica.Utilities.Streams.print("    eta_0 = " + String(eta_0));
+    Modelica.Utilities.Streams.print("   B_star = " + String(B_star));
+    Modelica.Utilities.Streams.print("        B = " + String(B));
+    Modelica.Utilities.Streams.print("    eta_1 = " + String(eta_1));
+    Modelica.Utilities.Streams.print("  delta_0 = " + String(delta_0));
+    Modelica.Utilities.Streams.print("     xnum = " + String(xnum) + " and xden = " + String(xden));
+    Modelica.Utilities.Streams.print("    eta_r = " + String(eta_r));
+    Modelica.Utilities.Streams.print("      eta = " + String(eta));
     Modelica.Utilities.Streams.print("===========================================");
 
     annotation (Documentation(info="<html>
