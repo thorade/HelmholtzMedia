@@ -2,8 +2,7 @@ within HelmholtzFluids.PartialHelmholtzFluid;
 record ThermalConductivityCoefficients
   Temperature reducingTemperature
     "reducing temperature (either 1 or some value close to critical temperature)";
-  Density reducingDensity
-    "reducing density (either 1 or some value close to critical density";
+  MolarVolume reducingMolarVolume "reducing molar volume";
   Real reducingThermalConductivity=1 "usually unity, sometimes different value";
   constant Real[:,2] lambda_0_coeffs "coeffs for dilute contribution";
   constant Real[:,4] lambda_r_coeffs "coeffs for residual contribution";

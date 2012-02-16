@@ -125,7 +125,7 @@ package Butane "Butane data, copied from RefProp Butane.fld"
 
   final constant PartialHelmholtzFluid.ThermalConductivityCoefficients thermalConductivityCoefficientsButane(
     reducingTemperature=425.16,
-    reducingDensity=3920*0.0581222,
+    reducingMolarVolume=1/3920,
     reducingThermalConductivity=1,
     lambda_0_coeffs=[
      1.62676E-03,    0;
@@ -153,9 +153,8 @@ package Butane "Butane data, copied from RefProp Butane.fld"
     T_ref=637.68) "Coefficients for the thermal conductivity";
 
   final constant PartialHelmholtzFluid.DynamicViscosityCoefficients dynamicViscosityCoefficientsButane(
-    criticalTemperature=425.125,
-    criticalMolarVolume=1/3920,
-    molarMass=0.0581222,
+    reducingTemperature=425.125,
+    reducingMolarVolume=1/3920,
     sigma=0.57335,
     epsilon_kappa=280.51,
     CET=[
