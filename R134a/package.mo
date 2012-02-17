@@ -113,7 +113,7 @@ package R134a "R134a data, copied from RefProp R134a.fld"
 
   final constant PartialHelmholtzFluid.ThermalConductivityCoefficients thermalConductivityCoefficientsR134a(
     reducingTemperature=1,
-    reducingDensity=5049.886*0.102032,
+    reducingMolarVolume=1/5049.886,
     reducingThermalConductivity=2.055E-3,
     lambda_0_coeffs=[
     -1.05248E-2,    0;
@@ -134,9 +134,6 @@ package R134a "R134a data, copied from RefProp R134a.fld"
     T_ref=561.411) "Coefficients for the thermal conductivity";
 
   final constant PartialHelmholtzFluid.DynamicViscosityCoefficients dynamicViscosityCoefficientsR134a(
-    criticalTemperature=374.21,
-    criticalMolarVolume=1/5049.886,
-    molarMass=0.102032,
     sigma=0.468932,
     epsilon_kappa=299.363,
     CET=[
@@ -155,6 +152,10 @@ package R134a "R134a data, copied from RefProp R134a.fld"
     -0.78726086E+3,  -1.50;
      0.14085455E+2,  -2.50;
     -0.34664158E+0,  -5.50],
+    hasGeneralizedDelta0=false,
+    reducingTemperature_residual=374.21,
+    reducingMolarVolume_residual=1/5017.0613,
+    reducingViscosity_residual=1e3,
     g=[
      3.163695635587490,      0.00;
     -0.8901733752064137E-1,  1.00;
