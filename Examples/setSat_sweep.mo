@@ -11,21 +11,21 @@ protected
   constant medium.AbsolutePressure pcrit=medium.fluidConstants[1].criticalPressure;
   constant medium.AbsolutePressure pmax=medium.fluidLimits.PMAX;
 
-  Modelica.Blocks.Sources.Ramp Tsat(
+  Modelica.Blocks.Sources.Ramp Tramp(
     height=Tcrit - Tmin-(1e-12),
     offset=Tmin,
     duration=8,
     startTime=1)
     annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
-  Modelica.Blocks.Sources.Ramp psat(
+  Modelica.Blocks.Sources.Ramp pramp(
     height=pcrit - pmin,
     offset=pmin,
     duration=8,
     startTime=1) annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
 
 equation
-  satProps = medium.setSat_T(T=Tsat.y);
-//satProps = medium.setSat_p(p=psat.y);
+  satProps = medium.setSat_T(T=Tramp.y);
+//satProps = medium.setSat_p(p=pramp.y);
 
   annotation (experiment(
       StopTime=10,
