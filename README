@@ -2,5 +2,5 @@ This library is written in Modelica.
 The purpose of this library is to calculate fluid properties from an equation of state (EoS), directly within Modelica and not from an external dll.
 It supports EoS of the form Helmholtz energy as a funtion of temperature and density, f=f(T,d).
 In addition to all state properties, this library will also calculate viscosity and thermal conductivity.
-So far, only n-Butane is implemented. The next fluids to be implemented are R134a and propane.
+So far, n-Butane and R134a are implemented. The next fluids to be implemented are isopentane and (maybe) propane.
 If possible, this will be done before May, because I would like to submit this library to the Modelica 2012 conference.
