@@ -11,6 +11,7 @@ model State_dT_parameter "calculate state record from dT input"
   // medium.MassFraction x;
   // medium.SurfaceTension sigma;
   medium.DynamicViscosity eta;
+  medium.ThermalConductivity lambda;
 
 equation
   inletState=medium.setState_dTX(d=d, T=T, phase=0, X={1});
@@ -18,5 +19,6 @@ equation
   // x=medium.vapourQuality(inletState);
   // sigma=medium.surfaceTension(medium.setSat_T(T=T));
   eta=medium.dynamicViscosity(inletState);
+  lambda=medium.thermalConductivity(inletState);
 
 end State_dT_parameter;
