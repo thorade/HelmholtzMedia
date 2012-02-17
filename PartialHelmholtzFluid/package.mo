@@ -707,16 +707,16 @@ protected
 protected
     SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
     "specific gas constant in J/kg.K";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
-    // values from thermal conductivity
-    Density d_red=fluidConstants[1].molarMass/thermalConductivityCoefficients.reducingMolarVolume; // almost identical to critical density
-    Temperature T_red=thermalConductivityCoefficients.reducingTemperature; // almost identical to critical temperature
-    Real TCX_red=thermalConductivityCoefficients.reducingThermalConductivity; // usually 1e3, sometimes different value
-    Real delta "reduced density";
+    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    Temperature T_red_0=thermalConductivityCoefficients.reducingTemperature_0;
+    Temperature T_red_residual=thermalConductivityCoefficients.reducingTemperature_residual;
     Real tau "reduced temperature";
+
+    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    Density d_red_residual=fluidConstants[1].molarMass/thermalConductivityCoefficients.reducingMolarVolume_residual;
+    Real delta "reduced density";
 
     // coeffs for dilute contribution
     Real[size(thermalConductivityCoefficients.lambda_0_coeffs,1),2] A=thermalConductivityCoefficients.lambda_0_coeffs;
@@ -751,20 +751,26 @@ protected
     SpecificHeatCapacity Cv;
     DynamicViscosity eta_b;
 
+    Real lambda_red_0=thermalConductivityCoefficients.reducingThermalConductivity_0;
+    Real lambda_red_residual=thermalConductivityCoefficients.reducingThermalConductivity_residual;
     ThermalConductivity lambda_0=0;
     ThermalConductivity lambda_r=0;
     ThermalConductivity lambda_c=0;
+    constant Real milli=1e-3;
 
   algorithm
     assert(state.phase<>2, "thermalConductivity error: property not defined in two-phase region");
 
     // dilute gas contribution
-    tau := state.T/T_red;
+    tau := state.T/T_red_0;
     lambda_0 := sum(A[i,1]*tau^A[i,2] for i in 1:size(A,1));
+    lambda_0 := lambda_0*lambda_red_0;
 
     // residual contribution; RefProp uses the name background contribution
-    delta:=state.d/d_red;
+    tau := state.T/T_red_residual;
+    delta:=state.d/d_red_residual;
     lambda_r := sum((B[i,1]*tau^B[i,2])*(delta)^B[i,3] for i in 1:size(B,1));
+    lambda_r := lambda_r*lambda_red_residual;
 
     // crtical enhancement by the simplified crossover model by Olchowy and Sengers
     if ((state.T > T_ref) or (state.d < 1e-6)) then
@@ -799,26 +805,25 @@ protected
       end if;
     end if;
 
-    // multiply with reducingTCX (caution: RefPropresults are in mW/m·K but SI default is W/m·K)
-    lambda := TCX_red*(lambda_0 + lambda_r + lambda_c);
+    // RefPropresults are in mW/m·K but SI default is W/m·K
+    lambda := milli*(lambda_0 + lambda_r + lambda_c);
 
-    /*
-  Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("        d = " + String(state.d) + " and T = " + String(state.T));
-  Modelica.Utilities.Streams.print(" lambda_0 = " + String(lambda_0));
-  Modelica.Utilities.Streams.print(" lambda_r = " + String(lambda_r));
-  Modelica.Utilities.Streams.print("   dpdd   = " + String(dpdd) + " and dpdd_ref = " + String(dpdd_ref));
-  Modelica.Utilities.Streams.print("   chi    = " + String(chi) + "  and  chi_ref = " + String(chi_ref));
-  Modelica.Utilities.Streams.print("Delta_chi = " + String(Delta_chi));
-  Modelica.Utilities.Streams.print("       xi = " + String(xi));
-  Modelica.Utilities.Streams.print("       Cp = " + String(Cp) + "  and  Cv = " + String(Cv));
-  Modelica.Utilities.Streams.print("  Omega_0 = " + String(Omega_0));
-  Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
-  Modelica.Utilities.Streams.print("    eta_b = " + String(eta_b));
-  Modelica.Utilities.Streams.print(" lambda_c = " + String(lambda_c));
-  Modelica.Utilities.Streams.print("  lambda  = " + String(lambda));
-  Modelica.Utilities.Streams.print("===========================================");
-  */
+    // following lines are for debugging only
+    Modelica.Utilities.Streams.print("===========================================");
+    Modelica.Utilities.Streams.print("        d = " + String(state.d) + " and T = " + String(state.T));
+    Modelica.Utilities.Streams.print(" lambda_0 = " + String(lambda_0));
+    Modelica.Utilities.Streams.print(" lambda_r = " + String(lambda_r));
+    Modelica.Utilities.Streams.print("   dpdd   = " + String(dpdd) + " and dpdd_ref = " + String(dpdd_ref));
+    Modelica.Utilities.Streams.print("   chi    = " + String(chi) + "  and  chi_ref = " + String(chi_ref));
+    Modelica.Utilities.Streams.print("Delta_chi = " + String(Delta_chi));
+    Modelica.Utilities.Streams.print("       xi = " + String(xi));
+    Modelica.Utilities.Streams.print("       Cp = " + String(Cp) + "  and  Cv = " + String(Cv));
+    Modelica.Utilities.Streams.print("  Omega_0 = " + String(Omega_0));
+    Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
+    Modelica.Utilities.Streams.print("    eta_b = " + String(eta_b));
+    Modelica.Utilities.Streams.print(" lambda_c = " + String(lambda_c));
+    Modelica.Utilities.Streams.print("  lambda  = " + String(lambda));
+    Modelica.Utilities.Streams.print("===========================================");
 
     annotation (Documentation(info="<html>
   <p>
@@ -949,7 +954,7 @@ protected
     eta_r := eta_r*eta_red_residual;
     // exponential terms not yet implemented!!
 
-    // results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
+    // RefProp results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
     eta := micro*(eta_0 + eta_1 + eta_r);
 
     /* // following lines are for debugging only
