@@ -808,22 +808,23 @@ protected
     // RefPropresults are in mW/m·K but SI default is W/m·K
     lambda := milli*(lambda_0 + lambda_r + lambda_c);
 
-    // following lines are for debugging only
-    Modelica.Utilities.Streams.print("===========================================");
-    Modelica.Utilities.Streams.print("        d = " + String(state.d) + " and T = " + String(state.T));
-    Modelica.Utilities.Streams.print(" lambda_0 = " + String(lambda_0));
-    Modelica.Utilities.Streams.print(" lambda_r = " + String(lambda_r));
-    Modelica.Utilities.Streams.print("   dpdd   = " + String(dpdd) + " and dpdd_ref = " + String(dpdd_ref));
-    Modelica.Utilities.Streams.print("   chi    = " + String(chi) + "  and  chi_ref = " + String(chi_ref));
-    Modelica.Utilities.Streams.print("Delta_chi = " + String(Delta_chi));
-    Modelica.Utilities.Streams.print("       xi = " + String(xi));
-    Modelica.Utilities.Streams.print("       Cp = " + String(Cp) + "  and  Cv = " + String(Cv));
-    Modelica.Utilities.Streams.print("  Omega_0 = " + String(Omega_0));
-    Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
-    Modelica.Utilities.Streams.print("    eta_b = " + String(eta_b));
-    Modelica.Utilities.Streams.print(" lambda_c = " + String(lambda_c));
-    Modelica.Utilities.Streams.print("  lambda  = " + String(lambda));
-    Modelica.Utilities.Streams.print("===========================================");
+    /* // following lines are for debugging only
+  Modelica.Utilities.Streams.print("===========================================");
+  Modelica.Utilities.Streams.print("        d = " + String(state.d) + " and T = " + String(state.T));
+  Modelica.Utilities.Streams.print(" lambda_0 = " + String(lambda_0));
+  Modelica.Utilities.Streams.print(" lambda_r = " + String(lambda_r));
+  Modelica.Utilities.Streams.print("   dpdd   = " + String(dpdd) + " and dpdd_ref = " + String(dpdd_ref));
+  Modelica.Utilities.Streams.print("   chi    = " + String(chi) + "  and  chi_ref = " + String(chi_ref));
+  Modelica.Utilities.Streams.print("Delta_chi = " + String(Delta_chi));
+  Modelica.Utilities.Streams.print("       xi = " + String(xi));
+  Modelica.Utilities.Streams.print("       Cp = " + String(Cp) + "  and  Cv = " + String(Cv));
+  Modelica.Utilities.Streams.print("  Omega_0 = " + String(Omega_0));
+  Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
+  Modelica.Utilities.Streams.print("    eta_b = " + String(eta_b));
+  Modelica.Utilities.Streams.print(" lambda_c = " + String(lambda_c));
+  Modelica.Utilities.Streams.print("  lambda  = " + String(lambda));
+  Modelica.Utilities.Streams.print("===========================================");
+  */
 
     annotation (Documentation(info="<html>
   <p>
