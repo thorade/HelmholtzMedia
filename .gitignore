@@ -4,7 +4,9 @@ dsfinal.txt
 dsin.txt
 dslog.txt
 printlog.txt
+empty.txt
 dsmodel.c
+*.exe
 dymosim.exe
 dymosim.exp
 dymosim.lib
