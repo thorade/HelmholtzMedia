@@ -952,24 +952,26 @@ protected
     // results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
     eta := micro*(eta_0 + eta_1 + eta_r);
 
-    Modelica.Utilities.Streams.print("===========================================");
-    Modelica.Utilities.Streams.print("        T = " + String(state.T));
-    Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
-    Modelica.Utilities.Streams.print("      tau = " + String(tau));
-    Modelica.Utilities.Streams.print("        d = " + String(state.d));
-    Modelica.Utilities.Streams.print("    delta = " + String(delta));
-    Modelica.Utilities.Streams.print("delta_exp = " + String(delta_exp));
-    Modelica.Utilities.Streams.print("===========================================");
-    Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
-    Modelica.Utilities.Streams.print("    eta_0 = " + String(eta_0));
-    Modelica.Utilities.Streams.print("   B_star = " + String(B_star));
-    Modelica.Utilities.Streams.print("        B = " + String(B));
-    Modelica.Utilities.Streams.print("    eta_1 = " + String(eta_1));
-    Modelica.Utilities.Streams.print("  delta_0 = " + String(delta_0));
-    Modelica.Utilities.Streams.print("     xnum = " + String(xnum) + " and xden = " + String(xden));
-    Modelica.Utilities.Streams.print("    eta_r = " + String(eta_r));
-    Modelica.Utilities.Streams.print("      eta = " + String(eta));
-    Modelica.Utilities.Streams.print("===========================================");
+    /* // following lines are for debugging only
+  Modelica.Utilities.Streams.print("===========================================");
+  Modelica.Utilities.Streams.print("        T = " + String(state.T));
+  Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
+  Modelica.Utilities.Streams.print("      tau = " + String(tau));
+  Modelica.Utilities.Streams.print("        d = " + String(state.d));
+  Modelica.Utilities.Streams.print("    delta = " + String(delta));
+  Modelica.Utilities.Streams.print("delta_exp = " + String(delta_exp));
+  Modelica.Utilities.Streams.print("===========================================");
+  Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
+  Modelica.Utilities.Streams.print("    eta_0 = " + String(eta_0));
+  Modelica.Utilities.Streams.print("   B_star = " + String(B_star));
+  Modelica.Utilities.Streams.print("        B = " + String(B));
+  Modelica.Utilities.Streams.print("    eta_1 = " + String(eta_1));
+  Modelica.Utilities.Streams.print("  delta_0 = " + String(delta_0));
+  Modelica.Utilities.Streams.print("     xnum = " + String(xnum) + " and xden = " + String(xden));
+  Modelica.Utilities.Streams.print("    eta_r = " + String(eta_r));
+  Modelica.Utilities.Streams.print("      eta = " + String(eta));
+  Modelica.Utilities.Streams.print("===========================================");
+  */
 
     annotation (Documentation(info="<html>
 <p>
