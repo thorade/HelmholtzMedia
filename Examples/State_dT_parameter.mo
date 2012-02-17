@@ -4,7 +4,7 @@ model State_dT_parameter "calculate state record from dT input"
   package medium = HelmholtzFluids.R134a;
 
   parameter medium.Density d=1300;
-  parameter medium.Temperature T=375;
+  parameter medium.Temperature T=400;
 
   medium.ThermodynamicState inletState;
 
