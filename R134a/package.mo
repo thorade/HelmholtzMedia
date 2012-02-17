@@ -112,22 +112,19 @@ package R134a "R134a data, copied from RefProp R134a.fld"
       -0.71821E+02,   7.0]) "Coefficients for the ancillary equations";
 
   final constant PartialHelmholtzFluid.ThermalConductivityCoefficients thermalConductivityCoefficientsR134a(
-    reducingTemperature=1,
-    reducingMolarVolume=1/5049.886,
-    reducingThermalConductivity=2.055E-3,
+    reducingTemperature_0=1,
+    reducingThermalConductivity_0=1,
     lambda_0_coeffs=[
     -1.05248E-2,    0;
      8.00982E-5,    1],
+    reducingTemperature_residual=1,
+    reducingMolarVolume_residual=1/5049.886,
+    reducingThermalConductivity_residual=2.055E-3,
     lambda_r_coeffs=[
      1.836526E+0,   0,   1,   0;
      5.126143E+0,   0,   2,   0;
     -1.436883E+0,   0,   3,   0;
      6.261441E-1,   0,   4,   0],
-    nu=0.63,
-    gamma=1.239,
-    R0=1.03,
-    z=0.063,
-    c=1,
     xi_0=1.94E-10,
     Gamma_0=0.0496,
     qd_inverse=5.285356E-10,

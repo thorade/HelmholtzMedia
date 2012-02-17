@@ -124,13 +124,15 @@ package Butane "Butane data, copied from RefProp Butane.fld"
 */
 
   final constant PartialHelmholtzFluid.ThermalConductivityCoefficients thermalConductivityCoefficientsButane(
-    reducingTemperature=425.16,
-    reducingMolarVolume=1/3920,
-    reducingThermalConductivity=1,
+    reducingTemperature_0=425.16,
+    reducingThermalConductivity_0=1,
     lambda_0_coeffs=[
      1.62676E-03,    0;
      9.75703E-04,    1;
      2.89887E-02,    2],
+    reducingTemperature_residual=425.16,
+    reducingMolarVolume_residual=1/3920,
+    reducingThermalConductivity_residual=1,
     lambda_r_coeffs=[
     -3.04337E-2,    0,   1,   0;
      4.18357E-2,    1,   1,   0;
@@ -142,11 +144,6 @@ package Butane "Butane data, copied from RefProp Butane.fld"
     -4.85489E-2,    1,   4,   0;
     -6.29367E-3,    0,   5,   0;
      6.44307E-3,    1,   5,   0],
-    nu=0.63,
-    gamma=1.239,
-    R0=1.03,
-    z=0.063,
-    c=1,
     xi_0=0.194E-9,
     Gamma_0=0.0496,
     qd_inverse=0.875350E-9,
