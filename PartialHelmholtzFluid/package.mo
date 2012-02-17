@@ -849,12 +849,13 @@ Here, the simplified approach as suggested by Olchowy and Sengers is implemented
 
 protected
     Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Temperature T_red=dynamicViscosityCoefficients.reducingTemperature;
+    Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
+    Temperature T_red_residual=dynamicViscosityCoefficients.reducingTemperature_residual;
     Real T_star "reduced temperature";
     Real tau "reduced temperature";
 
     Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
-    Density d_red=fluidConstants[1].molarMass/dynamicViscosityCoefficients.reducingMolarVolume;
+    Density d_red_residual=fluidConstants[1].molarMass/dynamicViscosityCoefficients.reducingMolarVolume_residual;
     Real delta "reduced density";
     Real delta_exp "reduced density in exponential term";
     Real delta_0 "close packed density";
@@ -863,6 +864,7 @@ protected
     Real[size(dynamicViscosityCoefficients.a,1),2] a=dynamicViscosityCoefficients.a;
     Real[size(dynamicViscosityCoefficients.b,1),2] b=dynamicViscosityCoefficients.b;
 
+    Boolean hasGeneralizedDelta0= dynamicViscosityCoefficients.hasGeneralizedDelta0;
     Real[size(dynamicViscosityCoefficients.g,1),2] g=dynamicViscosityCoefficients.g;
     Real[size(dynamicViscosityCoefficients.e,1),5] e=dynamicViscosityCoefficients.e;
     Real[size(dynamicViscosityCoefficients.nu_po,1),5] nu_po=dynamicViscosityCoefficients.nu_po;
@@ -879,6 +881,8 @@ protected
     Real xnum=0 "RefProp   numerator temporary variable";
     Real xden=0 "RefProp denominator temporary variable";
 
+    Real eta_red_0=dynamicViscosityCoefficients.reducingViscosity_0;
+    Real eta_red_residual=dynamicViscosityCoefficients.reducingViscosity_residual;
     DynamicViscosity eta_0= 0 "zero density contribution";
     DynamicViscosity eta_1= 0 "initial density contribution";
     DynamicViscosity eta_r= 0 "residual viscosity";
@@ -891,8 +895,9 @@ protected
     // using the collision integral Omega and the Chapman-Enskog-Term
     T_star:= Modelica.Math.log(state.T/dynamicViscosityCoefficients.epsilon_kappa);
     Omega := exp(sum(a[i,1]*(T_star)^a[i, 2] for i in 1:size(a, 1)));
-    tau := state.T/1; // reducing not used so far
+    tau := state.T/T_red_0;
     eta_0 := CET[1,1]*sqrt(tau)/(sigma^2*Omega);
+    eta_0 := eta_0*eta_red_0;
 
     // inital density contribution
     // using the second viscosity virial coefficient B
@@ -904,16 +909,20 @@ protected
     // residual contribution
     // using the reduced close-packed density delta_0,
     // a simple polynominal, a rational polynominal and an exponential term
-    tau := state.T/T_red;
-    delta := state.d/d_red;
-    if (abs(d_red-1)>0.001) then
+    tau := state.T/T_red_residual;
+    delta := state.d/d_red_residual;
+    if (abs(d_red_residual-1)>0.001) then
       delta_exp := state.d/d_crit;
     else
       delta_exp := delta;
     end if;
-    //delta_0 := sum(g[i,1]*tau^g[i,2] for i in 1:size(g,1)); // generalized RefProp algorithm, be careful with coeffs: they may differ from article
-    delta_0 := g[1,1]/(1+sum(g[i,1]*tau^g[i,2] for i in 2:size(g,1))); // alternative inverse form
-
+    if hasGeneralizedDelta0 then
+      // generalized RefProp algorithm, be careful with coeffs: they may differ from article
+      delta_0 := sum(g[i,1]*tau^g[i,2] for i in 1:size(g,1));
+    else
+      // alternative inverse form
+      delta_0 := g[1,1]/(1+sum(g[i,1]*tau^g[i,2] for i in 2:size(g,1)));
+    end if;
     for i in 1:size(e,1) loop
       visci := e[i,1]*tau^e[i,2]*delta^e[i,3]*delta_0^e[i,4]; // simple polynominal terms
       if (e[i,5]>0) then
@@ -937,6 +946,7 @@ protected
       end if;
     end for;
     eta_r := eta_r+xnum/xden;
+    eta_r := eta_r*eta_red_residual;
     // exponential terms not yet implemented!!
 
     // results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
@@ -944,13 +954,9 @@ protected
 
     Modelica.Utilities.Streams.print("===========================================");
     Modelica.Utilities.Streams.print("        T = " + String(state.T));
-    Modelica.Utilities.Streams.print("   T_crit = " + String(T_crit));
-    Modelica.Utilities.Streams.print("    T_red = " + String(T_red));
     Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
     Modelica.Utilities.Streams.print("      tau = " + String(tau));
     Modelica.Utilities.Streams.print("        d = " + String(state.d));
-    Modelica.Utilities.Streams.print("   d_crit = " + String(d_crit));
-    Modelica.Utilities.Streams.print("    d_red = " + String(d_red));
     Modelica.Utilities.Streams.print("    delta = " + String(delta));
     Modelica.Utilities.Streams.print("delta_exp = " + String(delta_exp));
     Modelica.Utilities.Streams.print("===========================================");
