@@ -115,7 +115,8 @@ package Butane "Butane data, copied from RefProp Butane.fld"
       -0.57347E+01,   1.14;
       -0.16408E+02,   3.0;
       -0.46986E+02,   6.5;
-      -0.10090E+03,  14.0]) "Coefficients for the ancillary equations";
+      -0.10090E+03,  14.0])
+  "Coefficients for the ancillary equations (PS5, DL1, DV3)";
 /*  densityVapor=[
       -2.07770057,          0.345;
       -3.08362490,          5/6;
