@@ -267,13 +267,14 @@ protected
   algorithm
     // Modelica.Utilities.Streams.print("  d = " + String(d) + " and T = " + String(T));
     state :=setState_dTX(d=d, T=T);
-    if (state.phase == 2) then
-      sat :=setSat_T(T=T);
-    end if;
     p :=state.p;
     h :=state.h;
   //s :=state.s;
     u :=h - p/d;
+    if (state.phase == 2) then
+      // sat :=setSat_p(p=p);
+      sat :=setSat_T(T=T);
+    end if;
   end BaseProperties;
 
 
@@ -1062,6 +1063,7 @@ The extended version has up to three terms with two parameters each.
     T := state.T;
   end temperature;
 
+
   redeclare function extends density
   "returns density from given ThermodynamicState"
   // inherited from: PartialMedium
@@ -1069,6 +1071,7 @@ The extended version has up to three terms with two parameters each.
   algorithm
     d := state.d;
   end density;
+
 
   redeclare function extends specificEnthalpy
   "returns specificEnthalpy from given ThermodynamicState"
@@ -1078,6 +1081,7 @@ The extended version has up to three terms with two parameters each.
     h := state.h;
   end specificEnthalpy;
 
+
   redeclare function extends bubbleEnthalpy
   "returns specificEnthalpy from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
@@ -1086,6 +1090,7 @@ The extended version has up to three terms with two parameters each.
     hl := sat.liq.h;
   end bubbleEnthalpy;
 
+
   redeclare function extends dewEnthalpy
   "returns specificEnthalpy from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
@@ -1093,4 +1098,20 @@ The extended version has up to three terms with two parameters each.
   algorithm
     hv := sat.vap.h;
   end dewEnthalpy;
+
+  redeclare function extends setBubbleState
+  "returns bubble ThermodynamicState from given saturation properties"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat, input phase and output state
+  algorithm
+    state := sat.liq;
+  end setBubbleState;
+
+  redeclare function extends setDewState
+  "returns dew ThermodynamicState from given saturation properties"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat, input phase and output state
+  algorithm
+    state := sat.vap;
+  end setDewState;
 end PartialHelmholtzFluid;
