@@ -1,9 +1,15 @@
 within HelmholtzFluids;
 partial package PartialHelmholtzFluid 
-  extends Modelica.Media.Interfaces.PartialTwoPhaseMedium;
+  extends Modelica.Media.Interfaces.PartialTwoPhaseMedium(
+    onePhase=false,
+    singleState=false,
+    smoothModel=true,
+    DipoleMoment(min=0, max=5),
+    AbsolutePressure(min=Modelica.Constants.small, max=1e12),
+    SpecificEntropy(min=-Modelica.Constants.inf, max=Modelica.Constants.inf));
 
-  // the EosLimits record is quite similar to the FluidLimits record
-  constant EosLimits fluidLimits;
+
+  constant FluidLimits fluidLimits;
 
   constant HelmholtzCoefficients helmholtzCoefficients;
 
@@ -12,6 +18,15 @@ partial package PartialHelmholtzFluid
 
   constant SurfaceTensionCoefficients surfaceTensionCoefficients;
   constant AncillaryCoefficients ancillaryCoefficients;
+
+
+
+
+
+
+
+
+
 
 
   redeclare function setSat_T
@@ -59,8 +74,10 @@ protected
     Delta_J := abs(J_liq - J_vap);
 
     // Gibbs energy difference liquid-vapor
-    K_liq := delta_liq*ar_delta(tau=tau, delta=delta_liq) + ar(tau=tau, delta=delta_liq) + log(delta_liq);
-    K_vap := delta_vap*ar_delta(tau=tau, delta=delta_vap) + ar(tau=tau, delta=delta_vap) + log(delta_vap);
+    K_liq := delta_liq*ar_delta(tau=tau, delta=delta_liq) + ar(tau=tau, delta=
+      delta_liq) + log(delta_liq);
+    K_vap := delta_vap*ar_delta(tau=tau, delta=delta_vap) + ar(tau=tau, delta=
+      delta_vap) + log(delta_vap);
     Delta_K := abs(K_liq - K_vap);
 
     while (abs(Delta_J) + abs(Delta_K) > tolerance) loop
@@ -68,30 +85,44 @@ protected
       // print("Delta_J=" + String(Delta_J) + " and Delta_K=" + String(Delta_K), "printlog.txt");
 
       // calculate better values for reduced density delta using gradients
-      J_liq_delta := 1 + 2*delta_liq*ar_delta(tau=tau, delta=delta_liq) + delta_liq^2*ar_delta_delta(tau=tau, delta=delta_liq);
-      J_vap_delta := 1 + 2*delta_vap*ar_delta(tau=tau, delta=delta_vap) + delta_vap^2*ar_delta_delta(tau=tau, delta=delta_vap);
+      J_liq_delta := 1 + 2*delta_liq*ar_delta(tau=tau, delta=delta_liq) + delta_liq^
+        2*ar_delta_delta(tau=tau, delta=delta_liq);
+      J_vap_delta := 1 + 2*delta_vap*ar_delta(tau=tau, delta=delta_vap) +
+        delta_vap^2*ar_delta_delta(tau=tau, delta=delta_vap);
 
-      K_liq_delta := 2*ar_delta(tau=tau, delta=delta_liq) + delta_liq*ar_delta_delta(tau=tau, delta=delta_liq) + 1/delta_liq;
-      K_vap_delta := 2*ar_delta(tau=tau, delta=delta_vap) + delta_vap*ar_delta_delta(tau=tau, delta=delta_vap) + 1/delta_vap;
+      K_liq_delta := 2*ar_delta(tau=tau, delta=delta_liq) + delta_liq*
+        ar_delta_delta(tau=tau, delta=delta_liq) + 1/delta_liq;
+      K_vap_delta := 2*ar_delta(tau=tau, delta=delta_vap) + delta_vap*
+        ar_delta_delta(tau=tau, delta=delta_vap) + 1/delta_vap;
 
       Delta := J_vap_delta*K_liq_delta - J_liq_delta*K_vap_delta;
 
-      delta_liq := delta_liq + gamma/Delta*((K_vap - K_liq)*J_vap_delta - (J_vap - J_liq)*K_vap_delta);
-      delta_vap := delta_vap + gamma/Delta*((K_vap - K_liq)*J_liq_delta - (J_vap - J_liq)*K_liq_delta);
+      delta_liq := delta_liq + gamma/Delta*((K_vap - K_liq)*J_vap_delta - (
+        J_vap - J_liq)*K_vap_delta);
+      delta_vap := delta_vap + gamma/Delta*((K_vap - K_liq)*J_liq_delta - (
+        J_vap - J_liq)*K_liq_delta);
 
       // calculate new Delta_J and Delta_K
       J_liq := delta_liq*(1 + delta_liq*ar_delta(tau=tau, delta=delta_liq));
       J_vap := delta_vap*(1 + delta_vap*ar_delta(tau=tau, delta=delta_vap));
       Delta_J := abs(J_liq - J_vap);
 
-      K_liq := delta_liq*ar_delta(tau=tau, delta=delta_liq) + ar(tau=tau, delta=delta_liq) + log(delta_liq);
-      K_vap := delta_vap*ar_delta(tau=tau, delta=delta_vap) + ar(tau=tau, delta=delta_vap) + log(delta_vap);
+      K_liq := delta_liq*ar_delta(tau=tau, delta=delta_liq) + ar(tau=tau,
+        delta=delta_liq) + log(delta_liq);
+      K_vap := delta_vap*ar_delta(tau=tau, delta=delta_vap) + ar(tau=tau,
+        delta=delta_vap) + log(delta_vap);
       Delta_K := abs(K_liq - K_vap);
     end while;
 
     sat.Tsat := T;
-    sat.liq := setState_dTX(d=delta_liq*d_crit,T=T,phase=1);
-    sat.vap := setState_dTX(d=delta_vap*d_crit,T=T,phase=1);
+    sat.liq := setState_dTX(
+          d=delta_liq*d_crit,
+          T=T,
+          phase=1);
+    sat.vap := setState_dTX(
+          d=delta_vap*d_crit,
+          T=T,
+          phase=1);
     sat.psat := sat.liq.p;
 
     annotation (Documentation(info="<html>
@@ -129,14 +160,17 @@ protected
     assert(p <= p_crit, "setSat_p error: Pressure is higher than critical pressure");
 
     T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-      function setSat_p_RES(p=p),
-      u_min=T_min,
-      u_max=T_max,
-      tolerance=tolerance);
+          function setSat_p_RES(p=p),
+          u_min=T_min,
+          u_max=T_max,
+          tolerance=tolerance);
 
     sat := setSat_T(T=T);
 
   end setSat_p;
+
+
+
 
 
   redeclare function extends saturationPressure
@@ -149,21 +183,20 @@ protected
     Real T_theta=1 - T/T_crit;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
-    Integer nPressureSaturation = size(ancillaryCoefficients.pressureSaturation,1);
-    Real[nPressureSaturation] n = ancillaryCoefficients.pressureSaturation[:,1];
-    Real[nPressureSaturation] theta = ancillaryCoefficients.pressureSaturation[:,2];
+    Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation,
+        1);
+    Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
+    Real[nPressureSaturation] theta=ancillaryCoefficients.pressureSaturation[
+        :, 2];
 
   algorithm
     assert(T <= T_crit, "saturationPressure error: Temperature is higher than critical temperature");
-    p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation));
+    p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:
+      nPressureSaturation));
 
     // this is an ancillary forward function
     // the corresponding iterative backward function is saturationTemperature(p)
-    annotation (
-      inverse(
-        T = saturationTemperature(p=p)),
-      Documentation(
-        info="<html>
+    annotation (inverse(T=saturationTemperature(p=p)), Documentation(info="<html>
       <p>
       This algorithm returns the saturation pressure as a function of Temperature: psat=psat(T).
       This type of vapor pressure equation was developed by W. Wagner.
@@ -196,15 +229,16 @@ protected
     assert(p >= p_trip, "saturationTemperature error: Pressure is lower than triple-point pressure");
     assert(p <= p_crit, "saturationTemperature error: Pressure is higher than critical pressure");
     T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-      function saturationTemperature_RES(p=p),
-      u_min=T_trip,
-      u_max=T_crit,
-      tolerance=tolerance);
+          function saturationTemperature_RES(p=p),
+          u_min=T_trip,
+          u_max=T_crit,
+          tolerance=tolerance);
 
     // this is an iterative backward function
     // the corresponding ancillary forward function is saturationPressure(T)
-    annotation(inverse(p = saturationPressure(T=T)));
+    annotation (inverse(p=saturationPressure(T=T)));
   end saturationTemperature;
+
 
 
   redeclare function vapourQuality "returns the vapour quality"
@@ -247,14 +281,15 @@ protected
 
   redeclare record extends SaturationProperties
     // inherits Tsat and psat
-    ThermodynamicState liq(phase=1);
-    ThermodynamicState vap(phase=1);
+    ThermodynamicState liq;
+    ThermodynamicState vap;
   end SaturationProperties;
 
 
   redeclare model extends BaseProperties
   "Base properties (p, d, T, h, u, R, MM and, if applicable, X and Xi) of a medium"
-  // SpecificEntropy s;
+
+    SpecificEntropy s;
 
   // this is a model, so input and output can be inverted
   // the algorithm block inside the model is treated like a function
@@ -262,20 +297,24 @@ protected
   // the natural input variables for Helmholtz equations of state are d and T
 
   equation
-    MM =  fluidConstants[1].molarMass;
-    R =  Modelica.Constants.R/MM;
+    MM = fluidConstants[1].molarMass;
+    R = Modelica.Constants.R/MM;
   algorithm
     // Modelica.Utilities.Streams.print("  d = " + String(d) + " and T = " + String(T));
-    state :=setState_dTX(d=d, T=T);
-    p :=state.p;
-    h :=state.h;
-  //s :=state.s;
-    u :=h - p/d;
+    state := setState_dTX(d=d, T=T);
+    p := state.p;
+    h := state.h;
+    // state := setState_phX(p=p, h=h);
+    // d := state.d;
+    // T := state.T;
+    s := state.s;
+    u := h - p/d;
     if (state.phase == 2) then
       // sat :=setSat_p(p=p);
-      sat :=setSat_T(T=T);
+      sat := setSat_T(T=T);
     end if;
   end BaseProperties;
+
 
 
   redeclare function extends setState_dTX
@@ -287,8 +326,8 @@ protected
     Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Temperature T_trip=fluidConstants[1].triplePointTemperature;
-    Real delta = d/d_crit "reduced density";
-    Real tau = T_crit/T "inverse reduced temperature";
+    Real delta=d/d_crit "reduced density";
+    Real tau=T_crit/T "inverse reduced temperature";
 
     SaturationProperties sat;
     MassFraction Q "vapour quality";
@@ -296,11 +335,12 @@ protected
   algorithm
     state.phase := phase;
 
-    if (state.phase==0) then
+    if (state.phase == 0) then
       //phase unknown, check phase first
       if (T < T_crit) then
         // two-phase possible, do simple density check
-        if ((d > 1.02*bubbleDensity_T_ANC(T=T)) or (d < 0.98*dewDensity_T_ANC(T=T))) then
+        if ((d > 1.02*bubbleDensity_T_ANC(T=T)) or (d < 0.98*dewDensity_T_ANC(
+             T=T))) then
           state.phase := 1;
         else
           // two-phase state or close to it, get saturation properties from EoS
@@ -316,10 +356,10 @@ protected
         state.phase := 1;
       end if;
     elseif (state.phase == 2) then
-     assert(T <= T_crit, "setState_dTX_error: Temperature is higher than critical temperature");
-     sat := setSat_T(T=T);
-     assert(d >= sat.vap.d, "setState_dTX_error: density is lower than saturated vapor density: this is single phase vapor");
-     assert(d <= sat.liq.d, "setState_dTX_error: density is higher than saturated liquid density: this is single phase liquid");
+      assert(T <= T_crit, "setState_dTX_error: Temperature is higher than critical temperature");
+      sat := setSat_T(T=T);
+      assert(d >= sat.vap.d, "setState_dTX_error: density is lower than saturated vapor density: this is single phase vapor");
+      assert(d <= sat.liq.d, "setState_dTX_error: density is higher than saturated liquid density: this is single phase liquid");
     end if;
 
     state.d := d;
@@ -333,8 +373,10 @@ protected
     else
       // force single-phase
       state.p := (1 + delta*ar_delta(delta=delta, tau=tau))*d*R*T;
-      state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*T;
-      state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
+      state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta,
+        tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*T;
+      state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=
+        tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
     end if;
 
   end setState_dTX;
@@ -354,15 +396,20 @@ protected
     Real tolerance=1e-9 "relative Tolerance for Density";
 
   algorithm
-    assert(phase<>2, "setState_pTX_error: pressure and temperature are not independent varaibles in two-phase state");
+    assert(phase <> 2, "setState_pTX_error: pressure and temperature are not independent varaibles in two-phase state");
     state.phase := 1;
 
     state.p := p;
     state.T := T;
-    state.d := density_pT(p=p,T=T,phase=1);
+    state.d := density_pT(
+          p=p,
+          T=T,
+          phase=1);
     delta := state.d/d_crit;
-    state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*T;
-    state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
+    state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta,
+      tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*T;
+    state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=
+      tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
 
   end setState_pTX;
 
@@ -383,8 +430,8 @@ protected
 
     SaturationProperties sat;
     MassFraction Q "vapour quality";
-    Temperature Tmin= fluidLimits.TMIN;
-    Temperature Tmax= fluidLimits.TMAX;
+    Temperature Tmin=fluidLimits.TMIN;
+    Temperature Tmax=fluidLimits.TMAX;
     Real tolerance=1e-9 "relative Tolerance for Density";
 
   algorithm
@@ -403,14 +450,17 @@ protected
         tau := T_crit/sat.Tsat;
         sat.liq.d := bubbleDensity_T_ANC(T=sat.Tsat);
         delta := sat.liq.d/d_crit;
-        sat.liq.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*sat.Tsat;
+        sat.liq.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=
+          delta, tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*sat.Tsat;
         sat.vap.d := dewDensity_T_ANC(T=sat.Tsat);
         delta := sat.vap.d/d_crit;
-        sat.vap.h := (1 + tau*(ai_tau(delta=delta,tau=tau) + ar_tau(delta=delta,tau=tau)) + delta*ar_delta(delta=delta,tau=tau))*R*sat.Tsat;
+        sat.vap.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=
+          delta, tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*sat.Tsat;
 
-        if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02*sat.vap.h))) then
+        if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02
+            *sat.vap.h))) then
           // two-phase state or close to it, get saturation properties from EoS, use Tsat as starting value
-          sat := setSat_p(p=p,T_guess=sat.Tsat);
+          sat := setSat_p(p=p, T_guess=sat.Tsat);
         end if;
 
         if (h < sat.liq.h) then
@@ -440,17 +490,25 @@ protected
     else
       // force single-phase
       state.T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-        function setState_phX_RES(p=p,h=h,phase=1),
-        u_min=Tmin,
-        u_max=Tmax,
-        tolerance=tolerance);
-      state.d := density_pT(p=p,T=state.T,phase=1);
+            function setState_phX_RES(
+              p=p,
+              h=h,
+              phase=1),
+            u_min=Tmin,
+            u_max=Tmax,
+            tolerance=tolerance);
+      state.d := density_pT(
+            p=p,
+            T=state.T,
+            phase=1);
       tau := T_crit/state.T;
       delta := state.d/d_crit;
-      state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
+      state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=
+        tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
     end if;
 
   end setState_phX;
+
 
 
   redeclare function extends setState_psX
@@ -469,8 +527,8 @@ protected
 
     SaturationProperties sat;
     MassFraction Q "vapour quality";
-    Temperature Tmin= fluidLimits.TMIN;
-    Temperature Tmax= fluidLimits.TMAX;
+    Temperature Tmin=fluidLimits.TMIN;
+    Temperature Tmax=fluidLimits.TMAX;
     Real tolerance=1e-9 "relative Tolerance for Density";
 
   algorithm
@@ -489,14 +547,17 @@ protected
         tau := T_crit/sat.Tsat;
         sat.liq.d := bubbleDensity_T_ANC(T=sat.Tsat);
         delta := sat.liq.d/d_crit;
-        sat.liq.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
+        sat.liq.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta,
+          tau=tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
         sat.vap.d := dewDensity_T_ANC(T=sat.Tsat);
         delta := sat.vap.d/d_crit;
-        sat.vap.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
+        sat.vap.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta,
+          tau=tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
 
-        if ((s > sat.liq.s - abs(0.02*sat.liq.s)) and (s < sat.vap.s + abs(0.02*sat.vap.s))) then
+        if ((s > sat.liq.s - abs(0.02*sat.liq.s)) and (s < sat.vap.s + abs(0.02
+            *sat.vap.s))) then
           // two-phase state or close to it, get saturation properties from EoS, use Tsat as starting value
-          sat := setSat_p(p=p,T_guess=sat.Tsat);
+          sat := setSat_p(p=p, T_guess=sat.Tsat);
         end if;
 
         if (s < sat.liq.s) then
@@ -526,17 +587,25 @@ protected
     else
       // force single-phase
       state.T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-        function setState_psX_RES(p=p,s=s,phase=1),
-        u_min=Tmin,
-        u_max=Tmax,
-        tolerance=tolerance);
-      state.d := density_pT(p=p,T=state.T,phase=1);
+            function setState_psX_RES(
+              p=p,
+              s=s,
+              phase=1),
+            u_min=Tmin,
+            u_max=Tmax,
+            tolerance=tolerance);
+      state.d := density_pT(
+            p=p,
+            T=state.T,
+            phase=1);
       tau := T_crit/state.T;
       delta := state.d/d_crit;
-      state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*state.T;
+      state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta,
+        tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*state.T;
     end if;
 
   end setState_psX;
+
 
 
   redeclare function density_pT
@@ -562,20 +631,20 @@ protected
 
     SaturationProperties sat;
 
-    Density dmin= fluidLimits.DMIN;
-    Density dmax= fluidLimits.DMAX;
+    Density dmin=fluidLimits.DMIN;
+    Density dmax=fluidLimits.DMAX;
     Real tolerance=1e-9 "relative Tolerance for Density";
 
   algorithm
-    assert(phase<>2, "density_pT error: in two-phase state pressure and temperature are not independent variables");
+    assert(phase <> 2, "density_pT error: in two-phase state pressure and temperature are not independent variables");
 
-    if (T<=T_crit) then
+    if (T <= T_crit) then
       sat.psat := saturationPressure(T=T);
 
-      if (p>1.05*sat.psat) then
-        sat.liq.d:=bubbleDensity_T_ANC(T=T);
-      elseif (p<0.95*sat.psat) then
-        sat.vap.d:=dewDensity_T_ANC(T=T);
+      if (p > 1.05*sat.psat) then
+        sat.liq.d := bubbleDensity_T_ANC(T=T);
+      elseif (p < 0.95*sat.psat) then
+        sat.vap.d := dewDensity_T_ANC(T=T);
       else
         sat := setSat_T(T=T); // very close to two-phase: get saturation properties from EoS for consistency
       end if;
@@ -585,21 +654,22 @@ protected
       elseif (p < sat.psat) then
         dmax := sat.vap.d; //single-phase vapor: d is between 0 and dvap
       else
-        assert(p <> sat.psat,"density_pT error: cannot calculate the density because in the two-phase region p and T are not independent");
+        assert(p <> sat.psat, "density_pT error: cannot calculate the density because in the two-phase region p and T are not independent");
       end if;
 
     end if;
 
     d := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-      function density_pT_RES(T=T,p=p),
-      u_min=dmin,
-      u_max=dmax,
-      tolerance=tolerance);
+          function density_pT_RES(T=T, p=p),
+          u_min=dmin,
+          u_max=dmax,
+          tolerance=tolerance);
 
     // this is an iterative backward function
     // pressure_dT is the corresponding forward function
     // annotation (inverse(p=pressure_dT(d=d, T=T, phase=phase)));
   end density_pT;
+
 
 
   redeclare function specificEnthalpy_pT
@@ -621,15 +691,16 @@ protected
     Density d;
 
   algorithm
-    assert(phase<>2, "specificEnthalpy_pT error: pressure and temperature are not independent variables in two-phase state");
-    d:=density_pT(p=p,T=T,phase=phase);
-    delta:=d/d_crit;
+    assert(phase <> 2, "specificEnthalpy_pT error: pressure and temperature are not independent variables in two-phase state");
+    d := density_pT(p=p, T=T, phase=phase);
+    delta := d/d_crit;
     h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*T;
 
     // this is an iterative backward function
     // the two inverse functions are Temperature_ph and pressure_Th
     // annotation (inverse(p=pressure_dT(d=d, T=T, phase=phase)));
   end specificEnthalpy_pT;
+
 
 
   redeclare function extends specificHeatCapacityCp
@@ -645,11 +716,12 @@ protected
     Real tau=T_crit/state.T "inverse reduced temperature";
 
   algorithm
-    assert(state.phase<>2, "specificHeatCapacityCp error: property not defined in two-phase region");
+    assert(state.phase <> 2, "specificHeatCapacityCp error: property not defined in two-phase region");
 
-    cp := R*(-tau^2*(ai_tau_tau(delta=delta, tau=tau)+ar_tau_tau(delta=delta, tau=tau))
-    +(1+delta*ar_delta(delta=delta, tau=tau)-delta*tau*ar_delta_tau(delta=delta, tau=tau))^2
-    /(1+2*delta*ar_delta(delta=delta, tau=tau)+delta^2*ar_delta_delta(delta=delta, tau=tau)));
+    cp := R*(-tau^2*(ai_tau_tau(delta=delta, tau=tau) + ar_tau_tau(delta=
+      delta, tau=tau)) + (1 + delta*ar_delta(delta=delta, tau=tau) - delta*
+      tau*ar_delta_tau(delta=delta, tau=tau))^2/(1 + 2*delta*ar_delta(delta=
+      delta, tau=tau) + delta^2*ar_delta_delta(delta=delta, tau=tau)));
 
   end specificHeatCapacityCp;
 
@@ -667,9 +739,10 @@ protected
     Real tau=T_crit/state.T "inverse reduced temperature";
 
   algorithm
-    assert(state.phase<>2, "specificHeatCapacityCv error: property not defined in two-phase region");
+    assert(state.phase <> 2, "specificHeatCapacityCv error: property not defined in two-phase region");
 
-    cv := R*(-tau^2*(ai_tau_tau(delta=delta, tau=tau)+ar_tau_tau(delta=delta, tau=tau)));
+    cv := R*(-tau^2*(ai_tau_tau(delta=delta, tau=tau) + ar_tau_tau(delta=
+      delta, tau=tau)));
 
   end specificHeatCapacityCv;
 
@@ -687,13 +760,12 @@ protected
     Real tau=T_crit/state.T "inverse reduced temperature";
 
   algorithm
-    assert(state.phase<>2, "velocityOfSound error: property not defined in two-phase region");
+    assert(state.phase <> 2, "velocityOfSound error: property not defined in two-phase region");
 
-    a := sqrt(R*state.T*(
-        1+2*delta*ar_delta(delta=delta, tau=tau)
-         +delta^2*ar_delta_delta(delta=delta, tau=tau)
-         -(1+delta*ar_delta(delta=delta, tau=tau)-delta*tau*ar_delta_tau(delta=delta, tau=tau))^2
-         /(tau^2*(ai_tau_tau(delta=delta, tau=tau) + ar_tau_tau(delta=delta, tau=tau)))));
+    a := sqrt(R*state.T*(1 + 2*delta*ar_delta(delta=delta, tau=tau) + delta^2*
+      ar_delta_delta(delta=delta, tau=tau) - (1 + delta*ar_delta(delta=delta,
+      tau=tau) - delta*tau*ar_delta_tau(delta=delta, tau=tau))^2/(tau^2*(
+      ai_tau_tau(delta=delta, tau=tau) + ar_tau_tau(delta=delta, tau=tau)))));
 
   end velocityOfSound;
 
@@ -714,14 +786,17 @@ protected
     Real tau "reduced temperature";
 
     Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
-    Density d_red_residual=fluidConstants[1].molarMass/thermalConductivityCoefficients.reducingMolarVolume_residual;
+    Density d_red_residual=fluidConstants[1].molarMass/
+        thermalConductivityCoefficients.reducingMolarVolume_residual;
     Real delta "reduced density";
 
     // coeffs for dilute contribution
-    Real[size(thermalConductivityCoefficients.lambda_0_coeffs,1),2] A=thermalConductivityCoefficients.lambda_0_coeffs;
+    Real[size(thermalConductivityCoefficients.lambda_0_coeffs, 1),2] A=
+        thermalConductivityCoefficients.lambda_0_coeffs;
 
     // coeffs for residual contribution
-    Real[size(thermalConductivityCoefficients.lambda_r_coeffs,1),4] B=thermalConductivityCoefficients.lambda_r_coeffs;
+    Real[size(thermalConductivityCoefficients.lambda_r_coeffs, 1),4] B=
+        thermalConductivityCoefficients.lambda_r_coeffs;
 
     // coeffs for critical enhancement
     Real nu=thermalConductivityCoefficients.nu;
@@ -758,17 +833,17 @@ protected
     constant Real milli=1e-3;
 
   algorithm
-    assert(state.phase<>2, "thermalConductivity error: property not defined in two-phase region");
+    assert(state.phase <> 2, "thermalConductivity error: property not defined in two-phase region");
 
     // dilute gas contribution
     tau := state.T/T_red_0;
-    lambda_0 := sum(A[i,1]*tau^A[i,2] for i in 1:size(A,1));
+    lambda_0 := sum(A[i, 1]*tau^A[i, 2] for i in 1:size(A, 1));
     lambda_0 := lambda_0*lambda_red_0;
 
     // residual contribution; RefProp uses the name background contribution
     tau := state.T/T_red_residual;
-    delta:=state.d/d_red_residual;
-    lambda_r := sum((B[i,1]*tau^B[i,2])*(delta)^B[i,3] for i in 1:size(B,1));
+    delta := state.d/d_red_residual;
+    lambda_r := sum((B[i, 1]*tau^B[i, 2])*(delta)^B[i, 3] for i in 1:size(B, 1));
     lambda_r := lambda_r*lambda_red_residual;
 
     // crtical enhancement by the simplified crossover model by Olchowy and Sengers
@@ -779,28 +854,29 @@ protected
       // watch out: algorithm for chi and chi_ref are different (chi_ref is multiplied with T_ref/state.T)
       delta := state.d/d_crit;
       tau := T_crit/state.T;
-      dpdd := R*state.T*(1+2*delta*ar_delta(delta=delta, tau=tau)+delta^2*ar_delta_delta(delta=delta, tau=tau)); // =dddp^-1
+      dpdd := R*state.T*(1 + 2*delta*ar_delta(delta=delta, tau=tau) + delta^2*ar_delta_delta(delta=delta, tau=tau));
+                                                                                                  // =dddp^-1
       chi := p_crit/d_crit^2*state.d/dpdd;
 
       tau := T_crit/T_ref;
-      dpdd_ref := R*T_ref*(1+2*delta*ar_delta(delta=delta, tau=tau)+delta^2*ar_delta_delta(delta=delta, tau=tau));
+      dpdd_ref := R*T_ref*(1 + 2*delta*ar_delta(delta=delta, tau=tau) + delta^2*ar_delta_delta(delta=delta, tau=tau));
       chi_ref := p_crit/d_crit^2*state.d/dpdd_ref*T_ref/state.T;
 
-      Delta_chi := chi-chi_ref;
+      Delta_chi := chi - chi_ref;
 
       if (Delta_chi < 0) then
         lambda_c := 0;
       else
-        xi:=xi_0*(Delta_chi/Gamma_0)^(nu/gamma);
+        xi := xi_0*(Delta_chi/Gamma_0)^(nu/gamma);
 
         Cp := specificHeatCapacityCp(state=state);
         Cv := specificHeatCapacityCv(state=state);
-        Omega := 2/pi*((Cp-Cv)/Cp*atan(q_D*xi)+Cv/Cp*q_D*xi);
-        Omega_0:= 2/pi*(1-exp(-1/(1/(q_D*xi) + ((q_D*xi*d_crit/state.d)^2)/3)));
+        Omega := 2/pi*((Cp - Cv)/Cp*atan(q_D*xi) + Cv/Cp*q_D*xi);
+        Omega_0 := 2/pi*(1 - exp(-1/(1/(q_D*xi) + ((q_D*xi*d_crit/state.d)^2)/3)));
 
         eta_b := dynamicViscosity(state=state);
         lambda_c := (state.d*Cp*R0*k_b*state.T)/(6*pi*eta_b*xi)*(Omega - Omega_0);
-        lambda_c := max(0,lambda_c);
+        lambda_c := max(0, lambda_c);
       end if;
     end if;
 
@@ -861,20 +937,27 @@ protected
     Real tau "reduced temperature";
 
     Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
-    Density d_red_residual=fluidConstants[1].molarMass/dynamicViscosityCoefficients.reducingMolarVolume_residual;
+    Density d_red_residual=fluidConstants[1].molarMass/
+        dynamicViscosityCoefficients.reducingMolarVolume_residual;
     Real delta "reduced density";
     Real delta_exp "reduced density in exponential term";
     Real delta_0 "close packed density";
     Real dm=state.d/(1000*fluidConstants[1].molarMass) "molar density in mol/l";
 
-    Real[size(dynamicViscosityCoefficients.a,1),2] a=dynamicViscosityCoefficients.a;
-    Real[size(dynamicViscosityCoefficients.b,1),2] b=dynamicViscosityCoefficients.b;
+    Real[size(dynamicViscosityCoefficients.a, 1),2] a=
+        dynamicViscosityCoefficients.a;
+    Real[size(dynamicViscosityCoefficients.b, 1),2] b=
+        dynamicViscosityCoefficients.b;
 
-    Boolean hasGeneralizedDelta0= dynamicViscosityCoefficients.hasGeneralizedDelta0;
-    Real[size(dynamicViscosityCoefficients.g,1),2] g=dynamicViscosityCoefficients.g;
-    Real[size(dynamicViscosityCoefficients.e,1),5] e=dynamicViscosityCoefficients.e;
-    Real[size(dynamicViscosityCoefficients.nu_po,1),5] nu_po=dynamicViscosityCoefficients.nu_po;
-    Real[size(dynamicViscosityCoefficients.de_po,1),5] de_po=dynamicViscosityCoefficients.de_po;
+    Boolean hasGeneralizedDelta0=dynamicViscosityCoefficients.hasGeneralizedDelta0;
+    Real[size(dynamicViscosityCoefficients.g, 1),2] g=
+        dynamicViscosityCoefficients.g;
+    Real[size(dynamicViscosityCoefficients.e, 1),5] e=
+        dynamicViscosityCoefficients.e;
+    Real[size(dynamicViscosityCoefficients.nu_po, 1),5] nu_po=
+        dynamicViscosityCoefficients.nu_po;
+    Real[size(dynamicViscosityCoefficients.de_po, 1),5] de_po=
+        dynamicViscosityCoefficients.de_po;
     // Real[size(dynamicViscosityCoefficients.nu_ex,1),5] nu_ex=dynamicViscosityCoefficients.nu_ex;
     // Real[size(dynamicViscosityCoefficients.de_ex,1),5] de_ex=dynamicViscosityCoefficients.de_ex;
 
@@ -889,9 +972,9 @@ protected
 
     Real eta_red_0=dynamicViscosityCoefficients.reducingViscosity_0;
     Real eta_red_residual=dynamicViscosityCoefficients.reducingViscosity_residual;
-    DynamicViscosity eta_0= 0 "zero density contribution";
-    DynamicViscosity eta_1= 0 "initial density contribution";
-    DynamicViscosity eta_r= 0 "residual viscosity";
+    DynamicViscosity eta_0=0 "zero density contribution";
+    DynamicViscosity eta_1=0 "initial density contribution";
+    DynamicViscosity eta_r=0 "residual viscosity";
     constant Real micro=1e-6;
 
   algorithm
@@ -899,16 +982,16 @@ protected
 
     // dilute gas (or zero density) contribution
     // using the collision integral Omega and the Chapman-Enskog-Term
-    T_star:= Modelica.Math.log(state.T/dynamicViscosityCoefficients.epsilon_kappa);
-    Omega := exp(sum(a[i,1]*(T_star)^a[i, 2] for i in 1:size(a, 1)));
+    T_star := Modelica.Math.log(state.T/dynamicViscosityCoefficients.epsilon_kappa);
+    Omega := exp(sum(a[i, 1]*(T_star)^a[i, 2] for i in 1:size(a, 1)));
     tau := state.T/T_red_0;
-    eta_0 := CET[1,1]*sqrt(tau)/(sigma^2*Omega);
+    eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);
     eta_0 := eta_0*eta_red_0;
 
     // inital density contribution
     // using the second viscosity virial coefficient B
     T_star := (state.T/dynamicViscosityCoefficients.epsilon_kappa);
-    B_star := sum(b[i,1]*T_star^b[i,2] for i in 1:size(b,1));
+    B_star := sum(b[i, 1]*T_star^b[i, 2] for i in 1:size(b, 1));
     B := B_star*0.6022137*sigma^3;
     eta_1 := eta_0*B*dm;
 
@@ -917,41 +1000,44 @@ protected
     // a simple polynominal, a rational polynominal and an exponential term
     tau := state.T/T_red_residual;
     delta := state.d/d_red_residual;
-    if (abs(d_red_residual-1)>0.001) then
+    if (abs(d_red_residual - 1) > 0.001) then
       delta_exp := state.d/d_crit;
     else
       delta_exp := delta;
     end if;
     if hasGeneralizedDelta0 then
       // generalized RefProp algorithm, be careful with coeffs: they may differ from article
-      delta_0 := sum(g[i,1]*tau^g[i,2] for i in 1:size(g,1));
+      delta_0 := sum(g[i, 1]*tau^g[i, 2] for i in 1:size(g, 1));
     else
       // alternative inverse form
-      delta_0 := g[1,1]/(1+sum(g[i,1]*tau^g[i,2] for i in 2:size(g,1)));
+      delta_0 := g[1, 1]/(1 + sum(g[i, 1]*tau^g[i, 2] for i in 2:size(g, 1)));
     end if;
-    for i in 1:size(e,1) loop
-      visci := e[i,1]*tau^e[i,2]*delta^e[i,3]*delta_0^e[i,4]; // simple polynominal terms
-      if (e[i,5]>0) then
-        visci := visci*exp(-delta_exp^e[i,5]);
+    for i in 1:size(e, 1) loop
+      visci := e[i, 1]*tau^e[i, 2]*delta^e[i, 3]*delta_0^e[i, 4];
+                                                              // simple polynominal terms
+      if (e[i, 5] > 0) then
+        visci := visci*exp(-delta_exp^e[i, 5]);
       end if;
-      eta_r := eta_r+visci;
+      eta_r := eta_r + visci;
     end for;
 
-    for i in 1:size(nu_po,1) loop
+    for i in 1:size(nu_po, 1) loop
       // numerator of rational poly terms, RefProp algorithm
-      xnum := xnum + (nu_po[i,1]*tau^nu_po[i,2]*delta^nu_po[i,3]*delta_0^nu_po[i,4]);
-      if (nu_po[i,5]>0) then
-        xnum := xnum*exp(-delta_exp^nu_po[i,5]);
+      xnum := xnum + (nu_po[i, 1]*tau^nu_po[i, 2]*delta^nu_po[i, 3]*delta_0^
+        nu_po[i, 4]);
+      if (nu_po[i, 5] > 0) then
+        xnum := xnum*exp(-delta_exp^nu_po[i, 5]);
       end if;
     end for;
-    for i in 1:size(de_po,1) loop
+    for i in 1:size(de_po, 1) loop
       // denominator of rational poly terms, RefProp algorithm
-      xden := xden + (de_po[i,1]*tau^de_po[i,2]*delta^de_po[i,3]*delta_0^de_po[i,4]);
-      if (de_po[i,5]>0) then
-        xden := xden*exp(-delta_exp^de_po[i,5]);
+      xden := xden + (de_po[i, 1]*tau^de_po[i, 2]*delta^de_po[i, 3]*delta_0^
+        de_po[i, 4]);
+      if (de_po[i, 5] > 0) then
+        xden := xden*exp(-delta_exp^de_po[i, 5]);
       end if;
     end for;
-    eta_r := eta_r+xnum/xden;
+    eta_r := eta_r + xnum/xden;
     eta_r := eta_r*eta_red_residual;
     // exponential terms not yet implemented!!
 
@@ -1023,8 +1109,10 @@ protected
     Temperature T_trip=fluidConstants[1].triplePointTemperature;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
 
-    Real[size(surfaceTensionCoefficients.coeffs,1)] a=surfaceTensionCoefficients.coeffs[:,1];
-    Real[size(surfaceTensionCoefficients.coeffs,1)] n=surfaceTensionCoefficients.coeffs[:,2];
+    Real[size(surfaceTensionCoefficients.coeffs, 1)] a=
+        surfaceTensionCoefficients.coeffs[:, 1];
+    Real[size(surfaceTensionCoefficients.coeffs, 1)] n=
+        surfaceTensionCoefficients.coeffs[:, 2];
     Real X "reduced temperature difference";
 
   algorithm
@@ -1032,7 +1120,7 @@ protected
     assert(sat.Tsat <= T_crit, "vapourQuality error: Temperature is higher than critical temperature");
 
     X := (T_crit - sat.Tsat)/T_crit;
-    sigma := sum(a[i]*X^n[i] for i in 1:size(a,1));
+    sigma := sum(a[i]*X^n[i] for i in 1:size(a, 1));
 
     annotation (Documentation(info="<html>
   <p>
@@ -1099,6 +1187,7 @@ The extended version has up to three terms with two parameters each.
     hv := sat.vap.h;
   end dewEnthalpy;
 
+
   redeclare function extends setBubbleState
   "returns bubble ThermodynamicState from given saturation properties"
   // inherited from: PartialTwoPhaseMedium
@@ -1107,6 +1196,7 @@ The extended version has up to three terms with two parameters each.
     state := sat.liq;
   end setBubbleState;
 
+
   redeclare function extends setDewState
   "returns dew ThermodynamicState from given saturation properties"
   // inherited from: PartialTwoPhaseMedium
@@ -1114,4 +1204,49 @@ The extended version has up to three terms with two parameters each.
   algorithm
     state := sat.vap;
   end setDewState;
+
+
+  redeclare function extends density_ph "returns density for given p and h"
+  // inherited from: PartialMedium
+  // inherits input p, h and phase
+  // inherits output d
+  algorithm
+    d := density(setState_phX(p=p, h=h, phase=phase));
+  end density_ph;
+
+  redeclare function extends density_derp_h
+  "returns density derivative wrt. p at constant h"
+  // inherited from: PartialMedium
+  // inherits input state
+  // inherits output ddph
+  algorithm
+    ddph := 5;
+  end density_derp_h;
+
+  redeclare function extends density_derh_p
+  "returns density derivative wrt. h at constant p"
+  // inherited from: PartialMedium
+  // inherits input state
+  // inherits output ddhp
+  algorithm
+    ddhp := 5;
+  end density_derh_p;
+
+  redeclare function extends density_derp_T
+  "returns density derivative wrt. p at constant T"
+  // inherited from: PartialMedium
+  // inherits input state
+  // inherits output ddpT
+  algorithm
+    ddpT := 5;
+  end density_derp_T;
+
+  redeclare function extends density_derT_p
+  "returns density derivative wrt. T at constant p"
+  // inherited from: PartialMedium
+  // inherits input state
+  // inherits output ddTp
+  algorithm
+    ddTp := 5;
+  end density_derT_p;
 end PartialHelmholtzFluid;

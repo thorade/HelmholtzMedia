@@ -18,9 +18,9 @@ protected
   Density d;
 
 algorithm
-  assert(phase<>2, "specificEntropy_pT error: pressure and temperature are not independent variables in two-phase state");
-  d:=density_pT(p=p,T=T,phase=phase);
-  delta:=d/d_crit;
+  assert(phase <> 2, "specificEntropy_pT error: pressure and temperature are not independent variables in two-phase state");
+  d := density_pT(p=p, T=T, phase=phase);
+  delta := d/d_crit;
   s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
 
   // this is an iterative backward function

@@ -17,6 +17,6 @@ protected
   AbsolutePressure p_of_u;
 
 algorithm
-  p_of_u:=((1 + delta*ar_delta(delta=delta,tau=tau))*u*R*T);
+  p_of_u := ((1 + delta*ar_delta(delta=delta, tau=tau))*u*R*T);
   y := p - p_of_u;
 end density_pT_RES;

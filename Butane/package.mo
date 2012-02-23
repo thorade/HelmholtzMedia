@@ -1,6 +1,6 @@
 within HelmholtzFluids;
 package Butane "Butane data, copied from RefProp Butane.fld"
-  extends HelmholtzFluids.PartialHelmholtzFluid(
+extends HelmholtzFluids.PartialHelmholtzFluid(
   fluidConstants={fluidConstantsButane},
   helmholtzCoefficients=helmholtzCoefficientsButane,
   thermalConductivityCoefficients=thermalConductivityCoefficientsButane,
@@ -8,10 +8,7 @@ package Butane "Butane data, copied from RefProp Butane.fld"
   surfaceTensionCoefficients=surfaceTensionCoefficientsButane,
   ancillaryCoefficients=ancillaryCoefficientsButane,
   fluidLimits=fluidLimitsButane,
-  Density(
-    min=fluidLimitsButane.DMIN,
-    max=fluidLimitsButane.DMAX,
-    start=fluidLimitsButane.DNOM),
+  Density(min=fluidLimitsButane.DMIN, max=fluidLimitsButane.DMAX),
   Temperature(min=fluidLimitsButane.TMIN, max=fluidLimitsButane.TMAX),
   AbsolutePressure(min=fluidLimitsButane.PMIN, max=fluidLimitsButane.PMAX),
   SpecificEnthalpy(min=fluidLimitsButane.HMIN, max=fluidLimitsButane.HMAX),
@@ -43,15 +40,12 @@ package Butane "Butane data, copied from RefProp Butane.fld"
     normalBoilingPoint=272.660,
     meltingPoint=134.912) "copied from Butane.fld";
 
-  final constant PartialHelmholtzFluid.EosLimits fluidLimitsButane(
+  final constant PartialHelmholtzFluid.FluidLimits fluidLimitsButane(
     TMIN=fluidConstantsButane.triplePointTemperature,
-    TNOM=298.15,
     TMAX=575,
     DMIN=Modelica.Constants.small,
-    DNOM=228,
     DMAX=800,
     PMIN=Modelica.Constants.small,
-    PNOM=101325,
     PMAX=200e6,
     HMIN=-725e3,
     HMAX=+700e3,

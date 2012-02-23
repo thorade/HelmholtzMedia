@@ -10,5 +10,5 @@ protected
 
 algorithm
   sat := setSat_T(T=u);
-  y := p-sat.psat;
+  y := p - sat.psat;
 end setSat_p_RES;
