@@ -3,10 +3,10 @@ package R134a "R134a data, copied from RefProp R134a.fld"
   extends HelmholtzFluids.PartialHelmholtzFluid(
   fluidConstants={fluidConstantsR134a},
   helmholtzCoefficients=helmholtzCoefficientsR134a,
-  ancillaryCoefficients=ancillaryCoefficientsR134a,
   thermalConductivityCoefficients=thermalConductivityCoefficientsR134a,
   dynamicViscosityCoefficients=dynamicViscosityCoefficientsR134a,
   surfaceTensionCoefficients=surfaceTensionCoefficientsR134a,
+  ancillaryCoefficients=ancillaryCoefficientsR134a,
   fluidLimits=fluidLimitsR134a,
   Density(
     min=fluidLimitsR134a.DMIN,
@@ -92,25 +92,6 @@ package R134a "R134a data, copied from RefProp R134a.fld"
      -0.1285458000E-03,  50.00,  10.00,   4],
    residualGauss=fill(0.0, 0, 12)) "Coefficients of the Helmholtz EoS";
 
-  final constant PartialHelmholtzFluid.AncillaryCoefficients ancillaryCoefficientsR134a(
-    pressureSaturation=[
-      -0.77513E+01,   1.0;
-       0.29263E+01,   1.5;
-      -0.26622E+01,   1.9;
-      -0.39711E+01,   4.25],
-    densityLiquid=[
-       0.12449E+02,   0.5;
-      -0.41023E+02,   0.7;
-       0.73641E+02,   0.9;
-      -0.64635E+02,   1.1;
-       0.22551E+02,   1.3],
-    densityVapor=[
-      -0.29174E+01,   0.383;
-      -0.72542E+01,   1.21;
-      -0.23306E+02,   3.3;
-       0.59840E+01,   5.6;
-      -0.71821E+02,   7.0]) "Coefficients for the ancillary equations";
-
   final constant PartialHelmholtzFluid.ThermalConductivityCoefficients thermalConductivityCoefficientsR134a(
     reducingTemperature_0=1,
     reducingThermalConductivity_0=1,
@@ -131,6 +112,7 @@ package R134a "R134a data, copied from RefProp R134a.fld"
     T_ref=561.411) "Coefficients for the thermal conductivity";
 
   final constant PartialHelmholtzFluid.DynamicViscosityCoefficients dynamicViscosityCoefficientsR134a(
+    dynamicViscosityModel=Types.DynamicViscosityModel.VS1_alternative,
     sigma=0.468932,
     epsilon_kappa=299.363,
     CET=[
@@ -172,9 +154,31 @@ package R134a "R134a data, copied from RefProp R134a.fld"
     -1.00,                   0.00,  1.00,  0.00,  0])
   "Coefficients for the dynamic viscosity";
 
-    final constant PartialHelmholtzFluid.SurfaceTensionCoefficients surfaceTensionCoefficientsR134a(
+  final constant PartialHelmholtzFluid.SurfaceTensionCoefficients surfaceTensionCoefficientsR134a(
     coeffs=[
       0.06016,    1.26]) "Coefficients for the surface tension";
+
+  final constant PartialHelmholtzFluid.AncillaryCoefficients ancillaryCoefficientsR134a(
+    pressureSaturationModel=Types.PressureSaturationModel.PS5,
+    pressureSaturation=[
+      -0.77513E+01,   1.0;
+       0.29263E+01,   1.5;
+      -0.26622E+01,   1.9;
+      -0.39711E+01,   4.25],
+    densityLiquidModel=Types.DensityLiquidModel.DL1,
+    densityLiquid=[
+       0.12449E+02,   0.5;
+      -0.41023E+02,   0.7;
+       0.73641E+02,   0.9;
+      -0.64635E+02,   1.1;
+       0.22551E+02,   1.3],
+    densityVaporModel=Types.DensityVaporModel.DV3,
+    densityVapor=[
+      -0.29174E+01,   0.383;
+      -0.72542E+01,   1.21;
+      -0.23306E+02,   3.3;
+       0.59840E+01,   5.6;
+      -0.71821E+02,   7.0]) "Coefficients for the ancillary equations";
 
 
   annotation (Documentation(info="<html>

@@ -3,10 +3,10 @@ package Isobutane "Isobutane data, copied from RefProp Isobutane.fld"
   extends HelmholtzFluids.PartialHelmholtzFluid(
   fluidConstants={fluidConstantsIsobutane},
   helmholtzCoefficients=helmholtzCoefficientsIsobutane,
-  ancillaryCoefficients=ancillaryCoefficientsIsobutane,
   thermalConductivityCoefficients=thermalConductivityCoefficientsIsobutane,
   dynamicViscosityCoefficients=dynamicViscosityCoefficientsIsobutane,
   surfaceTensionCoefficients=surfaceTensionCoefficientsIsobutane,
+  ancillaryCoefficients=ancillaryCoefficientsIsobutane,
   fluidLimits=fluidLimitsIsobutane,
   Density(
     min=fluidLimitsIsobutane.DMIN,
@@ -99,24 +99,6 @@ package Isobutane "Isobutane data, copied from RefProp Isobutane.fld"
       -0.53001044558079E-02,    0.0,    2.,   2, 2,  -10.,  -200.,  1.13,  1.,   0., 0., 0.])
   "Coefficients of the Helmholtz EoS";
 
-  final constant PartialHelmholtzFluid.AncillaryCoefficients ancillaryCoefficientsIsobutane(
-    pressureSaturation=[
-      -6.85093103,         1.0;
-       1.36543198,         1.5;
-      -1.32542691,         2.5;
-      -2.56190994,         4.5],
-    densityLiquid=[
-       2.04025104,          1.065;
-       0.850874089,         3.0;
-      -0.479052281,         4.0;
-       0.348201252,         7.0],
-    densityVapor=[
-      -2.12933323,          1.065;
-      -2.93790085,          2.5;
-      -0.89441086,          9.5;
-      -3.46343707,         13.0])
-  "Coefficients for the ancillary equations (PS5, DL2, DV6)";
-
   final constant PartialHelmholtzFluid.ThermalConductivityCoefficients thermalConductivityCoefficientsIsobutane(
     reducingTemperature_0 = 407.85,
     reducingThermalConductivity_0 = 1,
@@ -144,6 +126,7 @@ package Isobutane "Isobutane data, copied from RefProp Isobutane.fld"
     T_ref=611.73) "Coefficients for the thermal conductivity";
 
   final constant PartialHelmholtzFluid.DynamicViscosityCoefficients dynamicViscosityCoefficientsIsobutane(
+    dynamicViscosityModel=Types.DynamicViscosityModel.VS1,
     sigma=0.46445,
     epsilon_kappa=280.51,
     CET=[
@@ -193,6 +176,27 @@ package Isobutane "Isobutane data, copied from RefProp Isobutane.fld"
     coeffs=[
        0.05756,     1.290;
       -0.009554,    2.290]) "Coefficients for the surface tension";
+
+  final constant PartialHelmholtzFluid.AncillaryCoefficients ancillaryCoefficientsIsobutane(
+    pressureSaturationModel=Types.PressureSaturationModel.PS5,
+    pressureSaturation=[
+      -6.85093103,         1.0;
+       1.36543198,         1.5;
+      -1.32542691,         2.5;
+      -2.56190994,         4.5],
+    densityLiquidModel=Types.DensityLiquidModel.DL2,
+    densityLiquid=[
+       2.04025104,          1.065;
+       0.850874089,         3.0;
+      -0.479052281,         4.0;
+       0.348201252,         7.0],
+    densityVaporModel=Types.DensityVaporModel.DV6,
+    densityVapor=[
+      -2.12933323,          1.065;
+      -2.93790085,          2.5;
+      -0.89441086,          9.5;
+      -3.46343707,         13.0])
+  "Coefficients for the ancillary equations (PS5, DL2, DV6)";
 
 
   annotation (Documentation(info="<html>
