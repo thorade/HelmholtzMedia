@@ -54,3 +54,5 @@ density
 specificEnthalpy
 bubbleEnthalpy
 dewEnthalpy
+setBubbleState
+setDewState
