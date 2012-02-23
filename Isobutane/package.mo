@@ -1,21 +1,18 @@
 within HelmholtzFluids;
 package Isobutane "Isobutane data, copied from RefProp Isobutane.fld"
   extends HelmholtzFluids.PartialHelmholtzFluid(
-  fluidConstants={fluidConstantsIsobutane},
-  helmholtzCoefficients=helmholtzCoefficientsIsobutane,
-  thermalConductivityCoefficients=thermalConductivityCoefficientsIsobutane,
-  dynamicViscosityCoefficients=dynamicViscosityCoefficientsIsobutane,
-  surfaceTensionCoefficients=surfaceTensionCoefficientsIsobutane,
-  ancillaryCoefficients=ancillaryCoefficientsIsobutane,
-  fluidLimits=fluidLimitsIsobutane,
-  Density(
-    min=fluidLimitsIsobutane.DMIN,
-    max=fluidLimitsIsobutane.DMAX,
-    start=fluidLimitsIsobutane.DNOM),
-  Temperature(min=fluidLimitsIsobutane.TMIN, max=fluidLimitsIsobutane.TMAX),
-  AbsolutePressure(min=fluidLimitsIsobutane.PMIN, max=fluidLimitsIsobutane.PMAX),
-  SpecificEnthalpy(min=fluidLimitsIsobutane.HMIN, max=fluidLimitsIsobutane.HMAX),
-  SpecificEntropy(min=fluidLimitsIsobutane.SMIN, max=fluidLimitsIsobutane.SMAX));
+    fluidConstants={fluidConstantsIsobutane},
+    helmholtzCoefficients=helmholtzCoefficientsIsobutane,
+    thermalConductivityCoefficients=thermalConductivityCoefficientsIsobutane,
+    dynamicViscosityCoefficients=dynamicViscosityCoefficientsIsobutane,
+    surfaceTensionCoefficients=surfaceTensionCoefficientsIsobutane,
+    ancillaryCoefficients=ancillaryCoefficientsIsobutane,
+    fluidLimits=fluidLimitsIsobutane,
+    Density(min=fluidLimitsIsobutane.DMIN, max=fluidLimitsIsobutane.DMAX),
+    Temperature(min=fluidLimitsIsobutane.TMIN, max=fluidLimitsIsobutane.TMAX),
+    AbsolutePressure(min=fluidLimitsIsobutane.PMIN, max=fluidLimitsIsobutane.PMAX),
+    SpecificEnthalpy(min=fluidLimitsIsobutane.HMIN, max=fluidLimitsIsobutane.HMAX),
+    SpecificEntropy(min=fluidLimitsIsobutane.SMIN, max=fluidLimitsIsobutane.SMAX));
 
   final constant PartialHelmholtzFluid.FluidConstants fluidConstantsIsobutane(
     chemicalFormula="C4H10",
@@ -43,15 +40,12 @@ package Isobutane "Isobutane data, copied from RefProp Isobutane.fld"
     normalBoilingPoint=261.401,
     meltingPoint=113.73) "copied from Isobutane.fld";
 
-  final constant PartialHelmholtzFluid.EosLimits fluidLimitsIsobutane(
+  final constant PartialHelmholtzFluid.FluidLimits fluidLimitsIsobutane(
     TMIN=fluidConstantsIsobutane.triplePointTemperature,
-    TNOM=298.15,
     TMAX=575,
     DMIN=Modelica.Constants.small,
-    DNOM=225.5,
     DMAX=800,
     PMIN=Modelica.Constants.small,
-    PNOM=101325,
     PMAX=35e6,
     HMIN=-725e3,
     HMAX=+700e3,
@@ -62,7 +56,7 @@ package Isobutane "Isobutane data, copied from RefProp Isobutane.fld"
     idealLog=[
       +3.05956619,         1.],
     idealPower=[
-      +11.60865546,         0.;
+      +11.60865546,        0.;
       -5.29450411,         1.],
     idealEinstein=[
       +4.94641014,        -0.9512779015;

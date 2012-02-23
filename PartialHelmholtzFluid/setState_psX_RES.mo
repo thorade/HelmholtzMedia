@@ -9,5 +9,8 @@ function setState_psX_RES "residual function"
 
 algorithm
   // return the RESidual
-  y := s - specificEntropy_pT(p=p,T=u,phase=phase);
+  y := s - specificEntropy_pT(
+        p=p,
+        T=u,
+        phase=phase);
 end setState_psX_RES;

@@ -9,5 +9,8 @@ function setState_phX_RES "residual function"
 
 algorithm
   // return the RESidual
-  y := h - specificEnthalpy_pT(p=p,T=u,phase=phase);
+  y := h - specificEnthalpy_pT(
+        p=p,
+        T=u,
+        phase=phase);
 end setState_phX_RES;

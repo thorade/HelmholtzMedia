@@ -1,21 +1,18 @@
 within HelmholtzFluids;
 package R134a "R134a data, copied from RefProp R134a.fld"
   extends HelmholtzFluids.PartialHelmholtzFluid(
-  fluidConstants={fluidConstantsR134a},
-  helmholtzCoefficients=helmholtzCoefficientsR134a,
-  thermalConductivityCoefficients=thermalConductivityCoefficientsR134a,
-  dynamicViscosityCoefficients=dynamicViscosityCoefficientsR134a,
-  surfaceTensionCoefficients=surfaceTensionCoefficientsR134a,
-  ancillaryCoefficients=ancillaryCoefficientsR134a,
-  fluidLimits=fluidLimitsR134a,
-  Density(
-    min=fluidLimitsR134a.DMIN,
-    max=fluidLimitsR134a.DMAX,
-    start=fluidLimitsR134a.DNOM),
-  Temperature(min=fluidLimitsR134a.TMIN, max=fluidLimitsR134a.TMAX),
-  AbsolutePressure(min=fluidLimitsR134a.PMIN, max=fluidLimitsR134a.PMAX),
-  SpecificEnthalpy(min=fluidLimitsR134a.HMIN, max=fluidLimitsR134a.HMAX),
-  SpecificEntropy(min=fluidLimitsR134a.SMIN, max=fluidLimitsR134a.SMAX));
+    fluidConstants={fluidConstantsR134a},
+    helmholtzCoefficients=helmholtzCoefficientsR134a,
+    thermalConductivityCoefficients=thermalConductivityCoefficientsR134a,
+    dynamicViscosityCoefficients=dynamicViscosityCoefficientsR134a,
+    surfaceTensionCoefficients=surfaceTensionCoefficientsR134a,
+    ancillaryCoefficients=ancillaryCoefficientsR134a,
+    fluidLimits=fluidLimitsR134a,
+    Density(min=fluidLimitsR134a.DMIN, max=fluidLimitsR134a.DMAX),
+    Temperature(min=fluidLimitsR134a.TMIN, max=fluidLimitsR134a.TMAX),
+    AbsolutePressure(min=fluidLimitsR134a.PMIN, max=fluidLimitsR134a.PMAX),
+    SpecificEnthalpy(min=fluidLimitsR134a.HMIN, max=fluidLimitsR134a.HMAX),
+    SpecificEntropy(min=fluidLimitsR134a.SMIN, max=fluidLimitsR134a.SMAX));
 
   final constant PartialHelmholtzFluid.FluidConstants fluidConstantsR134a(
     chemicalFormula="C2H2F4",
@@ -43,20 +40,17 @@ package R134a "R134a data, copied from RefProp R134a.fld"
     normalBoilingPoint=247.076,
     meltingPoint=247.076063) "copied from R134a.fld";
 
-  final constant PartialHelmholtzFluid.EosLimits fluidLimitsR134a(
+  final constant PartialHelmholtzFluid.FluidLimits fluidLimitsR134a(
     TMIN=fluidConstantsR134a.triplePointTemperature,
-    TNOM=298.15,
     TMAX=455,
     DMIN=Modelica.Constants.small,
-    DNOM=511.899952,
     DMAX=1592,
     PMIN=Modelica.Constants.small,
-    PNOM=101325,
     PMAX=70e6,
     HMIN=0,
     HMAX=600e3,
     SMIN=0,
-    SMAX=Modelica.Constants.inf) "Helmholtz EoS Limits";
+    SMAX=1e12) "Helmholtz EoS Limits";
 
   final constant PartialHelmholtzFluid.HelmholtzCoefficients helmholtzCoefficientsR134a(
     idealLog=[
