@@ -7,13 +7,11 @@ partial package PartialHelmholtzFluid
 
   constant HelmholtzCoefficients helmholtzCoefficients;
 
-  constant AncillaryCoefficients ancillaryCoefficients;
-
+  constant ThermalConductivityCoefficients thermalConductivityCoefficients;
   constant DynamicViscosityCoefficients dynamicViscosityCoefficients;
 
-  constant ThermalConductivityCoefficients thermalConductivityCoefficients;
-
   constant SurfaceTensionCoefficients surfaceTensionCoefficients;
+  constant AncillaryCoefficients ancillaryCoefficients;
 
 
   redeclare function setSat_T
@@ -249,14 +247,14 @@ protected
 
   redeclare record extends SaturationProperties
     // inherits Tsat and psat
-    ThermodynamicState liq;
-    ThermodynamicState vap;
+    ThermodynamicState liq(phase=1);
+    ThermodynamicState vap(phase=1);
   end SaturationProperties;
 
 
   redeclare model extends BaseProperties
   "Base properties (p, d, T, h, u, R, MM and, if applicable, X and Xi) of a medium"
-    SpecificEntropy s;
+  // SpecificEntropy s;
 
   // this is a model, so input and output can be inverted
   // the algorithm block inside the model is treated like a function
@@ -264,8 +262,8 @@ protected
   // the natural input variables for Helmholtz equations of state are d and T
 
   equation
-    R =  Modelica.Constants.R/fluidConstants[1].molarMass;
     MM =  fluidConstants[1].molarMass;
+    R =  Modelica.Constants.R/MM;
   algorithm
     // Modelica.Utilities.Streams.print("  d = " + String(d) + " and T = " + String(T));
     state :=setState_dTX(d=d, T=T);
@@ -274,7 +272,7 @@ protected
     end if;
     p :=state.p;
     h :=state.h;
-    s :=state.s;
+  //s :=state.s;
     u :=h - p/d;
   end BaseProperties;
 
@@ -852,6 +850,7 @@ Here, the simplified approach as suggested by Olchowy and Sengers is implemented
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
     // inherits input state and output eta
+    import HelmholtzFluids.PartialHelmholtzFluid.Types.DynamicViscosityModel;
 
 protected
     Temperature T_crit=fluidConstants[1].criticalTemperature;
@@ -1054,4 +1053,44 @@ The extended version has up to three terms with two parameters each.
 </html>"));
   end surfaceTension;
 
+
+  redeclare function extends temperature
+  "returns temperature from given ThermodynamicState"
+  // inherited from: PartialMedium
+  // inherits input state and output T
+  algorithm
+    T := state.T;
+  end temperature;
+
+  redeclare function extends density
+  "returns density from given ThermodynamicState"
+  // inherited from: PartialMedium
+  // inherits input state and output d
+  algorithm
+    d := state.d;
+  end density;
+
+  redeclare function extends specificEnthalpy
+  "returns specificEnthalpy from given ThermodynamicState"
+  // inherited from: PartialMedium
+  // inherits input state and output h
+  algorithm
+    h := state.h;
+  end specificEnthalpy;
+
+  redeclare function extends bubbleEnthalpy
+  "returns specificEnthalpy from given SaturationProperties"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output hl
+  algorithm
+    hl := sat.liq.h;
+  end bubbleEnthalpy;
+
+  redeclare function extends dewEnthalpy
+  "returns specificEnthalpy from given SaturationProperties"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output hl
+  algorithm
+    hv := sat.vap.h;
+  end dewEnthalpy;
 end PartialHelmholtzFluid;

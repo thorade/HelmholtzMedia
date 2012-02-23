@@ -1,6 +1,8 @@
 within HelmholtzFluids.PartialHelmholtzFluid;
 record DynamicViscosityCoefficients
 
+  constant Types.DynamicViscosityModel dynamicViscosityModel;
+
   // description of coeffs copied from RefProp
   constant Temperature epsilon_kappa "Lennard-Jones energy parameter";
   constant Real sigma "Lennard-Jones size parameter";

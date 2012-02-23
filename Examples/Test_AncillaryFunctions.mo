@@ -1,6 +1,6 @@
 within HelmholtzFluids.Examples;
 model Test_AncillaryFunctions
-  package medium = HelmholtzFluids.R134a;
+  package medium = HelmholtzFluids.Isobutane;
   medium.Temperature Tsat;
   medium.AbsolutePressure psat;
   medium.Density dliq;
@@ -23,5 +23,4 @@ algorithm
     dliq := medium.bubbleDensity_T_ANC(T=Tsat);
     dvap := medium.dewDensity_T_ANC(T=Tsat);
 
-  annotation (experiment(StopTime=10), __Dymola_experimentSetupOutput);
 end Test_AncillaryFunctions;
