@@ -8,7 +8,6 @@ partial package PartialHelmholtzFluid
     AbsolutePressure(min=Modelica.Constants.small, max=1e12),
     SpecificEntropy(min=-Modelica.Constants.inf, max=Modelica.Constants.inf));
 
-
   constant FluidLimits fluidLimits;
 
   constant HelmholtzCoefficients helmholtzCoefficients;
@@ -18,15 +17,6 @@ partial package PartialHelmholtzFluid
 
   constant SurfaceTensionCoefficients surfaceTensionCoefficients;
   constant AncillaryCoefficients ancillaryCoefficients;
-
-
-
-
-
-
-
-
-
 
 
   redeclare function setSat_T
@@ -170,9 +160,6 @@ protected
   end setSat_p;
 
 
-
-
-
   redeclare function extends saturationPressure
   "ancillary function: calculate saturation pressure for a given Temperature"
     // inherits input T and output p
@@ -240,7 +227,6 @@ protected
   end saturationTemperature;
 
 
-
   redeclare function vapourQuality "returns the vapour quality"
     // redeclare with algorithm based on d and T
     // previously only input state and output x were defined
@@ -304,9 +290,11 @@ protected
     state := setState_dTX(d=d, T=T);
     p := state.p;
     h := state.h;
-    // state := setState_phX(p=p, h=h);
-    // d := state.d;
-    // T := state.T;
+    /* // alternatively
+  state := setState_phX(p=p, h=h);
+  d := state.d;
+  T := state.T; 
+  */
     s := state.s;
     u := h - p/d;
     if (state.phase == 2) then
@@ -314,7 +302,6 @@ protected
       sat := setSat_T(T=T);
     end if;
   end BaseProperties;
-
 
 
   redeclare function extends setState_dTX
@@ -510,7 +497,6 @@ protected
   end setState_phX;
 
 
-
   redeclare function extends setState_psX
   "Return thermodynamic state as function of p, s and composition X or Xi"
 
@@ -607,7 +593,6 @@ protected
   end setState_psX;
 
 
-
   redeclare function density_pT
   "iteratively finds the density for a given p and T (works for single-phase only)"
 
@@ -671,7 +656,6 @@ protected
   end density_pT;
 
 
-
   redeclare function specificEnthalpy_pT
   "iteratively finds the specific enthalpy for a given p and T"
 
@@ -700,7 +684,6 @@ protected
     // the two inverse functions are Temperature_ph and pressure_Th
     // annotation (inverse(p=pressure_dT(d=d, T=T, phase=phase)));
   end specificEnthalpy_pT;
-
 
 
   redeclare function extends specificHeatCapacityCp
@@ -1214,6 +1197,7 @@ The extended version has up to three terms with two parameters each.
     d := density(setState_phX(p=p, h=h, phase=phase));
   end density_ph;
 
+
   redeclare function extends density_derp_h
   "returns density derivative wrt. p at constant h"
   // inherited from: PartialMedium
@@ -1222,6 +1206,7 @@ The extended version has up to three terms with two parameters each.
   algorithm
     ddph := 5;
   end density_derp_h;
+
 
   redeclare function extends density_derh_p
   "returns density derivative wrt. h at constant p"
@@ -1232,6 +1217,7 @@ The extended version has up to three terms with two parameters each.
     ddhp := 5;
   end density_derh_p;
 
+
   redeclare function extends density_derp_T
   "returns density derivative wrt. p at constant T"
   // inherited from: PartialMedium
@@ -1240,6 +1226,7 @@ The extended version has up to three terms with two parameters each.
   algorithm
     ddpT := 5;
   end density_derp_T;
+
 
   redeclare function extends density_derT_p
   "returns density derivative wrt. T at constant p"
