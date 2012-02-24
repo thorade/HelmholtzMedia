@@ -56,3 +56,8 @@ bubbleEnthalpy
 dewEnthalpy
 setBubbleState
 setDewState
+density_ph
+density_derp_h
+density_derh_p
+density_derp_T
+density_derT_p
