@@ -1204,7 +1204,11 @@ The extended version has up to three terms with two parameters each.
   // inherits input state
   // inherits output ddph
   algorithm
-    ddph := 5;
+    if (state.phase == 1) then
+      ddph := 5;
+    elseif (state.phase == 2) then
+      ddph := 3;
+    end if;
   end density_derp_h;
 
 
@@ -1214,7 +1218,11 @@ The extended version has up to three terms with two parameters each.
   // inherits input state
   // inherits output ddhp
   algorithm
-    ddhp := 5;
+    if (state.phase == 1) then
+      ddhp := 5;
+    elseif (state.phase == 2) then
+      ddhp := 3;
+    end if;
   end density_derh_p;
 
 
@@ -1224,16 +1232,17 @@ The extended version has up to three terms with two parameters each.
   // inherits input state
   // inherits output ddpT
   algorithm
+    assert(state.phase <> 2, "density_derp_T error: property not defined in two-phase region");
     ddpT := 5;
   end density_derp_T;
 
 
-  redeclare function extends density_derT_p
-  "returns density derivative wrt. T at constant p"
+  redeclare function extends density_derT_p "returns dd/dT @p=const"
   // inherited from: PartialMedium
   // inherits input state
   // inherits output ddTp
   algorithm
+    assert(state.phase <> 2, "density_derT_p error: property not defined in two-phase region");
     ddTp := 5;
   end density_derT_p;
 end PartialHelmholtzFluid;
