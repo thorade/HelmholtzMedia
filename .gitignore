@@ -13,6 +13,8 @@ dymosim.lib
 *.mat
 *.bak-mo
 
+# ignore pdf files
+*.pdf
 
 # ignore Microsoft Office files
 *.doc
