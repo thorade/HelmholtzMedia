@@ -1,5 +1,6 @@
 within HelmholtzFluids.Examples.Tests.MediaTestModels.HelmholtzFluids;
-model Butane "Test Modelica.Media.Water.ConstantPropertyLiquidWater"
+model Butane "Test HelmholtzFluids.Butane"
+  //
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(
      redeclare package Medium = HelmholtzFluids.Butane);
