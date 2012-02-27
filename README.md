@@ -1,4 +1,4 @@
-## HelmholtzFluids
+# HelmholtzFluids
 
 This library is written in Modelica.
 The purpose of this library is to calculate fluid properties from an equation of state (EoS), directly within Modelica and not from an external dll.
