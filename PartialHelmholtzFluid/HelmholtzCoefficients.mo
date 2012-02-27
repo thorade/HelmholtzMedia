@@ -3,15 +3,15 @@ record HelmholtzCoefficients
   "Coefficients for Helmholtz energy equations of state"
 
   //ideal gas part: substance specific coefficients
-  constant Real[:,2] idealLog;
-  constant Real[:,2] idealPower;
-  constant Real[:,2] idealEinstein;
-  // constant Real[:,2] idealCosh;
-  // constant Real[:,2] idealSinh;
+  constant Real[:,2] idealLog = fill(0.0, 0, 2);
+  constant Real[:,2] idealPower = fill(0.0, 0, 2);
+  constant Real[:,2] idealEinstein = fill(0.0, 0, 2);
+  constant Real[:,2] idealCosh = fill(0.0, 0, 2);
+  constant Real[:,2] idealSinh = fill(0.0, 0, 2);
 
   //residual part: substance specific coefficients
-  constant Real[:,4] residualPoly;
-  constant Real[:,4] residualBwr;
-  constant Real[:,12] residualGauss;
+  constant Real[:,4] residualPoly = fill(0.0, 0, 4);
+  constant Real[:,4] residualBwr = fill(0.0, 0, 4);
+  constant Real[:,12] residualGauss = fill(0.0, 0, 12);
 
 end HelmholtzCoefficients;
