@@ -8,9 +8,9 @@ function specificEntropy_pT
   output SpecificEntropy s "Specific Enthalpy";
 
 protected
-  SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
-  Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+  MolarMass MM = fluidConstants[1].molarMass;
+  SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+  Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
   Temperature T_crit=fluidConstants[1].criticalTemperature;
   Real delta "reduced density";
   Real tau=T_crit/T "inverse reduced temperature";

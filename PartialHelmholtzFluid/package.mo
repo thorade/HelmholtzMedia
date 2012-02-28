@@ -308,9 +308,9 @@ protected
   "Return thermodynamic state as function of d, T and composition X or Xi"
 
 protected
-    SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Temperature T_trip=fluidConstants[1].triplePointTemperature;
     Real delta=d/d_crit "reduced density";
@@ -373,9 +373,9 @@ protected
   "Return thermodynamic state as function of p, T and composition X or Xi"
 
 protected
-    SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta "reduced density";
     Real tau=T_crit/T "inverse reduced temperature";
@@ -405,9 +405,9 @@ protected
   "Return thermodynamic state as function of p, h and composition X or Xi"
 
 protected
-    SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta "reduced density";
     Real tau "inverse reduced temperature";
@@ -500,9 +500,9 @@ protected
   "Return thermodynamic state as function of p, s and composition X or Xi"
 
 protected
-    SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta "reduced density";
     Real tau "inverse reduced temperature";
@@ -606,9 +606,9 @@ protected
     output Density d "Density";
 
 protected
-    SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta=d/d_crit "reduced density";
     Real tau=T_crit/T "inverse reduced temperature";
@@ -664,9 +664,9 @@ protected
     output SpecificEnthalpy h "Specific Enthalpy";
 
 protected
-    SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta "reduced density";
     Real tau=T_crit/T "inverse reduced temperature";
@@ -690,20 +690,24 @@ protected
   // inherits input state and output cp
 
 protected
-    SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta=state.d/d_crit "reduced density";
     Real tau=T_crit/state.T "inverse reduced temperature";
 
   algorithm
-    assert(state.phase <> 2, "specificHeatCapacityCp error: property not defined in two-phase region");
-
-    cp := R*(-tau^2*(ai_tau_tau(delta=delta, tau=tau) + ar_tau_tau(delta=
+    if (state.phase == 1) then
+      // single phase definition as in RefProp
+        cp := R*(-tau^2*(ai_tau_tau(delta=delta, tau=tau) + ar_tau_tau(delta=
       delta, tau=tau)) + (1 + delta*ar_delta(delta=delta, tau=tau) - delta*
       tau*ar_delta_tau(delta=delta, tau=tau))^2/(1 + 2*delta*ar_delta(delta=
       delta, tau=tau) + delta^2*ar_delta_delta(delta=delta, tau=tau)));
+    elseif (state.phase == 2) then
+      assert(state.phase <> 2, "specificHeatCapacityCp warning: property not defined in two-phase region");
+      cp := Modelica.Constants.inf; // division by zero
+    end if;
 
   end specificHeatCapacityCp;
 
@@ -713,27 +717,45 @@ protected
   // inherits input state and output cv
 
 protected
-    SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta=state.d/d_crit "reduced density";
     Real tau=T_crit/state.T "inverse reduced temperature";
 
     SaturationProperties sat;
     MassFraction Q "vapour quality";
-    SpecificHeatCapacity cv_liq;
-    SpecificHeatCapacity cv_vap;
+    Real delta_liq;
+    Real delta_vap;
+    Real dpsdT;
+    SpecificHeatCapacity cv2_liq
+    "limiting cv when approaching from within 2phase";
+    SpecificHeatCapacity cv2_vap
+    "limiting cv when approaching from within 2phase";
 
   algorithm
     if (state.phase == 1) then
       // single phase definition as in RefProp
       cv := R*(-tau^2*(ai_tau_tau(delta=delta, tau=tau) + ar_tau_tau(delta=delta, tau=tau)));
     elseif (state.phase == 2) then
-      // two-phase definition as in i.e. Tummescheit (2002)
+      // assert(state.phase <> 2, "specificHeatCapacityCv warning: using cv in two-phase region");
+      // two-phase definition as in Span(2000), eq. 3.78 - 3.86
       sat := setSat_T(T=state.T);
+      delta_liq := sat.liq.d/d_crit;
+      delta_vap := sat.vap.d/d_crit;
+
+      dpsdT := (sat.vap.d*sat.liq.d)/(sat.vap.d-sat.liq.d)*R*(
+        log(sat.vap.d/sat.liq.d)
+        + (ar(delta=delta_vap,tau=tau)-ar(delta=delta_liq,tau=tau))
+        - tau*(ar_tau(delta=delta_vap,tau=tau)-ar_tau(delta=delta_liq,tau=tau)));
+      cv2_liq := R*(-tau^2*(ai_tau_tau(delta=delta_liq, tau=tau) + ar_tau_tau(delta=delta_liq, tau=tau)))
+        -state.T/sat.liq.d^2*(pressure_derT_d(sat.liq)-dpsdT)^2/(pressure_derd_T(sat.liq));
+      cv2_vap := R*(-tau^2*(ai_tau_tau(delta=delta_vap, tau=tau) + ar_tau_tau(delta=delta_vap, tau=tau)))
+        -state.T/sat.vap.d^2*(pressure_derT_d(sat.vap)-dpsdT)^2/(pressure_derd_T(sat.vap));
+
       Q := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
-      cv := cv_liq + Q*(cv_vap-cv_liq);
+      cv := cv2_liq + Q*(cv2_vap-cv2_liq);
     end if;
 
   end specificHeatCapacityCv;
@@ -744,9 +766,9 @@ protected
   // inherits input state and output a
 
 protected
-    SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta=state.d/d_crit "reduced density";
     Real tau=T_crit/state.T "inverse reduced temperature";
@@ -768,19 +790,19 @@ protected
     // depends on dynamicViscosity, specificHeatCapacityCp, specificHeatCapacityCv and dpdd=1/dddp
 
 protected
-    SpecificHeatCapacity R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
-    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+    Density d_red_residual=fluidConstants[1].molarMass/
+        thermalConductivityCoefficients.reducingMolarVolume_residual;
+    Real delta "reduced density";
 
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Temperature T_red_0=thermalConductivityCoefficients.reducingTemperature_0;
     Temperature T_red_residual=thermalConductivityCoefficients.reducingTemperature_residual;
     Real tau "reduced temperature";
 
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
-    Density d_red_residual=fluidConstants[1].molarMass/
-        thermalConductivityCoefficients.reducingMolarVolume_residual;
-    Real delta "reduced density";
+    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
     // coeffs for dilute contribution
     Real[size(thermalConductivityCoefficients.lambda_0_coeffs, 1),2] A=
@@ -804,8 +826,8 @@ protected
     // interim variables for critical enhancement
     constant Real pi=Modelica.Constants.pi;
     constant Real k_b=Modelica.Constants.k;
-    Real dpdd;
-    Real dpdd_ref;
+    Real ddpt;
+    Real ddpt_ref;
     Real chi;
     Real chi_ref;
     Real Delta_chi;
@@ -838,21 +860,19 @@ protected
     lambda_r := sum((B[i, 1]*tau^B[i, 2])*(delta)^B[i, 3] for i in 1:size(B, 1));
     lambda_r := lambda_r*lambda_red_residual;
 
-    // crtical enhancement by the simplified crossover model by Olchowy and Sengers
+    // critical enhancement by the simplified crossover model by Olchowy and Sengers
     if ((state.T > T_ref) or (state.d < 1e-6)) then
       lambda_c := 0; // far away from critical point
     else
       // use critical values from EoS to calculate chi, Omega and lambda_c
       // watch out: algorithm for chi and chi_ref are different (chi_ref is multiplied with T_ref/state.T)
-      delta := state.d/d_crit;
-      tau := T_crit/state.T;
-      dpdd := R*state.T*(1 + 2*delta*ar_delta(delta=delta, tau=tau) + delta^2*ar_delta_delta(delta=delta, tau=tau));
-                                                                                                  // =dddp^-1
-      chi := p_crit/d_crit^2*state.d/dpdd;
+      ddpt := density_derp_T(state=state);
+      chi := p_crit/d_crit^2*state.d*ddpt;
 
+      delta := state.d/d_crit;
       tau := T_crit/T_ref;
-      dpdd_ref := R*T_ref*(1 + 2*delta*ar_delta(delta=delta, tau=tau) + delta^2*ar_delta_delta(delta=delta, tau=tau));
-      chi_ref := p_crit/d_crit^2*state.d/dpdd_ref*T_ref/state.T;
+      ddpt_ref := 1/(R*T_ref*(1 + 2*delta*ar_delta(delta=delta, tau=tau) + delta^2*ar_delta_delta(delta=delta, tau=tau)));
+      chi_ref := p_crit/d_crit^2*state.d*ddpt_ref*T_ref/state.T;
 
       Delta_chi := chi - chi_ref;
 
@@ -922,19 +942,21 @@ Here, the simplified approach as suggested by Olchowy and Sengers is implemented
     import HelmholtzFluids.PartialHelmholtzFluid.Types.DynamicViscosityModel;
 
 protected
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
-    Temperature T_red_residual=dynamicViscosityCoefficients.reducingTemperature_residual;
-    Real T_star "reduced temperature";
-    Real tau "reduced temperature";
-
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Density d_red_residual=fluidConstants[1].molarMass/
         dynamicViscosityCoefficients.reducingMolarVolume_residual;
     Real delta "reduced density";
     Real delta_exp "reduced density in exponential term";
     Real delta_0 "close packed density";
     Real dm=state.d/(1000*fluidConstants[1].molarMass) "molar density in mol/l";
+
+    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
+    Temperature T_red_residual=dynamicViscosityCoefficients.reducingTemperature_residual;
+    Real T_star "reduced temperature";
+    Real tau "reduced temperature";
 
     Real[size(dynamicViscosityCoefficients.a, 1),2] a=
         dynamicViscosityCoefficients.a;
@@ -1207,11 +1229,38 @@ The extended version has up to three terms with two parameters each.
   end density_phX;
 
 
-  redeclare function extends density_derp_h
-  "returns density derivative wrt. p at constant h"
+  redeclare function extends density_derp_T "returns (dd/dp)@T=const"
+  // inherited from: PartialMedium
+  // inherits input state
+  // inherits output ddpT
+
+  algorithm
+    if (state.phase == 1) then
+      // inverse of (dp/dd)@T=const
+      ddpT := 1.0/pressure_derd_T(state=state);
+    elseif (state.phase == 2) then
+      ddpT := Modelica.Constants.inf; // divide by zero
+    end if;
+  end density_derp_T;
+
+  redeclare function extends density_derT_p "returns (dd/dT)@p=const"
+  // inherited from: PartialMedium
+  // inherits input state
+  // inherits output ddTp
+
+  algorithm
+    if (state.phase == 1) then
+      ddTp := -pressure_derT_d(state)/pressure_derd_T(state);
+    elseif (state.phase == 2) then
+      ddTp := Modelica.Constants.inf; // divide by zero
+    end if;
+  end density_derT_p;
+
+  redeclare function extends density_derp_h "returns (dd/dp)@h=const"
   // inherited from: PartialMedium
   // inherits input state
   // inherits output ddph
+
   algorithm
     if (state.phase == 1) then
       ddph := 5;
@@ -1221,11 +1270,11 @@ The extended version has up to three terms with two parameters each.
   end density_derp_h;
 
 
-  redeclare function extends density_derh_p
-  "returns density derivative wrt. h at constant p"
+  redeclare function extends density_derh_p "returns (dd/dh)@p=const"
   // inherited from: PartialMedium
   // inherits input state
   // inherits output ddhp
+
   algorithm
     if (state.phase == 1) then
       ddhp := 5;
@@ -1235,23 +1284,32 @@ The extended version has up to three terms with two parameters each.
   end density_derh_p;
 
 
-  redeclare function extends density_derp_T
-  "returns density derivative wrt. p at constant T"
+
+  redeclare function extends isobaricExpansionCoefficient
+  "returns 1/v*(dv/dT)@p=const"
   // inherited from: PartialMedium
   // inherits input state
-  // inherits output ddpT
+  // inherits output beta
+
   algorithm
-    assert(state.phase <> 2, "density_derp_T error: property not defined in two-phase region");
-    ddpT := 5;
-  end density_derp_T;
+    if (state.phase == 1) then
+      beta := 1/state.d*pressure_derd_T(state)*pressure_derT_d(state);
+    elseif (state.phase == 2) then
+      beta := Modelica.Constants.small; // zero
+    end if;
+  end isobaricExpansionCoefficient;
 
-
-  redeclare function extends density_derT_p "returns dd/dT @p=const"
+  redeclare function extends isothermalCompressibility
+  "returns -1/v*(dv/dp)@T=const"
   // inherited from: PartialMedium
   // inherits input state
-  // inherits output ddTp
+  // inherits output kappa
+
   algorithm
-    assert(state.phase <> 2, "density_derT_p error: property not defined in two-phase region");
-    ddTp := 5;
-  end density_derT_p;
+    if (state.phase == 1) then
+      kappa := 1/(state.d*pressure_derd_T(state));
+    elseif (state.phase == 2) then
+      kappa := Modelica.Constants.inf; // divide by zero
+    end if;
+  end isothermalCompressibility;
 end PartialHelmholtzFluid;

@@ -12,6 +12,8 @@ surfaceTensionCoefficients
 AncillaryCoefficients
 ancillaryCoefficients
 ai
+ai_delta
+ai_delta_delta
 ai_tau
 ai_tau_tau
 ar
@@ -57,7 +59,11 @@ dewEnthalpy
 setBubbleState
 setDewState
 density_phX
-density_derp_h
-density_derh_p
+pressure_derd_T
+pressure_derT_d
 density_derp_T
 density_derT_p
+density_derp_h
+density_derh_p
+isobaricExpansionCoefficient
+isothermalCompressibility

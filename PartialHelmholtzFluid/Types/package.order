@@ -2,3 +2,5 @@ DynamicViscosityModel
 PressureSaturationModel
 DensityLiquidModel
 DensityVaporModel
+DerPressureByDensity
+DerPressureByTemperature
