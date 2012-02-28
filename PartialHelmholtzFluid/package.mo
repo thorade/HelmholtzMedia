@@ -490,8 +490,7 @@ protected
             phase=1);
       tau := T_crit/state.T;
       delta := state.d/d_crit;
-      state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=
-        tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
+      state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
     end if;
 
   end setState_phX;
@@ -721,11 +720,21 @@ protected
     Real delta=state.d/d_crit "reduced density";
     Real tau=T_crit/state.T "inverse reduced temperature";
 
-  algorithm
-    assert(state.phase <> 2, "specificHeatCapacityCv error: property not defined in two-phase region");
+    SaturationProperties sat;
+    MassFraction Q "vapour quality";
+    SpecificHeatCapacity cv_liq;
+    SpecificHeatCapacity cv_vap;
 
-    cv := R*(-tau^2*(ai_tau_tau(delta=delta, tau=tau) + ar_tau_tau(delta=
-      delta, tau=tau)));
+  algorithm
+    if (state.phase == 1) then
+      // single phase definition as in RefProp
+      cv := R*(-tau^2*(ai_tau_tau(delta=delta, tau=tau) + ar_tau_tau(delta=delta, tau=tau)));
+    elseif (state.phase == 2) then
+      // two-phase definition as in i.e. Tummescheit (2002)
+      sat := setSat_T(T=state.T);
+      Q := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
+      cv := cv_liq + Q*(cv_vap-cv_liq);
+    end if;
 
   end specificHeatCapacityCv;
 
@@ -1189,13 +1198,13 @@ The extended version has up to three terms with two parameters each.
   end setDewState;
 
 
-  redeclare function extends density_ph "returns density for given p and h"
+  redeclare function extends density_phX "returns density for given p and h"
   // inherited from: PartialMedium
   // inherits input p, h and phase
   // inherits output d
-  algorithm
-    d := density(setState_phX(p=p, h=h, phase=phase));
-  end density_ph;
+
+  annotation (der=density_derp_h, der=density_derh_p);
+  end density_phX;
 
 
   redeclare function extends density_derp_h
@@ -1207,7 +1216,7 @@ The extended version has up to three terms with two parameters each.
     if (state.phase == 1) then
       ddph := 5;
     elseif (state.phase == 2) then
-      ddph := 3;
+      ddph := 4;
     end if;
   end density_derp_h;
 
