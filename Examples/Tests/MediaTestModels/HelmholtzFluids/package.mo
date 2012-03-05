@@ -3,7 +3,6 @@ package HelmholtzFluids "Test models of library HelmholtzFluids"
  extends Modelica.Icons.ExamplesPackage;
 
 
-
   annotation (Documentation(info="<html>
 
 </html>"));

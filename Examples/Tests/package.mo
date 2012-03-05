@@ -5,7 +5,6 @@ package Tests "Library to test that all media models simulate and fulfill the ex
  extends Modelica.Icons.ExamplesPackage;
 
 
-
   annotation (Documentation(info="<html>
 
 </html>"));
