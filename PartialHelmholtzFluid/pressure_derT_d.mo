@@ -18,6 +18,6 @@ algorithm
     // single phase definition as in Span(2000)
     pdTd := R*state.d*(1 + delta*ar_delta(delta=delta, tau=tau) - delta*tau*ar_delta_tau(delta=delta, tau=tau));
   elseif (state.phase == 2) then
-    pdTd := Modelica.Constants.inf; // How to calculate that?
+    pdTd := 1.0/saturationTemperature_derp(p=state.p); //
   end if;
 end pressure_derT_d;

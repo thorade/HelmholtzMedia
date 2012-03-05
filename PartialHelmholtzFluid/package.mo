@@ -19,6 +19,17 @@ partial package PartialHelmholtzFluid
   constant AncillaryCoefficients ancillaryCoefficients;
 
 
+
+
+
+
+
+
+
+
+
+
+
   redeclare function setSat_T
   "iterative calculation of saturation properties from EoS with Newton-Raphson algorithm"
     input Temperature T;
@@ -160,6 +171,9 @@ protected
   end setSat_p;
 
 
+
+
+
   redeclare function extends saturationPressure
   "ancillary function: calculate saturation pressure for a given Temperature"
     // inherits input T and output p
@@ -227,6 +241,7 @@ protected
   end saturationTemperature;
 
 
+
   redeclare function vapourQuality "returns the vapour quality"
     // redeclare with algorithm based on d and T
     // previously only input state and output x were defined
@@ -261,6 +276,7 @@ protected
     Temperature T "Temperature of medium";
     AbsolutePressure p "Absolute pressure of medium";
     SpecificEnthalpy h "Specific enthalpy of medium";
+    SpecificEnergy u "Specific inner energy of medium";
     SpecificEntropy s "Specific entropy of medium";
   end ThermodynamicState;
 
@@ -302,6 +318,7 @@ protected
       sat := setSat_T(T=T);
     end if;
   end BaseProperties;
+
 
 
   redeclare function extends setState_dTX
@@ -360,10 +377,8 @@ protected
     else
       // force single-phase
       state.p := (1 + delta*ar_delta(delta=delta, tau=tau))*d*R*T;
-      state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta,
-        tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*T;
-      state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=
-        tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
+      state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*T;
+      state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
     end if;
 
   end setState_dTX;
@@ -393,10 +408,8 @@ protected
           T=T,
           phase=1);
     delta := state.d/d_crit;
-    state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta,
-      tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*T;
-    state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=
-      tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
+    state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*T;
+    state.s := (tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) - ai(delta=delta, tau=tau) - ar(delta=delta, tau=tau))*R;
 
   end setState_pTX;
 
@@ -444,8 +457,7 @@ protected
         sat.vap.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=
           delta, tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*sat.Tsat;
 
-        if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02
-            *sat.vap.h))) then
+        if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02*sat.vap.h))) then
           // two-phase state or close to it, get saturation properties from EoS, use Tsat as starting value
           sat := setSat_p(p=p, T_guess=sat.Tsat);
         end if;
@@ -494,6 +506,7 @@ protected
     end if;
 
   end setState_phX;
+
 
 
   redeclare function extends setState_psX
@@ -585,11 +598,11 @@ protected
             phase=1);
       tau := T_crit/state.T;
       delta := state.d/d_crit;
-      state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta,
-        tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*state.T;
+      state.h := (1 + tau*(ai_tau(delta=delta, tau=tau) + ar_tau(delta=delta, tau=tau)) + delta*ar_delta(delta=delta, tau=tau))*R*state.T;
     end if;
 
   end setState_psX;
+
 
 
   redeclare function density_pT
@@ -655,6 +668,7 @@ protected
   end density_pT;
 
 
+
   redeclare function specificEnthalpy_pT
   "iteratively finds the specific enthalpy for a given p and T"
 
@@ -685,6 +699,7 @@ protected
   end specificEnthalpy_pT;
 
 
+
   redeclare function extends specificHeatCapacityCp
   "returns the isobaric specific heat capcacity"
   // inherits input state and output cp
@@ -705,7 +720,7 @@ protected
       tau*ar_delta_tau(delta=delta, tau=tau))^2/(1 + 2*delta*ar_delta(delta=
       delta, tau=tau) + delta^2*ar_delta_delta(delta=delta, tau=tau)));
     elseif (state.phase == 2) then
-      assert(state.phase <> 2, "specificHeatCapacityCp warning: property not defined in two-phase region");
+      assert(false, "specificHeatCapacityCp warning: property not defined in two-phase region");
       cp := Modelica.Constants.inf; // division by zero
     end if;
 
@@ -728,7 +743,8 @@ protected
     MassFraction Q "vapour quality";
     Real delta_liq;
     Real delta_vap;
-    Real dpsdT;
+    Real dTp;
+    Real dpT;
     SpecificHeatCapacity cv2_liq
     "limiting cv when approaching from within 2phase";
     SpecificHeatCapacity cv2_vap
@@ -739,20 +755,18 @@ protected
       // single phase definition as in RefProp
       cv := R*(-tau^2*(ai_tau_tau(delta=delta, tau=tau) + ar_tau_tau(delta=delta, tau=tau)));
     elseif (state.phase == 2) then
-      // assert(state.phase <> 2, "specificHeatCapacityCv warning: using cv in two-phase region");
+      assert(false, "specificHeatCapacityCv warning: using cv in two-phase region");
       // two-phase definition as in Span(2000), eq. 3.78 - 3.86
       sat := setSat_T(T=state.T);
       delta_liq := sat.liq.d/d_crit;
       delta_vap := sat.vap.d/d_crit;
 
-      dpsdT := (sat.vap.d*sat.liq.d)/(sat.vap.d-sat.liq.d)*R*(
-        log(sat.vap.d/sat.liq.d)
-        + (ar(delta=delta_vap,tau=tau)-ar(delta=delta_liq,tau=tau))
-        - tau*(ar_tau(delta=delta_vap,tau=tau)-ar_tau(delta=delta_liq,tau=tau)));
+      dTp := saturationTemperature_derp(p=sat.psat, sat=sat);
+      dpT := 1.0/dTp;
       cv2_liq := R*(-tau^2*(ai_tau_tau(delta=delta_liq, tau=tau) + ar_tau_tau(delta=delta_liq, tau=tau)))
-        -state.T/sat.liq.d^2*(pressure_derT_d(sat.liq)-dpsdT)^2/(pressure_derd_T(sat.liq));
+        -state.T/sat.liq.d^2*(pressure_derT_d(sat.liq)-dpT)^2/(pressure_derd_T(sat.liq));
       cv2_vap := R*(-tau^2*(ai_tau_tau(delta=delta_vap, tau=tau) + ar_tau_tau(delta=delta_vap, tau=tau)))
-        -state.T/sat.vap.d^2*(pressure_derT_d(sat.vap)-dpsdT)^2/(pressure_derd_T(sat.vap));
+        -state.T/sat.vap.d^2*(pressure_derT_d(sat.vap)-dpT)^2/(pressure_derd_T(sat.vap));
 
       Q := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
       cv := cv2_liq + Q*(cv2_vap-cv2_liq);
@@ -782,6 +796,37 @@ protected
       ai_tau_tau(delta=delta, tau=tau) + ar_tau_tau(delta=delta, tau=tau)))));
 
   end velocityOfSound;
+
+
+  redeclare function extends isobaricExpansionCoefficient
+  "returns 1/v*(dv/dT)@p=const"
+  // inherited from: PartialMedium
+  // inherits input state
+  // inherits output beta
+
+  algorithm
+    if (state.phase == 1) then
+      beta := 1/state.d*pressure_derd_T(state)*pressure_derT_d(state);
+    elseif (state.phase == 2) then
+      beta := Modelica.Constants.small; // zero
+    end if;
+  end isobaricExpansionCoefficient;
+
+
+  redeclare function extends isothermalCompressibility
+  "returns -1/v*(dv/dp)@T=const"
+  // inherited from: PartialMedium
+  // inherits input state
+  // inherits output kappa
+
+  algorithm
+    if (state.phase == 1) then
+      kappa := 1/(state.d*pressure_derd_T(state));
+    elseif (state.phase == 2) then
+      kappa := Modelica.Constants.inf; // divide by zero
+    end if;
+  end isothermalCompressibility;
+
 
 
   redeclare replaceable function extends thermalConductivity
@@ -1229,6 +1274,8 @@ The extended version has up to three terms with two parameters each.
   end density_phX;
 
 
+
+
   redeclare function extends density_derp_T "returns (dd/dp)@T=const"
   // inherited from: PartialMedium
   // inherits input state
@@ -1243,6 +1290,7 @@ The extended version has up to three terms with two parameters each.
     end if;
   end density_derp_T;
 
+
   redeclare function extends density_derT_p "returns (dd/dT)@p=const"
   // inherited from: PartialMedium
   // inherits input state
@@ -1255,6 +1303,7 @@ The extended version has up to three terms with two parameters each.
       ddTp := Modelica.Constants.inf; // divide by zero
     end if;
   end density_derT_p;
+
 
   redeclare function extends density_derp_h "returns (dd/dp)@h=const"
   // inherited from: PartialMedium
@@ -1275,41 +1324,44 @@ The extended version has up to three terms with two parameters each.
   // inherits input state
   // inherits output ddhp
 
+protected
+    SaturationProperties sat;
+
   algorithm
     if (state.phase == 1) then
       ddhp := 5;
     elseif (state.phase == 2) then
-      ddhp := 3;
+      sat := setSat_T(T=state.T);
+      ddhp := (sat.liq.d-sat.vap.d)/(sat.liq.h-sat.vap.h);
     end if;
   end density_derh_p;
 
 
+  redeclare function extends saturationTemperature_derp "returns (dT/dp)@sat"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input p
+  // inherits output dTp
 
-  redeclare function extends isobaricExpansionCoefficient
-  "returns 1/v*(dv/dT)@p=const"
-  // inherited from: PartialMedium
-  // inherits input state
-  // inherits output beta
+  input SaturationProperties sat=setSat_p(p=p)
+    "optional input, if sat state is known";
 
-  algorithm
-    if (state.phase == 1) then
-      beta := 1/state.d*pressure_derd_T(state)*pressure_derT_d(state);
-    elseif (state.phase == 2) then
-      beta := Modelica.Constants.small; // zero
-    end if;
-  end isobaricExpansionCoefficient;
-
-  redeclare function extends isothermalCompressibility
-  "returns -1/v*(dv/dp)@T=const"
-  // inherited from: PartialMedium
-  // inherits input state
-  // inherits output kappa
+protected
+    MolarMass MM = fluidConstants[1].molarMass;
+    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    Temperature T_trip=fluidConstants[1].triplePointTemperature;
+    Real tau= T_crit/sat.Tsat "inverse reduced temperature";
+    Real delta_liq = sat.liq.d/d_crit;
+    Real delta_vap = sat.vap.d/d_crit;
 
   algorithm
-    if (state.phase == 1) then
-      kappa := 1/(state.d*pressure_derd_T(state));
-    elseif (state.phase == 2) then
-      kappa := Modelica.Constants.inf; // divide by zero
-    end if;
-  end isothermalCompressibility;
+      // inverse of (dp/dT)@sat
+      // algorithm by Span(2000) eq. 3.78
+      dTp := ((sat.vap.d-sat.liq.d)*R*(
+        log(sat.vap.d/sat.liq.d)
+        + (ar(delta=delta_vap,tau=tau)-ar(delta=delta_liq,tau=tau))
+        - tau*(ar_tau(delta=delta_vap,tau=tau)-ar_tau(delta=delta_liq,tau=tau))))
+        /(sat.vap.d*sat.liq.d);
+  end saturationTemperature_derp;
 end PartialHelmholtzFluid;
