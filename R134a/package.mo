@@ -10,7 +10,7 @@ package R134a "R134a data, copied from RefProp R134a.fld"
     fluidLimits=fluidLimitsR134a,
     Density(min=fluidLimitsR134a.DMIN, max=fluidLimitsR134a.DMAX),
     Temperature(min=fluidLimitsR134a.TMIN, max=fluidLimitsR134a.TMAX),
-    AbsolutePressure(min=fluidLimitsR134a.PMIN, max=fluidLimitsR134a.PMAX),
+    AbsolutePressure(min=0, max=70e6),
     SpecificEnthalpy(min=fluidLimitsR134a.HMIN, max=fluidLimitsR134a.HMAX),
     SpecificEntropy(min=fluidLimitsR134a.SMIN, max=fluidLimitsR134a.SMAX));
 

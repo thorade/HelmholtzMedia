@@ -1,6 +1,7 @@
 within ;
 package HelmholtzFluids "Data and models of real pure fluids (liquid, two-phase and gas)"
   extends Modelica.Icons.MaterialPropertiesPackage;
+  import Modelica.Media.Common;
 
 
 

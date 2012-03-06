@@ -10,7 +10,7 @@ extends HelmholtzFluids.PartialHelmholtzFluid(
   fluidLimits=fluidLimitsButane,
   Density(min=fluidLimitsButane.DMIN, max=fluidLimitsButane.DMAX),
   Temperature(min=fluidLimitsButane.TMIN, max=fluidLimitsButane.TMAX),
-  AbsolutePressure(min=fluidLimitsButane.PMIN, max=fluidLimitsButane.PMAX),
+  AbsolutePressure(min=0, max=200e6),
   SpecificEnthalpy(min=fluidLimitsButane.HMIN, max=fluidLimitsButane.HMAX),
   SpecificEntropy(min=fluidLimitsButane.SMIN, max=fluidLimitsButane.SMAX));
 

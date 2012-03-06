@@ -19,17 +19,6 @@ partial package PartialHelmholtzFluid
   constant AncillaryCoefficients ancillaryCoefficients;
 
 
-
-
-
-
-
-
-
-
-
-
-
   redeclare function setSat_T
   "iterative calculation of saturation properties from EoS with Newton-Raphson algorithm"
     input Temperature T;
@@ -171,9 +160,6 @@ protected
   end setSat_p;
 
 
-
-
-
   redeclare function extends saturationPressure
   "ancillary function: calculate saturation pressure for a given Temperature"
     // inherits input T and output p
@@ -239,7 +225,6 @@ protected
     // the corresponding ancillary forward function is saturationPressure(T)
     annotation (inverse(p=saturationPressure(T=T)));
   end saturationTemperature;
-
 
 
   redeclare function vapourQuality "returns the vapour quality"
@@ -318,7 +303,6 @@ protected
       sat := setSat_T(T=T);
     end if;
   end BaseProperties;
-
 
 
   redeclare function extends setState_dTX
@@ -508,7 +492,6 @@ protected
   end setState_phX;
 
 
-
   redeclare function extends setState_psX
   "Return thermodynamic state as function of p, s and composition X or Xi"
 
@@ -604,7 +587,6 @@ protected
   end setState_psX;
 
 
-
   redeclare function density_pT
   "iteratively finds the density for a given p and T (works for single-phase only)"
 
@@ -668,7 +650,6 @@ protected
   end density_pT;
 
 
-
   redeclare function specificEnthalpy_pT
   "iteratively finds the specific enthalpy for a given p and T"
 
@@ -697,7 +678,6 @@ protected
     // the two inverse functions are Temperature_ph and pressure_Th
     // annotation (inverse(p=pressure_dT(d=d, T=T, phase=phase)));
   end specificEnthalpy_pT;
-
 
 
   redeclare function extends specificHeatCapacityCp
@@ -806,7 +786,7 @@ protected
 
   algorithm
     if (state.phase == 1) then
-      beta := 1/state.d*pressure_derd_T(state)*pressure_derT_d(state);
+      beta := 1/state.d*pressure_derT_d(state)/pressure_derd_T(state);
     elseif (state.phase == 2) then
       beta := Modelica.Constants.small; // zero
     end if;
@@ -826,7 +806,6 @@ protected
       kappa := Modelica.Constants.inf; // divide by zero
     end if;
   end isothermalCompressibility;
-
 
 
   redeclare replaceable function extends thermalConductivity
@@ -1272,8 +1251,6 @@ The extended version has up to three terms with two parameters each.
 
   annotation (der=density_derp_h, der=density_derh_p);
   end density_phX;
-
-
 
 
   redeclare function extends density_derp_T "returns (dd/dp)@T=const"

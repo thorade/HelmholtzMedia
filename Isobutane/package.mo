@@ -10,7 +10,7 @@ package Isobutane "Isobutane data, copied from RefProp Isobutane.fld"
     fluidLimits=fluidLimitsIsobutane,
     Density(min=fluidLimitsIsobutane.DMIN, max=fluidLimitsIsobutane.DMAX),
     Temperature(min=fluidLimitsIsobutane.TMIN, max=fluidLimitsIsobutane.TMAX),
-    AbsolutePressure(min=fluidLimitsIsobutane.PMIN, max=fluidLimitsIsobutane.PMAX),
+    AbsolutePressure(min=0, max=35e6),
     SpecificEnthalpy(min=fluidLimitsIsobutane.HMIN, max=fluidLimitsIsobutane.HMAX),
     SpecificEntropy(min=fluidLimitsIsobutane.SMIN, max=fluidLimitsIsobutane.SMAX));
 
