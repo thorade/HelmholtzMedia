@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.Components;
+within HelmholtzMedia.Examples.Tests.Components;
 model FixedMassFlowRate
   "Ideal pump that produces a constant mass flow rate from a large reservoir at fixed temperature and mass fraction"
 

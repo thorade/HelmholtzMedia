@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 package Tests "Library to test that all media models simulate and fulfill the expected structural properties"
 
 

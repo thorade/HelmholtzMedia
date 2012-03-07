@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.MediaTestModels.IdealGases;
+within HelmholtzMedia.Examples.Tests.MediaTestModels.IdealGases;
 model SimpleNaturalGasFixedComposition
   "Test mixture gas Modelica.Media.IdealGases.MixtureGases.SimpleNaturalGas"
   extends Modelica.Icons.Example;

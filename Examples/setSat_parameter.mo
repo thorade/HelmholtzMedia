@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model setSat_parameter
   package medium = HelmholtzFluids.R134a;
 

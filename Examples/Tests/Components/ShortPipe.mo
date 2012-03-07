@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.Components;
+within HelmholtzMedia.Examples.Tests.Components;
 model ShortPipe "Simple pressure loss in pipe"
    replaceable package Medium = Modelica.Media.Interfaces.PartialMedium
     "Medium model"

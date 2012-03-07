@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model State_pT_parameter "calculate state record from pT input"
 
   package medium = HelmholtzFluids.Butane;
@@ -10,8 +10,8 @@ model State_pT_parameter "calculate state record from pT input"
 
   // pT always results in single phase states,
   // so this is a good place to test quantities that are defined for single phase only
-  medium.Types.DerPressureByDensity  pddT;
-  medium.Types.DerPressureByTemperature pdTd;
+  Interfaces.PartialHelmholtzMedium.Types.DerPressureByDensity pddT;
+  Interfaces.PartialHelmholtzMedium.Types.DerPressureByTemperature pdTd;
   medium.SpecificHeatCapacity cp;
   medium.SpecificHeatCapacity cv;
   medium.VelocityOfSound a;

@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.MediaTestModels.Incompressible;
+within HelmholtzMedia.Examples.Tests.MediaTestModels.Incompressible;
 model Essotherm650 "Test Modelica.Media.Incompressible.Examples.Essotherm65"
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(

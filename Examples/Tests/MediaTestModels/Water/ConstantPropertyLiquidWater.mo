@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.MediaTestModels.Water;
+within HelmholtzMedia.Examples.Tests.MediaTestModels.Water;
 model ConstantPropertyLiquidWater
   "Test Modelica.Media.Water.ConstantPropertyLiquidWater"
   extends Modelica.Icons.Example;

@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.Components;
+within HelmholtzMedia.Examples.Tests.Components;
 partial model PartialTestModel2 "slightly larger test model to test a medium"
   import SI = Modelica.SIunits;
 

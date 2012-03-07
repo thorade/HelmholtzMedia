@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model State_dT_sweep
   package medium = HelmholtzFluids.R134a;
   medium.Density d;

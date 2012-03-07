@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model BaseProps_sweep
   "calculate BaseProperties from any two given input properties"
   package medium = HelmholtzFluids.Butane;

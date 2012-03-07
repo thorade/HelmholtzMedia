@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model Test_AncillaryFunctions
   package medium = HelmholtzFluids.Isobutane;
   medium.Temperature Tsat;

@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests;
+within HelmholtzMedia.Examples.Tests;
 package Components "Functions, connectors and models needed for the media model tests"
 
 

@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.MediaTestModels.IdealGases;
+within HelmholtzMedia.Examples.Tests.MediaTestModels.IdealGases;
 model Nitrogen "Test single gas Modelica.Media.IdealGases.SingleGases.N2"
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(

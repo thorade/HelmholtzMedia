@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.Components;
+within HelmholtzMedia.Examples.Tests.Components;
 model PortVolume
   "Fixed volume associated with a port by the finite volume method"
   import SI = Modelica.SIunits;

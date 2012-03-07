@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests;
+within HelmholtzMedia.Examples.Tests;
 package MediaTestModels "Test models to test all media"
  extends Modelica.Icons.ExamplesPackage;
 

@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model State_ps_parameter "calculate state record from ps input"
 
   package medium = HelmholtzFluids.Butane;

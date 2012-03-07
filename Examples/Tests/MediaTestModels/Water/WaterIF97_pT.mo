@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.MediaTestModels.Water;
+within HelmholtzMedia.Examples.Tests.MediaTestModels.Water;
 model WaterIF97_pT "Test Modelica.Media.Water.WaterIF97_pT"
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(

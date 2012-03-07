@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model setSat_sweep
   package medium = HelmholtzFluids.R134a;
   medium.SaturationProperties satProps;

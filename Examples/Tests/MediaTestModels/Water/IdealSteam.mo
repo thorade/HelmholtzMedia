@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.MediaTestModels.Water;
+within HelmholtzMedia.Examples.Tests.MediaTestModels.Water;
 model IdealSteam "Test Modelica.Media.Water.IdealSteam"
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(

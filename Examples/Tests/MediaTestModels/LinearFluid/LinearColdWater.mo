@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.MediaTestModels.LinearFluid;
+within HelmholtzMedia.Examples.Tests.MediaTestModels.LinearFluid;
 model LinearColdWater "Test Modelica.Media.Incompressible.Examples.Glycol47"
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(

@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.Components;
+within HelmholtzMedia.Examples.Tests.Components;
 model FixedAmbient "Ambient pressure, temperature and mass fraction source"
   replaceable package Medium = Modelica.Media.Interfaces.PartialMedium
     "Medium model"

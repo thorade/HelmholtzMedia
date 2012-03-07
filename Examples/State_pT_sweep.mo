@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model State_pT_sweep
   package medium = HelmholtzFluids.R134a;
   medium.AbsolutePressure p;

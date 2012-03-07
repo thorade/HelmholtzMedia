@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model State_ph_parameter "calculate state record from ph input"
   package medium = HelmholtzFluids.R134a;
 

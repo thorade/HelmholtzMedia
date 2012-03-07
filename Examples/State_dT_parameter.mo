@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model State_dT_parameter "calculate state record from dT input"
 
   package medium = HelmholtzFluids.Butane;

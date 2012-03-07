@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.Components;
+within HelmholtzMedia.Examples.Tests.Components;
 connector FluidPort_a "Fluid connector with filled icon"
   extends FluidPort;
   annotation (Diagram(coordinateSystem(preserveAspectRatio=true, extent={{-100,

@@ -1,4 +1,4 @@
-within HelmholtzFluids;
+within HelmholtzMedia;
 package Examples "Test"
 
 end Examples;

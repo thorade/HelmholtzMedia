@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.MediaTestModels.LinearFluid;
+within HelmholtzMedia.Examples.Tests.MediaTestModels.LinearFluid;
 model LinearWater_pT "Test Modelica.Media.Incompressible.Examples.Essotherm65"
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(

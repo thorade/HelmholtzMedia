@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model Test_inverse
   package medium = HelmholtzFluids.Butane;
   medium.Temperature Tsat;

@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.MediaTestModels.Air;
+within HelmholtzMedia.Examples.Tests.MediaTestModels.Air;
 model MoistAir "Test Modelica.Media.Air.MoistAir"
     extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(

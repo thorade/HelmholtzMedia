@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples;
+within HelmholtzMedia.Examples;
 model Test_HelmholtzDerivatives
   package medium = HelmholtzFluids.Butane;
   Real tau;
@@ -32,16 +32,25 @@ algorithm
     tau := tau_ramp.y;
     delta := delta_ramp.y;
 
-    ai :=medium.ai(delta=delta, tau=tau);
-    ai_tau :=medium.ai_tau(delta=delta, tau=tau);
-    ai_tau_tau :=medium.ai_tau_tau(delta=delta, tau=tau);
+    ai :=HelmholtzFluids.Interfaces.PartialHelmholtzMedium.a_i(
+                   delta=delta, tau=tau);
+    ai_tau :=HelmholtzFluids.Interfaces.PartialHelmholtzMedium.a_it(
+                           delta=delta, tau=tau);
+    ai_tau_tau :=HelmholtzFluids.Interfaces.PartialHelmholtzMedium.a_itt(
+                                   delta=delta, tau=tau);
 
-    ar :=medium.ar(delta=delta, tau=tau);
-    ar_delta :=medium.ar_delta(delta=delta, tau=tau);
-    ar_delta_delta :=medium.ar_delta_delta(delta=delta, tau=tau);
-    ar_delta_tau :=medium.ar_delta_tau(delta=delta, tau=tau);
-    ar_tau :=medium.ar_tau(delta=delta, tau=tau);
-    ar_tau_tau :=medium.ar_tau_tau(delta=delta, tau=tau);
+    ar :=HelmholtzFluids.Interfaces.PartialHelmholtzMedium.a_r(
+                   delta=delta, tau=tau);
+    ar_delta :=HelmholtzFluids.Interfaces.PartialHelmholtzMedium.a_rd(
+                               delta=delta, tau=tau);
+    ar_delta_delta :=HelmholtzFluids.Interfaces.PartialHelmholtzMedium.a_rdd(
+                                           delta=delta, tau=tau);
+    ar_delta_tau :=HelmholtzFluids.Interfaces.PartialHelmholtzMedium.a_rtd(
+                                       delta=delta, tau=tau);
+    ar_tau :=HelmholtzFluids.Interfaces.PartialHelmholtzMedium.a_rt(
+                           delta=delta, tau=tau);
+    ar_tau_tau :=HelmholtzFluids.Interfaces.PartialHelmholtzMedium.a_rtt(
+                                   delta=delta, tau=tau);
 
   annotation (experiment(StopTime=10), __Dymola_experimentSetupOutput);
 end Test_HelmholtzDerivatives;

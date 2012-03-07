@@ -1,4 +1,4 @@
-within HelmholtzFluids.Examples.Tests.MediaTestModels.Incompressible;
+within HelmholtzMedia.Examples.Tests.MediaTestModels.Incompressible;
 model Glycol47 "Test Modelica.Media.Incompressible.Examples.Glycol47"
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(
