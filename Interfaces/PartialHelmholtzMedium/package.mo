@@ -358,8 +358,9 @@ protected
       f.r   := f_r(tau=tau, delta=delta);
       f.rt  := f_rt(tau=tau, delta=delta);
       f.rd  := f_rd(tau=tau, delta=delta);
-      state.p := d*T*R*(1 + delta*f.rd);
-      state.h :=   T*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
+      state.p := d*T*R*(1+delta*f.rd);
+      state.h :=   T*R*(tau*(f.it + f.rt) + (1+delta*f.rd));
+      state.u :=   T*R*(tau*(f.it + f.rt));
       state.s :=     R*(tau*(f.it + f.rt) - f.i - f.r);
     end if;
 
@@ -398,7 +399,8 @@ protected
     f.rt  := f_rt(tau=tau, delta=delta);
     f.rd  := f_rd(tau=tau, delta=delta);
     state.h :=   T*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
-    state.s :=     R*(tau*(f.it + f.rt) - f.i - f.r);
+    state.u :=   T*R*(tau*(f.it+f.rt));
+    state.s :=     R*(tau*(f.it+f.rt) - (f.i+f.r));
   end setState_pTX;
 
 
@@ -500,7 +502,8 @@ protected
       f.it  := f_it(tau=tau, delta=delta);
       f.r   := f_r(tau=tau, delta=delta);
       f.rt  := f_rt(tau=tau, delta=delta);
-      state.s := R*(tau*(f.it + f.rt) - f.i - f.r);
+      state.u := state.T*R*(tau*(f.it+f.rt));
+      state.s :=         R*(tau*(f.it+f.rt) - (f.i+f.r));
     end if;
 
   end setState_phX;
@@ -605,7 +608,8 @@ protected
       f.it  := f_it(tau=tau, delta=delta);
       f.rt  := f_rt(tau=tau, delta=delta);
       f.rd  := f_rd(tau=tau, delta=delta);
-      state.h := state.T*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
+      state.h := state.T*R*(tau*(f.it+f.rt) + (1+delta*f.rd));
+      state.u := state.T*R*(tau*(f.it+f.rt));
     end if;
 
   end setState_psX;
