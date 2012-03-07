@@ -63,17 +63,13 @@ protected
     delta_vap := dewDensity_T_ANC(T=T)/d_crit;
 
     // pressure difference liquid-vapor
-    J_liq := delta_liq*(1 + delta_liq*f_rd(    tau=tau, delta=delta_liq));
-    J_vap := delta_vap*(1 + delta_vap*f_rd(    tau=tau, delta=delta_vap));
+    J_liq := delta_liq*(1 + delta_liq*f_rd(tau=tau, delta=delta_liq));
+    J_vap := delta_vap*(1 + delta_vap*f_rd(tau=tau, delta=delta_vap));
     Delta_J := abs(J_liq - J_vap);
 
     // Gibbs energy difference liquid-vapor
-    K_liq := delta_liq*f_rd(    tau=tau, delta=delta_liq) + f_r(
-                                                               tau=tau, delta=
-      delta_liq) + log(delta_liq);
-    K_vap := delta_vap*f_rd(    tau=tau, delta=delta_vap) + f_r(
-                                                               tau=tau, delta=
-      delta_vap) + log(delta_vap);
+    K_liq := delta_liq*f_rd(tau=tau, delta=delta_liq) + f_r(tau=tau, delta=delta_liq) + log(delta_liq);
+    K_vap := delta_vap*f_rd(tau=tau, delta=delta_vap) + f_r(tau=tau, delta=delta_vap) + log(delta_vap);
     Delta_K := abs(K_liq - K_vap);
 
     while (abs(Delta_J) + abs(Delta_K) > tolerance) loop
@@ -81,26 +77,20 @@ protected
       // print("Delta_J=" + String(Delta_J) + " and Delta_K=" + String(Delta_K), "printlog.txt");
 
       // calculate better values for reduced density delta using gradients
-      J_liq_delta := 1 + 2*delta_liq*f_rd(    tau=tau, delta=delta_liq) + delta_liq^
-        2*f_rdd(         tau=tau, delta=delta_liq);
-      J_vap_delta := 1 + 2*delta_vap*f_rd(    tau=tau, delta=delta_vap) +
-        delta_vap^2*f_rdd(         tau=tau, delta=delta_vap);
+      J_liq_delta := 1 + 2*delta_liq*f_rd(tau=tau, delta=delta_liq) + delta_liq^2*f_rdd(tau=tau, delta=delta_liq);
+      J_vap_delta := 1 + 2*delta_vap*f_rd(tau=tau, delta=delta_vap) + delta_vap^2*f_rdd(tau=tau, delta=delta_vap);
 
-      K_liq_delta := 2*f_rd(    tau=tau, delta=delta_liq) + delta_liq*
-        f_rdd(         tau=tau, delta=delta_liq) + 1/delta_liq;
-      K_vap_delta := 2*f_rd(    tau=tau, delta=delta_vap) + delta_vap*
-        f_rdd(         tau=tau, delta=delta_vap) + 1/delta_vap;
+      K_liq_delta := 2*f_rd(tau=tau, delta=delta_liq) + delta_liq*f_rdd(tau=tau, delta=delta_liq) + 1/delta_liq;
+      K_vap_delta := 2*f_rd(tau=tau, delta=delta_vap) + delta_vap*f_rdd(tau=tau, delta=delta_vap) + 1/delta_vap;
 
       Delta := J_vap_delta*K_liq_delta - J_liq_delta*K_vap_delta;
 
-      delta_liq := delta_liq + gamma/Delta*((K_vap - K_liq)*J_vap_delta - (
-        J_vap - J_liq)*K_vap_delta);
-      delta_vap := delta_vap + gamma/Delta*((K_vap - K_liq)*J_liq_delta - (
-        J_vap - J_liq)*K_liq_delta);
+      delta_liq := delta_liq + gamma/Delta*((K_vap - K_liq)*J_vap_delta - (J_vap - J_liq)*K_vap_delta);
+      delta_vap := delta_vap + gamma/Delta*((K_vap - K_liq)*J_liq_delta - (J_vap - J_liq)*K_liq_delta);
 
       // calculate new Delta_J and Delta_K
-      J_liq := delta_liq*(1 + delta_liq*f_rd(    tau=tau, delta=delta_liq));
-      J_vap := delta_vap*(1 + delta_vap*f_rd(    tau=tau, delta=delta_vap));
+      J_liq := delta_liq*(1 + delta_liq*f_rd(tau=tau, delta=delta_liq));
+      J_vap := delta_vap*(1 + delta_vap*f_rd(tau=tau, delta=delta_vap));
       Delta_J := abs(J_liq - J_vap);
 
       K_liq := delta_liq*f_rd(tau=tau, delta=delta_liq) + f_r(tau=tau, delta=delta_liq) + log(delta_liq);
@@ -865,8 +855,8 @@ protected
     // interim variables for critical enhancement
     constant Real pi=Modelica.Constants.pi;
     constant Real k_b=Modelica.Constants.k;
-    Real dddp_T;
-    Real dddp_T_ref;
+    Real ddpT;
+    Real ddpT_ref;
     Real chi;
     Real chi_ref;
     Real Delta_chi;
@@ -905,13 +895,13 @@ protected
     else
       // use critical values from EoS to calculate chi, Omega and lambda_c
       // watch out: algorithm for chi and chi_ref are different (chi_ref is multiplied with T_ref/state.T)
-      dddp_T := density_derp_T(state=state);
-      chi := p_crit/d_crit^2*state.d*dddp_T;
+      ddpT := density_derp_T(state=state);
+      chi := p_crit/d_crit^2*state.d*ddpT;
 
       delta := state.d/d_crit;
       tau := T_crit/T_ref;
-      dddp_T_ref := 1/(R*T_ref*(1 + 2*delta*f_rd(delta=delta, tau=tau) + delta^2*f_rdd(delta=delta, tau=tau)));
-      chi_ref := p_crit/d_crit^2*state.d*dddp_T_ref*T_ref/state.T;
+      ddpT_ref := 1/(R*T_ref*(1 + 2*delta*f_rd(delta=delta, tau=tau) + delta^2*f_rdd(delta=delta, tau=tau)));
+      chi_ref := p_crit/d_crit^2*state.d*ddpT_ref*T_ref/state.T;
 
       Delta_chi := chi - chi_ref;
 
