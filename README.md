@@ -9,7 +9,7 @@ I am planning to submit this library to the Modelica 2012 conference.
 So far, the fluids n-Butane, R134a and Isobutane are implemented, but not fully validated. 
 
 ### ToDo
-* Add density derivatives.
+* Add setState_Ts (needed for isotherms in h,s-diagram)
 * The next fluids to be implemented are probably 
   * isopentane, 
   * propane, 
