@@ -1,7 +1,7 @@
 within HelmholtzMedia.Examples;
 model State_pT_parameter "calculate state record from pT input"
 
-  package medium = HelmholtzFluids.Butane;
+  package medium = HelmholtzFluids.R134a;
 
   parameter medium.AbsolutePressure p=101325;
   parameter medium.Temperature T=298.15;
@@ -10,19 +10,20 @@ model State_pT_parameter "calculate state record from pT input"
 
   // pT always results in single phase states,
   // so this is a good place to test quantities that are defined for single phase only
-  Interfaces.PartialHelmholtzMedium.Types.DerPressureByDensity dpdT;
-  Interfaces.PartialHelmholtzMedium.Types.DerPressureByTemperature dpTd;
-  Interfaces.PartialHelmholtzMedium.Types.DerEnthalpyByDensity dhdT;
-  Interfaces.PartialHelmholtzMedium.Types.DerEnthalpyByTemperature dhTd;
+  medium.Types.DerPressureByDensity dpdT;
+  medium.Types.DerPressureByTemperature dpTd;
+  medium.Types.DerEnthalpyByDensity dhdT;
+  medium.Types.DerEnthalpyByTemperature dhTd;
 
-  Interfaces.PartialHelmholtzMedium.DerDensityByTemperature ddTh;
-  Interfaces.PartialHelmholtzMedium.DerDensityByPressure ddpT;
-  Interfaces.PartialHelmholtzMedium.DerDensityByTemperature ddTp;
-  Interfaces.PartialHelmholtzMedium.DerDensityByPressure ddph;
-  Interfaces.PartialHelmholtzMedium.DerDensityByEnthalpy ddhp;
+  medium.DerDensityByTemperature ddTh;
+  medium.DerDensityByPressure ddpT;
+  medium.DerDensityByTemperature ddTp;
+  medium.DerDensityByPressure ddph;
+  medium.DerDensityByEnthalpy ddhp;
 
   medium.SpecificHeatCapacity cp;
   medium.SpecificHeatCapacity cv;
+  Interfaces.PartialHelmholtzMedium.Types.JouleThomsonCoefficient mu;
   medium.VelocityOfSound a;
   medium.DynamicViscosity eta;
   medium.ThermalConductivity lambda;
@@ -44,6 +45,7 @@ equation
 
   cp=medium.specificHeatCapacityCp(state);
   cv=medium.specificHeatCapacityCv(state);
+  mu=medium.jouleThomsonCoefficient(state=state);
   a=medium.velocityOfSound(state);
 
   eta=medium.dynamicViscosity(state);

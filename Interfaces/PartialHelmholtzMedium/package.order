@@ -65,6 +65,7 @@ setBubbleState
 setDewState
 density_phX
 saturationTemperature_derp
+saturationPressure_derT
 pressure_derd_T
 pressure_derT_d
 specificEnthalpy_derd_T

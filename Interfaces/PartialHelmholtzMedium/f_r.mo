@@ -16,8 +16,8 @@ protected
 
 algorithm
   f_residual :=
-    sum(p[i,1]*delta^p[i,3]*tau^p[i,2] for i in 1:nPoly)
-  + sum(b[i,1]*delta^b[i,3]*tau^b[i,2]*exp(-delta^b[i,4]) for i in 1:nBwr)
-  + sum(g[i,1]*delta^g[i,3]*tau^g[i,2]*exp(g[i,6]*(delta - g[i,9])^2 + g[i,7]*(tau - g[i,8])^2) for i in 1:nGauss);
+    sum(p[i,1]*tau^p[i,2]*delta^p[i,3] for i in 1:nPoly)
+  + sum(b[i,1]*tau^b[i,2]*delta^b[i,3]*exp(-delta^b[i,4]) for i in 1:nBwr)
+  + sum(g[i,1]*tau^g[i,2]*delta^g[i,3]*exp(g[i,6]*(delta - g[i,9])^2 + g[i,7]*(tau - g[i,8])^2) for i in 1:nGauss);
 
 end f_r;

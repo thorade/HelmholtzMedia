@@ -1,8 +1,6 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
 function dewDensity_T_ANC
   "ancillary function: calculate density of saturated vapor for a given T"
-  import
-    HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel;
 
   input Modelica.SIunits.Temperature T;
   output Modelica.SIunits.Density dvap;

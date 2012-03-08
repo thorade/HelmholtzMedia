@@ -8,6 +8,8 @@ partial package PartialHelmholtzMedium
     AbsolutePressure(min=Modelica.Constants.small, max=1e12),
     SpecificEntropy(min=-Modelica.Constants.inf, max=Modelica.Constants.inf));
 
+import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
+
   constant FluidLimits fluidLimits;
 
   constant HelmholtzCoefficients helmholtzCoefficients;
@@ -972,8 +974,6 @@ Here, the simplified approach as suggested by Olchowy and Sengers is implemented
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
     // inherits input state and output eta
-  import
-    HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel;
 
 protected
     MolarMass MM = fluidConstants[1].molarMass;
@@ -1263,31 +1263,17 @@ The extended version has up to three terms with two parameters each.
   end density_phX;
 
 
-  redeclare function extends saturationTemperature_derp "returns (dT/dp)@sat"
-  // inherited from: PartialTwoPhaseMedium
-  // inherits input p and output dTp
+  redeclare function saturationTemperature_derp "returns (dT/dp)@sat"
 
-  input SaturationProperties sat=setSat_p(p=p)
-    "optional input, if sat state is known";
+  input AbsolutePressure p;
+  output DerTemperatureByPressure dTp;
 
-protected
-    MolarMass MM = fluidConstants[1].molarMass;
-    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
-    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Temperature T_trip=fluidConstants[1].triplePointTemperature;
-    Real tau= T_crit/sat.Tsat "inverse reduced temperature";
-    Real delta_liq = sat.liq.d/d_crit;
-    Real delta_vap = sat.vap.d/d_crit;
+  input SaturationProperties sat=setSat_p(p=p) "optional input sat";
+  // speeds up computation, if sat state is already known
 
   algorithm
       // inverse of (dp/dT)@sat
-      // algorithm by Span(2000) eq. 3.78
-      dTp := ((sat.vap.d-sat.liq.d)*R*(
-        log(sat.vap.d/sat.liq.d)
-        + (f_r(delta=delta_vap,tau=tau)-f_r(delta=delta_liq,tau=tau))
-        - tau*(f_rt(delta=delta_vap,tau=tau)-f_rt(delta=delta_liq,tau=tau))))
-        /(sat.vap.d*sat.liq.d);
+      dTp := 1.0/saturationPressure_derT(T=sat.Tsat,sat=sat);
   end saturationTemperature_derp;
 
 

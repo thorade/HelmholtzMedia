@@ -4,6 +4,7 @@ DensityLiquidModel
 DensityVaporModel
 DerPressureByDensity
 DerPressureByTemperature
+DerTemperatureByPressure
 DerEnthalpyByDensity
 DerEnthalpyByTemperature
 JouleThomsonCoefficient

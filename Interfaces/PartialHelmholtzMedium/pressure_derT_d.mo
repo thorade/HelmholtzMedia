@@ -8,6 +8,6 @@ algorithm
   if (state.phase == 1) then
     dpTd := state.d*f.R*(1 + f.delta*f.rd - f.delta*f.tau*f.rtd);
   elseif (state.phase == 2) then
-    dpTd := 1.0/saturationTemperature_derp(p=state.p);
+    dpTd := saturationPressure_derT(T=state.T);
   end if;
 end pressure_derT_d;

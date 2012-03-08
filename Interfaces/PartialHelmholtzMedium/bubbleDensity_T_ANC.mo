@@ -1,8 +1,6 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
 function bubbleDensity_T_ANC
   "ancillary function: calculate density of saturated liquid for a given T"
-  import
-    HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel;
 
   input Modelica.SIunits.Temperature T;
   output Modelica.SIunits.Density dliq;
