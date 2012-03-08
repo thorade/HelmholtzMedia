@@ -9,6 +9,6 @@ algorithm
   if (state.phase == 1) then
     dhTd := f.R*(1 - f.tau^2*(f.itt+f.rtt) + f.delta*f.rd - f.tau*f.delta*f.rtd);
   elseif (state.phase == 2) then
-    dhTd := Modelica.Constants.small; // zero
+    dhTd := 5000000000000;
   end if;
 end specificEnthalpy_derT_d;

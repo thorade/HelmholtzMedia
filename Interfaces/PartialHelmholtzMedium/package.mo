@@ -770,7 +770,7 @@ protected
     elseif (state.phase == 2) then
       // assert(false, "specificHeatCapacityCv warning: using cv in two-phase region", level=AssertionLevel.warning);
       // two-phase definition as in Span(2000), eq. 3.79 + 3.80 + 3.86
-      // Attention: wron sign in eq. 3.80
+      // Attention: wrong sign in eq. 3.80
       sat := setSat_T(T=state.T);
       dpT := saturationPressure_derT(T=state.T, sat=sat);
       f_liq := setHelmholtzDerivs(T=state.T, d=sat.liq.d, phase=1);
@@ -782,11 +782,11 @@ protected
 
       delta_liq := sat.liq.d/d_crit;
       delta_vap := sat.vap.d/d_crit;
+      Q := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
 
       cv_lim2liq := R*(-tau^2*(f_liq.itt + f_liq.rtt)) + state.T/sat.liq.d^2 * (dpTd_liq-dpT)^2/dpdT_liq;
       cv_lim2vap := R*(-tau^2*(f_vap.itt + f_vap.rtt)) + state.T/sat.vap.d^2 * (dpTd_vap-dpT)^2/dpdT_vap;
 
-      Q := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
       cv := cv_lim2liq + Q*(cv_lim2vap-cv_lim2liq);
     end if;
 
@@ -1306,15 +1306,18 @@ The extended version has up to three terms with two parameters each.
     output DerDensityByTemperature ddTh "Density derivative w.r.t. temperature";
 
 protected
-    Types.DerEnthalpyByTemperature dhTd = specificEnthalpy_derT_d(state=state, f=f);
-    Types.DerEnthalpyByDensity dhdT = specificEnthalpy_derd_T(state=state, f=f);
+    Types.DerEnthalpyByTemperature dhTd;
+    Types.DerEnthalpyByDensity dhdT;
     SaturationProperties sat;
 
   algorithm
     if (state.phase == 1) then
+      dhTd :=specificEnthalpy_derT_d(state=state, f=f);
+      dhdT :=specificEnthalpy_derd_T(state=state, f=f);
       ddTh := -dhTd/dhdT;
     elseif (state.phase == 2) then
       sat := setSat_T(T=state.T);
+      ddTh := 50000000000000000;
     end if;
   end density_derT_h;
 
@@ -1325,9 +1328,13 @@ protected
   //input HelmholtzDerivs is optional and will be used for single-phase only
     input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
 
+protected
+    Types.DerPressureByDensity dpdT;
+
   algorithm
     if (state.phase == 1) then
-      ddpT := 1.0/pressure_derd_T(state=state, f=f);
+      dpdT := pressure_derd_T(state=state, f=f);
+      ddpT := 1.0/dpdT;
     elseif (state.phase == 2) then
       ddpT := Modelica.Constants.inf; // divide by zero
     end if;
@@ -1340,9 +1347,15 @@ protected
   //input HelmholtzDerivs is optional and will be used for single-phase only
     input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
 
+protected
+    Types.DerPressureByTemperature dpTd;
+    Types.DerPressureByDensity dpdT;
+
   algorithm
     if (state.phase == 1) then
-      ddTp := -pressure_derT_d(state=state, f=f)/pressure_derd_T(state=state, f=f);
+      dpdT := pressure_derd_T(state=state, f=f);
+      dpTd := pressure_derT_d(state=state, f=f);
+      ddTp := -dpTd/dpdT;
     elseif (state.phase == 2) then
       ddTp := Modelica.Constants.inf; // divide by zero
     end if;
@@ -1356,17 +1369,20 @@ protected
     input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
 
 protected
-    Types.DerPressureByDensity dpdT = pressure_derd_T(state=state, f=f);
-    Types.DerPressureByTemperature dpTd = pressure_derT_d(state=state, f=f);
-          DerDensityByTemperature ddTh = density_derT_h(state=state, f=f);
+    Types.DerPressureByDensity dpdT;
+    Types.DerPressureByTemperature dpTd;
+          DerDensityByTemperature ddTh;
     SaturationProperties sat;
 
   algorithm
     if (state.phase == 1) then
+      dpdT :=pressure_derd_T(state=state, f=f);
+      dpTd :=pressure_derT_d(state=state, f=f);
+      ddTh :=density_derT_h(state=state, f=f);
       ddph := 1.0/(dpdT + dpTd/ddTh);
     elseif (state.phase == 2) then
       sat := setSat_T(T=state.T);
-      ddph := (sat.liq.d-sat.vap.d)/(5000000000000000000);
+      ddph := 5000000000000000000;
     end if;
   end density_derp_h;
 
@@ -1378,13 +1394,16 @@ protected
     input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
 
 protected
-    Types.DerEnthalpyByDensity dhdT = specificEnthalpy_derd_T(state=state, f=f);
-    Types.DerEnthalpyByTemperature dhTd = specificEnthalpy_derT_d(state=state, f=f);
-          DerDensityByTemperature ddTp = density_derT_p(state=state, f=f);
+    Types.DerEnthalpyByDensity dhdT;
+    Types.DerEnthalpyByTemperature dhTd;
+          DerDensityByTemperature ddTp;
     SaturationProperties sat;
 
   algorithm
     if (state.phase == 1) then
+      dhdT :=specificEnthalpy_derd_T(state=state, f=f);
+      dhTd :=specificEnthalpy_derT_d(state=state, f=f);
+      ddTp :=density_derT_p(state=state, f=f);
       ddhp := 1.0/(dhdT + dhTd/ddTp);
     elseif (state.phase == 2) then
       sat := setSat_T(T=state.T);
