@@ -1,8 +1,9 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
 function jouleThomsonCoefficient
   "returns Joule-Thomson-Coefficient (dT/dp)@h=const"
-input ThermodynamicState state;
-input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+  input ThermodynamicState state;
+//input HelmholtzDerivs is optional and will be used for single-phase only
+  input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
 output Types.JouleThomsonCoefficient mu;
 
 algorithm

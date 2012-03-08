@@ -1,8 +1,9 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
 function specificEnthalpy_derd_T "returns enthalpy derivative (dh/dd)@T=const"
-input ThermodynamicState state;
-input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
-output Types.DerEnthalpyByDensity dhdT;
+  input ThermodynamicState state;
+//input HelmholtzDerivs is optional and will be used for single-phase only
+  input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+  output DerEnthalpyByDensity dhdT;
 
 protected
   SaturationProperties sat;

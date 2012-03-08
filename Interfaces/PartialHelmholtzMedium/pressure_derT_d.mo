@@ -1,8 +1,9 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
 function pressure_derT_d "returns pressure derivative (dp/dT)@d=const"
-input ThermodynamicState state;
-input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
-output Types.DerPressureByTemperature dpTd;
+  input ThermodynamicState state;
+//input HelmholtzDerivs is optional and will be used for single-phase only
+  input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+  output DerPressureByTemperature dpTd;
 
 algorithm
   if (state.phase == 1) then

@@ -18,9 +18,12 @@ protected
   Real delta_vap = sat.vap.d/d_crit;
 
 algorithm
-    // algorithm by Span(2000) eq. 3.78
-    dpT := (sat.vap.d*sat.liq.d)/(sat.vap.d-sat.liq.d)*R*(
-        log(sat.vap.d/sat.liq.d)
-        +     (f_r( tau=tau, delta=delta_vap)-f_r( tau=tau,delta=delta_liq))
-        - tau*(f_rt(tau=tau, delta=delta_vap)-f_rt(tau=tau,delta=delta_liq)));
+// algorithm by Span(2000) eq. 3.78
+/* dpT :=  (sat.vap.d*sat.liq.d)/(sat.vap.d-sat.liq.d)*R*(
+       log(sat.vap.d/sat.liq.d)
+       +     (f_r( tau=tau, delta=delta_vap)-f_r( tau=tau,delta=delta_liq))
+       - tau*(f_rt(tau=tau, delta=delta_vap)-f_rt(tau=tau,delta=delta_liq)));
+*/
+// Clausius-Clapeyron, yields same results
+   dpT := (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);
 end saturationPressure_derT;

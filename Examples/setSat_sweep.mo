@@ -1,7 +1,9 @@
 within HelmholtzMedia.Examples;
 model setSat_sweep
   package medium = HelmholtzFluids.R134a;
-  medium.SaturationProperties satProps;
+  medium.SaturationProperties sat;
+//medium.ThermodynamicState liq;
+//medium.ThermodynamicState vap;
 
 protected
   constant medium.Temperature Tmin=medium.fluidLimits.TMIN;
@@ -24,8 +26,11 @@ protected
     startTime=1) annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
 
 equation
-  satProps = medium.setSat_T(T=Tramp.y);
-//satProps = medium.setSat_p(p=pramp.y);
+  sat = medium.setSat_T(T=Tramp.y);
+//sat = medium.setSat_p(p=pramp.y);
+
+//liq = sat.liq;
+//vap = sat.vap;
 
   annotation (experiment(
       StopTime=10,
