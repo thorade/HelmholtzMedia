@@ -813,11 +813,17 @@ protected
   //input HelmholtzDerivs is optional and will be used for single-phase only
     input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
 
+protected
+    Types.DerPressureByTemperature dpTd;
+    Types.DerPressureByDensity dpdT;
+
   algorithm
     if (state.phase == 1) then
       // Attention: wrong in Span(2000) table 3.10
       // correct in Lemmon(2009)
-      beta := 1/state.d*pressure_derT_d(state=state, f=f)/pressure_derd_T(state=state, f=f);
+      dpTd := pressure_derT_d(state=state, f=f);
+      dpdT := pressure_derd_T(state=state, f=f);
+      beta := 1/state.d*dpTd/dpTd;
     elseif (state.phase == 2) then
       beta := Modelica.Constants.small; // zero
     end if;
@@ -830,9 +836,13 @@ protected
   //input HelmholtzDerivs is optional and will be used for single-phase only
     input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
 
+protected
+    Types.DerPressureByDensity dpdT;
+
   algorithm
     if (state.phase == 1) then
-      kappa := 1/(state.d*pressure_derd_T(state, f=f));
+      dpdT := pressure_derd_T(state=state, f=f);
+      kappa := 1/(state.d*dpdT);
     elseif (state.phase == 2) then
       kappa := Modelica.Constants.inf; // divide by zero
     end if;

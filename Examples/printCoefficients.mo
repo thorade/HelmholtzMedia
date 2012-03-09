@@ -7,7 +7,7 @@ algorithm
     // if printing fails with error "Room to allocate string"
     // go to $Dymola$/source/matrixop.h and increase the size of simplestring by a factor of 10
 
-    Modelica.Utilities.Streams.print("===============================================================================", "printlog.txt");
+    Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|", "printlog.txt");
     Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealLog), "printlog.txt");
     Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealPower), "printlog.txt");
     Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealEinstein), "printlog.txt");
