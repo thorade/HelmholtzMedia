@@ -1,5 +1,5 @@
 within HelmholtzMedia.Examples;
-model Test_HelmholtzDerivatives
+model Validate_HelmholtzDerivatives
   package medium = HelmholtzFluids.Butane;
   Real tau;
   Real delta;
@@ -44,4 +44,4 @@ algorithm
     ar_tau_tau :=HelmholtzFluids.Interfaces.PartialHelmholtzMedium.a_rtt(delta=delta, tau=tau);
 
   annotation (experiment(StopTime=10), __Dymola_experimentSetupOutput);
-end Test_HelmholtzDerivatives;
+end Validate_HelmholtzDerivatives;

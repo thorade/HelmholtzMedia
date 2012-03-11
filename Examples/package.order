@@ -11,6 +11,7 @@ State_ps_sweep
 BaseProps_sweep
 setSat_sweep
 Test_inverse
-Test_HelmholtzDerivatives
 Test_AncillaryFunctions
+Validate_HelmholtzDerivatives
+Validate_Derivatives
 Tests

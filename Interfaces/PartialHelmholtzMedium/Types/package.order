@@ -2,9 +2,11 @@ DynamicViscosityModel
 PressureSaturationModel
 DensityLiquidModel
 DensityVaporModel
+DerTemperatureByPressure
 DerPressureByDensity
 DerPressureByTemperature
-DerTemperatureByPressure
 DerEnthalpyByDensity
 DerEnthalpyByTemperature
+DerEnergyByDensity
+DerEnergyByTemperature
 JouleThomsonCoefficient
