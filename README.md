@@ -10,9 +10,11 @@ So far, the fluids n-Butane, R134a and Isobutane are implemented, but not fully 
 
 ### ToDo
 * Add setState_Ts (needed for isotherms in h,s-diagram)
+* Add derivatives in two-phase region
 * The next fluids to be implemented are probably 
   * isopentane, 
   * propane, 
   * ammonia, 
-  * CO2 
-  * and other possible working fluids for Organic-Rankine-Cycles.
+  * CO2,
+  * working fluids for Organic-Rankine-Cycles,
+  * water.

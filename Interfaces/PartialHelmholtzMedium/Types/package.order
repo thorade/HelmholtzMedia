@@ -9,4 +9,6 @@ DerEnthalpyByDensity
 DerEnthalpyByTemperature
 DerEnergyByDensity
 DerEnergyByTemperature
+DerEntropyByDensity
+DerEntropyByTemperature
 JouleThomsonCoefficient
