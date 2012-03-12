@@ -13,5 +13,6 @@ setSat_sweep
 Test_inverse
 Test_AncillaryFunctions
 Validate_HelmholtzDerivatives
-Validate_Derivatives
+Validate_Derivatives_SinglePhase
+Validate_Derivatives_TwoPhase
 Tests

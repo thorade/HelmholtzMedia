@@ -352,6 +352,7 @@ protected
       Q := (1/d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
       state.p := sat.psat;
       state.h := sat.liq.h + Q*(sat.vap.h - sat.liq.h);
+      state.u := sat.liq.u + Q*(sat.vap.u - sat.liq.u);
       state.s := sat.liq.s + Q*(sat.vap.s - sat.liq.s);
     else
       // force single-phase
@@ -483,6 +484,7 @@ protected
       state.T := sat.Tsat;
       Q := (h - sat.liq.h)/(sat.vap.h - sat.liq.h);
       state.d := 1/(1/sat.liq.d + Q*(1/sat.vap.d - 1/sat.liq.d));
+      state.u := sat.liq.u + Q*(sat.vap.u - sat.liq.u);
       state.s := sat.liq.s + Q*(sat.vap.s - sat.liq.s);
     else
       // force single-phase
@@ -591,6 +593,7 @@ protected
       Q := (s - sat.liq.s)/(sat.vap.s - sat.liq.s);
       state.d := 1/(1/sat.liq.d + Q*(1/sat.vap.d - 1/sat.liq.d));
       state.h := sat.liq.h + Q*(sat.vap.h - sat.liq.h);
+      state.u := sat.liq.u + Q*(sat.vap.u - sat.liq.u);
     else
       // force single-phase
       state.T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(

@@ -1,5 +1,5 @@
 within HelmholtzMedia.Examples;
-model Validate_Derivatives
+model Validate_Derivatives_SinglePhase
   "compare analytical derivatives to numerical derivatives"
 
   package medium = HelmholtzFluids.R134a;
@@ -74,4 +74,4 @@ equation
   Modelica.Utilities.Streams.print("(ds/dT)@d=const  numerical= " + String(dsTd_numerical));
 
   annotation (experiment(NumberOfIntervals=1), __Dymola_experimentSetupOutput);
-end Validate_Derivatives;
+end Validate_Derivatives_SinglePhase;
