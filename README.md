@@ -10,6 +10,7 @@ So far, the fluids n-Butane, R134a and Isobutane are implemented, but not fully 
 
 ### ToDo
 * Add setState_Ts (needed for isotherms in h,s-diagram)
+* Add setState_Th (needed for numerical validation of (dd/dT)@h=const)
 * Add derivatives in two-phase region
 * The next fluids to be implemented are probably 
   * isopentane, 
