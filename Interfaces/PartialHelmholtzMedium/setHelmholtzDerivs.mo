@@ -3,7 +3,7 @@ function setHelmholtzDerivs
 
   input Temperature T;
   input Density d;
-  input FixedPhase phase(min=0, max=2);
+  input FixedPhase phase=1;
   output HelmholtzDerivs f;
 
 protected

@@ -28,6 +28,7 @@ import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
   redeclare function setSat_T
   "iterative calculation of saturation properties from EoS with Newton-Raphson algorithm"
     input Temperature T;
+    input FixedPhase phase=2;
     output SaturationProperties sat;
 
 protected
@@ -56,6 +57,7 @@ protected
     Real tolerance=1e-9 "Tolerance for sum of Delta_J and Delta_K";
 
   algorithm
+  if (phase==2) then
     // print("sat_of_T_EoS: T="+String(T),"printlog.txt");
     assert(T >= T_trip, "setSat_T error: Temperature is lower than triple-point temperature");
     assert(T <= T_crit, "setSat_T error: Temperature is higher than critical temperature");
@@ -110,6 +112,8 @@ protected
           T=T,
           phase=1);
     sat.psat := sat.liq.p;
+  // else: do nothing
+  end if;
 
     annotation (Documentation(info="<html>
 This function iteratively determines the saturation state  for a given temperature 
@@ -130,6 +134,7 @@ with a Newton-Raphson approach for simultaneous equations.
   redeclare function setSat_p
   "iterative calculation of saturation properties from EoS for a given pressure"
     input AbsolutePressure p;
+    input FixedPhase phase=2;
     input Temperature T_guess=saturationTemperature(p=p); // optional input with default value
     output SaturationProperties sat;
 
@@ -142,6 +147,7 @@ protected
     Real tolerance=1e-9 "relative Tolerance for Temperature";
 
   algorithm
+  if (phase==2) then
     assert(p >= p_trip, "setSat_p error: Pressure is lower than triple-point pressure");
     assert(p <= p_crit, "setSat_p error: Pressure is higher than critical pressure");
 
@@ -152,7 +158,8 @@ protected
           tolerance=tolerance);
 
     sat := setSat_T(T=T);
-
+  // else: do nothing
+  end if;
   end setSat_p;
 
 
@@ -742,6 +749,8 @@ protected
   //input state and output cv are inherited from PartialMedium
   //input HelmholtzDerivs is optional and will be used for single-phase only
     input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+  //input sat is optional and will be used for two-phase only
+    input SaturationProperties sat=setSat_T(T=state.T, phase=state.phase);
 
 protected
     MolarMass MM = fluidConstants[1].molarMass;
@@ -751,7 +760,6 @@ protected
     Real delta=state.d/d_crit "reduced density";
     Real tau=T_crit/state.T "inverse reduced temperature";
 
-    SaturationProperties sat;
     DerPressureByTemperature dpT;
     HelmholtzDerivs f_liq;
     HelmholtzDerivs f_vap;
@@ -759,8 +767,6 @@ protected
     DerPressureByTemperature dpTd_vap;
     DerPressureByDensity dpdT_liq;
     DerPressureByDensity dpdT_vap;
-    Real delta_liq;
-    Real delta_vap;
     SpecificHeatCapacity cv_lim2liq
     "limiting cv when approaching liq from within 2phase";
     SpecificHeatCapacity cv_lim2vap
@@ -774,7 +780,6 @@ protected
       // assert(false, "specificHeatCapacityCv warning: using cv in two-phase region", level=AssertionLevel.warning);
       // two-phase definition as in Span(2000), eq. 3.79 + 3.80 + 3.86
       // Attention: wrong sign in eq. 3.80
-      sat := setSat_T(T=state.T);
       dpT := saturationPressure_derT(T=state.T, sat=sat);
       f_liq := setHelmholtzDerivs(T=state.T, d=sat.liq.d, phase=1);
       f_vap := setHelmholtzDerivs(T=state.T, d=sat.vap.d, phase=1);
@@ -783,14 +788,12 @@ protected
       dpdT_liq := pressure_derd_T(state=sat.liq, f=f_liq);
       dpdT_vap := pressure_derd_T(state=sat.vap, f=f_vap);
 
-      delta_liq := sat.liq.d/d_crit;
-      delta_vap := sat.vap.d/d_crit;
-      Q := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
-
       cv_lim2liq := R*(-tau^2*(f_liq.itt + f_liq.rtt)) + state.T/sat.liq.d^2 * (dpTd_liq-dpT)^2/dpdT_liq;
       cv_lim2vap := R*(-tau^2*(f_vap.itt + f_vap.rtt)) + state.T/sat.vap.d^2 * (dpTd_vap-dpT)^2/dpdT_vap;
 
+      Q := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
       cv := cv_lim2liq + Q*(cv_lim2vap-cv_lim2liq);
+      // cv := (Q*cv_lim2vap+(1-Q)*cv_lim2liq) - (sat.vap.u-sat.liq.u)/(sat.vap.d-sat.liq.d)*(Q*density_derT+(1-Q)/sat.liq.d);
     end if;
 
   end specificHeatCapacityCv;
@@ -1316,12 +1319,13 @@ The extended version has up to three terms with two parameters each.
     input ThermodynamicState state "thermodynamic state record";
   //input HelmholtzDerivs is optional and will be used for single-phase only
     input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+  //input sat is optional and will be used for two-phase only
+    input SaturationProperties sat=setSat_T(T=state.T, phase=state.phase);
     output DerDensityByTemperature ddTh "Density derivative w.r.t. temperature";
 
 protected
     Types.DerEnthalpyByTemperature dhTd;
     Types.DerEnthalpyByDensity dhdT;
-    SaturationProperties sat;
 
   algorithm
     if (state.phase == 1) then
@@ -1329,7 +1333,6 @@ protected
       dhdT :=specificEnthalpy_derd_T(state=state, f=f);
       ddTh := -dhTd/dhdT;
     elseif (state.phase == 2) then
-      sat := setSat_T(T=state.T);
       ddTh := 50000000000000000;
     end if;
   end density_derT_h;
@@ -1380,22 +1383,22 @@ protected
   //input state and output ddph are inherited
   //input HelmholtzDerivs is optional and will be used for single-phase only
     input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+  //input sat is optional and will be used for two-phase only
+    input SaturationProperties sat=setSat_T(T=state.T, phase=state.phase);
 
 protected
     Types.DerPressureByDensity dpdT;
-    Types.DerPressureByTemperature dpTd;
+    Types.DerPressureByTemperature dpTd= pressure_derT_d(state=state, f=f, sat=sat);
           DerDensityByTemperature ddTh;
-    SaturationProperties sat;
 
   algorithm
     if (state.phase == 1) then
-      dpdT :=pressure_derd_T(state=state, f=f);
-      dpTd :=pressure_derT_d(state=state, f=f);
-      ddTh :=density_derT_h(state=state, f=f);
+      dpdT := pressure_derd_T(state=state, f=f);
+      ddTh := density_derT_h(state=state, f=f);
       ddph := 1.0/(dpdT + dpTd/ddTh);
     elseif (state.phase == 2) then
-      sat := setSat_T(T=state.T);
-      ddph := 5000000000000000000;
+      ddph := state.d^2/state.T*specificHeatCapacityCv(state=state, sat=sat)/dpTd^2
+              + state.d/state.T/dpTd;
     end if;
   end density_derp_h;
 
@@ -1405,12 +1408,13 @@ protected
   //input state and output ddhp are inherited
   //input HelmholtzDerivs is optional and will be used for single-phase only
     input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+  //input sat is optional and will be used for two-phase only
+    input SaturationProperties sat=setSat_T(T=state.T, phase=state.phase);
 
 protected
     Types.DerEnthalpyByDensity dhdT;
     Types.DerEnthalpyByTemperature dhTd;
           DerDensityByTemperature ddTp;
-    SaturationProperties sat;
 
   algorithm
     if (state.phase == 1) then
@@ -1419,8 +1423,9 @@ protected
       ddTp :=density_derT_p(state=state, f=f);
       ddhp := 1.0/(dhdT + dhTd/ddTp);
     elseif (state.phase == 2) then
-      sat := setSat_T(T=state.T);
-      ddhp := (sat.liq.d-sat.vap.d)/(sat.liq.h-sat.vap.h);
+      // dvhp = (v"-v')/(h"-h')
+      // ddhp = -d^2 * dvhp
+      ddhp := -state.d^2*(1/sat.liq.d-1/sat.vap.d)/(sat.liq.h-sat.vap.h);
     end if;
   end density_derh_p;
 
