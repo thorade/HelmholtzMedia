@@ -75,13 +75,8 @@ equation
 
   Modelica.Utilities.Streams.print(" ");
   // Modelica.Utilities.Streams.print("Enthalpy");
-  // check (dh/dd)@T=const
-  // dhdT_analytical = medium.specificEnthalpy_derd_T(state=state, f=f);
-  // dhdT_numerical = (d_plus.h-d_minus.h)/(d_plus.d-d_minus.d);
-  // Modelica.Utilities.Streams.print("(dh/dd)@T=const analytical= " + String(dhdT_analytical));
-  // Modelica.Utilities.Streams.print("(dh/dd)@T=const  numerical= " + String(dhdT_numerical));
-  // check (dh/dT)@d=const
-  dhT_liq_analytical = medium.specificEnthalpy_derT_d(state=sat.liq);
+  // check (dh/dT)@liq
+  dhT_liq_analytical = medium.specificHeatCapacityCp(state=sat.liq) +medium.isothermalThrottlingCoefficient(state=sat.liq)*medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
   dhT_liq_numerical = (sat_Tplus.liq.h-sat_Tminus.liq.h)/(sat_Tplus.liq.T-sat_Tminus.liq.T);
   Modelica.Utilities.Streams.print("(dh/dT)@liq analytical= " + String(dhT_liq_analytical));
   Modelica.Utilities.Streams.print("(dh/dT)@liq  numerical= " + String(dhT_liq_numerical));

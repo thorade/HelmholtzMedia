@@ -53,7 +53,7 @@ velocityOfSound
 isobaricExpansionCoefficient
 isothermalCompressibility
 jouleThomsonCoefficient
-isothermThrottlingCoefficient
+isothermalThrottlingCoefficient
 thermalConductivity
 dynamicViscosity
 surfaceTension
