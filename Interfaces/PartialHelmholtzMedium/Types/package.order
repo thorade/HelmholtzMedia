@@ -7,8 +7,11 @@ DerPressureByDensity
 DerPressureByTemperature
 DerEnthalpyByDensity
 DerEnthalpyByTemperature
+DerEnthalpyByPressure
 DerEnergyByDensity
 DerEnergyByTemperature
+DerEnergyByPressure
 DerEntropyByDensity
 DerEntropyByTemperature
+DerEntropyByPressure
 JouleThomsonCoefficient

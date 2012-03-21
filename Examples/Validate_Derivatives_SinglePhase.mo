@@ -91,7 +91,7 @@ equation
   Modelica.Utilities.Streams.print("(dg/dd)@T=const analytical= " + String(dgdT_analytical));
   Modelica.Utilities.Streams.print("(dg/dd)@T=const  numerical= " + String(dgdT_numerical));
   // check (dg/dT)@d=const
-  dgTd_analytical = f.R*(f.i+f.r+1+f.delta*f.rd -f.tau*(f.it+f.rt) - f.tau*f.delta*f.rtd);
+  dgTd_analytical = f.R*(f.i+f.r + 1+f.delta*f.rd -f.tau*(f.it+f.rt) - f.tau*f.delta*f.rtd);
   dgTd_numerical = ((T_plus.h-T_plus.T*T_plus.s)-(T_minus.h-T_minus.T*T_minus.s))/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("(dg/dT)@d=const analytical= " + String(dgTd_analytical));
   Modelica.Utilities.Streams.print("(dg/dT)@d=const  numerical= " + String(dgTd_numerical));

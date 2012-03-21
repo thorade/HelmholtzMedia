@@ -112,7 +112,8 @@ protected
           T=T,
           phase=1);
     sat.psat := sat.liq.p;
-  // else: do nothing
+  // elseif (phase==1) then
+  // print("sat_of_T_EoS has been called from single-phase state","printlog.txt");
   end if;
 
     annotation (Documentation(info="<html>
