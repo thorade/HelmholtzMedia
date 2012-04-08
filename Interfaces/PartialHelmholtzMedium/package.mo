@@ -171,19 +171,16 @@ protected
 protected
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real tau=T_crit/T "inverse reduced temperature";
-    Real T_theta=1 - T/T_crit;
+    Real T_theta=1-T/T_crit;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
-    Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation,
-        1);
+    Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
     Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
-    Real[nPressureSaturation] theta=ancillaryCoefficients.pressureSaturation[
-        :, 2];
+    Real[nPressureSaturation] theta=ancillaryCoefficients.pressureSaturation[:, 2];
 
   algorithm
     assert(T <= T_crit, "saturationPressure error: Temperature is higher than critical temperature");
-    p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:
-      nPressureSaturation));
+    p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation));
 
     // this is an ancillary forward function
     // the corresponding iterative backward function is saturationTemperature(p)
@@ -488,7 +485,7 @@ protected
     state.p := p;
     state.h := h;
     if (state.phase == 2) then
-      // force two-phase
+      // force two-phase, SaturationProperties are already known
       state.T := sat.Tsat;
       Q := (h - sat.liq.h)/(sat.vap.h - sat.liq.h);
       state.d := 1/(1/sat.liq.d + Q*(1/sat.vap.d - 1/sat.liq.d));
@@ -680,7 +677,7 @@ protected
     end if;
 
     d := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-          function density_pT_RES(T=T, p=p),
+         function density_pT_RES(T=T, p=p),
           u_min=dmin,
           u_max=dmax,
           tolerance=tolerance);
@@ -1016,8 +1013,7 @@ protected
     MolarMass MM = fluidConstants[1].molarMass;
     SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
     Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-    Density d_red_residual=fluidConstants[1].molarMass/
-        dynamicViscosityCoefficients.reducingMolarVolume_residual;
+    Density d_red_residual=fluidConstants[1].molarMass/dynamicViscosityCoefficients.reducingMolarVolume_residual;
     Real delta "reduced density";
     Real delta_exp "reduced density in exponential term";
     Real delta_0 "close packed density";
@@ -1029,20 +1025,14 @@ protected
     Real T_star "reduced temperature";
     Real tau "reduced temperature";
 
-    Real[size(dynamicViscosityCoefficients.a, 1),2] a=
-        dynamicViscosityCoefficients.a;
-    Real[size(dynamicViscosityCoefficients.b, 1),2] b=
-        dynamicViscosityCoefficients.b;
+    Real[size(dynamicViscosityCoefficients.a, 1),2] a=dynamicViscosityCoefficients.a;
+    Real[size(dynamicViscosityCoefficients.b, 1),2] b=dynamicViscosityCoefficients.b;
 
     Boolean hasGeneralizedDelta0=dynamicViscosityCoefficients.hasGeneralizedDelta0;
-    Real[size(dynamicViscosityCoefficients.g, 1),2] g=
-        dynamicViscosityCoefficients.g;
-    Real[size(dynamicViscosityCoefficients.e, 1),5] e=
-        dynamicViscosityCoefficients.e;
-    Real[size(dynamicViscosityCoefficients.nu_po, 1),5] nu_po=
-        dynamicViscosityCoefficients.nu_po;
-    Real[size(dynamicViscosityCoefficients.de_po, 1),5] de_po=
-        dynamicViscosityCoefficients.de_po;
+    Real[size(dynamicViscosityCoefficients.g, 1),2] g=dynamicViscosityCoefficients.g;
+    Real[size(dynamicViscosityCoefficients.e, 1),5] e=dynamicViscosityCoefficients.e;
+    Real[size(dynamicViscosityCoefficients.nu_po, 1),5] nu_po=dynamicViscosityCoefficients.nu_po;
+    Real[size(dynamicViscosityCoefficients.de_po, 1),5] de_po=dynamicViscosityCoefficients.de_po;
     // Real[size(dynamicViscosityCoefficients.nu_ex,1),5] nu_ex=dynamicViscosityCoefficients.nu_ex;
     // Real[size(dynamicViscosityCoefficients.de_ex,1),5] de_ex=dynamicViscosityCoefficients.de_ex;
 
@@ -1055,11 +1045,11 @@ protected
     Real xnum=0 "RefProp   numerator temporary variable";
     Real xden=0 "RefProp denominator temporary variable";
 
-    Real etf_red_0=dynamicViscosityCoefficients.reducingViscosity_0;
-    Real etf_red_residual=dynamicViscosityCoefficients.reducingViscosity_residual;
+    Real eta_red_0=dynamicViscosityCoefficients.reducingViscosity_0;
+    Real eta_red_residual=dynamicViscosityCoefficients.reducingViscosity_residual;
     DynamicViscosity eta_0=0 "zero density contribution";
     DynamicViscosity eta_1=0 "initial density contribution";
-    DynamicViscosity etf_r=0 "residual viscosity";
+    DynamicViscosity eta_r=0 "residual viscosity";
     constant Real micro=1e-6;
 
   algorithm
@@ -1071,7 +1061,7 @@ protected
     Omega := exp(sum(a[i, 1]*(T_star)^a[i, 2] for i in 1:size(a, 1)));
     tau := state.T/T_red_0;
     eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);
-    eta_0 := eta_0*etf_red_0;
+    eta_0 := eta_0*eta_red_0;
 
     // inital density contribution
     // using the second viscosity virial coefficient B
@@ -1103,7 +1093,7 @@ protected
       if (e[i, 5] > 0) then
         visci := visci*exp(-delta_exp^e[i, 5]);
       end if;
-      etf_r := etf_r + visci;
+      eta_r := etf_r + visci;
     end for;
 
     for i in 1:size(nu_po, 1) loop
@@ -1122,12 +1112,12 @@ protected
         xden := xden*exp(-delta_exp^de_po[i, 5]);
       end if;
     end for;
-    etf_r := etf_r + xnum/xden;
-    etf_r := etf_r*etf_red_residual;
+    eta_r := etf_r + xnum/xden;
+    eta_r := etf_r*eta_red_residual;
     // exponential terms not yet implemented!!
 
     // RefProp results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
-    eta := micro*(eta_0 + eta_1 + etf_r);
+    eta := micro*(eta_0 + eta_1 + eta_r);
 
     /* // following lines are for debugging only
   Modelica.Utilities.Streams.print("===========================================");
@@ -1145,7 +1135,7 @@ protected
   Modelica.Utilities.Streams.print("    eta_1 = " + String(eta_1));
   Modelica.Utilities.Streams.print("  delta_0 = " + String(delta_0));
   Modelica.Utilities.Streams.print("     xnum = " + String(xnum) + " and xden = " + String(xden));
-  Modelica.Utilities.Streams.print("    etf_r = " + String(etf_r));
+  Modelica.Utilities.Streams.print("    eta_r = " + String(eta_r));
   Modelica.Utilities.Streams.print("      eta = " + String(eta));
   Modelica.Utilities.Streams.print("===========================================");
   */
@@ -1157,7 +1147,7 @@ This model should return results identical to the RefProp VS1 model.
 The viscosity is split into three contributions: 
 zero density (ideal gas) viscosity eta_0, 
 initial density contribution eta_1
-and residual contribution etf_r.
+and residual contribution eta_r.
 
 This allows to develop functions for each contribution seperately.
 The so called background viscosity is the sum of initial and residual viscosity.
@@ -1330,8 +1320,8 @@ protected
 
   algorithm
     if (state.phase == 1) then
-      dhTd :=specificEnthalpy_derT_d(state=state, f=f);
-      dhdT :=specificEnthalpy_derd_T(state=state, f=f);
+      dhTd := specificEnthalpy_derT_d(state=state, f=f);
+      dhdT := specificEnthalpy_derd_T(state=state, f=f);
       ddTh := -dhTd/dhdT;
     elseif (state.phase == 2) then
       ddTh := 50000000000000000;
@@ -1419,9 +1409,9 @@ protected
 
   algorithm
     if (state.phase == 1) then
-      dhdT :=specificEnthalpy_derd_T(state=state, f=f);
-      dhTd :=specificEnthalpy_derT_d(state=state, f=f);
-      ddTp :=density_derT_p(state=state, f=f);
+      dhdT := specificEnthalpy_derd_T(state=state, f=f);
+      dhTd := specificEnthalpy_derT_d(state=state, f=f);
+      ddTp := density_derT_p(state=state, f=f);
       ddhp := 1.0/(dhdT + dhTd/ddTp);
     elseif (state.phase == 2) then
       // dvhp = (v"-v')/(h"-h')
