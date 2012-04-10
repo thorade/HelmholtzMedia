@@ -127,6 +127,7 @@ package Isobutane "Isobutane data, copied from RefProp Isobutane.fld"
   final constant Interfaces.PartialHelmholtzMedium.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsIsobutane(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
+    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
     sigma=0.46445,
     epsilon_kappa=280.51,
     CET=[

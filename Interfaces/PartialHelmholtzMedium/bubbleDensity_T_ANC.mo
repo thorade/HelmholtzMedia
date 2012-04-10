@@ -6,13 +6,13 @@ function bubbleDensity_T_ANC
   output Modelica.SIunits.Density dliq;
 
 protected
+  DensityLiquidModel densityLiquidModel=ancillaryCoefficients.densityLiquidModel;
   Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
   Real delta "reduced density";
   Temperature T_crit=fluidConstants[1].criticalTemperature;
   Real T_theta;
   Real tau=T_crit/T "inverse reduced temperature";
 
-  DensityLiquidModel densityLiquidModel=ancillaryCoefficients.densityLiquidModel;
   Integer nDliq=size(ancillaryCoefficients.densityLiquid, 1);
   Real[nDliq] n=ancillaryCoefficients.densityLiquid[:, 1];
   Real[nDliq] theta=ancillaryCoefficients.densityLiquid[:, 2];

@@ -1010,14 +1010,18 @@ Here, the simplified approach as suggested by Olchowy and Sengers is implemented
     // inherits input state and output eta
 
 protected
+    DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
+    CollisionIntegralModel collisionIntegralModel=dynamicViscosityCoefficients.collisionIntegralModel;
     MolarMass MM = fluidConstants[1].molarMass;
     SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
     Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-    Density d_red_residual=fluidConstants[1].molarMass/dynamicViscosityCoefficients.reducingMolarVolume_residual;
+    Density d_red_residual=MM/dynamicViscosityCoefficients.reducingMolarVolume_residual;
     Real delta "reduced density";
     Real delta_exp "reduced density in exponential term";
     Real delta_0 "close packed density";
-    Real dm=state.d/(1000*fluidConstants[1].molarMass) "molar density in mol/l";
+    Real dm=state.d/(1000*fluidConstants[1].molarMass) "molar density in mol/l";   // 1 m3=1000 l
+    Real dm_crit=d_crit/(1000*fluidConstants[1].molarMass)
+    "molar density in mol/l";                                                          // 1 m3=1000 l
 
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
@@ -1027,8 +1031,8 @@ protected
 
     Real[size(dynamicViscosityCoefficients.a, 1),2] a=dynamicViscosityCoefficients.a;
     Real[size(dynamicViscosityCoefficients.b, 1),2] b=dynamicViscosityCoefficients.b;
+    Real[size(dynamicViscosityCoefficients.c, 1),1] c=dynamicViscosityCoefficients.c;
 
-    Boolean hasGeneralizedDelta0=dynamicViscosityCoefficients.hasGeneralizedDelta0;
     Real[size(dynamicViscosityCoefficients.g, 1),2] g=dynamicViscosityCoefficients.g;
     Real[size(dynamicViscosityCoefficients.e, 1),5] e=dynamicViscosityCoefficients.e;
     Real[size(dynamicViscosityCoefficients.nu_po, 1),5] nu_po=dynamicViscosityCoefficients.nu_po;
@@ -1044,8 +1048,12 @@ protected
     Real visci=0 "RefProp      visci temporary variable";
     Real xnum=0 "RefProp   numerator temporary variable";
     Real xden=0 "RefProp denominator temporary variable";
+    Real G=0 "RefProp temporary variable";
+    Real H=0 "RefProp temporary variable";
+    Real F=0 "RefProp temporary variable";
 
     Real eta_red_0=dynamicViscosityCoefficients.reducingViscosity_0;
+    Real eta_red_1=dynamicViscosityCoefficients.reducingViscosity_1;
     Real eta_red_residual=dynamicViscosityCoefficients.reducingViscosity_residual;
     DynamicViscosity eta_0=0 "zero density contribution";
     DynamicViscosity eta_1=0 "initial density contribution";
@@ -1055,66 +1063,99 @@ protected
   algorithm
     assert(state.phase <> 2, "dynamicViscosity error: property not defined in two-phase region");
 
-    // dilute gas (or zero density) contribution
-    // using the collision integral Omega and the Chapman-Enskog-Term
-    T_star := Modelica.Math.log(state.T/dynamicViscosityCoefficients.epsilon_kappa);
-    Omega := exp(sum(a[i, 1]*(T_star)^a[i, 2] for i in 1:size(a, 1)));
-    tau := state.T/T_red_0;
-    eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);
+    // collision integral
+    if (collisionIntegralModel == CollisionIntegralModel.CI0) then
+      T_star := (state.T/dynamicViscosityCoefficients.epsilon_kappa);
+      Omega := 1.16145/T_star^0.14874 + 0.52487*exp(-0.77320*T_star) + 2.16178*exp(-2.43787*T_star);
+    elseif (collisionIntegralModel == CollisionIntegralModel.CI1) then
+      T_star := Modelica.Math.log(state.T/dynamicViscosityCoefficients.epsilon_kappa);
+      Omega := exp(sum(a[i, 1]*(T_star)^a[i, 2] for i in 1:size(a, 1)));
+    elseif (collisionIntegralModel == CollisionIntegralModel.CI2) then
+      T_star := (dynamicViscosityCoefficients.epsilon_kappa/state.T);
+      Omega := 1/(sum(a[i, 1]*(T_star)^((4-i)/3) for i in 1:size(a, 1)));
+    end if;
+
+    // dilute gas (zero density) contribution
+    // using the Chapman-Enskog-Term and the collision integral Omega
+    if ((dynamicViscosityModel == DynamicViscosityModel.VS1)
+    or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
+      tau := state.T/T_red_0;
+      eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);
+    elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
+      eta_0 := CET[1, 1]*state.T^CET[2,1]/(sigma^2*Omega);
+    elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
+    end if;
     eta_0 := eta_0*eta_red_0;
 
     // inital density contribution
-    // using the second viscosity virial coefficient B
-    T_star := (state.T/dynamicViscosityCoefficients.epsilon_kappa);
-    B_star := sum(b[i, 1]*T_star^b[i, 2] for i in 1:size(b, 1));
-    B := B_star*0.6022137*sigma^3;
-    eta_1 := eta_0*B*dm;
+    if ((dynamicViscosityModel == DynamicViscosityModel.VS1)
+    or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)
+    or  (dynamicViscosityModel == DynamicViscosityModel.VS4)) then
+      // use the second viscosity virial coefficient B
+      T_star := (state.T/dynamicViscosityCoefficients.epsilon_kappa);
+      B_star := sum(b[i, 1]*T_star^b[i, 2] for i in 1:size(b, 1));
+      B := B_star*0.6022137*sigma^3;
+      eta_1 := eta_0*B*dm;
+    elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
+      eta_1 := dm * (b[1,1] + b[2,1]*(b[3,1]-log(state.T/b[4,1]))^2);
+    end if;
+    eta_1 := eta_1*eta_red_1;
 
     // residual contribution
-    // using the reduced close-packed density delta_0,
-    // a simple polynominal, a rational polynominal and an exponential term
-    tau := state.T/T_red_residual;
-    delta := state.d/d_red_residual;
-    if (abs(d_red_residual - 1) > 0.001) then
-      delta_exp := state.d/d_crit;
-    else
-      delta_exp := delta;
-    end if;
-    if hasGeneralizedDelta0 then
-      // generalized RefProp algorithm, be careful with coeffs: they may differ from article
-      delta_0 := sum(g[i, 1]*tau^g[i, 2] for i in 1:size(g, 1));
-    else
-      // alternative inverse form
-      delta_0 := g[1, 1]/(1 + sum(g[i, 1]*tau^g[i, 2] for i in 2:size(g, 1)));
-    end if;
-    for i in 1:size(e, 1) loop
-      visci := e[i, 1]*tau^e[i, 2]*delta^e[i, 3]*delta_0^e[i, 4];
-                                                              // simple polynominal terms
-      if (e[i, 5] > 0) then
-        visci := visci*exp(-delta_exp^e[i, 5]);
+    if ((dynamicViscosityModel == DynamicViscosityModel.VS1)
+    or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
+      // use the reduced close-packed density delta_0,
+      // a simple polynominal, a rational polynominal and an exponential term
+      tau := state.T/T_red_residual;
+      delta := state.d/d_red_residual;
+      if (abs(d_red_residual - 1) > 0.001) then
+        delta_exp := state.d/d_crit;
+      else
+        delta_exp := delta;
       end if;
-      eta_r := etf_r + visci;
-    end for;
 
-    for i in 1:size(nu_po, 1) loop
-      // numerator of rational poly terms, RefProp algorithm
-      xnum := xnum + (nu_po[i, 1]*tau^nu_po[i, 2]*delta^nu_po[i, 3]*delta_0^
-        nu_po[i, 4]);
-      if (nu_po[i, 5] > 0) then
-        xnum := xnum*exp(-delta_exp^nu_po[i, 5]);
+      if (dynamicViscosityModel == DynamicViscosityModel.VS1) then
+        // generalized RefProp algorithm, be careful with coeffs: they may differ from article
+        delta_0 := sum(g[i, 1]*tau^g[i, 2] for i in 1:size(g, 1));
+      elseif (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative) then
+        // alternative inverse form
+        delta_0 := g[1, 1]/(1 + sum(g[i, 1]*tau^g[i, 2] for i in 2:size(g, 1)));
       end if;
-    end for;
-    for i in 1:size(de_po, 1) loop
-      // denominator of rational poly terms, RefProp algorithm
-      xden := xden + (de_po[i, 1]*tau^de_po[i, 2]*delta^de_po[i, 3]*delta_0^
-        de_po[i, 4]);
-      if (de_po[i, 5] > 0) then
-        xden := xden*exp(-delta_exp^de_po[i, 5]);
-      end if;
-    end for;
-    eta_r := etf_r + xnum/xden;
-    eta_r := etf_r*eta_red_residual;
-    // exponential terms not yet implemented!!
+      for i in 1:size(e, 1) loop
+        visci := e[i, 1]*tau^e[i, 2]*delta^e[i, 3]*delta_0^e[i, 4]; // simple polynominal terms
+        if (e[i, 5] > 0) then
+          visci := visci*exp(-delta_exp^e[i, 5]);
+        end if;
+        eta_r := eta_r + visci;
+      end for;
+
+      for i in 1:size(nu_po, 1) loop
+        // numerator of rational poly terms, RefProp algorithm
+        xnum := xnum + (nu_po[i, 1]*tau^nu_po[i, 2]*delta^nu_po[i, 3]*delta_0^nu_po[i, 4]);
+        if (nu_po[i, 5] > 0) then
+          xnum := xnum*exp(-delta_exp^nu_po[i, 5]);
+        end if;
+      end for;
+      for i in 1:size(de_po, 1) loop
+        // denominator of rational poly terms, RefProp algorithm
+        xden := xden + (de_po[i, 1]*tau^de_po[i, 2]*delta^de_po[i, 3]*delta_0^de_po[i, 4]);
+        if (de_po[i, 5] > 0) then
+          xden := xden*exp(-delta_exp^de_po[i, 5]);
+        end if;
+      end for;
+      eta_r := eta_r + xnum/xden;
+      // exponential terms not yet implemented!!
+
+    elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
+      G := c[1,1] + b[2,1]/state.T;
+      H := sqrt(dm)*(dm-dm_crit)/dm_crit;
+      F := G + c[3,1] + c[4,1]*state.T^(-3/2)*dm^0.1 + c[5,1] + c[6,1]/state.T + c[7,1]/state.T^2*H;
+      eta_r :=exp(F) - exp(G);
+
+    elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
+      // not yet implemented!!
+    end if;
+    eta_r := eta_r*eta_red_residual;
 
     // RefProp results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
     eta := micro*(eta_0 + eta_1 + eta_r);

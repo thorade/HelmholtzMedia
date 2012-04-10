@@ -113,6 +113,7 @@ package R134a "R134a data, copied from RefProp R134a.fld"
   final constant Interfaces.PartialHelmholtzMedium.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsR134a(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1_alternative,
+    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
     sigma=0.468932,
     epsilon_kappa=299.363,
     CET=[
@@ -131,7 +132,6 @@ package R134a "R134a data, copied from RefProp R134a.fld"
     -0.78726086E+3,  -1.50;
      0.14085455E+2,  -2.50;
     -0.34664158E+0,  -5.50],
-    hasGeneralizedDelta0=false,
     reducingTemperature_residual=374.21,
     reducingMolarVolume_residual=1/5017.0613,
     reducingViscosity_residual=1e3,

@@ -127,6 +127,7 @@ extends Interfaces.PartialHelmholtzMedium(
   final constant Interfaces.PartialHelmholtzMedium.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsButane(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
+    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
     sigma=0.57335,
     epsilon_kappa=280.51,
     CET=[

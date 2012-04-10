@@ -23,7 +23,7 @@ model State_pT_parameter "calculate state record from pT input"
 
   medium.SpecificHeatCapacity cp;
   medium.SpecificHeatCapacity cv;
-  Interfaces.PartialHelmholtzMedium.Types.JouleThomsonCoefficient mu;
+  medium.Types.DerTemperatureByPressure mu;
   medium.VelocityOfSound a;
   medium.DynamicViscosity eta;
   medium.ThermalConductivity lambda;

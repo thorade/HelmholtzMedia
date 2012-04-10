@@ -6,13 +6,13 @@ function dewDensity_T_ANC
   output Modelica.SIunits.Density dvap;
 
 protected
+  DensityVaporModel densityVaporModel=ancillaryCoefficients.densityVaporModel;
   Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
   Real delta "reduced density";
   Temperature T_crit=fluidConstants[1].criticalTemperature;
   Real T_theta;
   Real tau=T_crit/T "inverse reduced temperature";
 
-  DensityVaporModel densityVaporModel=ancillaryCoefficients.densityVaporModel;
   Integer nDvap=size(ancillaryCoefficients.densityVapor, 1);
   Real[nDvap] n=ancillaryCoefficients.densityVapor[:, 1];
   Real[nDvap] theta=ancillaryCoefficients.densityVapor[:, 2];
