@@ -1020,7 +1020,7 @@ protected
     Real delta_exp=0 "reduced density in exponential term";
     Real delta_0=0 "close packed density";
     Real dm=state.d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
-    Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
+  //Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
 
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
@@ -1070,8 +1070,8 @@ protected
       T_star := Modelica.Math.log(state.T/dynamicViscosityCoefficients.epsilon_kappa);
       Omega := exp(sum(a[i, 1]*(T_star)^a[i, 2] for i in 1:size(a, 1)));
     elseif (collisionIntegralModel == CollisionIntegralModel.CI2) then
-      T_star := (dynamicViscosityCoefficients.epsilon_kappa/state.T);
-      Omega := 1/(sum(a[i, 1]*(T_star)^((4-i)/3) for i in 1:size(a, 1)));
+      T_star := (dynamicViscosityCoefficients.epsilon_kappa/state.T)^(1/3);
+      Omega := 1/(sum(a[i, 1]*(T_star)^(4-i) for i in 1:size(a, 1)));
     end if;
 
     // dilute gas (zero density) contribution
@@ -1147,8 +1147,10 @@ protected
 
     elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
       G := c[1,1] + c[2,1]/state.T;
-      H := sqrt(dm)*(dm-dm_crit)/dm_crit;
-      F := G + c[3,1] + c[4,1]*state.T^(-3/2)*dm^0.1 + c[5,1] + c[6,1]/state.T + c[7,1]/state.T^2*H;
+    //H := sqrt(dm)*(dm-dm_crit)/dm_crit;
+      H := sqrt(dm)*(dm- c[8,1])/c[8,1];
+      F := G + (c[3,1] + c[4,1]*state.T^(-3/2))*dm^0.1
+             + (c[5,1] + c[6,1]/state.T + c[7,1]/state.T^2)*H;
       eta_r :=exp(F) - exp(G);
 
     elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
@@ -1165,6 +1167,7 @@ protected
     Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
     Modelica.Utilities.Streams.print("      tau = " + String(tau));
     Modelica.Utilities.Streams.print("        d = " + String(state.d));
+    Modelica.Utilities.Streams.print("       dm = " + String(dm));
     Modelica.Utilities.Streams.print("    delta = " + String(delta));
     Modelica.Utilities.Streams.print("delta_exp = " + String(delta_exp));
     Modelica.Utilities.Streams.print("===========================================");
@@ -1176,6 +1179,7 @@ protected
     Modelica.Utilities.Streams.print("  delta_0 = " + String(delta_0));
     Modelica.Utilities.Streams.print("     xnum = " + String(xnum) + " and xden = " + String(xden));
     Modelica.Utilities.Streams.print("    eta_r = " + String(eta_r));
+    Modelica.Utilities.Streams.print(" eta_r_RP = " + String(eta_r+eta_1));
     Modelica.Utilities.Streams.print("      eta = " + String(eta));
     Modelica.Utilities.Streams.print("===========================================");
 

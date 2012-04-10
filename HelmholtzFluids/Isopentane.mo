@@ -126,7 +126,8 @@ package Isopentane "Isopentane data, copied from RefProp ipentane.fld"
        33641.3512000000;
        0.15624235969000;
        122.900175430000;
-      -20914.7951660000]) "Coefficients for the dynamic viscosity";
+      -20914.7951660000;
+       3.24]) "Coefficients for the dynamic viscosity";
 
   final constant Interfaces.PartialHelmholtzMedium.SurfaceTensionCoefficients
   surfaceTensionCoefficientsIsopentane(
