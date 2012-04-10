@@ -1019,9 +1019,8 @@ protected
     Real delta "reduced density";
     Real delta_exp "reduced density in exponential term";
     Real delta_0 "close packed density";
-    Real dm=state.d/(1000*fluidConstants[1].molarMass) "molar density in mol/l";   // 1 m3=1000 l
-    Real dm_crit=d_crit/(1000*fluidConstants[1].molarMass)
-    "molar density in mol/l";                                                          // 1 m3=1000 l
+    Real dm=state.d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
+    Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
 
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
