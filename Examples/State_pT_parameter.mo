@@ -1,7 +1,7 @@
 within HelmholtzMedia.Examples;
 model State_pT_parameter "calculate state record from pT input"
 
-  package medium = HelmholtzFluids.R134a;
+  package medium = HelmholtzFluids.Isopentane;
 
   parameter medium.AbsolutePressure p=101325;
   parameter medium.Temperature T=298.15;
@@ -45,7 +45,7 @@ equation
 
   cp=medium.specificHeatCapacityCp(state);
   cv=medium.specificHeatCapacityCv(state);
-  mu=medium.jouleThomsonCoefficient(state=state);
+  mu=medium.jouleThomsonCoefficient(state);
   a=medium.velocityOfSound(state);
 
   eta=medium.dynamicViscosity(state);

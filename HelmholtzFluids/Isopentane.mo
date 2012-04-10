@@ -109,7 +109,7 @@ package Isopentane "Isopentane data, copied from RefProp ipentane.fld"
   final constant Interfaces.PartialHelmholtzMedium.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsIsopentane(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS2,
-    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
+    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI0,
     sigma=0.56232,
     epsilon_kappa=341.06,
     CET=[

@@ -1,7 +1,7 @@
 within HelmholtzMedia.Examples;
 model State_dT_parameter "calculate state record from dT input"
 
-  package medium = HelmholtzFluids.R134a;
+  package medium = HelmholtzFluids.Isopentane;
 
   parameter medium.Density d=33;
   parameter medium.Temperature T=298.15;

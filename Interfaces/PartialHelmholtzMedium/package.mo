@@ -1016,9 +1016,9 @@ protected
     SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
     Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Density d_red_residual=MM/dynamicViscosityCoefficients.reducingMolarVolume_residual;
-    Real delta "reduced density";
-    Real delta_exp "reduced density in exponential term";
-    Real delta_0 "close packed density";
+    Real delta=0 "reduced density";
+    Real delta_exp=0 "reduced density in exponential term";
+    Real delta_0=0 "close packed density";
     Real dm=state.d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
     Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
 
@@ -1040,10 +1040,10 @@ protected
     // Real[size(dynamicViscosityCoefficients.de_ex,1),5] de_ex=dynamicViscosityCoefficients.de_ex;
 
     Real[1,2] CET=dynamicViscosityCoefficients.CET; // Chapman-Enskog-Term
-    Real Omega "reduced effective cross section / Omega collision integral";
+    Real Omega=0 "reduced effective cross section / Omega collision integral";
     Real sigma=dynamicViscosityCoefficients.sigma;
-    Real B_star "reduced second viscosity virial coefficient";
-    Real B "second viscosity virial coefficient, l/mol";
+    Real B_star=0 "reduced second viscosity virial coefficient";
+    Real B=0 "second viscosity virial coefficient, l/mol";
     Real visci=0 "RefProp      visci temporary variable";
     Real xnum=0 "RefProp   numerator temporary variable";
     Real xden=0 "RefProp denominator temporary variable";
@@ -1081,7 +1081,7 @@ protected
       tau := state.T/T_red_0;
       eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);
     elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
-      eta_0 := CET[1, 1]*state.T^CET[2,1]/(sigma^2*Omega);
+      eta_0 := CET[1, 1]*state.T^CET[1,2]/(sigma^2*Omega);
     elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
     end if;
     eta_0 := eta_0*eta_red_0;
@@ -1146,7 +1146,7 @@ protected
       // exponential terms not yet implemented!!
 
     elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
-      G := c[1,1] + b[2,1]/state.T;
+      G := c[1,1] + c[2,1]/state.T;
       H := sqrt(dm)*(dm-dm_crit)/dm_crit;
       F := G + c[3,1] + c[4,1]*state.T^(-3/2)*dm^0.1 + c[5,1] + c[6,1]/state.T + c[7,1]/state.T^2*H;
       eta_r :=exp(F) - exp(G);
@@ -1159,26 +1159,25 @@ protected
     // RefProp results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
     eta := micro*(eta_0 + eta_1 + eta_r);
 
-    /* // following lines are for debugging only
-  Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("        T = " + String(state.T));
-  Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
-  Modelica.Utilities.Streams.print("      tau = " + String(tau));
-  Modelica.Utilities.Streams.print("        d = " + String(state.d));
-  Modelica.Utilities.Streams.print("    delta = " + String(delta));
-  Modelica.Utilities.Streams.print("delta_exp = " + String(delta_exp));
-  Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
-  Modelica.Utilities.Streams.print("    eta_0 = " + String(eta_0));
-  Modelica.Utilities.Streams.print("   B_star = " + String(B_star));
-  Modelica.Utilities.Streams.print("        B = " + String(B));
-  Modelica.Utilities.Streams.print("    eta_1 = " + String(eta_1));
-  Modelica.Utilities.Streams.print("  delta_0 = " + String(delta_0));
-  Modelica.Utilities.Streams.print("     xnum = " + String(xnum) + " and xden = " + String(xden));
-  Modelica.Utilities.Streams.print("    eta_r = " + String(eta_r));
-  Modelica.Utilities.Streams.print("      eta = " + String(eta));
-  Modelica.Utilities.Streams.print("===========================================");
-  */
+    // following lines are for debugging only
+    Modelica.Utilities.Streams.print("===========================================");
+    Modelica.Utilities.Streams.print("        T = " + String(state.T));
+    Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
+    Modelica.Utilities.Streams.print("      tau = " + String(tau));
+    Modelica.Utilities.Streams.print("        d = " + String(state.d));
+    Modelica.Utilities.Streams.print("    delta = " + String(delta));
+    Modelica.Utilities.Streams.print("delta_exp = " + String(delta_exp));
+    Modelica.Utilities.Streams.print("===========================================");
+    Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
+    Modelica.Utilities.Streams.print("    eta_0 = " + String(eta_0));
+    Modelica.Utilities.Streams.print("   B_star = " + String(B_star));
+    Modelica.Utilities.Streams.print("        B = " + String(B));
+    Modelica.Utilities.Streams.print("    eta_1 = " + String(eta_1));
+    Modelica.Utilities.Streams.print("  delta_0 = " + String(delta_0));
+    Modelica.Utilities.Streams.print("     xnum = " + String(xnum) + " and xden = " + String(xden));
+    Modelica.Utilities.Streams.print("    eta_r = " + String(eta_r));
+    Modelica.Utilities.Streams.print("      eta = " + String(eta));
+    Modelica.Utilities.Streams.print("===========================================");
 
     annotation (Documentation(info="<html>
 <p>
