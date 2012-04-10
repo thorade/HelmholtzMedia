@@ -6,16 +6,16 @@ In addition to all state properties, this library calculates viscosity, thermal 
 I am planning to submit this library to the Modelica 2012 conference.
 
 ### Status
-So far, the fluids n-Butane, R134a and Isobutane are implemented, but not fully validated. 
+So far, the fluids n-Butane, R134a, Isobutane and Isopentane are implemented (but not fully validated)
 
 ### ToDo
 * Add setState_Ts (needed for isotherms in h,s-diagram)
 * Add setState_Th (needed for numerical validation of (dd/dT)@h=const)
 * Add derivatives in two-phase region
 * The next fluids to be implemented are probably 
-  * isopentane, 
   * propane, 
   * ammonia, 
   * CO2,
+  * ethanol,
   * working fluids for Organic-Rankine-Cycles,
   * water.
