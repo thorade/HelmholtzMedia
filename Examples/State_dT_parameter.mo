@@ -1,16 +1,16 @@
 within HelmholtzMedia.Examples;
 model State_dT_parameter "calculate state record from dT input"
 
-  package medium = HelmholtzFluids.Isopentane;
+  package medium = HelmholtzMedia.HelmholtzFluids.Isopentane;
 
-  parameter medium.Density d=789;
-  parameter medium.Temperature T=500;
+  parameter medium.Density d=5;
+  parameter medium.Temperature T=298.15;
 
   medium.ThermodynamicState state;
 
   // medium.MassFraction x;
-  // medium.SurfaceTension sigma;
-   medium.DynamicViscosity eta;
+   medium.SurfaceTension sigma;
+  // medium.DynamicViscosity eta;
   // medium.ThermalConductivity lambda;
   // medium.Types.DerTemperatureByPressure dTp;
   // medium.Types.DerPressureByTemperature dpT;
@@ -20,8 +20,8 @@ equation
   state=medium.setState_dTX(d=d, T=T, phase=0, X={1});
 
   // x=medium.vapourQuality(state);
-  // sigma=medium.surfaceTension(medium.setSat_T(T=T));
-   eta=medium.dynamicViscosity(state);
+   sigma=medium.surfaceTension(medium.setSat_T(T=T));
+  // eta=medium.dynamicViscosity(state);
   // lambda=medium.thermalConductivity(state);
   // dpT=medium.saturationPressure_derT(T=state.T);
   // dTp=medium.saturationTemperature_derp(p=state.p);

@@ -83,7 +83,7 @@ package Isopentane "Isopentane data, copied from RefProp ipentane.fld"
    residualGauss=fill(0.0, 0, 12)) "Coefficients of the Helmholtz EoS";
 
   final constant
-    Interfaces.PartialHelmholtzMedium.ThermalConductivityCoefficients
+  Interfaces.PartialHelmholtzMedium.ThermalConductivityCoefficients
   thermalConductivityCoefficientsIsopentane(
     reducingTemperature_0 = 341.06,
     reducingThermalConductivity_0 = 1e-3,
@@ -158,7 +158,8 @@ package Isopentane "Isopentane data, copied from RefProp ipentane.fld"
       -0.21603E+02,       3.25;
       -0.57218E+02,       7.3;
       -0.15164E+03,      16.6])
-    "Coefficients for the ancillary equations (PS5, DL2, DV6)";
+  "Coefficients for the ancillary equations (PS5, DL2, DV6)";
+
 
   annotation (Documentation(info="<html>
 These are the coefficients for Isopentane. 

@@ -1,7 +1,7 @@
 within HelmholtzMedia.Examples;
 model State_pT_parameter "calculate state record from pT input"
 
-  package medium = HelmholtzFluids.Isopentane;
+  package medium = HelmholtzMedia.HelmholtzFluids.Isopentane;
 
   parameter medium.AbsolutePressure p=101325;
   parameter medium.Temperature T=298.15;
@@ -25,8 +25,8 @@ model State_pT_parameter "calculate state record from pT input"
   medium.SpecificHeatCapacity cv;
   medium.Types.DerTemperatureByPressure mu;
   medium.VelocityOfSound a;
-  medium.DynamicViscosity eta;
   medium.ThermalConductivity lambda;
+  medium.DynamicViscosity eta;
   medium.PrandtlNumber Pr;
 
 equation
@@ -48,9 +48,8 @@ equation
   mu=medium.jouleThomsonCoefficient(state);
   a=medium.velocityOfSound(state);
 
-  eta=medium.dynamicViscosity(state);
   lambda=medium.thermalConductivity(state);
-
+  eta=medium.dynamicViscosity(state);
   Pr=medium.prandtlNumber(state);
 
 end State_pT_parameter;
