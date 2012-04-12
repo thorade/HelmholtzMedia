@@ -9,9 +9,10 @@ I am planning to submit this library to the Modelica 2012 conference.
 So far, the fluids n-Butane, R134a, Isobutane and Isopentane are implemented (but not fully validated)
 
 ### ToDo
-* Add setState_Ts (needed for isotherms in h,s-diagram)
-* Add setState_Th (needed for numerical validation of (dd/dT)@h=const)
-* Add derivatives in two-phase region
+* Improve BaseProperties (use preferredState or something else?)
+* Add annotation regarding derivative and inverse functions (using optional inputs?)
+* Add annotation regarding Documentation (copy+paste+translate from PhD-Thesis)
+* Check derivatives in two-phase region
 * The next fluids to be implemented are probably 
   * propane, 
   * ammonia, 
@@ -19,3 +20,5 @@ So far, the fluids n-Butane, R134a, Isobutane and Isopentane are implemented (bu
   * ethanol,
   * working fluids for Organic-Rankine-Cycles,
   * water.
+* Add setState_Ts (needed for isotherms in h,s-diagram)
+* Add setState_Th (needed for numerical validation of (dd/dT)@h=const)
