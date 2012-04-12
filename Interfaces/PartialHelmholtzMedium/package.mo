@@ -993,6 +993,10 @@ Residual TC is also modeled by a polynominal.
 At the critical point TC becomes infinite; TC is enhanced for a large region around the critical point.
 The critical enhancement can be described by various alternative approaches.
 Here, the simplified approach as suggested by Olchowy and Sengers is implemented.
+
+Special thanks go to Eric W. Lemmon for answering all my emails 
+and programming a special version of RefProp that outputs also intermediate values.
+
 </p>
 <dl>
 <dt>Olchowy, G.A. and Sengers, J.V</dt>
@@ -1161,34 +1165,35 @@ protected
     // RefProp results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
     eta := micro*(eta_0 + eta_1 + eta_r);
 
-    // following lines are for debugging only
-    Modelica.Utilities.Streams.print("===========================================");
-    Modelica.Utilities.Streams.print("        T = " + String(state.T));
-    Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
-    Modelica.Utilities.Streams.print("      tau = " + String(tau));
-    Modelica.Utilities.Streams.print("        d = " + String(state.d));
-    Modelica.Utilities.Streams.print("       dm = " + String(dm));
-    Modelica.Utilities.Streams.print("    delta = " + String(delta));
-    Modelica.Utilities.Streams.print("delta_exp = " + String(delta_exp));
-    Modelica.Utilities.Streams.print("===========================================");
-    Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
-    Modelica.Utilities.Streams.print("    eta_0 = " + String(eta_0));
-    Modelica.Utilities.Streams.print("   B_star = " + String(B_star));
-    Modelica.Utilities.Streams.print("        B = " + String(B));
-    Modelica.Utilities.Streams.print("    eta_1 = " + String(eta_1));
-    Modelica.Utilities.Streams.print("  delta_0 = " + String(delta_0));
-    Modelica.Utilities.Streams.print("     xnum = " + String(xnum) + " and xden = " + String(xden));
-    Modelica.Utilities.Streams.print("    eta_r = " + String(eta_r));
-    Modelica.Utilities.Streams.print(" eta_r_RP = " + String(eta_r+eta_1));
-    Modelica.Utilities.Streams.print("      eta = " + String(eta));
-    Modelica.Utilities.Streams.print("===========================================");
+    /* // following lines are for debugging only
+  Modelica.Utilities.Streams.print("===========================================");
+  Modelica.Utilities.Streams.print("        T = " + String(state.T));
+  Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
+  Modelica.Utilities.Streams.print("      tau = " + String(tau));
+  Modelica.Utilities.Streams.print("        d = " + String(state.d));
+  Modelica.Utilities.Streams.print("       dm = " + String(dm));
+  Modelica.Utilities.Streams.print("    delta = " + String(delta));
+  Modelica.Utilities.Streams.print("delta_exp = " + String(delta_exp));
+  Modelica.Utilities.Streams.print("===========================================");
+  Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
+  Modelica.Utilities.Streams.print("    eta_0 = " + String(eta_0));
+  Modelica.Utilities.Streams.print("   B_star = " + String(B_star));
+  Modelica.Utilities.Streams.print("        B = " + String(B));
+  Modelica.Utilities.Streams.print("    eta_1 = " + String(eta_1));
+  Modelica.Utilities.Streams.print("  delta_0 = " + String(delta_0));
+  Modelica.Utilities.Streams.print("     xnum = " + String(xnum) + " and xden = " + String(xden));
+  Modelica.Utilities.Streams.print("    eta_r = " + String(eta_r));
+  Modelica.Utilities.Streams.print(" eta_r_RP = " + String(eta_r+eta_1));
+  Modelica.Utilities.Streams.print("      eta = " + String(eta));
+  Modelica.Utilities.Streams.print("===========================================");
+  */
 
     annotation (Documentation(info="<html>
 <p>
-This model should return results identical to the RefProp VS1 model.
+This model is identical to the RefProp VS1 or VS2 model.
 
 The viscosity is split into three contributions: 
-zero density (ideal gas) viscosity eta_0, 
+zero density (dilute gas) viscosity eta_0, 
 initial density contribution eta_1
 and residual contribution eta_r.
 
@@ -1198,7 +1203,9 @@ The so called background viscosity is the sum of initial and residual viscosity.
 At the critical point and a small region around the critical point, the viscosity is enhanced. 
 As this critical enhancement is small, it is neglected here.
 
-Special thanks go to Eric W. Lemmon for answering all my emails!
+Special thanks go to Eric W. Lemmon for answering all my emails 
+and programming a special version of RefProp that outputs also intermediate values.
+
 </p>
 
 <dl>
