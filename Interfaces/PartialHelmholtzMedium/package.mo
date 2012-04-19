@@ -824,10 +824,11 @@ protected
   algorithm
     if (state.phase == 1) then
       // Attention: wrong in Span(2000) table 3.10
-      // correct in Lemmon(2009)
+      // correct in Lemmon(2000)
+      // 1/v*(dv/dT)@p = -1/d*(dd/dT)@p = +1/d * (dp/dT)@d / (dp/dT)@d
       dpTd := pressure_derT_d(state=state, f=f);
       dpdT := pressure_derd_T(state=state, f=f);
-      beta := 1/state.d*dpTd/dpTd;
+      beta := 1/state.d*dpTd/dpdT;
     elseif (state.phase == 2) then
       beta := Modelica.Constants.small; // zero
     end if;
