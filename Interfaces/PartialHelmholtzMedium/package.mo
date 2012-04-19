@@ -1336,12 +1336,12 @@ The extended version has up to three terms with two parameters each.
   // inherits input p, h and phase
   // inherits output d
   // optional input state
-    input ThermodynamicState state=setState_phX(p=p,h=h,phase=phase);
+  //  input ThermodynamicState state=setState_phX(p=p,h=h,phase=phase);
 
-  algorithm
-    d := state.d;
+  // algorithm
+  //   d := state.d;
 
-    annotation (der=density_derp_h, der=density_derh_p);
+    annotation (derivative=density_derp_h, derivative=density_derh_p);
   end density_phX;
 
 
