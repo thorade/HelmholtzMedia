@@ -1,5 +1,5 @@
 within HelmholtzMedia.HelmholtzFluids;
-package Isopentane "Isopentane data, copied from RefProp ipentane.fld"
+package Isopentane "Isopentane"
   extends Interfaces.PartialHelmholtzMedium(
     fluidConstants={fluidConstantsIsopentane},
     helmholtzCoefficients=helmholtzCoefficientsIsopentane,
@@ -39,7 +39,7 @@ package Isopentane "Isopentane data, copied from RefProp ipentane.fld"
     triplePointTemperature=112.65,
     triplePointPressure=0.000089527,
     normalBoilingPoint=300.98,
-    meltingPoint=112.662) "mostly copied from Isopentane.fld";
+    meltingPoint=112.662) "Fluid Constants";
 
   final constant Interfaces.PartialHelmholtzMedium.FluidLimits
   fluidLimitsIsopentane(
@@ -163,30 +163,27 @@ package Isopentane "Isopentane data, copied from RefProp ipentane.fld"
 
   annotation (Documentation(info="<html>
 These are the coefficients for Isopentane. 
-Implementation of the same correlations as in RefProp. 
-All data is copied from Isopentane.fld
-Units are converted to SI because Modelica uses SI.
 
 <dl>
+<dt> Author</dt>
+<dd> <b>EoS</b><br>
+     Journal, Vol:Pages, Year<br>
+     DOI: <a href=\"http://dx.doi.org/10.1000/1\">10.1000/1</a>
+</dd>
+<dt> Author</dt>
+<dd> <b>Viscosity</b><br>
+     Journal, Vol:Pages, Year<br>
+     DOI: <a href=\"http://dx.doi.org/10.1000/1\">10.1000/1</a>
+</dd>
+<dt> Author</dt>
+<dd> <b>Thermal Conductivity</b><br>
+     Journal, Vol:Pages, Year<br>
+     DOI: <a href=\"http://dx.doi.org/10.1000/1\">10.1000/1</a>
+</dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
      National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
-</dd>
-<dt> </dt>
-<dd> <b></b><br>
-     <br>
-     DOI: <a href=\"http://dx.doi.org/\"></a>
-</dd>
-<dt> </dt>
-<dd> <b>Viscosity </b><br>
-     <br>
-     DOI: <a href=\"http://dx.doi.org/\"></a>
-</dd>
-<dt> Perkins, Richard A. et. al.</dt>
-<dd> <b>Measurement and Correlation of the Thermal Conductivity of Isopentane from 135 K to 600 K at Pressures to 70 MPa</b><br>
-     Journal of Chemical & Engineering Data 47.5, S. 1263-1271. (2002)<br>
-     DOI: <a href=\"http://dx.doi.org/10.1021/je0101202\">10.1021/je0101202</a>
 </dd>
 </dl>
 </html>"));

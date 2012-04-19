@@ -1,5 +1,5 @@
 within HelmholtzMedia.HelmholtzFluids;
-package Butane "Butane data, copied from RefProp Butane.fld"
+package Butane "Butane"
 extends Interfaces.PartialHelmholtzMedium(
   fluidConstants={fluidConstantsButane},
   helmholtzCoefficients=helmholtzCoefficientsButane,
@@ -39,7 +39,7 @@ extends Interfaces.PartialHelmholtzMedium(
     triplePointTemperature=134.895,
     triplePointPressure=0.653,
     normalBoilingPoint=272.660,
-    meltingPoint=134.912) "copied from Butane.fld";
+    meltingPoint=134.912) "Fluid Constants";
 
   final constant Interfaces.PartialHelmholtzMedium.FluidLimits
   fluidLimitsButane(
@@ -204,16 +204,8 @@ extends Interfaces.PartialHelmholtzMedium(
 
   annotation (Documentation(info="<html>
 These are the coefficients for Butane. 
-Implementation of the same correlations as in RefProp. 
-All data is copied from butane.fld
-Units are converted to SI because Modelica uses SI.
 
 <dl>
-<dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
-<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
-     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
-     URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
-</dd>
 <dt> Bücker, D. and Wagner, W.</dt>
 <dd> <b>Reference Equations of State for the Thermodynamic Properties of Fluid Phase n-Butane and Isobutane</b><br>
      Journal of Physical and Chemical Reference Data 35.2, S. 929-1019 (2006)<br>
@@ -228,6 +220,11 @@ Units are converted to SI because Modelica uses SI.
 <dd> <b>Measurement and Correlation of the Thermal Conductivity of Butane from 135 K to 600 K at Pressures to 70 MPa</b><br>
      Journal of Chemical & Engineering Data 47.5, S. 1263-1271. (2002)<br>
      DOI: <a href=\"http://dx.doi.org/10.1021/je0101202\">10.1021/je0101202</a>
+</dd>
+<dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
+<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
+     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
+     URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
 </dd>
 </dl>
 </html>"));
