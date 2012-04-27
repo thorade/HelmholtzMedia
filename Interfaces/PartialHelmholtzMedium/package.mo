@@ -25,6 +25,18 @@ import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
   constant HelmholtzDerivs helmholtzDerivs(d=228) "empty dummy";
 
 
+
+
+
+
+
+
+
+
+
+
+
+
   redeclare function setSat_T
   "iterative calculation of saturation properties from EoS with Newton-Raphson algorithm"
     input Temperature T;
@@ -164,6 +176,9 @@ protected
   end setSat_p;
 
 
+
+
+
   redeclare function extends saturationPressure
   "ancillary function: calculate saturation pressure for a given Temperature"
     // inherits input T and output p
@@ -226,6 +241,7 @@ protected
     // the corresponding ancillary forward function is saturationPressure(T)
     annotation (inverse(p=saturationPressure(T=T)));
   end saturationTemperature;
+
 
 
   redeclare function vapourQuality "returns the vapour quality"
@@ -304,6 +320,7 @@ protected
       sat := setSat_T(T=T);
     end if;
   end BaseProperties;
+
 
 
   redeclare function extends setState_dTX
@@ -518,6 +535,7 @@ protected
   end setState_phX;
 
 
+
   redeclare function extends setState_psX
   "Return thermodynamic state as function of p, s and composition X or Xi"
 
@@ -625,6 +643,7 @@ protected
   end setState_psX;
 
 
+
   redeclare function density_pT
   "iteratively finds the density for a given p and T (works for single-phase only)"
 
@@ -688,6 +707,7 @@ protected
   end density_pT;
 
 
+
   redeclare function specificEnthalpy_pT
   "iteratively finds the specific enthalpy for a given p and T"
 
@@ -720,6 +740,7 @@ protected
     // the two inverse functions are Temperature_ph and pressure_Th
     // annotation (inverse(p=pressure_dT(d=d, T=T, phase=phase)));
   end specificEnthalpy_pT;
+
 
 
   redeclare function extends specificHeatCapacityCp
@@ -852,6 +873,8 @@ protected
       kappa := Modelica.Constants.inf; // divide by zero
     end if;
   end isothermalCompressibility;
+
+
 
 
   redeclare replaceable function extends thermalConductivity
@@ -1337,7 +1360,7 @@ The extended version has up to three terms with two parameters each.
   // inherits input p, h and phase
   // inherits output d
   // optional input state
-  //  input ThermodynamicState state=setState_phX(p=p,h=h,phase=phase);
+  // input ThermodynamicState state=setState_phX(p=p,h=h,phase=phase);
 
   // algorithm
   //   d := state.d;
@@ -1360,6 +1383,11 @@ The extended version has up to three terms with two parameters each.
     // Clausius-Clapeyron, yields same result
     dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
   end saturationTemperature_derp;
+
+
+
+
+
 
 
   function density_derT_h "returns density derivative (dd/dT)@h=const"
