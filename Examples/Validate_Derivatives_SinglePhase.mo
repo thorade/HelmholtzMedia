@@ -4,7 +4,7 @@ model Validate_Derivatives_SinglePhase
 
   package medium = HelmholtzFluids.R134a;
   // choose d and T which will result in single-phase
-  parameter medium.Density d=2e+3;
+  parameter medium.Density d=1e-3;
   parameter medium.Temperature T=298.15;
 
   medium.ThermodynamicState state;
@@ -14,6 +14,11 @@ model Validate_Derivatives_SinglePhase
   medium.ThermodynamicState T_plus;
   medium.ThermodynamicState T_minus;
 
+  // Pressure derivatives
+  medium.Types.DerPressureByDensity dpdT_analytical;
+  medium.Types.DerPressureByDensity dpdT_numerical;
+  medium.Types.DerPressureByTemperature dpTd_analytical;
+  medium.Types.DerPressureByTemperature dpTd_numerical;
   // Enthalpy derivatives
   medium.Types.DerEnthalpyByDensity dhdT_analytical;
   medium.Types.DerEnthalpyByDensity dhdT_numerical;
@@ -34,6 +39,9 @@ model Validate_Derivatives_SinglePhase
   medium.Types.DerEnergyByDensity dgdT_numerical;
   medium.Types.DerEnergyByTemperature dgTd_analytical;
   medium.Types.DerEnergyByTemperature dgTd_numerical;
+  // Further derivatives
+  medium.VelocityOfSound a_analytical1;
+  medium.VelocityOfSound a_analytical2;
 
 equation
   state=medium.setState_dTX(d=d, T=T);
@@ -44,6 +52,18 @@ equation
   T_minus=medium.setState_dTX(d=d, T=T*0.99999);
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|");
+
+  Modelica.Utilities.Streams.print("Pressure");
+  // check (dp/dd)@T=const
+  dpdT_analytical = medium.pressure_derd_T(state=state, f=f);
+  dpdT_numerical = (d_plus.p-d_minus.p)/(d_plus.d-d_minus.d);
+  Modelica.Utilities.Streams.print("(dp/dd)@T=const analytical= " + String(dpdT_analytical));
+  Modelica.Utilities.Streams.print("(dp/dd)@T=const  numerical= " + String(dpdT_numerical));
+  // check (dp/dT)@d=const
+  dpTd_analytical = medium.pressure_derT_d(state=state, f=f);
+  dpTd_numerical = (T_plus.p-T_minus.p)/(T_plus.T-T_minus.T);
+  Modelica.Utilities.Streams.print("(dp/dT)@d=const analytical= " + String(dpTd_analytical));
+  Modelica.Utilities.Streams.print("(dp/dT)@d=const  numerical= " + String(dpTd_numerical));
 
   Modelica.Utilities.Streams.print("Enthalpy");
   // check (dh/dd)@T=const
@@ -95,6 +115,13 @@ equation
   dgTd_numerical = ((T_plus.h-T_plus.T*T_plus.s)-(T_minus.h-T_minus.T*T_minus.s))/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("(dg/dT)@d=const analytical= " + String(dgTd_analytical));
   Modelica.Utilities.Streams.print("(dg/dT)@d=const  numerical= " + String(dgTd_numerical));
+
+  Modelica.Utilities.Streams.print(" ");
+  Modelica.Utilities.Streams.print("Further derivatives");
+  a_analytical1 = medium.velocityOfSound(state=state);
+  a_analytical2 = sqrt(dpdT_analytical-dpTd_analytical*dsdT_analytical/dsTd_analytical);
+  Modelica.Utilities.Streams.print("(dp/dd)@s=const analytical1= " + String(a_analytical1));
+  Modelica.Utilities.Streams.print("(dp/dd)@s=const  analytical2= " + String(a_analytical2));
 
   annotation (experiment(NumberOfIntervals=1), __Dymola_experimentSetupOutput);
 end Validate_Derivatives_SinglePhase;
