@@ -10,8 +10,6 @@ SurfaceTensionCoefficients
 surfaceTensionCoefficients
 AncillaryCoefficients
 ancillaryCoefficients
-HelmholtzDerivs
-helmholtzDerivs
 setHelmholtzDerivs
 f_i
 f_it
@@ -33,6 +31,7 @@ saturationPressure
 saturationTemperature
 saturationTemperature_RES
 vapourQuality
+HelmholtzDerivs
 ThermodynamicState
 SaturationProperties
 BaseProperties

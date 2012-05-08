@@ -55,12 +55,12 @@ equation
 
   Modelica.Utilities.Streams.print("Pressure");
   // check (dp/dd)@T=const
-  dpdT_analytical = medium.pressure_derd_T(state=state, f=f);
+  dpdT_analytical = medium.pressure_derd_T(state=state);
   dpdT_numerical = (d_plus.p-d_minus.p)/(d_plus.d-d_minus.d);
   Modelica.Utilities.Streams.print("(dp/dd)@T=const analytical= " + String(dpdT_analytical));
   Modelica.Utilities.Streams.print("(dp/dd)@T=const  numerical= " + String(dpdT_numerical));
   // check (dp/dT)@d=const
-  dpTd_analytical = medium.pressure_derT_d(state=state, f=f);
+  dpTd_analytical = medium.pressure_derT_d(state=state);
   dpTd_numerical = (T_plus.p-T_minus.p)/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("(dp/dT)@d=const analytical= " + String(dpTd_analytical));
   Modelica.Utilities.Streams.print("(dp/dT)@d=const  numerical= " + String(dpTd_numerical));
@@ -68,12 +68,12 @@ equation
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Enthalpy");
   // check (dh/dd)@T=const
-  dhdT_analytical = medium.specificEnthalpy_derd_T(state=state, f=f);
+  dhdT_analytical = medium.specificEnthalpy_derd_T(state=state);
   dhdT_numerical = (d_plus.h-d_minus.h)/(d_plus.d-d_minus.d);
   Modelica.Utilities.Streams.print("(dh/dd)@T=const analytical= " + String(dhdT_analytical));
   Modelica.Utilities.Streams.print("(dh/dd)@T=const  numerical= " + String(dhdT_numerical));
   // check (dh/dT)@d=const
-  dhTd_analytical = medium.specificEnthalpy_derT_d(state=state, f=f);
+  dhTd_analytical = medium.specificEnthalpy_derT_d(state=state);
   dhTd_numerical = (T_plus.h-T_minus.h)/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("(dh/dT)@d=const analytical= " + String(dhTd_analytical));
   Modelica.Utilities.Streams.print("(dh/dT)@d=const  numerical= " + String(dhTd_numerical));
