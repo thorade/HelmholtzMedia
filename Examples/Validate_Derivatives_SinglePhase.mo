@@ -65,6 +65,7 @@ equation
   Modelica.Utilities.Streams.print("(dp/dT)@d=const analytical= " + String(dpTd_analytical));
   Modelica.Utilities.Streams.print("(dp/dT)@d=const  numerical= " + String(dpTd_numerical));
 
+  Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Enthalpy");
   // check (dh/dd)@T=const
   dhdT_analytical = medium.specificEnthalpy_derd_T(state=state, f=f);
