@@ -30,3 +30,6 @@ dymosim.lib
 
 # ignore LaTeX folder
 [Ll][Aa][Tt][Ee][Xx]*/
+
+# ignore PowerShell
+*.ps1
