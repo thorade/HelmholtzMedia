@@ -27,3 +27,6 @@ dymosim.lib
 # ignore RefProp files
 *.rfp
 *.fld
+
+# ignore LaTeX folder
+[Ll][Aa][Tt][Ee][Xx]*/
