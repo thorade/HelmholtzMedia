@@ -86,7 +86,7 @@ equation
   Modelica.Utilities.Streams.print("(du/dd)@T=const analytical= " + String(dudT_analytical));
   Modelica.Utilities.Streams.print("(du/dd)@T=const  numerical= " + String(dudT_numerical));
   // check (du/dT)@d=const
-  duTd_analytical = medium.specificHeatCapacityCv(state=state, f=f);
+  duTd_analytical = medium.specificHeatCapacityCv(state=state);
   duTd_numerical = (T_plus.u-T_minus.u)/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("(du/dT)@d=const analytical= " + String(duTd_analytical));
   Modelica.Utilities.Streams.print("(du/dT)@d=const  numerical= " + String(duTd_numerical));
