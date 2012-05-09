@@ -15,11 +15,11 @@ So far, the fluids n-Butane, R134a, Isobutane and Isopentane are implemented (bu
 * Add annotation regarding Documentation (copy+paste+translate from conference paper)
 * The next fluids to be implemented are probably 
   * propane, 
-  * ammonia, 
-  * CO2,
+  * ammonia,
   * ethanol,
-  * working fluids for Organic-Rankine-Cycles,
-  * water.
+  * other working fluids for Organic-Rankine-Cycles.
+* Add non-analytic critical terms for residual Helmholtz energy (needed for water and CO2)
+* Add hyperbolic terms for ideal Helmholtz energy (used in short technical EoS and AGA8)
 * Low priority:
   * Add setState_Ts (needed for isotherms in h,s-diagram)
   * Add setState_Th (needed for numerical validation of (dd/dT)@h=const)
