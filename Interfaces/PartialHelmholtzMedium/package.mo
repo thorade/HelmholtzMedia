@@ -1458,10 +1458,7 @@ protected
 
   algorithm
     if (state.phase == 1) then
-      f:=setHelmholtzDerivs(
-        T=state.T,
-        d=state.d,
-        phase=1);
+      f:=setHelmholtzDerivs(T=state.T, d=state.d, phase=1);
       dpdT := pressure_derd_T(state=state);
       ddTh := density_derT_h(state=state);
       ddph := 1.0/(dpdT + dpTd/ddTh);
