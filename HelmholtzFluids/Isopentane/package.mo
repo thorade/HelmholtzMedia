@@ -57,10 +57,10 @@ package Isopentane "Isopentane"
   final constant Interfaces.PartialHelmholtzMedium.HelmholtzCoefficients
   helmholtzCoefficientsIsopentane(
     idealLog=[
-      +3.0000000000,    1.0000000000],
+      +3.0000000000,    1],
     idealPower=[
-      +2.5822330405,    0.0000000000;
-       1.1609103419,    1.0000000000],
+      +2.5822330405,    0;
+       1.1609103419,    1],
     idealEinstein=[
       +7.4056000000,   -0.9601390247;
        9.5772000000,   -2.4090366026;

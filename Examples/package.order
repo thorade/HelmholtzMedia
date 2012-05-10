@@ -17,4 +17,6 @@ Validate_Derivatives_SinglePhase
 Validate_Derivatives_SaturationBoundary
 Validate_Derivatives_TwoPhase
 ButaneTestModel
+IsobutaneTestModel
+IsopentaneTestModel
 R134aTestModel
