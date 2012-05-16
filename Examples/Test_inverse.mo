@@ -1,8 +1,8 @@
 within HelmholtzMedia.Examples;
 model Test_inverse
-  package medium = HelmholtzFluids.Butane;
-  medium.Temperature Tsat;
-  medium.AbsolutePressure psat;
+  package Medium = HelmholtzFluids.Butane;
+  Medium.Temperature Tsat;
+  Medium.AbsolutePressure psat;
 
   Modelica.Blocks.Sources.Ramp T_ramp(
     height=250,
@@ -16,9 +16,9 @@ model Test_inverse
 
 equation
     psat =  p_ramp.y;
-    Tsat =  medium.saturationTemperature(p=psat);
+    Tsat =  Medium.saturationTemperature(p=psat);
     // Tsat = T_ramp.y;
-    // psat = medium.saturationPressure(T=Tsat);
+    // psat = Medium.saturationPressure(T=Tsat);
 
   annotation (experiment(StopTime=10), __Dymola_experimentSetupOutput);
 end Test_inverse;

@@ -1,55 +1,55 @@
 within HelmholtzMedia.Examples;
 model State_pT_parameter "calculate state record from pT input"
 
-  package medium = HelmholtzMedia.HelmholtzFluids.Isopentane;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Isopentane;
 
-  parameter medium.AbsolutePressure p=101325;
-  parameter medium.Temperature T=298.15;
+  parameter Medium.AbsolutePressure p=101325;
+  parameter Medium.Temperature T=298.15;
 
-  medium.ThermodynamicState state;
+  Medium.ThermodynamicState state;
 
   // pT always results in single phase states,
   // so this is a good place to test quantities that are defined for single phase only
-  medium.Types.DerPressureByDensity dpdT;
-  medium.Types.DerPressureByTemperature dpTd;
-  medium.Types.DerEnthalpyByDensity dhdT;
-  medium.Types.DerEnthalpyByTemperature dhTd;
+  Medium.Types.DerPressureByDensity dpdT;
+  Medium.Types.DerPressureByTemperature dpTd;
+  Medium.Types.DerEnthalpyByDensity dhdT;
+  Medium.Types.DerEnthalpyByTemperature dhTd;
 
-  medium.DerDensityByTemperature ddTh;
-  medium.DerDensityByPressure ddpT;
-  medium.DerDensityByTemperature ddTp;
-  medium.DerDensityByPressure ddph;
-  medium.DerDensityByEnthalpy ddhp;
+  Medium.DerDensityByTemperature ddTh;
+  Medium.DerDensityByPressure ddpT;
+  Medium.DerDensityByTemperature ddTp;
+  Medium.DerDensityByPressure ddph;
+  Medium.DerDensityByEnthalpy ddhp;
 
-  medium.SpecificHeatCapacity cp;
-  medium.SpecificHeatCapacity cv;
-  medium.Types.DerTemperatureByPressure mu;
-  medium.VelocityOfSound a;
-  medium.ThermalConductivity lambda;
-  medium.DynamicViscosity eta;
-  medium.PrandtlNumber Pr;
+  Medium.SpecificHeatCapacity cp;
+  Medium.SpecificHeatCapacity cv;
+  Medium.Types.DerTemperatureByPressure mu;
+  Medium.VelocityOfSound a;
+  Medium.ThermalConductivity lambda;
+  Medium.DynamicViscosity eta;
+  Medium.PrandtlNumber Pr;
 
 equation
-  state=medium.setState_pTX(p=p, T=T, phase=0, X={1});
+  state=Medium.setState_pTX(p=p, T=T, phase=0, X={1});
 
-  dpdT=medium.pressure_derd_T(state);
-  dpTd=medium.pressure_derT_d(state);
-  dhdT=medium.specificEnthalpy_derd_T(state);
-  dhTd=medium.specificEnthalpy_derT_d(state);
+  dpdT=Medium.pressure_derd_T(state);
+  dpTd=Medium.pressure_derT_d(state);
+  dhdT=Medium.specificEnthalpy_derd_T(state);
+  dhTd=Medium.specificEnthalpy_derT_d(state);
 
-  ddTh=medium.density_derT_h(state);
-  ddpT=medium.density_derp_T(state);
-  ddTp=medium.density_derT_p(state);
-  ddph=medium.density_derp_h(state);
-  ddhp=medium.density_derh_p(state);
+  ddTh=Medium.density_derT_h(state);
+  ddpT=Medium.density_derp_T(state);
+  ddTp=Medium.density_derT_p(state);
+  ddph=Medium.density_derp_h(state);
+  ddhp=Medium.density_derh_p(state);
 
-  cp=medium.specificHeatCapacityCp(state);
-  cv=medium.specificHeatCapacityCv(state);
-  mu=medium.jouleThomsonCoefficient(state);
-  a=medium.velocityOfSound(state);
+  cp=Medium.specificHeatCapacityCp(state);
+  cv=Medium.specificHeatCapacityCv(state);
+  mu=Medium.jouleThomsonCoefficient(state);
+  a=Medium.velocityOfSound(state);
 
-  lambda=medium.thermalConductivity(state);
-  eta=medium.dynamicViscosity(state);
-  Pr=medium.prandtlNumber(state);
+  lambda=Medium.thermalConductivity(state);
+  eta=Medium.dynamicViscosity(state);
+  Pr=Medium.prandtlNumber(state);
 
 end State_pT_parameter;

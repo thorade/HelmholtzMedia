@@ -4,13 +4,13 @@ model Validate_HelmholtzDerivatives
   // values for comparison are given in IAPWS-95 (Table 6)
   // http://iapws.org/relguide/IAPWS-95.htm
 
-  package medium = HelmholtzMedia.HelmholtzFluids.Butane;
-  medium.Density d=838.025;
-  medium.Temperature T=500;
-  medium.HelmholtzDerivs f;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Butane;
+  Medium.Density d=838.025;
+  Medium.Temperature T=500;
+  Medium.HelmholtzDerivs f;
 
 algorithm
-    f := medium.setHelmholtzDerivs(T=T, d=d, phase=1);
+    f := Medium.setHelmholtzDerivs(T=T, d=d, phase=1);
   annotation (experiment(StopTime=10, NumberOfIntervals=1),
                                        __Dymola_experimentSetupOutput);
 end Validate_HelmholtzDerivatives;

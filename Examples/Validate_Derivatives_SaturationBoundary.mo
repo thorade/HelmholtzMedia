@@ -2,73 +2,73 @@ within HelmholtzMedia.Examples;
 model Validate_Derivatives_SaturationBoundary
   "compare analytical derivatives to numerical derivatives"
 
-  package medium = HelmholtzFluids.R134a;
+  package Medium = HelmholtzFluids.R134a;
   // choose subcritical T
-  parameter medium.Temperature T=298.15;
+  parameter Medium.Temperature T=298.15;
 
-  medium.SaturationProperties sat;
-  medium.SaturationProperties sat_Tplus;
-  medium.SaturationProperties sat_Tminus;
-  medium.SaturationProperties sat_pplus;
-  medium.SaturationProperties sat_pminus;
+  Medium.SaturationProperties sat;
+  Medium.SaturationProperties sat_Tplus;
+  Medium.SaturationProperties sat_Tminus;
+  Medium.SaturationProperties sat_pplus;
+  Medium.SaturationProperties sat_pminus;
 
   // Enthalpy derivatives
-  // medium.Types.DerEnthalpyByDensity dhdT_analytical;
-  // medium.Types.DerEnthalpyByDensity dhdT_numerical;
-  medium.Types.DerEnthalpyByTemperature dhT_liq_analytical;
-  medium.Types.DerEnthalpyByTemperature dhT_liq_numerical;
+  // Medium.Types.DerEnthalpyByDensity dhdT_analytical;
+  // Medium.Types.DerEnthalpyByDensity dhdT_numerical;
+  Medium.Types.DerEnthalpyByTemperature dhT_liq_analytical;
+  Medium.Types.DerEnthalpyByTemperature dhT_liq_numerical;
   // Energy derivatives
-  // medium.Types.DerEnergyByDensity dudT_analytical;
-  // medium.Types.DerEnergyByDensity dudT_numerical;
-  // medium.Types.DerEnergyByTemperature duTd_analytical;
-  // medium.Types.DerEnergyByTemperature duTd_numerical;
+  // Medium.Types.DerEnergyByDensity dudT_analytical;
+  // Medium.Types.DerEnergyByDensity dudT_numerical;
+  // Medium.Types.DerEnergyByTemperature duTd_analytical;
+  // Medium.Types.DerEnergyByTemperature duTd_numerical;
   // Entropy derivatives
-  // medium.Types.DerEntropyByDensity dsdT_analytical;
-  // medium.Types.DerEntropyByDensity dsdT_numerical;
-  // medium.Types.DerEntropyByTemperature dsTd_analytical;
-  // medium.Types.DerEntropyByTemperature dsTd_numerical;
+  // Medium.Types.DerEntropyByDensity dsdT_analytical;
+  // Medium.Types.DerEntropyByDensity dsdT_numerical;
+  // Medium.Types.DerEntropyByTemperature dsTd_analytical;
+  // Medium.Types.DerEntropyByTemperature dsTd_numerical;
   // Gibbs derivatives
-  // medium.Types.DerEnergyByDensity dgdT_analytical;
-  // medium.Types.DerEnergyByDensity dgdT_numerical;
-  // medium.Types.DerEnergyByTemperature dgTd_analytical;
-  // medium.Types.DerEnergyByTemperature dgTd_numerical;
+  // Medium.Types.DerEnergyByDensity dgdT_analytical;
+  // Medium.Types.DerEnergyByDensity dgdT_numerical;
+  // Medium.Types.DerEnergyByTemperature dgTd_analytical;
+  // Medium.Types.DerEnergyByTemperature dgTd_numerical;
   // Density derivatives
-  medium.DerDensityByTemperature ddT_liq_analytical;
-  medium.DerDensityByTemperature ddT_liq_numerical;
-  medium.DerDensityByTemperature ddT_vap_analytical;
-  medium.DerDensityByTemperature ddT_vap_numerical;
-  medium.DerDensityByPressure ddp_liq_analytical;
-  medium.DerDensityByPressure ddp_liq_numerical;
-  medium.DerDensityByPressure ddp_vap_analytical;
-  medium.DerDensityByPressure ddp_vap_numerical;
+  Medium.DerDensityByTemperature ddT_liq_analytical;
+  Medium.DerDensityByTemperature ddT_liq_numerical;
+  Medium.DerDensityByTemperature ddT_vap_analytical;
+  Medium.DerDensityByTemperature ddT_vap_numerical;
+  Medium.DerDensityByPressure ddp_liq_analytical;
+  Medium.DerDensityByPressure ddp_liq_numerical;
+  Medium.DerDensityByPressure ddp_vap_analytical;
+  Medium.DerDensityByPressure ddp_vap_numerical;
 
 equation
-  sat=medium.setSat_T(T=T);
-  sat_Tplus = medium.setSat_T(T=1.0001*T);
-  sat_Tminus = medium.setSat_T(T=0.9999*T);
-  sat_pplus = medium.setSat_p(p=1.0001*sat.psat);
-  sat_pminus = medium.setSat_p(p=0.9999*sat.psat);
+  sat=Medium.setSat_T(T=T);
+  sat_Tplus = Medium.setSat_T(T=1.0001*T);
+  sat_Tminus = Medium.setSat_T(T=0.9999*T);
+  sat_pplus = Medium.setSat_p(p=1.0001*sat.psat);
+  sat_pminus = Medium.setSat_p(p=0.9999*sat.psat);
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|");
 
   Modelica.Utilities.Streams.print("Density");
   // check (dd/dT)@liq
-  ddT_liq_analytical = medium.density_derT_p(state=sat.liq) +medium.density_derp_T(state=sat.liq)*medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
+  ddT_liq_analytical = Medium.density_derT_p(state=sat.liq) +Medium.density_derp_T(state=sat.liq)*Medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
   ddT_liq_numerical = (sat_Tplus.liq.d - sat_Tminus.liq.d)/(sat_Tplus.liq.T - sat_Tminus.liq.T);
   Modelica.Utilities.Streams.print("(dd/dT)@liq analytical= " + String(ddT_liq_analytical));
   Modelica.Utilities.Streams.print("(dd/dT)@liq  numerical= " + String(ddT_liq_numerical));
   // check (dd/dT)@vap
-  ddT_vap_analytical = medium.density_derT_p(state=sat.vap) +medium.density_derp_T(state=sat.vap)*medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
+  ddT_vap_analytical = Medium.density_derT_p(state=sat.vap) +Medium.density_derp_T(state=sat.vap)*Medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
   ddT_vap_numerical = (sat_Tplus.vap.d - sat_Tminus.vap.d)/(sat_Tplus.vap.T - sat_Tminus.vap.T);
   Modelica.Utilities.Streams.print("(dd/dT)@vap analytical= " + String(ddT_vap_analytical));
   Modelica.Utilities.Streams.print("(dd/dT)@vap  numerical= " + String(ddT_vap_numerical));
   // check (dd/dp)@liq
-  ddp_liq_analytical = medium.density_derp_T(state=sat.liq) +medium.density_derT_p(state=sat.liq)*medium.saturationTemperature_derp(p=sat.psat, sat=sat);
+  ddp_liq_analytical = Medium.density_derp_T(state=sat.liq) +Medium.density_derT_p(state=sat.liq)*Medium.saturationTemperature_derp(p=sat.psat, sat=sat);
   ddp_liq_numerical = (sat_pplus.liq.d - sat_pminus.liq.d)/(sat_pplus.liq.p - sat_pminus.liq.p);
   Modelica.Utilities.Streams.print("(dd/dp)@liq analytical= " + String(ddp_liq_analytical));
   Modelica.Utilities.Streams.print("(dd/dp)@liq  numerical= " + String(ddp_liq_numerical));
   // check (dd/dp)@vap
-  ddp_vap_analytical = medium.density_derp_T(state=sat.vap) +medium.density_derT_p(state=sat.vap)*medium.saturationTemperature_derp(p=sat.psat, sat=sat);
+  ddp_vap_analytical = Medium.density_derp_T(state=sat.vap) +Medium.density_derT_p(state=sat.vap)*Medium.saturationTemperature_derp(p=sat.psat, sat=sat);
   ddp_vap_numerical = (sat_pplus.vap.d - sat_pminus.vap.d)/(sat_pplus.vap.p - sat_pminus.vap.p);
   Modelica.Utilities.Streams.print("(dd/dp)@vap analytical= " + String(ddp_vap_analytical));
   Modelica.Utilities.Streams.print("(dd/dp)@vap  numerical= " + String(ddp_vap_numerical));
@@ -76,7 +76,7 @@ equation
   Modelica.Utilities.Streams.print(" ");
   // Modelica.Utilities.Streams.print("Enthalpy");
   // check (dh/dT)@liq
-  dhT_liq_analytical = medium.specificHeatCapacityCp(state=sat.liq) +medium.isothermalThrottlingCoefficient(state=sat.liq)*medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
+  dhT_liq_analytical = Medium.specificHeatCapacityCp(state=sat.liq) +Medium.isothermalThrottlingCoefficient(state=sat.liq)*Medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
   dhT_liq_numerical = (sat_Tplus.liq.h-sat_Tminus.liq.h)/(sat_Tplus.liq.T-sat_Tminus.liq.T);
   Modelica.Utilities.Streams.print("(dh/dT)@liq analytical= " + String(dhT_liq_analytical));
   Modelica.Utilities.Streams.print("(dh/dT)@liq  numerical= " + String(dhT_liq_numerical));
@@ -89,7 +89,7 @@ equation
   // Modelica.Utilities.Streams.print("(du/dd)@T=const analytical= " + String(dudT_analytical));
   // Modelica.Utilities.Streams.print("(du/dd)@T=const  numerical= " + String(dudT_numerical));
   // check (du/dT)@d=const
-  // duTd_analytical = medium.specificHeatCapacityCv(state=state, f=f);
+  // duTd_analytical = Medium.specificHeatCapacityCv(state=state, f=f);
   // duTd_numerical = (T_plus.u-T_minus.u)/(T_plus.T-T_minus.T);
   // Modelica.Utilities.Streams.print("(du/dT)@d=const analytical= " + String(duTd_analytical));
   // Modelica.Utilities.Streams.print("(du/dT)@d=const  numerical= " + String(duTd_numerical));

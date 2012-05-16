@@ -1,19 +1,19 @@
 within HelmholtzMedia.Examples;
 model State_dT_sweep
-  package medium = HelmholtzFluids.R134a;
-  medium.Density d;
-  medium.Temperature T;
-  medium.ThermodynamicState inletState;
-  medium.AbsolutePressure p_in;
-  medium.SpecificEnthalpy h_in;
+  package Medium = HelmholtzFluids.R134a;
+  Medium.Density d;
+  Medium.Temperature T;
+  Medium.ThermodynamicState inletState;
+  Medium.AbsolutePressure p_in;
+  Medium.SpecificEnthalpy h_in;
 
 protected
-  constant medium.Density dmin=medium.fluidLimits.DMIN;
-  constant medium.Density dcrit=medium.fluidConstants[1].molarMass/medium.fluidConstants[1].criticalMolarVolume;
-  constant medium.Density dmax=medium.fluidLimits.DMAX;
-  constant medium.Temperature Tmin=medium.fluidLimits.TMIN;
-  constant medium.Temperature Tcrit=medium.fluidConstants[1].criticalTemperature;
-  constant medium.Temperature Tmax=medium.fluidLimits.TMAX;
+  constant Medium.Density dmin=Medium.fluidLimits.DMIN;
+  constant Medium.Density dcrit=Medium.fluidConstants[1].molarMass/Medium.fluidConstants[1].criticalMolarVolume;
+  constant Medium.Density dmax=Medium.fluidLimits.DMAX;
+  constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
+  constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
+  constant Medium.Temperature Tmax=Medium.fluidLimits.TMAX;
 
 Modelica.Blocks.Sources.Ramp ramp(
     height=1,
@@ -36,7 +36,7 @@ equation
   d = dcrit - ramp.y*dcrit + ramp.y*sine.y*dcrit;
   T = 0.7*Tcrit + expSine.y*(Tcrit-Tmin);
 
-  inletState=medium.setState_dTX(d=d, T=T, phase=0, X={1});
+  inletState=Medium.setState_dTX(d=d, T=T, phase=0, X={1});
   p_in=inletState.p;
   h_in=inletState.h;
 

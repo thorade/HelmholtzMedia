@@ -2,65 +2,65 @@ within HelmholtzMedia.Examples;
 model Validate_Derivatives_SinglePhase
   "compare analytical derivatives to numerical derivatives"
 
-  package medium = HelmholtzFluids.R134a;
+  package Medium = HelmholtzFluids.R134a;
   // choose d and T which will result in single-phase
-  parameter medium.Density d=1e-3;
-  parameter medium.Temperature T=298.15;
+  parameter Medium.Density d=1e-3;
+  parameter Medium.Temperature T=298.15;
 
-  medium.ThermodynamicState state;
-  medium.HelmholtzDerivs f;
-  medium.ThermodynamicState d_plus;
-  medium.ThermodynamicState d_minus;
-  medium.ThermodynamicState T_plus;
-  medium.ThermodynamicState T_minus;
+  Medium.ThermodynamicState state;
+  Medium.HelmholtzDerivs f;
+  Medium.ThermodynamicState d_plus;
+  Medium.ThermodynamicState d_minus;
+  Medium.ThermodynamicState T_plus;
+  Medium.ThermodynamicState T_minus;
 
   // Pressure derivatives
-  medium.Types.DerPressureByDensity dpdT_analytical;
-  medium.Types.DerPressureByDensity dpdT_numerical;
-  medium.Types.DerPressureByTemperature dpTd_analytical;
-  medium.Types.DerPressureByTemperature dpTd_numerical;
+  Medium.Types.DerPressureByDensity dpdT_analytical;
+  Medium.Types.DerPressureByDensity dpdT_numerical;
+  Medium.Types.DerPressureByTemperature dpTd_analytical;
+  Medium.Types.DerPressureByTemperature dpTd_numerical;
   // Enthalpy derivatives
-  medium.Types.DerEnthalpyByDensity dhdT_analytical;
-  medium.Types.DerEnthalpyByDensity dhdT_numerical;
-  medium.Types.DerEnthalpyByTemperature dhTd_analytical;
-  medium.Types.DerEnthalpyByTemperature dhTd_numerical;
+  Medium.Types.DerEnthalpyByDensity dhdT_analytical;
+  Medium.Types.DerEnthalpyByDensity dhdT_numerical;
+  Medium.Types.DerEnthalpyByTemperature dhTd_analytical;
+  Medium.Types.DerEnthalpyByTemperature dhTd_numerical;
   // Energy derivatives
-  medium.Types.DerEnergyByDensity dudT_analytical;
-  medium.Types.DerEnergyByDensity dudT_numerical;
-  medium.Types.DerEnergyByTemperature duTd_analytical;
-  medium.Types.DerEnergyByTemperature duTd_numerical;
+  Medium.Types.DerEnergyByDensity dudT_analytical;
+  Medium.Types.DerEnergyByDensity dudT_numerical;
+  Medium.Types.DerEnergyByTemperature duTd_analytical;
+  Medium.Types.DerEnergyByTemperature duTd_numerical;
   // Entropy derivatives
-  medium.Types.DerEntropyByDensity dsdT_analytical;
-  medium.Types.DerEntropyByDensity dsdT_numerical;
-  medium.Types.DerEntropyByTemperature dsTd_analytical;
-  medium.Types.DerEntropyByTemperature dsTd_numerical;
+  Medium.Types.DerEntropyByDensity dsdT_analytical;
+  Medium.Types.DerEntropyByDensity dsdT_numerical;
+  Medium.Types.DerEntropyByTemperature dsTd_analytical;
+  Medium.Types.DerEntropyByTemperature dsTd_numerical;
   // Gibbs derivatives
-  medium.Types.DerEnergyByDensity dgdT_analytical;
-  medium.Types.DerEnergyByDensity dgdT_numerical;
-  medium.Types.DerEnergyByTemperature dgTd_analytical;
-  medium.Types.DerEnergyByTemperature dgTd_numerical;
+  Medium.Types.DerEnergyByDensity dgdT_analytical;
+  Medium.Types.DerEnergyByDensity dgdT_numerical;
+  Medium.Types.DerEnergyByTemperature dgTd_analytical;
+  Medium.Types.DerEnergyByTemperature dgTd_numerical;
   // Further derivatives
-  medium.VelocityOfSound a_analytical1;
-  medium.VelocityOfSound a_analytical2;
+  Medium.VelocityOfSound a_analytical1;
+  Medium.VelocityOfSound a_analytical2;
 
 equation
-  state=medium.setState_dTX(d=d, T=T);
-  f=medium.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
-  d_plus=medium.setState_dTX(d=d*1.00001, T=T);
-  d_minus=medium.setState_dTX(d=d*0.99999, T=T);
-  T_plus=medium.setState_dTX(d=d, T=T*1.00001);
-  T_minus=medium.setState_dTX(d=d, T=T*0.99999);
+  state=Medium.setState_dTX(d=d, T=T);
+  f=Medium.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+  d_plus=Medium.setState_dTX(d=d*1.00001, T=T);
+  d_minus=Medium.setState_dTX(d=d*0.99999, T=T);
+  T_plus=Medium.setState_dTX(d=d, T=T*1.00001);
+  T_minus=Medium.setState_dTX(d=d, T=T*0.99999);
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|");
 
   Modelica.Utilities.Streams.print("Pressure");
   // check (dp/dd)@T=const
-  dpdT_analytical = medium.pressure_derd_T(state=state);
+  dpdT_analytical = Medium.pressure_derd_T(state=state);
   dpdT_numerical = (d_plus.p-d_minus.p)/(d_plus.d-d_minus.d);
   Modelica.Utilities.Streams.print("(dp/dd)@T=const analytical= " + String(dpdT_analytical));
   Modelica.Utilities.Streams.print("(dp/dd)@T=const  numerical= " + String(dpdT_numerical));
   // check (dp/dT)@d=const
-  dpTd_analytical = medium.pressure_derT_d(state=state);
+  dpTd_analytical = Medium.pressure_derT_d(state=state);
   dpTd_numerical = (T_plus.p-T_minus.p)/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("(dp/dT)@d=const analytical= " + String(dpTd_analytical));
   Modelica.Utilities.Streams.print("(dp/dT)@d=const  numerical= " + String(dpTd_numerical));
@@ -68,12 +68,12 @@ equation
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Enthalpy");
   // check (dh/dd)@T=const
-  dhdT_analytical = medium.specificEnthalpy_derd_T(state=state);
+  dhdT_analytical = Medium.specificEnthalpy_derd_T(state=state);
   dhdT_numerical = (d_plus.h-d_minus.h)/(d_plus.d-d_minus.d);
   Modelica.Utilities.Streams.print("(dh/dd)@T=const analytical= " + String(dhdT_analytical));
   Modelica.Utilities.Streams.print("(dh/dd)@T=const  numerical= " + String(dhdT_numerical));
   // check (dh/dT)@d=const
-  dhTd_analytical = medium.specificEnthalpy_derT_d(state=state);
+  dhTd_analytical = Medium.specificEnthalpy_derT_d(state=state);
   dhTd_numerical = (T_plus.h-T_minus.h)/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("(dh/dT)@d=const analytical= " + String(dhTd_analytical));
   Modelica.Utilities.Streams.print("(dh/dT)@d=const  numerical= " + String(dhTd_numerical));
@@ -86,7 +86,7 @@ equation
   Modelica.Utilities.Streams.print("(du/dd)@T=const analytical= " + String(dudT_analytical));
   Modelica.Utilities.Streams.print("(du/dd)@T=const  numerical= " + String(dudT_numerical));
   // check (du/dT)@d=const
-  duTd_analytical = medium.specificHeatCapacityCv(state=state);
+  duTd_analytical = Medium.specificHeatCapacityCv(state=state);
   duTd_numerical = (T_plus.u-T_minus.u)/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("(du/dT)@d=const analytical= " + String(duTd_analytical));
   Modelica.Utilities.Streams.print("(du/dT)@d=const  numerical= " + String(duTd_numerical));
@@ -119,7 +119,7 @@ equation
 
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Further derivatives");
-  a_analytical1 = medium.velocityOfSound(state=state);
+  a_analytical1 = Medium.velocityOfSound(state=state);
   a_analytical2 = sqrt(dpdT_analytical-dpTd_analytical*dsdT_analytical/dsTd_analytical);
   Modelica.Utilities.Streams.print("(dp/dd)@s=const analytical1= " + String(a_analytical1));
   Modelica.Utilities.Streams.print("(dp/dd)@s=const  analytical2= " + String(a_analytical2));

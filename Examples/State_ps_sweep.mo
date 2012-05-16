@@ -1,16 +1,16 @@
 within HelmholtzMedia.Examples;
 model State_ps_sweep
-  package medium = HelmholtzFluids.R134a;
-  medium.AbsolutePressure p;
-  medium.SpecificEntropy s;
-  medium.ThermodynamicState inletState;
+  package Medium = HelmholtzFluids.R134a;
+  Medium.AbsolutePressure p;
+  Medium.SpecificEntropy s;
+  Medium.ThermodynamicState inletState;
 
 protected
-  constant medium.AbsolutePressure pmin=medium.fluidLimits.PMIN;
-  constant medium.AbsolutePressure pcrit=medium.fluidConstants[1].criticalPressure;
-  constant medium.AbsolutePressure pmax=medium.fluidLimits.PMAX;
-  constant medium.SpecificEntropy smin=medium.fluidLimits.SMIN;
-  constant medium.SpecificEntropy smax=medium.fluidLimits.SMAX;
+  constant Medium.AbsolutePressure pmin=Medium.fluidLimits.PMIN;
+  constant Medium.AbsolutePressure pcrit=Medium.fluidConstants[1].criticalPressure;
+  constant Medium.AbsolutePressure pmax=Medium.fluidLimits.PMAX;
+  constant Medium.SpecificEntropy smin=Medium.fluidLimits.SMIN;
+  constant Medium.SpecificEntropy smax=Medium.fluidLimits.SMAX;
 
 Modelica.Blocks.Sources.Ramp ramp(
     height=1,
@@ -33,7 +33,7 @@ equation
   p = 0.3*pcrit + 0.3*pcrit*(ramp.y*sine.y - ramp.y);
   s = 2e3;
 
-  inletState=medium.setState_psX(p=p, s=s, phase=0, X={1});
+  inletState=Medium.setState_psX(p=p, s=s, phase=0, X={1});
   annotation (experiment(StopTime=10, NumberOfIntervals=1000),
       __Dymola_experimentSetupOutput,
     Diagram(graphics));
