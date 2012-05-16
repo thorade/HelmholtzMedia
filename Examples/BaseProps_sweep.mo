@@ -3,6 +3,7 @@ model BaseProps_sweep
   "calculate BaseProperties from any two given input properties"
   //package medium = HelmholtzFluids.Butane;
   package medium = HelmholtzFluids.Butane(independentVariables=IndependentVariables.pT);
+  //package medium = HelmholtzFluids.Butane(independentVariables=IndependentVariables.ph);
   medium.BaseProperties props;
 
   Modelica.Blocks.Sources.ExpSine d_generator(
