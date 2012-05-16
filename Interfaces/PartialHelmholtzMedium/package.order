@@ -59,6 +59,8 @@ dynamicViscosity
 surfaceTension
 temperature
 density
+pressure
+specificEntropy
 specificEnthalpy
 bubbleEnthalpy
 dewEnthalpy

@@ -8,7 +8,7 @@ function specificEntropy_pT
   output SpecificEntropy s "Specific Enthalpy";
 
 protected
-  MolarMass MM = fluidConstants[1].molarMass;
+  MolarMass MM=fluidConstants[1].molarMass;
   SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
   Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
   Temperature T_crit=fluidConstants[1].criticalTemperature;
@@ -22,13 +22,13 @@ algorithm
   assert(phase <> 2, "specificEntropy_pT error: pressure and temperature are not independent variables in two-phase state");
   d := density_pT(p=p, T=T, phase=phase);
   delta := d/d_crit;
-  f.i   := f_i(tau=tau, delta=delta);
-  f.it  := f_it(tau=tau, delta=delta);
-  f.r   := f_r(tau=tau, delta=delta);
-  f.rt  := f_rt(tau=tau, delta=delta);
+  f.i := f_i(tau=tau, delta=delta);
+  f.it := f_it(tau=tau, delta=delta);
+  f.r := f_r(tau=tau, delta=delta);
+  f.rt := f_rt(tau=tau, delta=delta);
   s := R*(tau*(f.it + f.rt) - f.i - f.r);
 
   // this is an iterative backward function
-  // pressure_dT is the corresponding forward function
-  // annotation (inverse(p=pressure_dT(d=d, T=T, phase=phase)));
+  // the two inverse functions are Temperature_ph and pressure_Th
+  annotation (inverse(T=temperature_ps(p=p, s=s, phase=phase)));
 end specificEntropy_pT;

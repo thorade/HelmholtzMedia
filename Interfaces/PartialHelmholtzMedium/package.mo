@@ -24,18 +24,6 @@ partial package PartialHelmholtzMedium
   constant AncillaryCoefficients ancillaryCoefficients;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
   redeclare function setSat_T
   "iterative calculation of saturation properties from EoS with Newton-Raphson algorithm"
     input Temperature T;
@@ -175,9 +163,6 @@ protected
   end setSat_p;
 
 
-
-
-
   redeclare function extends saturationPressure
   "ancillary function: calculate saturation pressure for a given Temperature"
     // inherits input T and output p
@@ -242,7 +227,6 @@ protected
   end saturationTemperature;
 
 
-
   redeclare function vapourQuality "returns the vapour quality"
     // redeclare with algorithm based on d and T
     // previously only input state and output x were defined
@@ -271,7 +255,6 @@ protected
   end vapourQuality;
 
 
-
   redeclare record extends ThermodynamicState
     // inherits phase integer
     Density d "Density of medium";
@@ -298,36 +281,39 @@ protected
     MM = fluidConstants[1].molarMass;
     R = Modelica.Constants.R/MM;
 
+  algorithm
     if (independentVariables==IndependentVariables.dTX) then
       // Modelica.Utilities.Streams.print("Calculate thermodynamic state from EoS using setState_dT");
-      state =  setState_dTX(d=d, T=T);
-      p =  state.p;
-      h =  state.h;
-      s =  state.s;
-      u =  h - p/d;
+      state :=setState_dTX(d=d, T=T);
+      p :=state.p;
+      h :=state.h;
+      s :=state.s;
+      u :=h - p/d;
     elseif (independentVariables==IndependentVariables.pT) then
       // Modelica.Utilities.Streams.print("Calculate thermodynamic state from EoS using setState_pT");
-      state =  setState_pTX(p=p, T=T);
-      d =  state.d;
-      h =  state.h;
-      s =  state.s;
-      u =  h - p/d;
+      state :=setState_pTX(p=p, T=T);
+      d :=state.d;
+      h :=state.h;
+      s :=state.s;
+      u :=h - p/d;
     elseif (independentVariables==IndependentVariables.ph) then
       // Modelica.Utilities.Streams.print("Calculate thermodynamic state from EoS using setState_ph");
-      state =  setState_phX(p=p, h=h);
-      d =  density_ph(p=p, h=h, phase=state.phase);
+      state :=setState_phX(p=p, h=h);
+      d :=density_ph(
+        p=p,
+        h=h,
+        phase=state.phase);
       // d := state.d;
-      T =  state.T;
-      s =  state.s;
-      u =  h - p/d;
+      T :=state.T;
+      s :=state.s;
+      u :=h - p/d;
     end if;
 
     if (state.phase == 2) then
-      sat =  setSat_T(T=state.T);
+      sat :=setSat_T(T=state.T);
     end if;
 
   end BaseProperties;
-
 
 
   redeclare function extends setState_dTX
@@ -542,7 +528,6 @@ protected
   end setState_phX;
 
 
-
   redeclare function extends setState_psX
   "Return thermodynamic state as function of p, s and composition X or Xi"
 
@@ -650,7 +635,6 @@ protected
   end setState_psX;
 
 
-
   redeclare function density_pT
   "iteratively finds the density for a given p and T (works for single-phase only)"
 
@@ -710,9 +694,8 @@ protected
 
     // this is an iterative backward function
     // pressure_dT is the corresponding forward function
-    // annotation (inverse(p=pressure_dT(d=d, T=T, phase=phase)));
+     annotation (inverse(p=pressure_dT(d=d, T=T, phase=phase)));
   end density_pT;
-
 
 
   redeclare function specificEnthalpy_pT
@@ -744,10 +727,9 @@ protected
     h :=   T*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
 
     // this is an iterative backward function
-    // the two inverse functions are Temperature_ph and pressure_Th
-    // annotation (inverse(p=pressure_dT(d=d, T=T, phase=phase)));
+    // the two inverse functions are T=temperature_ph and p=pressure_Th
+    annotation (inverse(T=temperature_ph(p=p, h=h, phase=phase)));
   end specificEnthalpy_pT;
-
 
 
   redeclare function extends specificHeatCapacityCp
@@ -901,8 +883,6 @@ protected
       kappa := Modelica.Constants.inf; // divide by zero
     end if;
   end isothermalCompressibility;
-
-
 
 
   redeclare replaceable function extends thermalConductivity
@@ -1338,6 +1318,24 @@ The extended version has up to three terms with two parameters each.
   end density;
 
 
+  redeclare function extends pressure
+  "returns pressure from given ThermodynamicState"
+  // inherited from: PartialMedium
+  // inherits input state and output p
+  algorithm
+    p := state.p;
+  end pressure;
+
+
+  redeclare function extends specificEntropy
+  "returns specificEntropy from given ThermodynamicState"
+  // inherited from: PartialMedium
+  // inherits input state and output h
+  algorithm
+    s := state.s;
+  end specificEntropy;
+
+
   redeclare function extends specificEnthalpy
   "returns specificEnthalpy from given ThermodynamicState"
   // inherited from: PartialMedium
@@ -1397,11 +1395,6 @@ The extended version has up to three terms with two parameters each.
     // Clausius-Clapeyron, yields same result
     dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
   end saturationTemperature_derp;
-
-
-
-
-
 
 
   function density_derT_h "returns density derivative (dd/dT)@h=const"
@@ -1473,9 +1466,8 @@ protected
   // inherits output d
   // inherits algorithm
 
-    annotation (derivative=density_ph_der);
+    annotation(derivative=density_ph_der);
   end density_ph;
-
 
 
   redeclare function extends density_derp_h
