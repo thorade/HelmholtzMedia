@@ -299,18 +299,18 @@ protected
     elseif (independentVariables==IndependentVariables.ph) then
       // Modelica.Utilities.Streams.print("Calculate thermodynamic state from EoS using setState_ph");
       state :=setState_phX(p=p, h=h);
-      d :=density_ph(
-        p=p,
-        h=h,
-        phase=state.phase);
-      // d := state.d;
+      //d := density_ph(p=p, h=h);
+       d :=state.d;
       T :=state.T;
       s :=state.s;
       u :=h - p/d;
     end if;
 
-    if (state.phase == 2) then
+  if (state.phase == 2) then
       sat :=setSat_T(T=state.T);
+    else
+      // sat.Tsat :=saturationTemperature(p=p);
+      // sat.psat :=saturationPressure(T=T);
     end if;
 
   end BaseProperties;
@@ -471,17 +471,17 @@ protected
         f.rd  := f_rd(tau=tau, delta=delta);
         sat.vap.h := sat.Tsat*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
 
-        if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02*sat.vap.h))) then
+        if ((h > sat.liq.h - abs(0.05*sat.liq.h)) and (h < sat.vap.h + abs(0.05*sat.vap.h))) then
           // two-phase state or close to it, get saturation properties from EoS, use Tsat as starting value
           sat := setSat_p(p=p, T_guess=sat.Tsat);
         end if;
 
         if (h < sat.liq.h) then
           state.phase := 1; // single phase liquid
-          Tmax := 1.001*sat.Tsat;
+          Tmax := sat.Tsat;
         elseif (h > sat.vap.h) then
           state.phase := 1; // single phase vapor
-          Tmin := 0.999*sat.Tsat;
+          Tmin := sat.Tsat;
         else
           state.phase := 2; // two-phase, all properties can be calculated from sat record
         end if;
@@ -508,15 +508,17 @@ protected
               p=p,
               h=h,
               phase=1),
-            u_min=Tmin,
-            u_max=Tmax,
+            u_min=0.98*Tmin,
+            u_max=1.02*Tmax,
             tolerance=tolerance);
       state.d := density_pT(
             p=p,
             T=state.T,
             phase=1);
+
       tau := T_crit/state.T;
       delta := state.d/d_crit;
+
       f.i   := f_i(tau=tau, delta=delta);
       f.it  := f_it(tau=tau, delta=delta);
       f.r   := f_r(tau=tau, delta=delta);
@@ -579,17 +581,17 @@ protected
         f.rt  := f_rt(tau=tau, delta=delta);
         sat.vap.s := R*(tau*(f.it + f.rt) - f.i - f.r);
 
-        if ((s > sat.liq.s - abs(0.02*sat.liq.s)) and (s < sat.vap.s + abs(0.02*sat.vap.s))) then
+        if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
           // two-phase state or close to it, get saturation properties from EoS, use Tsat as starting value
           sat := setSat_p(p=p, T_guess=sat.Tsat);
         end if;
 
         if (s < sat.liq.s) then
           state.phase := 1; // single phase liquid
-          Tmax := 1.001*sat.Tsat;
+          Tmax := sat.Tsat;
         elseif (s > sat.vap.s) then
           state.phase := 1; // single phase vapor
-          Tmin := 0.999*sat.Tsat;
+          Tmin := sat.Tsat;
         else
           state.phase := 2; // two-phase, all properties can be calculated from sat record
         end if;
@@ -616,15 +618,17 @@ protected
               p=p,
               s=s,
               phase=1),
-            u_min=Tmin,
-            u_max=Tmax,
+            u_min=0.98*Tmin,
+            u_max=1.02*Tmax,
             tolerance=tolerance);
       state.d := density_pT(
             p=p,
             T=state.T,
             phase=1);
+
       tau := T_crit/state.T;
       delta := state.d/d_crit;
+
       f.it  := f_it(tau=tau, delta=delta);
       f.rt  := f_rt(tau=tau, delta=delta);
       f.rd  := f_rd(tau=tau, delta=delta);
@@ -688,8 +692,8 @@ protected
 
     d := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
          function density_pT_RES(T=T, p=p),
-          u_min=dmin,
-          u_max=dmax,
+          u_min=0.95*dmin,
+          u_max=1.05*dmax,
           tolerance=tolerance);
 
     // this is an iterative backward function
@@ -1345,6 +1349,22 @@ The extended version has up to three terms with two parameters each.
   end specificEnthalpy;
 
 
+  redeclare function extends setBubbleState
+  "returns bubble ThermodynamicState from given saturation properties"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat, input phase and output state
+  algorithm
+    state := sat.liq;
+  end setBubbleState;
+
+  redeclare function extends setDewState
+  "returns dew ThermodynamicState from given saturation properties"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat, input phase and output state
+  algorithm
+    state := sat.vap;
+  end setDewState;
+
   redeclare function extends bubbleEnthalpy
   "returns specificEnthalpy from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
@@ -1363,23 +1383,23 @@ The extended version has up to three terms with two parameters each.
   end dewEnthalpy;
 
 
-  redeclare function extends setBubbleState
-  "returns bubble ThermodynamicState from given saturation properties"
+
+
+  redeclare function extends dewDensity
+  "returns density from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
-  // inherits input sat, input phase and output state
+  // inherits input sat and output hl
   algorithm
-    state := sat.liq;
-  end setBubbleState;
+    dv := sat.vap.d;
+  end dewDensity;
 
-
-  redeclare function extends setDewState
-  "returns dew ThermodynamicState from given saturation properties"
+  redeclare function extends bubbleDensity
+  "returns density from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
-  // inherits input sat, input phase and output state
+  // inherits input sat and output hl
   algorithm
-    state := sat.vap;
-  end setDewState;
-
+    dl := sat.liq.d;
+  end bubbleDensity;
 
   redeclare function saturationTemperature_derp "returns (dT/dp)@sat"
   // does not extend, because base class output has wrong units
@@ -1494,6 +1514,7 @@ protected
               + state.d/state.T/dpTd;
     end if;
   end density_derp_h;
+
 
 
   redeclare function extends density_derh_p
