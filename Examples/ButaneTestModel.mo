@@ -2,7 +2,7 @@ within HelmholtzMedia.Examples;
 model ButaneTestModel "Test HelmholtzMedia.HelmholtzFluids.Butane"
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(
-     redeclare package Medium = HelmholtzMedia.HelmholtzFluids.Butane);
+     redeclare package Medium = HelmholtzMedia.HelmholtzFluids.Butane(independentVariables=IndependentVariables.ph));
   annotation (Documentation(info="<html>
 
 </html>"),

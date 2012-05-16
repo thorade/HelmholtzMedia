@@ -1,5 +1,6 @@
 Types
 fluidLimits
+independentVariables
 HelmholtzCoefficients
 helmholtzCoefficients
 ThermalConductivityCoefficients
@@ -63,7 +64,6 @@ bubbleEnthalpy
 dewEnthalpy
 setBubbleState
 setDewState
-density_phX
 saturationTemperature_derp
 saturationPressure_derT
 pressure_derd_T
@@ -73,5 +73,7 @@ specificEnthalpy_derT_d
 density_derT_h
 density_derp_T
 density_derT_p
+density_ph
+density_ph_der
 density_derp_h
 density_derh_p
