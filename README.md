@@ -23,5 +23,5 @@ So far, the fluids n-Butane, R134a, Isobutane and Isopentane are implemented (bu
 * Add hyperbolic terms for ideal Helmholtz energy (used in short technical EoS and GERG-2008)
 * Add choice of reference state
 * Low priority:
-  * Add setState_Ts (needed for isotherms in h,s-diagram)
-  * Add setState_Th (needed for numerical validation of (dd/dT)@h=const)
+  * Add `setState_Ts` (needed for isotherms in h,s-diagram)
+  * Add `setState_Th` (needed for numerical validation of (dd/dT)@h=const)
