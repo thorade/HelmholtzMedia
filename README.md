@@ -9,13 +9,15 @@ I am planning to submit this library to the Modelica 2012 conference.
 So far, the fluids n-Butane, R134a, Isobutane and Isopentane are implemented (but not fully validated)
 
 ### ToDo
-* Improve BaseProperties (use preferredState or something else?)
-* Add annotation regarding derivative and inverse functions
-* Add annotation regarding Documentation (copy+paste+translate from conference paper)
+* Improve BaseProperties (should independentVariables be used here?)
+* Check which functions from TwoPhaseMedium are still missing & implement them
+* Add annotation(inverse(b=b(a)) where possible & not yet implemented
+* Add annotation(derivative=...) to temperature_ph ~~and density_ph~~
+* Add annotation(Documentation(info=...html...)) using copy+paste from conference paper
 * The next fluids to be implemented are probably 
   * propane, 
-  * ammonia,
   * ethanol,
+  * ammonia,
   * other working fluids for Organic-Rankine-Cycles.
 * Add non-analytic critical terms for residual Helmholtz energy (needed for water and CO2)
 * Add hyperbolic terms for ideal Helmholtz energy (used in short technical EoS and GERG-2008)
