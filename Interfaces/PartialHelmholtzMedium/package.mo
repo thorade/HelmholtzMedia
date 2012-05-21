@@ -1357,6 +1357,7 @@ The extended version has up to three terms with two parameters each.
     state := sat.liq;
   end setBubbleState;
 
+
   redeclare function extends setDewState
   "returns dew ThermodynamicState from given saturation properties"
   // inherited from: PartialTwoPhaseMedium
@@ -1364,6 +1365,7 @@ The extended version has up to three terms with two parameters each.
   algorithm
     state := sat.vap;
   end setDewState;
+
 
   redeclare function extends bubbleEnthalpy
   "returns specificEnthalpy from given SaturationProperties"
@@ -1383,8 +1385,6 @@ The extended version has up to three terms with two parameters each.
   end dewEnthalpy;
 
 
-
-
   redeclare function extends dewDensity
   "returns density from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
@@ -1393,6 +1393,7 @@ The extended version has up to three terms with two parameters each.
     dv := sat.vap.d;
   end dewDensity;
 
+
   redeclare function extends bubbleDensity
   "returns density from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
@@ -1400,6 +1401,7 @@ The extended version has up to three terms with two parameters each.
   algorithm
     dl := sat.liq.d;
   end bubbleDensity;
+
 
   redeclare function saturationTemperature_derp "returns (dT/dp)@sat"
   // does not extend, because base class output has wrong units
@@ -1516,7 +1518,6 @@ protected
   end density_derp_h;
 
 
-
   redeclare function extends density_derh_p
   "returns density derivative (dd/dh)@p=const"
   //input state
@@ -1547,4 +1548,60 @@ protected
     end if;
   end density_derh_p;
 
+
+  redeclare function extends dBubbleDensity_dPressure
+  "Return bubble point density derivative"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output ddldp
+
+protected
+    DerDensityByPressure ddpT = density_derp_T(state=sat.liq);
+    DerDensityByTemperature ddTp = density_derT_p(state=sat.liq);
+    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+
+  algorithm
+    ddldp := ddpT + ddTp*dTp;
+  end dBubbleDensity_dPressure;
+
+  redeclare function extends dDewDensity_dPressure
+  "Return dew point density derivative"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output ddvdp
+
+protected
+    DerDensityByPressure ddpT = density_derp_T(state=sat.vap);
+    DerDensityByTemperature ddTp = density_derT_p(state=sat.vap);
+    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+
+  algorithm
+    ddvdp := ddpT + ddTp*dTp;
+  end dDewDensity_dPressure;
+
+  redeclare function extends dBubbleEnthalpy_dPressure
+  "Return bubble point enthalpy derivative"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output dhldp
+
+protected
+    DerEnthalpyByPressure dhpT = isothermalThrottlingCoefficient(state=sat.liq);
+    DerEnthalpyByTemperature dhTp = specificHeatCapacityCp(state=sat.liq);
+    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+
+  algorithm
+    dhldp := dhpT + dhTp*dTp;
+  end dBubbleEnthalpy_dPressure;
+
+  redeclare function extends dDewEnthalpy_dPressure
+  "Return dew point enthalpy derivative"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output dhldp
+
+protected
+    DerEnthalpyByPressure dhpT = isothermalThrottlingCoefficient(state=sat.vap);
+    DerEnthalpyByTemperature dhTp = specificHeatCapacityCp(state=sat.vap);
+    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+
+  algorithm
+    dhldp := dhpT + dhTp*dTp;
+  end dDewEnthalpy_dPressure;
 end PartialHelmholtzMedium;

@@ -81,3 +81,7 @@ density_ph
 density_ph_der
 density_derp_h
 density_derh_p
+dBubbleDensity_dPressure
+dDewDensity_dPressure
+dBubbleEnthalpy_dPressure
+dDewEnthalpy_dPressure
