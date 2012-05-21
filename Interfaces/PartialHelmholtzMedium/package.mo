@@ -1594,7 +1594,7 @@ protected
   redeclare function extends dDewEnthalpy_dPressure
   "Return dew point enthalpy derivative"
   // inherited from: PartialTwoPhaseMedium
-  // inherits input sat and output dhldp
+  // inherits input sat and output dhvdp
 
 protected
     DerEnthalpyByPressure dhpT = isothermalThrottlingCoefficient(state=sat.vap);
@@ -1602,6 +1602,6 @@ protected
     DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
 
   algorithm
-    dhldp := dhpT + dhTp*dTp;
+    dhvdp := dhpT + dhTp*dTp;
   end dDewEnthalpy_dPressure;
 end PartialHelmholtzMedium;
