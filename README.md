@@ -12,7 +12,7 @@ So far, the fluids n-Butane, R134a, Isobutane and Isopentane are implemented (bu
 * Improve BaseProperties (should independentVariables be used here?)
 * Check which functions from TwoPhaseMedium are still missing & implement them
 * Add annotation(inverse(b=b(a)) where possible & not yet implemented
-* Add annotation(derivative=...) to temperature_ph ~~and density_ph~~
+* Add `annotation(derivative=...)` to temperature_ph ~~and density_ph~~
 * Add annotation(Documentation(info=...html...)) using copy+paste from conference paper
 * The next fluids to be implemented are probably 
   * propane, 
