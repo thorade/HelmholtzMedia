@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples;
 model State_ph_sweep
-  package Medium = HelmholtzFluids.R134a;
+  package Medium = HelmholtzFluids.Butane;
   Medium.AbsolutePressure p;
   Medium.SpecificEnthalpy h;
   Medium.ThermodynamicState inletState;
@@ -31,7 +31,7 @@ Modelica.Blocks.Sources.Sine sine(
 
 equation
   p = 0.5*pcrit + 0.5*pcrit*(ramp.y*sine.y - ramp.y);
-  h = 200e3;// (hmax-hmin)/2 + 0.002*expSine.y*(hmax-hmin);
+  h = 700e3;// (hmax-hmin)/2 + 0.002*expSine.y*(hmax-hmin);
 
   inletState=Medium.setState_phX(p=p, h=h, phase=0, X={1});
   annotation (experiment(StopTime=10, NumberOfIntervals=1000),

@@ -49,18 +49,18 @@ extends Interfaces.PartialHelmholtzMedium(
     DMAX=800,
     PMIN=Modelica.Constants.small,
     PMAX=200e6,
-    HMIN=-725e3,
-    HMAX=+700e3,
-    SMIN=-3036,
-    SMAX=9283) "Helmholtz EoS Limits";
+    HMIN=-100e3,
+    HMAX=+1300e3,
+    SMIN=-465,
+    SMAX=8100) "Helmholtz EoS Limits";
 
   final constant Interfaces.PartialHelmholtzMedium.HelmholtzCoefficients
   helmholtzCoefficientsButane(
     idealLog=[
       +3.24680487,         1.],
     idealPower=[
-      -5.424952,        0.;
-      4.9194957,         1.],
+      -5.42495597,        0.;
+      4.919495781,         1.],
     idealEinstein=[
       +5.54913289,        -0.7748404445;
       +11.4648996,        -3.3406025522;
