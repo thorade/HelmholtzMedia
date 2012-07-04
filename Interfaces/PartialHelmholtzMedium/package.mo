@@ -300,7 +300,7 @@ protected
       // Modelica.Utilities.Streams.print("Calculate thermodynamic state from EoS using setState_ph");
       state :=setState_phX(p=p, h=h);
       //d := density_ph(p=p, h=h);
-       d :=state.d;
+      d :=state.d;
       T :=state.T;
       s :=state.s;
       u :=h - p/d;
@@ -400,7 +400,7 @@ protected
     Real tolerance=1e-9 "relative Tolerance for Density";
 
   algorithm
-    assert(phase <> 2, "setState_pTX_error: pressure and temperature are not independent varaibles in two-phase state");
+    assert(phase <> 2, "setState_pTX_error: pressure and temperature are not independent variables in two-phase state");
     state.phase := 1;
 
     state.p := p;
@@ -1563,6 +1563,7 @@ protected
     ddldp := ddpT + ddTp*dTp;
   end dBubbleDensity_dPressure;
 
+
   redeclare function extends dDewDensity_dPressure
   "Return dew point density derivative"
   // inherited from: PartialTwoPhaseMedium
@@ -1577,6 +1578,7 @@ protected
     ddvdp := ddpT + ddTp*dTp;
   end dDewDensity_dPressure;
 
+
   redeclare function extends dBubbleEnthalpy_dPressure
   "Return bubble point enthalpy derivative"
   // inherited from: PartialTwoPhaseMedium
@@ -1590,6 +1592,7 @@ protected
   algorithm
     dhldp := dhpT + dhTp*dTp;
   end dBubbleEnthalpy_dPressure;
+
 
   redeclare function extends dDewEnthalpy_dPressure
   "Return dew point enthalpy derivative"

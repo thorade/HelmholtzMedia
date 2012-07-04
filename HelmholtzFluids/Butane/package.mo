@@ -59,8 +59,8 @@ extends Interfaces.PartialHelmholtzMedium(
     idealLog=[
       +3.24680487,         1.],
     idealPower=[
-      +12.54882924,        0.;
-      -5.46976878,         1.],
+      -5.424952,        0.;
+      4.9194957,         1.],
     idealEinstein=[
       +5.54913289,        -0.7748404445;
       +11.4648996,        -3.3406025522;
