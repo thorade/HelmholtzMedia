@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples;
 model checkReferenceState
-  package Medium = HelmholtzMedia.HelmholtzFluids.Butane;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Ethanol;
   Medium.SpecificEnthalpy h_ref;
   Medium.SpecificEntropy s_ref;
 
