@@ -10,7 +10,7 @@ extends Interfaces.PartialHelmholtzMedium(
   fluidLimits=fluidLimitsEthanol,
   Density(min=fluidLimitsEthanol.DMIN, max=fluidLimitsEthanol.DMAX),
   Temperature(min=fluidLimitsEthanol.TMIN, max=fluidLimitsEthanol.TMAX),
-  AbsolutePressure(min=0, max=200e6),
+  AbsolutePressure(min=0, max=280e6),
   SpecificEnthalpy(min=fluidLimitsEthanol.HMIN, max=fluidLimitsEthanol.HMAX),
   SpecificEntropy(min=fluidLimitsEthanol.SMIN, max=fluidLimitsEthanol.SMAX));
 
@@ -96,26 +96,26 @@ extends Interfaces.PartialHelmholtzMedium(
   final constant
   Interfaces.PartialHelmholtzMedium.ThermalConductivityCoefficients
   thermalConductivityCoefficientsEthanol(
-    reducingTemperature_0=1,
+    reducingTemperature_0=513.9,
     reducingThermalConductivity_0=1,
     lambda_0_coeffs=[
-     1.62676E-03,    0;
-     9.75703E-04,    1;
-     2.89887E-02,    2],
-    reducingTemperature_residual=425.16,
-    reducingMolarVolume_residual=1/3920,
+     0.123120E-01,    0;
+    -0.153612E-01,    1;
+     0.426611E-01,    2],
+    reducingTemperature_residual=513.9,
+    reducingMolarVolume_residual=1/5991,
     reducingThermalConductivity_residual=1,
     lambda_r_coeffs=[
-    -3.04337E-2,    0,   1,   0;
-     4.18357E-2,    1,   1,   0;
-     1.65820E-1,    0,   2,   0;
-    -1.47163E-1,    1,   2,   0;
-    -1.48144E-1,    0,   3,   0;
-     1.33542E-1,    1,   3,   0;
-     5.25500E-2,    0,   4,   0;
-    -4.85489E-2,    1,   4,   0;
-    -6.29367E-3,    0,   5,   0;
-     6.44307E-3,    1,   5,   0],
+     0.266894E-1,        0.0,   1.0,   0.0;
+     0.0,                1.0,   1.0,   0.0;
+    -0.482953E-01,       0.0,   2.0,   0.0;
+     0.414022E-01,       1.0,   2.0,   0.0;
+     0.172939E-01,       0.0,   3.0,   0.0;
+    -0.977825E-02,       1.0,   3.0,   0.0;
+     0.0,                0.0,   4.0,   0.0;
+     0.0,                1.0,   4.0,   0.0;
+     0.0,                0.0,   5.0,   0.0;
+     0.0,                1.0,   5.0,   0.0],
     xi_0=0.194E-9,
     Gamma_0=0.0496,
     qd_inverse=0.875350E-9,
