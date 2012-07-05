@@ -1,9 +1,9 @@
 within HelmholtzMedia.Examples;
 model printCoefficients "pretty printing of EoS coefficients"
-  package medium = HelmholtzFluids.Butane;
+  package medium = HelmholtzFluids.Ethanol;
 
 algorithm
-    // print to Simulation Log -> Simulation or print to printlog.txt
+    // print to printlog.txt or to Simulation Log -> Simulation
     // if printing fails with error "Room to allocate string"
     // go to $Dymola$/source/matrixop.h and increase the size of simplestring by a factor of 10
 
