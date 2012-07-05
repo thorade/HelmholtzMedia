@@ -6,7 +6,7 @@ In addition to all state properties, this library calculates viscosity, thermal 
 I am planning to submit this library to the Modelica 2012 conference.
 
 ### Status
-So far, the fluids n-Butane, R134a, Isobutane and Isopentane are implemented (but not fully validated)
+So far, the fluids n-Butane, R134a, Isobutane, Isopentane and Ethanol are implemented (but not fully validated)
 
 ### ToDo
 * Improve `BaseProperties` (should independentVariables be used here?)
@@ -16,9 +16,8 @@ So far, the fluids n-Butane, R134a, Isobutane and Isopentane are implemented (bu
 * Add `annotation(Documentation(info=...html...))` using copy+paste from conference paper
 * The next fluids to be implemented are probably 
   * propane, 
-  * ethanol,
   * ammonia,
-  * other working fluids for Organic-Rankine-Cycles.
+  * working fluids for Organic-Rankine-Cycles.
 * Add non-analytic critical terms for residual Helmholtz energy (needed for water and CO2)
 * Add hyperbolic terms for ideal Helmholtz energy (used in short technical EoS and GERG-2008)
 * Add choice of reference state
