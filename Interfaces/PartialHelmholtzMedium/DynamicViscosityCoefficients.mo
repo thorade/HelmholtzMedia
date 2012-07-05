@@ -7,7 +7,7 @@ record DynamicViscosityCoefficients
   // description of coeffs copied from RefProp
   constant Temperature epsilon_kappa "Lennard-Jones energy parameter";
   constant Real sigma "Lennard-Jones size parameter";
-  constant Real[1,2] CET;
+  constant Real[:,2] CET = fill(0.0, 0, 2);
 
   // collision integral S_mathfrak and zero density dependence
   constant Real[:,2] a = fill(0.0, 0, 2) "coefficients for collision integral";

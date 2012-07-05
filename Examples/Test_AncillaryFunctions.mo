@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples;
 model Test_AncillaryFunctions
-  package Medium = HelmholtzFluids.R134a;
+  package Medium = HelmholtzFluids.Ethanol;
   Medium.Temperature Tsat;
   Medium.AbsolutePressure psat;
   Medium.Density dliq;

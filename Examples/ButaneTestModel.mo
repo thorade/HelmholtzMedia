@@ -6,5 +6,6 @@ model ButaneTestModel "Test HelmholtzMedia.HelmholtzFluids.Butane"
   annotation (Documentation(info="<html>
 
 </html>"),
-   experiment(StopTime=1.01));
+   experiment(StopTime=2.01, NumberOfIntervals=1000),
+    __Dymola_experimentSetupOutput);
 end ButaneTestModel;

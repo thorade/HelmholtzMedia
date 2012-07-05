@@ -1079,7 +1079,7 @@ protected
     // Real[size(dynamicViscosityCoefficients.nu_ex,1),5] nu_ex=dynamicViscosityCoefficients.nu_ex;
     // Real[size(dynamicViscosityCoefficients.de_ex,1),5] de_ex=dynamicViscosityCoefficients.de_ex;
 
-    Real[1,2] CET=dynamicViscosityCoefficients.CET; // Chapman-Enskog-Term
+    Real[size(dynamicViscosityCoefficients.CET, 1),2] CET=dynamicViscosityCoefficients.CET; // Chapman-Enskog-Term
     Real Omega=0 "reduced effective cross section / Omega collision integral";
     Real sigma=dynamicViscosityCoefficients.sigma;
     Real B_star=0 "reduced second viscosity virial coefficient";
@@ -1120,6 +1120,7 @@ protected
     or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
       tau := state.T/T_red_0;
       eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);
+      eta_0 := eta_0 + sum(CET[i, 1]*(tau)^CET[i, 2] for i in 2:size(CET, 1));
     elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
       eta_0 := CET[1, 1]*state.T^CET[1,2]/(sigma^2*Omega);
     elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then

@@ -96,7 +96,7 @@ extends Interfaces.PartialHelmholtzMedium(
   final constant
   Interfaces.PartialHelmholtzMedium.ThermalConductivityCoefficients
   thermalConductivityCoefficientsEthanol(
-    reducingTemperature_0=425.16,
+    reducingTemperature_0=1,
     reducingThermalConductivity_0=1,
     lambda_0_coeffs=[
      1.62676E-03,    0;
@@ -125,14 +125,16 @@ extends Interfaces.PartialHelmholtzMedium(
   dynamicViscosityCoefficientsEthanol(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
     collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
-    sigma=0.57335,
-    epsilon_kappa=280.51,
+    sigma=0.453,
+    epsilon_kappa=362.6,
     CET=[
-     0.1628213, 0.5],
+     0, 0.5;
+    -1.03116E+0,    0;
+     3.48379E-2,    1;
+    -6.50264E-6,   2],
     a=[
-     0.17067154,    0;
-    -0.48879666,    1;
-     0.039038856,   2],
+     0,    0;
+     0,    1],
     b=[
     -19.572881,       0.00;
      219.73999,      -0.25;
@@ -143,28 +145,22 @@ extends Interfaces.PartialHelmholtzMedium(
     -787.26086,      -1.50;
      14.085455,      -2.50;
     -0.34664158,     -5.50],
-    reducingTemperature_residual=425.125,
-    reducingMolarVolume_residual=1/3920,
-    reducingViscosity_residual=1,
+    reducingTemperature_residual=513.9,
+    reducingMolarVolume_residual=1/5991,
+    reducingViscosity_residual=1E3,
     g=[
-     2.30873963359,      0.0;
-     2.03404037254,      0.5],
+     -3.38264465E+00,      0.0;
+      1.27568864E+01,      0.5],
     e=[
-    -54.7737770846,      0.0,    2,  0,  0;
-     58.0898623034,     -1.0,    2,  0,  0;
-     0,                 -2.0,    2,  0,  0;
-     35.2658446259,      0.0,    3,  0,  0;
-    -39.6682203832,     -1.0,    3,  0,  0;
-     0,                 -2.0,    3,  0,  0;
-    -1.83729542151,      0.0,    4,  0,  0;
-     0,                 -1.0,    4,  0,  0;
-     0,                 -2.0,    4,  0,  0;
-    -0.833262985358,     0.0,    5,  0,  0;
-     1.93837020663,     -1.0,    5,  0,  0;
-     0,                 -2.0,    5,  0,  0;
-    -188.075903903,      0.0,    1, -1,  0],
+     1.31194057E-01,   0.0,   2.00,  0.00,  0;
+    -8.05700894E-02,   0.0,   3.00,  0.00,  0;
+    -3.82240694E-01,  -1.00,  2.00,  0.00,  0;
+     1.53811778E-01,  -1.00,  3.00,  0.00,  0;
+     0.0,             -2.00,  2.00,  0.00,  0;
+    -1.10578307E-01,  -2.00,  3.00,  0.00,  0;
+    -2.37222995E+01,   0.00,  1.00, -1.00,  0],
     nu_po=[
-     188.075903903,      0.0,    1,  0,  0],
+     2.37222995E+01,   0.00,  1.00,  0.00,  0],
     de_po=[
      1.,                 0.0,    0,  1,  0;
     -1.,                 0.0,    1,  0,  0])
