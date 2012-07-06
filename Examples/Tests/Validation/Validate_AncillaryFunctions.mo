@@ -1,5 +1,5 @@
-within HelmholtzMedia.Examples;
-model Test_AncillaryFunctions
+within HelmholtzMedia.Examples.Tests.Validation;
+model Validate_AncillaryFunctions
   package Medium = HelmholtzFluids.Ethanol;
   Medium.Temperature Tsat;
   Medium.AbsolutePressure psat;
@@ -24,4 +24,4 @@ algorithm
     dvap := Medium.dewDensity_T_ANC(T=Tsat);
 
   annotation (experiment(StopTime=10), __Dymola_experimentSetupOutput);
-end Test_AncillaryFunctions;
+end Validate_AncillaryFunctions;

@@ -1,4 +1,4 @@
-within HelmholtzMedia.Examples;
+within HelmholtzMedia.Examples.Tests.MediaTestModels;
 model IsopentaneTestModel "Test HelmholtzMedia.HelmholtzFluids.Isopentane"
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(

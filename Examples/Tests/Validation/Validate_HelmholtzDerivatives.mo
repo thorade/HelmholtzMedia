@@ -1,4 +1,4 @@
-within HelmholtzMedia.Examples;
+within HelmholtzMedia.Examples.Tests.Validation;
 model Validate_HelmholtzDerivatives
   // validate derivatives of Helmholtz energy (single phase state)
   // values for comparison are given in IAPWS-95 (Table 6)

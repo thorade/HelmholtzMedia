@@ -1,4 +1,4 @@
-within HelmholtzMedia.Examples;
+within HelmholtzMedia.Examples.Tests.Validation;
 model Validate_Derivatives_SinglePhase
   "compare analytical derivatives to numerical derivatives"
 

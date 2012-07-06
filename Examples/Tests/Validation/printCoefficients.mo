@@ -1,4 +1,4 @@
-within HelmholtzMedia.Examples;
+within HelmholtzMedia.Examples.Tests.Validation;
 model printCoefficients "pretty printing of EoS coefficients"
   package medium = HelmholtzFluids.Ethanol;
 

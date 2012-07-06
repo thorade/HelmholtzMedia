@@ -1,4 +1,4 @@
-within HelmholtzMedia.Examples;
+within HelmholtzMedia.Examples.Tests.Validation;
 model checkReferenceState
   package Medium = HelmholtzMedia.HelmholtzFluids.Ethanol;
   Medium.SpecificEnthalpy h_ref;

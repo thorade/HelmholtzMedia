@@ -1,5 +1,3 @@
-printCoefficients
-checkReferenceState
 State_dT_parameter
 State_pT_parameter
 State_ph_parameter
@@ -11,14 +9,4 @@ State_ph_sweep
 State_ps_sweep
 BaseProps_sweep
 setSat_sweep
-Test_inverse
-Test_AncillaryFunctions
-Validate_HelmholtzDerivatives
-Validate_Derivatives_SinglePhase
-Validate_Derivatives_SaturationBoundary
-Validate_Derivatives_TwoPhase
-ButaneTestModel
-IsobutaneTestModel
-IsopentaneTestModel
-R134aTestModel
-EthanolTestModel
+Tests
