@@ -6,9 +6,9 @@ model checkReferenceState
 
 protected
   Medium.SaturationProperties sat;
-  Medium.Temperature T_IIR = 273.15; // 0°C;
-  Medium.Temperature T_ASHRAE = 233.15; // -40°C;
-  Medium.AbsolutePressure p_NBP = 101325; // 1.01325 bar = 1 atm
+  final constant Medium.Temperature T_IIR = 273.15; // 0°C;
+  final constant Medium.Temperature T_ASHRAE = 233.15; // -40°C;
+  final constant Medium.AbsolutePressure p_NBP = 101325; // 1.01325 bar = 1 atm
 
 algorithm
   sat := Medium.setSat_T(T=T_IIR);

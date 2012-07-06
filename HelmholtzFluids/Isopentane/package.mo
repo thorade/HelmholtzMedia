@@ -165,20 +165,10 @@ package Isopentane "Isopentane"
 These are the coefficients for Isopentane. 
 
 <dl>
-<dt> Author</dt>
-<dd> <b>EoS</b><br>
-     Journal, Vol:Pages, Year<br>
-     DOI: <a href=\"http://dx.doi.org/10.1000/1\">10.1000/1</a>
-</dd>
-<dt> Author</dt>
-<dd> <b>Viscosity</b><br>
-     Journal, Vol:Pages, Year<br>
-     DOI: <a href=\"http://dx.doi.org/10.1000/1\">10.1000/1</a>
-</dd>
-<dt> Author</dt>
-<dd> <b>Thermal Conductivity</b><br>
-     Journal, Vol:Pages, Year<br>
-     DOI: <a href=\"http://dx.doi.org/10.1000/1\">10.1000/1</a>
+<dt> Lemmon, E. W. & Span, R</dt>
+<dd> <b>Short Fundamental Equations of State for 20 Industrial Fluids</b><br>
+     Journal of Chemical & Engineering Data 51 (3) , 785-850 (2006)<br>
+     DOI: <a href=\"http://dx.doi.org/10.1021/je050186n\">10.1021/je050186n</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>

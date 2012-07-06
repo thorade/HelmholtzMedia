@@ -202,20 +202,10 @@ extends Interfaces.PartialHelmholtzMedium(
 These are the coefficients for Ethanol. 
 
 <dl>
-<dt> Bücker, D. and Wagner, W.</dt>
-<dd> <b>Reference Equations of State for the Thermodynamic Properties of Fluid Phase n-Ethanol and IsoEthanol</b><br>
-     Journal of Physical and Chemical Reference Data 35.2, S. 929-1019 (2006)<br>
-     DOI: <a href=\"http://dx.doi.org/10.1063/1.1901687\">10.1063/1.1901687</a>
-</dd>
-<dt> Vogel, Eckhard; Küchenmeister, Cornelia and Bich, Eckard</dt>
-<dd> <b>Viscosity correlation for n-Ethanol in the fluid region</b><br>
-     High Temperatures - High Pressures 31.2, 173-186 (1999)<br>
-     DOI: <a href=\"http://dx.doi.org/10.1068/htrt154\">10.1068/htrt154</a>
-</dd>
-<dt> Perkins, Richard A. et. al.</dt>
-<dd> <b>Measurement and Correlation of the Thermal Conductivity of Ethanol from 135 K to 600 K at Pressures to 70 MPa</b><br>
-     Journal of Chemical & Engineering Data 47.5, S. 1263-1271. (2002)<br>
-     DOI: <a href=\"http://dx.doi.org/10.1021/je0101202\">10.1021/je0101202</a>
+<dt> Dillon, H. E. & Penoncello, S. G.</dt>
+<dd> <b>A Fundamental Equation for Calculation of the Thermodynamic Properties of Ethanol</b><br>
+     International Journal of Thermophysics 25, 321-335 (2004)<br>
+     DOI: <a href=\"http://dx.doi.org/10.1023/B:IJOT.0000028470.49774.14\">10.1023/B:IJOT.0000028470.49774.14</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
