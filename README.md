@@ -12,9 +12,6 @@ I am planning to submit this library to the Modelica 2012 conference.
 * Add `annotation(inverse(b=b(a))` where possible & not yet implemented
 * Add `annotation(derivative=...)` to `temperature_ph` ~~and `density_ph`~~
 * Add `annotation(Documentation(info=...html...))` using copy+paste from conference paper
-* The next fluids to be implemented are probably 
-  * ammonia,
-  * working fluids for Organic-Rankine-Cycles.
 * Add non-analytic critical terms for residual Helmholtz energy (needed for water and CO2)
 * Add hyperbolic terms for ideal Helmholtz energy (used in short technical EoS and GERG-2008)
 * Add choice of reference state
@@ -24,10 +21,13 @@ I am planning to submit this library to the Modelica 2012 conference.
 * And of course: more testing!
   
   
-### Implemented Fluids (so far)
+### Implemented Fluids
 * Butane (n-Butane)
 * Ethanol
 * Isobutane
 * Isopentane
 * Propane
 * R134a
+* The next fluids to be implemented are probably 
+  * ammonia,
+  * working fluids for Organic-Rankine-Cycles.
