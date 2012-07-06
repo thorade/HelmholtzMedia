@@ -5,9 +5,6 @@ It supports EoS of the form f=f(T,d) meaning Helmholtz energy as a funtion of te
 In addition to all state properties, this library calculates viscosity, thermal conductivity and surface tension.
 I am planning to submit this library to the Modelica 2012 conference.
 
-### Status
-So far, the fluids n-Butane, R134a, Isobutane, Isopentane and Ethanol are implemented (but not fully validated)
-
 ### ToDo
 * Replace asserts in setSat_T with extrapolation
 * Improve `BaseProperties` (should independentVariables be used here?)
@@ -16,12 +13,21 @@ So far, the fluids n-Butane, R134a, Isobutane, Isopentane and Ethanol are implem
 * Add `annotation(derivative=...)` to `temperature_ph` ~~and `density_ph`~~
 * Add `annotation(Documentation(info=...html...))` using copy+paste from conference paper
 * The next fluids to be implemented are probably 
-  * propane, 
   * ammonia,
   * working fluids for Organic-Rankine-Cycles.
 * Add non-analytic critical terms for residual Helmholtz energy (needed for water and CO2)
 * Add hyperbolic terms for ideal Helmholtz energy (used in short technical EoS and GERG-2008)
 * Add choice of reference state
-* Low priority:
-  * Add `setState_Ts` (needed for isotherms in h,s-diagram)
-  * Add `setState_Th` (needed for numerical validation of (dd/dT)@h=const)
+* Add `setState_hs` (needed for turbine calculation, when power is given and p_out is to be determined)
+* Add `setState_Ts` (needed for isotherms in h,s-diagram)
+* Add `setState_Th` (needed for numerical validation of (dd/dT)@h=const)
+* And of course: more testing!
+  
+  
+### Implemented Fluids (so far)
+* Butane (n-Butane)
+* Ethanol
+* Isobutane
+* Isopentane
+* Propane
+* R134a
