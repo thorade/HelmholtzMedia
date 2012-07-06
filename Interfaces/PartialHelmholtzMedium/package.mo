@@ -285,25 +285,25 @@ protected
     if (independentVariables==IndependentVariables.dTX) then
       // Modelica.Utilities.Streams.print("Calculate thermodynamic state from EoS using setState_dT");
       state :=setState_dTX(d=d, T=T);
-      p :=state.p;
-      h :=state.h;
-      s :=state.s;
-      u :=h - p/d;
+      p := state.p;
+      h := state.h;
+      s := state.s;
+      u := h - p/d;
     elseif (independentVariables==IndependentVariables.pT) then
       // Modelica.Utilities.Streams.print("Calculate thermodynamic state from EoS using setState_pT");
       state :=setState_pTX(p=p, T=T);
-      d :=state.d;
-      h :=state.h;
-      s :=state.s;
-      u :=h - p/d;
+      d := state.d;
+      h := state.h;
+      s := state.s;
+      u := h - p/d;
     elseif (independentVariables==IndependentVariables.ph) then
       // Modelica.Utilities.Streams.print("Calculate thermodynamic state from EoS using setState_ph");
       state :=setState_phX(p=p, h=h);
       //d := density_ph(p=p, h=h);
-      d :=state.d;
-      T :=state.T;
-      s :=state.s;
-      u :=h - p/d;
+      d := state.d;
+      T := state.T;
+      s := state.s;
+      u := h - p/d;
     end if;
 
   if (state.phase == 2) then
@@ -1119,7 +1119,9 @@ protected
     if ((dynamicViscosityModel == DynamicViscosityModel.VS1)
     or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
       tau := state.T/T_red_0;
+      // first term is the Chapman-Enskog-Term
       eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);
+      // possibly further empirical terms
       eta_0 := eta_0 + sum(CET[i, 1]*(tau)^CET[i, 2] for i in 2:size(CET, 1));
     elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
       eta_0 := CET[1, 1]*state.T^CET[1,2]/(sigma^2*Omega);
@@ -1131,7 +1133,7 @@ protected
     if ((dynamicViscosityModel == DynamicViscosityModel.VS1)
     or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)
     or  (dynamicViscosityModel == DynamicViscosityModel.VS4)) then
-      // use the second viscosity virial coefficient B
+      // use the second viscosity virial coefficient B according to Rainwater and Friend
       T_star := (state.T/dynamicViscosityCoefficients.epsilon_kappa);
       B_star := sum(b[i, 1]*T_star^b[i, 2] for i in 1:size(b, 1));
       B := B_star*0.6022137*sigma^3;
