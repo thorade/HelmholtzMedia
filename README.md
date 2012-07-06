@@ -9,6 +9,7 @@ I am planning to submit this library to the Modelica 2012 conference.
 So far, the fluids n-Butane, R134a, Isobutane, Isopentane and Ethanol are implemented (but not fully validated)
 
 ### ToDo
+* Replace asserts in setSat_T with extrapolation
 * Improve `BaseProperties` (should independentVariables be used here?)
 * Check which functions from `TwoPhaseMedium` are still missing & implement them
 * Add `annotation(inverse(b=b(a))` where possible & not yet implemented
