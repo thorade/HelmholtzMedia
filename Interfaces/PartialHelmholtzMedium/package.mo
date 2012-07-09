@@ -1550,10 +1550,7 @@ protected
 
   algorithm
     if (state.phase == 1) then
-      f:=setHelmholtzDerivs(
-        T=state.T,
-        d=state.d,
-        phase=1);
+      f:=setHelmholtzDerivs(T=state.T, d=state.d, phase=1);
       dhdT := specificEnthalpy_derd_T(state=state);
       dhTd := specificEnthalpy_derT_d(state=state);
       ddTp := density_derT_p(state=state);

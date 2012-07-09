@@ -28,6 +28,13 @@ I am planning to submit this library to the Modelica 2012 conference.
 * Isopentane
 * Propane
 * R134a
-* The next fluids to be implemented are probably 
-  * ammonia,
-  * working fluids for Organic-Rankine-Cycles.
+
+### Fluids that might be included in future versions
+* HFC-125 (should be easy)
+* HFC-1234yf (ECS viscosity model not yet implemented)
+* CO2 (non-analytical terms not yet implemented)
+* water according to IAPWS-95 (non-analytical terms not yet implemented)
+* nitrogen
+* methane
+* ammonia
+* working fluids for Organic-Rankine-Cycles.
