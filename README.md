@@ -6,7 +6,7 @@ In addition to all state properties, this library calculates viscosity, thermal 
 I am planning to submit this library to the Modelica 2012 conference.
 
 ### ToDo
-* Replace `assert` in `setSat_T` with extrapolation
+* ~~Replace `assert` in `setSat_T` with extrapolation~~
 * Improve `BaseProperties` (should independentVariables be used here?)
 * Check which functions from `TwoPhaseMedium` are still missing & implement them
 * Add `annotation(inverse(b=b(a))` where possible & not yet implemented
