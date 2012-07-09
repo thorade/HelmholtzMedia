@@ -4,7 +4,7 @@ function pressure_derT_d "returns pressure derivative (dp/dT)@d=const"
 //input HelmholtzDerivs is optional and will be used for single-phase only
   input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
 //input sat is optional and will be used for two-phase only
-  input SaturationProperties sat=setSat_T(T=state.T, phase=state.phase);
+  input SaturationProperties sat=setSat_T(T=state.T);
   output DerPressureByTemperature dpTd;
 
 algorithm

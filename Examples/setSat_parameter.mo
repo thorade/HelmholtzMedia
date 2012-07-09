@@ -4,7 +4,7 @@ model setSat_parameter
 
   Medium.SaturationProperties satProps;
 
-  parameter Medium.Temperature T_input = 273.15;
+  parameter Real T_input = 298.15;
   parameter Medium.AbsolutePressure p_input = 101325;
 
 equation

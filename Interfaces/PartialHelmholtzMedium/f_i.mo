@@ -19,7 +19,7 @@ protected
 //  Real[nSinh, 2] s=helmholtzCoefficients.idealSinh;
 
 algorithm
-  if delta>0 then
+  if (delta>0) then
     f_ideal :=
       log(delta)
       + sum(l[i,1]*log(tau^l[i,2]) for i in 1:nLog)

@@ -4,7 +4,7 @@ model State_dT_parameter "calculate state record from dT input"
   package Medium = HelmholtzMedia.HelmholtzFluids.Propane;
 
   parameter Medium.Density d=1e-3;
-  parameter Medium.Temperature T=250;
+  parameter Medium.Temperature T=298.15;
 
   Medium.ThermodynamicState state;
 

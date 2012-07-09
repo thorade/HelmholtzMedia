@@ -26,14 +26,14 @@ partial package PartialHelmholtzMedium
 
   redeclare function setSat_T
   "iterative calculation of saturation properties from EoS with Newton-Raphson algorithm"
+    // does not extend, because base class already defines an algorithm
     input Temperature T;
-    input FixedPhase phase=2;
     output SaturationProperties sat;
 
 protected
     Temperature T_trip=fluidConstants[1].triplePointTemperature;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real tau=T_crit/T "inverse reduced temperature";
+    Real tau(unit="1") "inverse reduced temperature";
     Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
     Real R=Modelica.Constants.R/fluidConstants[1].molarMass
     "specific gas constant in J/kg.K";
@@ -52,14 +52,14 @@ protected
     Real Delta_K;
     Real Delta;
     Real gamma=1
-    "parameter to control convergence speed, default is 1, decrease if convergence fails";
+    "control convergence speed, default is 1, decrease if convergence fails";
     Real tolerance=1e-9 "Tolerance for sum of Delta_J and Delta_K";
 
   algorithm
-  if (phase==2) then
-    // print("sat_of_T_EoS: T="+String(T),"printlog.txt");
-    assert(T >= T_trip, "setSat_T error: Temperature is lower than triple-point temperature");
-    assert(T <= T_crit, "setSat_T error: Temperature is higher than critical temperature");
+    // Modelica.Utilities.Streams.print("setSat_T: T="+String(T),"printlog.txt");
+
+  if ((T>=T_trip) and (T<T_crit)) then
+    tau := T_crit/T;
 
     // calculate guess values for reduced density delta
     delta_liq := bubbleDensity_T_ANC(T=T)/d_crit;
@@ -102,17 +102,32 @@ protected
     end while;
 
     sat.Tsat := T;
-    sat.liq := setState_dTX(
-          d=delta_liq*d_crit,
-          T=T,
-          phase=1);
-    sat.vap := setState_dTX(
-          d=delta_vap*d_crit,
-          T=T,
-          phase=1);
+    sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
+    sat.vap := setState_dTX(d=delta_vap*d_crit, T=T, phase=1);
     sat.psat := sat.liq.p;
-  // elseif (phase==1) then
-  // print("sat_of_T_EoS has been called from single-phase state","printlog.txt");
+
+  elseif (T>=T_crit) then
+    // assert(T <= T_crit, "setSat_T error: Temperature is higher than critical temperature");
+    // above critical temperature, no stable two-phase state exists
+    // anyway, it is possible to extend the vapour-pressure curve into this region
+    // one possibility is use the state where ds/dT=max or ds/dp=max or dcp/dT=max or dcp/dp=max
+    // here a very simple approximation is used by just setting d=d_crit
+    sat.Tsat := T;
+    sat.liq := setState_dTX(d=d_crit, T=T, phase=1);
+    sat.vap := setState_dTX(d=d_crit, T=T, phase=1);
+    sat.psat := sat.liq.p;
+  else
+    // assert(T >= T_trip, "setSat_T error: Temperature is lower than triple-point temperature");
+    // T<T_trip: this does not make sense: if T is below the triple temperature, the medium is solid, not fluid
+    // anyway, during initialization (at time=0) T=0 may happen
+    // density values are extrapolated linearly, fantasy values are returned
+    sat.Tsat := max(T, Modelica.Constants.small);
+    delta_liq := (T_trip/sat.Tsat)*bubbleDensity_T_ANC(T=T_trip)/d_crit;
+    delta_vap := (sat.Tsat/T_trip)*dewDensity_T_ANC(T=T_trip)/d_crit;
+
+    sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
+    sat.vap := setState_dTX(d=delta_vap*d_crit, T=T, phase=1);
+    sat.psat := sat.liq.p;
   end if;
 
     annotation (Documentation(info="<html>
@@ -801,7 +816,7 @@ protected
           phase=1);
       cv := R*(-tau^2*(f.itt + f.rtt));
     elseif (state.phase == 2) then
-      sat:=setSat_T(T=state.T, phase=state.phase);
+      sat:=setSat_T(T=state.T);
       // assert(false, "specificHeatCapacityCv warning: using cv in two-phase region", level=AssertionLevel.warning);
       // two-phase definition as in Span(2000), eq. 3.79 + 3.80 + 3.86
       // Attention: wrong sign in eq. 3.80
@@ -1427,7 +1442,7 @@ The extended version has up to three terms with two parameters each.
   //input HelmholtzDerivs is optional and will be used for single-phase only
     input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
   //input sat is optional and will be used for two-phase only
-    input SaturationProperties sat=setSat_T(T=state.T, phase=state.phase);
+    input SaturationProperties sat=setSat_T(T=state.T);
     output DerDensityByTemperature ddTh "Density derivative w.r.t. temperature";
 
 protected
@@ -1514,7 +1529,7 @@ protected
       ddTh := density_derT_h(state=state);
       ddph := 1.0/(dpdT + dpTd/ddTh);
     elseif (state.phase == 2) then
-      sat:=setSat_T(T=state.T, phase=2);
+      sat:=setSat_T(T=state.T);
       ddph := state.d^2/state.T*specificHeatCapacityCv(state=state)/dpTd^2
               + state.d/state.T/dpTd;
     end if;
@@ -1544,7 +1559,7 @@ protected
       ddTp := density_derT_p(state=state);
       ddhp := 1.0/(dhdT + dhTd/ddTp);
     elseif (state.phase == 2) then
-      sat:=setSat_T(T=state.T, phase=2);
+      sat:=setSat_T(T=state.T);
       // dvhp = (v"-v')/(h"-h')
       // ddhp = -d^2 * dvhp
       ddhp := -state.d^2*(1/sat.liq.d-1/sat.vap.d)/(sat.liq.h-sat.vap.h);

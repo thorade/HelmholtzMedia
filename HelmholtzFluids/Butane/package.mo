@@ -8,11 +8,11 @@ extends Interfaces.PartialHelmholtzMedium(
   surfaceTensionCoefficients=surfaceTensionCoefficientsButane,
   ancillaryCoefficients=ancillaryCoefficientsButane,
   fluidLimits=fluidLimitsButane,
-  Density(min=fluidLimitsButane.DMIN, max=fluidLimitsButane.DMAX),
-  Temperature(min=fluidLimitsButane.TMIN, max=fluidLimitsButane.TMAX),
-  AbsolutePressure(min=0, max=200e6),
-  SpecificEnthalpy(min=fluidLimitsButane.HMIN, max=fluidLimitsButane.HMAX),
-  SpecificEntropy(min=fluidLimitsButane.SMIN, max=fluidLimitsButane.SMAX));
+  Density(min=fluidLimitsButane.DMIN, max=fluidLimitsButane.DMAX, start=fluidConstantsButane.molarMass/fluidConstantsButane.criticalMolarVolume),
+  Temperature(min=fluidLimitsButane.TMIN, max=fluidLimitsButane.TMAX, start=298.15),
+  AbsolutePressure(min=0, max=200e6, start=101325),
+  SpecificEnthalpy(min=fluidLimitsButane.HMIN, max=fluidLimitsButane.HMAX, start=(fluidLimitsButane.HMIN+fluidLimitsButane.HMAX)/2),
+  SpecificEntropy(min=fluidLimitsButane.SMIN, max=fluidLimitsButane.SMAX, start=(fluidLimitsButane.SMIN+fluidLimitsButane.SMAX)/2));
 
   final constant Interfaces.PartialHelmholtzMedium.FluidConstants
   fluidConstantsButane(
