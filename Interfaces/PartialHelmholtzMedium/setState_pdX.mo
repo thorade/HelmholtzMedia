@@ -77,8 +77,8 @@ algorithm
             p=p,
             d=d,
             phase=1),
-          u_min=0.98*Tmin,
-          u_max=1.02*Tmax,
+          u_min=Tmin,
+          u_max=Tmax,
           tolerance=tolerance);
 
     tau := T_crit/state.T;

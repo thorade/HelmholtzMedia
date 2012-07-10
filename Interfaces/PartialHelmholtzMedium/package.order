@@ -48,6 +48,8 @@ setState_phX
 setState_phX_RES
 setState_psX
 setState_psX_RES
+setState_Ts
+setState_Ts_RES
 setState_ThX
 setState_ThX_RES
 density_pT
@@ -96,3 +98,4 @@ pressure_dT_der
 specificEnthalpy_dT
 specificEnthalpy_dT_der
 specificEnthalpy_pd
+density_Ts
