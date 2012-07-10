@@ -38,8 +38,8 @@ protected
     Real R=Modelica.Constants.R/fluidConstants[1].molarMass
     "specific gas constant in J/kg.K";
 
-    Real delta_liq;
-    Real delta_vap;
+    Real delta_liq(unit="1", min=0);
+    Real delta_vap(unit="1", min=0);
     Real J_liq;
     Real J_liq_delta;
     Real J_vap;
@@ -88,8 +88,8 @@ protected
 
       Delta := J_vap_delta*K_liq_delta - J_liq_delta*K_vap_delta;
 
-      delta_liq := delta_liq + gamma/Delta*((K_vap - K_liq)*J_vap_delta - (J_vap - J_liq)*K_vap_delta);
-      delta_vap := delta_vap + gamma/Delta*((K_vap - K_liq)*J_liq_delta - (J_vap - J_liq)*K_liq_delta);
+      delta_liq := max(Modelica.Constants.small, delta_liq + gamma/Delta*((K_vap - K_liq)*J_vap_delta - (J_vap - J_liq)*K_vap_delta));
+      delta_vap := max(Modelica.Constants.small, delta_vap + gamma/Delta*((K_vap - K_liq)*J_liq_delta - (J_vap - J_liq)*K_liq_delta));
 
       // calculate new Delta_J and Delta_K
       J_liq := delta_liq*(1 + delta_liq*f_rd(tau=tau, delta=delta_liq));
