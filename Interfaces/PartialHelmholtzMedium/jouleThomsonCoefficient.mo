@@ -5,7 +5,7 @@ function jouleThomsonCoefficient
 //input HelmholtzDerivs is optional and will be used for single-phase only
   input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
 //input sat is optional and will be used for two-phase only
-  input SaturationProperties sat=setSat_T(T=state.T, phase=state.phase);
+  input SaturationProperties sat=setSat_T(T=state.T);
 output DerTemperatureByPressure mu;
 
 algorithm
