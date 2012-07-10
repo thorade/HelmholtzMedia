@@ -297,18 +297,20 @@ protected
     MM = fluidConstants[1].molarMass;
     R = Modelica.Constants.R/MM;
 
-    // use functions to calculate properties
+  // use functions to calculate properties
+    // d = density_ph(p=p, h=h);
+    // T = temperature_ph(p=p, h=h);
     p =  pressure_dT(d=d, T=T);
     h =  specificEnthalpy_dT(d=d, T=T);
     s =  specificEntropy_dT(d=d, T=T);
 
-    // calculate u
+  // calculate u
     u =  h - p/d;
 
-    // set SaturationProperties
+  // set SaturationProperties
     sat = setSat_T(T=T);
 
-    // connect state with BaseProperties
+  // connect state with BaseProperties
     state.d = d;
     state.T = T;
     state.p = p;
@@ -333,7 +335,7 @@ protected
     HelmholtzDerivs f;
 
     SaturationProperties sat;
-    MassFraction Q "vapour quality";
+    MassFraction x "vapour quality";
 
   algorithm
     state.phase := phase;
@@ -368,11 +370,11 @@ protected
     state.d := d;
     if (state.phase == 2) then
       // force two-phase
-      Q := (1/d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
+      x := (1/d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
       state.p := sat.psat;
-      state.h := sat.liq.h + Q*(sat.vap.h - sat.liq.h);
-      state.u := sat.liq.u + Q*(sat.vap.u - sat.liq.u);
-      state.s := sat.liq.s + Q*(sat.vap.s - sat.liq.s);
+      state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
+      state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
+      state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
     else
       // force single-phase
       f.i   := f_i(tau=tau, delta=delta);
@@ -442,7 +444,7 @@ protected
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
     SaturationProperties sat;
-    MassFraction Q "vapour quality";
+    MassFraction x "vapour quality";
     Temperature Tmin=fluidLimits.TMIN;
     Temperature Tmax=fluidLimits.TMAX;
     Real tolerance=1e-9 "relative Tolerance for Density";
@@ -501,10 +503,10 @@ protected
     if (state.phase == 2) then
       // force two-phase, SaturationProperties are already known
       state.T := sat.Tsat;
-      Q := (h - sat.liq.h)/(sat.vap.h - sat.liq.h);
-      state.d := 1/(1/sat.liq.d + Q*(1/sat.vap.d - 1/sat.liq.d));
-      state.u := sat.liq.u + Q*(sat.vap.u - sat.liq.u);
-      state.s := sat.liq.s + Q*(sat.vap.s - sat.liq.s);
+      x := (h - sat.liq.h)/(sat.vap.h - sat.liq.h);
+      state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
+      state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
+      state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
     else
       // force single-phase
       state.T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
@@ -550,7 +552,7 @@ protected
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
     SaturationProperties sat;
-    MassFraction Q "vapour quality";
+    MassFraction x "vapour quality";
     Temperature Tmin=fluidLimits.TMIN;
     Temperature Tmax=fluidLimits.TMAX;
     Real tolerance=1e-9 "relative Tolerance for Density";
@@ -611,10 +613,10 @@ protected
     if (state.phase == 2) then
       // force two-phase
       state.T := sat.Tsat;
-      Q := (s - sat.liq.s)/(sat.vap.s - sat.liq.s);
-      state.d := 1/(1/sat.liq.d + Q*(1/sat.vap.d - 1/sat.liq.d));
-      state.h := sat.liq.h + Q*(sat.vap.h - sat.liq.h);
-      state.u := sat.liq.u + Q*(sat.vap.u - sat.liq.u);
+      x := (s - sat.liq.s)/(sat.vap.s - sat.liq.s);
+      state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
+      state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
+      state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
     else
       // force single-phase
       state.T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
@@ -641,6 +643,46 @@ protected
     end if;
 
   end setState_psX;
+
+
+  redeclare function setState_px
+  "Return thermodynamic state as function of (p, x)"
+    input AbsolutePressure p "Pressure";
+    input MassFraction x "Vapour quality";
+    output ThermodynamicState state "Thermodynamic state record";
+
+protected
+    SaturationProperties sat=setSat_p(p=p);
+
+  algorithm
+    state.phase := 2;
+    state.p := sat.psat;
+    state.T := sat.Tsat;
+    state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
+    state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
+    state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
+    state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
+  end setState_px;
+
+
+  redeclare function setState_Tx
+  "Return thermodynamic state as function of (T, x)"
+    input Temperature T "Temperature";
+    input MassFraction x "Vapour quality";
+    output ThermodynamicState state "Thermodynamic state record";
+
+protected
+    SaturationProperties sat=setSat_T(T=T);
+
+  algorithm
+    state.phase := 2;
+    state.p := sat.psat;
+    state.T := sat.Tsat;
+    state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
+    state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
+    state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
+    state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
+  end setState_Tx;
 
 
   redeclare function density_pT
@@ -1611,4 +1653,11 @@ protected
   algorithm
     dhvdp := dhpT + dhTp*dTp;
   end dDewEnthalpy_dPressure;
+
+
+  redeclare function extends pressure_dT
+  annotation (
+    derivative=pressure_dT_der,
+    inverse(d=density_pT(p=p, T=T, phase=phase)));
+  end pressure_dT;
 end PartialHelmholtzMedium;

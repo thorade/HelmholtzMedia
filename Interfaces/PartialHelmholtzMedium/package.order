@@ -43,6 +43,8 @@ setState_phX
 setState_phX_RES
 setState_psX
 setState_psX_RES
+setState_px
+setState_Tx
 density_pT
 density_pT_RES
 specificEnthalpy_pT
@@ -85,3 +87,5 @@ dBubbleDensity_dPressure
 dDewDensity_dPressure
 dBubbleEnthalpy_dPressure
 dDewEnthalpy_dPressure
+pressure_dT
+pressure_dT_der
