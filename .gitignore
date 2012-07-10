@@ -12,6 +12,7 @@ dymosim.exp
 dymosim.lib
 *.mat
 *.bak-mo
+*.mof
 
 # ignore pdf files
 *.pdf
