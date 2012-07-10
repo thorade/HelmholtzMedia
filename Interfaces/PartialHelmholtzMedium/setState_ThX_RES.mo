@@ -1,10 +1,11 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
-function density_pT_RES "residual function"
+function setState_ThX_RES "residual function"
   extends Modelica.Math.Nonlinear.Interfaces.partialScalarFunction;
   // inherits input u (here: d=u) and output y (Residual)
 
-  input Modelica.SIunits.Temperature T;
-  input Modelica.SIunits.AbsolutePressure p;
+  input Temperature T;
+  input SpecificEnthalpy h;
+  input FixedPhase phase=0;
 
 protected
   Real R=Modelica.Constants.R/fluidConstants[1].molarMass
@@ -14,9 +15,10 @@ protected
   Real delta=u/d_crit "reduced density";
   Real tau=T_crit/T "inverse reduced temperature";
 
-  AbsolutePressure p_of_u;
+  SpecificEnthalpy h_of_u;
 
 algorithm
-  p_of_u := ((1 + delta*f_rd(delta=delta, tau=tau))*u*R*T);
-  y := p - p_of_u;
-end density_pT_RES;
+  h_of_u := T*R*(tau*(f_it(delta=delta, tau=tau) + f_rt(delta=delta, tau=tau)) + (1+delta*f_rd(delta=delta, tau=tau)));
+  // return the RESidual
+  y := h - h_of_u;
+end setState_ThX_RES;

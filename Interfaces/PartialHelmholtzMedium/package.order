@@ -38,15 +38,17 @@ SaturationProperties
 BaseProperties
 specificEntropy_dT
 setState_dTX
+setState_Tx
+setState_px
 setState_pTX
+setState_pTX_RES
 setState_phX
 setState_phX_RES
 setState_psX
 setState_psX_RES
-setState_px
-setState_Tx
+setState_ThX
+setState_ThX_RES
 density_pT
-density_pT_RES
 specificEnthalpy_pT
 specificEntropy_pT
 specificHeatCapacityCp
@@ -89,3 +91,5 @@ dBubbleEnthalpy_dPressure
 dDewEnthalpy_dPressure
 pressure_dT
 pressure_dT_der
+specificEnthalpy_dT
+specificEnthalpy_dT_der

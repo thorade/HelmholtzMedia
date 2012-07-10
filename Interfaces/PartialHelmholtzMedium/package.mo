@@ -330,6 +330,7 @@ protected
     SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
     Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
+    Temperature T_trip=fluidConstants[1].triplePointTemperature;
     Real delta(unit="1")=d/d_crit "reduced density";
     Real tau(unit="1")=T_crit/T "inverse reduced temperature";
     HelmholtzDerivs f;
@@ -342,7 +343,7 @@ protected
 
     if (state.phase == 0) then
       //phase unknown, check phase first
-      if (T < T_crit) then
+      if ((T>T_trip) and (T < T_crit)) then
         // two-phase possible, do simple density check
         if ((d > 1.02*bubbleDensity_T_ANC(T=T)) or (d < 0.98*dewDensity_T_ANC(T=T))) then
           state.phase := 1;
@@ -391,6 +392,46 @@ protected
   end setState_dTX;
 
 
+  redeclare function setState_Tx
+  "Return thermodynamic state as function of (T, x)"
+    input Temperature T "Temperature";
+    input MassFraction x "Vapour quality";
+    output ThermodynamicState state "Thermodynamic state record";
+
+protected
+    SaturationProperties sat=setSat_T(T=T);
+
+  algorithm
+    state.phase := 2;
+    state.p := sat.psat;
+    state.T := sat.Tsat;
+    state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
+    state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
+    state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
+    state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
+  end setState_Tx;
+
+
+  redeclare function setState_px
+  "Return thermodynamic state as function of (p, x)"
+    input AbsolutePressure p "Pressure";
+    input MassFraction x "Vapour quality";
+    output ThermodynamicState state "Thermodynamic state record";
+
+protected
+    SaturationProperties sat=setSat_p(p=p);
+
+  algorithm
+    state.phase := 2;
+    state.p := sat.psat;
+    state.T := sat.Tsat;
+    state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
+    state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
+    state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
+    state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
+  end setState_px;
+
+
   redeclare function extends setState_pTX
   "Return thermodynamic state as function of (p, T)"
 
@@ -399,22 +440,48 @@ protected
     SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
     Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real delta "reduced density";
-    Real tau=T_crit/T "inverse reduced temperature";
+    Real delta(unit="1") "reduced density";
+    Real tau(unit="1")=T_crit/T "inverse reduced temperature";
     HelmholtzDerivs f;
 
+    SaturationProperties sat;
+
+    Density dmin=fluidLimits.DMIN;
+    Density dmax=fluidLimits.DMAX;
     Real tolerance=1e-9 "relative Tolerance for Density";
 
   algorithm
     assert(phase <> 2, "setState_pTX_error: pressure and temperature are not independent variables in two-phase state");
     state.phase := 1;
 
+    if (T <= T_crit) then
+      sat.psat := saturationPressure(T=T);
+
+      if (p > 1.05*sat.psat) then
+        sat.liq.d := bubbleDensity_T_ANC(T=T);
+      elseif (p < 0.95*sat.psat) then
+        sat.vap.d := dewDensity_T_ANC(T=T);
+      else
+        sat := setSat_T(T=T); // very close to two-phase: get saturation properties from EoS for consistency
+      end if;
+
+      if (p > sat.psat) then
+        dmin := sat.liq.d; // single-phase liquid: d is between dliq and rho_max
+      elseif (p < sat.psat) then
+        dmax := sat.vap.d; //single-phase vapor: d is between 0 and dvap
+      else
+        assert(p <> sat.psat, "density_pT error: cannot calculate the density because in the two-phase region p and T are not independent");
+      end if;
+
+    end if;
+
     state.p := p;
     state.T := T;
-    state.d := density_pT(
-          p=p,
-          T=T,
-          phase=1);
+    state.d := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
+         function setState_pTX_RES(T=T, p=p),
+          u_min=0.95*dmin,
+          u_max=1.05*dmax,
+          tolerance=tolerance);
     delta := state.d/d_crit;
 
     f.i   := f_i(tau=tau, delta=delta);
@@ -645,140 +712,130 @@ protected
   end setState_psX;
 
 
-  redeclare function setState_px
-  "Return thermodynamic state as function of (p, x)"
-    input AbsolutePressure p "Pressure";
-    input MassFraction x "Vapour quality";
-    output ThermodynamicState state "Thermodynamic state record";
-
-protected
-    SaturationProperties sat=setSat_p(p=p);
-
-  algorithm
-    state.phase := 2;
-    state.p := sat.psat;
-    state.T := sat.Tsat;
-    state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
-    state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
-    state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
-    state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
-  end setState_px;
-
-
-  redeclare function setState_Tx
-  "Return thermodynamic state as function of (T, x)"
+  function setState_ThX "Return thermodynamic state as function of (T, h)"
+    extends Modelica.Icons.Function;
     input Temperature T "Temperature";
-    input MassFraction x "Vapour quality";
-    output ThermodynamicState state "Thermodynamic state record";
-
-protected
-    SaturationProperties sat=setSat_T(T=T);
-
-  algorithm
-    state.phase := 2;
-    state.p := sat.psat;
-    state.T := sat.Tsat;
-    state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
-    state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
-    state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
-    state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
-  end setState_Tx;
-
-
-  redeclare function density_pT
-  "iteratively finds the density for a given p and T (works for single-phase only)"
-
-    // this function will be called millions of times,
-    // so it makes sense to have good starting values u_min and u_max
-    // an estimate for rho can be calculated from Redlich-Kwong-Soave
-    // then u_min=0.8*estimate and u_max=1.2*estimate
-
-    input AbsolutePressure p "Pressure";
-    input Temperature T "Temperature";
-    input FixedPhase phase=1 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output Density d "Density";
-
+    input SpecificEnthalpy h "Enthalpy";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    output ThermodynamicState state "thermodynamic state record";
 protected
     MolarMass MM = fluidConstants[1].molarMass;
     SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
     Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real delta=d/d_crit "reduced density";
-    Real tau=T_crit/T "inverse reduced temperature";
+    Temperature T_trip=fluidConstants[1].triplePointTemperature;
+    Real delta "reduced density";
+    Real tau(unit="1")=T_crit/T "inverse reduced temperature";
+    HelmholtzDerivs f;
 
     SaturationProperties sat;
-
+    MassFraction x "vapour quality";
     Density dmin=fluidLimits.DMIN;
     Density dmax=fluidLimits.DMAX;
     Real tolerance=1e-9 "relative Tolerance for Density";
 
   algorithm
-    assert(phase <> 2, "density_pT error: in two-phase state pressure and temperature are not independent variables");
+    state.phase := phase;
 
-    if (T <= T_crit) then
-      sat.psat := saturationPressure(T=T);
+    if (state.phase == 2) then
+      assert(T >= T_trip, "setState_ThX_error: pressure is lower than triple point pressure");
+      assert(T <= T_crit, "setState_ThX_error: pressure is higher than critical pressure");
+      sat := setSat_T(T=T);
+      assert(h >= sat.liq.h, "setState_ThX_error: enthalpy is lower than saturated liquid enthalpy: this is single phase liquid");
+      assert(h <= sat.vap.h, "setState_ThX_error: enthalpy is higher than saturated vapor enthalpy: this is single phase vapor");
+    else
+      if ((T <= T_crit) and (T >= T_trip)) then
+        // two-phase possible, do simple check first
+        sat.Tsat := T;
+        tau := T_crit/sat.Tsat;
+        sat.liq.d := bubbleDensity_T_ANC(T=sat.Tsat);
+        delta := sat.liq.d/d_crit;
+        f.it  := f_it(tau=tau, delta=delta);
+        f.rt  := f_rt(tau=tau, delta=delta);
+        f.rd  := f_rd(tau=tau, delta=delta);
+        sat.liq.h := sat.Tsat*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
 
-      if (p > 1.05*sat.psat) then
-        sat.liq.d := bubbleDensity_T_ANC(T=T);
-      elseif (p < 0.95*sat.psat) then
-        sat.vap.d := dewDensity_T_ANC(T=T);
+        sat.vap.d := dewDensity_T_ANC(T=sat.Tsat);
+        delta := sat.vap.d/d_crit;
+        f.it  := f_it(tau=tau, delta=delta);
+        f.rt  := f_rt(tau=tau, delta=delta);
+        f.rd  := f_rd(tau=tau, delta=delta);
+        sat.vap.h := sat.Tsat*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
+
+        if ((h > sat.liq.h - abs(0.05*sat.liq.h)) and (h < sat.vap.h + abs(0.05*sat.vap.h))) then
+          // two-phase state or close to it, get saturation properties from EoS
+          sat := setSat_T(T=sat.Tsat);
+        end if;
+
+        if (h < sat.liq.h) then
+          state.phase := 1; // single phase liquid
+          dmin := sat.liq.d;
+        elseif (h > sat.vap.h) then
+          state.phase := 1; // single phase vapor
+          dmax := sat.vap.d;
+        else
+          state.phase := 2; // two-phase, all properties can be calculated from sat record
+        end if;
+
       else
-        sat := setSat_T(T=T); // very close to two-phase: get saturation properties from EoS for consistency
+        // T>T_crit or T<T_trip, only single phase possible, do not change dmin and dmax
+        state.phase := 1;
       end if;
-
-      if (p > sat.psat) then
-        dmin := sat.liq.d; // single-phase liquid: d is between dliq and rho_max
-      elseif (p < sat.psat) then
-        dmax := sat.vap.d; //single-phase vapor: d is between 0 and dvap
-      else
-        assert(p <> sat.psat, "density_pT error: cannot calculate the density because in the two-phase region p and T are not independent");
-      end if;
-
     end if;
 
-    d := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-         function density_pT_RES(T=T, p=p),
-          u_min=0.95*dmin,
-          u_max=1.05*dmax,
-          tolerance=tolerance);
+    state.T := T;
+    state.h := h;
+    if (state.phase == 2) then
+      // force two-phase, SaturationProperties are already known
+      state.p := sat.psat;
+      x := (h - sat.liq.h)/(sat.vap.h - sat.liq.h);
+      state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
+      state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
+      state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
+    else
+      // force single-phase
+      state.d := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
+            function setState_ThX_RES(
+              T=T,
+              h=h,
+              phase=1),
+            u_min=0.98*dmin,
+            u_max=1.02*dmax,
+            tolerance=tolerance);
 
-    // this is an iterative backward function
-    // pressure_dT is the corresponding forward function
-     annotation (inverse(p=pressure_dT(d=d, T=T, phase=phase)));
+      tau := T_crit/state.T;
+      delta := state.d/d_crit;
+
+      f.i   := f_i(tau=tau, delta=delta);
+      f.it  := f_it(tau=tau, delta=delta);
+      f.r   := f_r(tau=tau, delta=delta);
+      f.rt  := f_rt(tau=tau, delta=delta);
+      f.rd  := f_rd(tau=tau, delta=delta);
+      state.p := state.d*T*R*(1+delta*f.rd);
+      state.u := state.T*R*(tau*(f.it+f.rt));
+      state.s :=         R*(tau*(f.it+f.rt) - (f.i+f.r));
+    end if;
+
+  end setState_ThX;
+
+
+  redeclare function extends density_pT
+  // input, output and algorithm are inherited from PartialTwoPhaseMedium
+  annotation (
+    inverse(p=pressure_dT(d=d, T=T, phase=phase)));
   end density_pT;
 
 
   redeclare function specificEnthalpy_pT
-  "iteratively finds the specific enthalpy for a given p and T"
-
+    extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
     input Temperature T "Temperature";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output SpecificEnthalpy h "Specific Enthalpy";
-
-protected
-    MolarMass MM = fluidConstants[1].molarMass;
-    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
-    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real delta "reduced density";
-    Real tau=T_crit/T "inverse reduced temperature";
-    HelmholtzDerivs f;
-
-    Density d;
-
+    output SpecificEnthalpy h "specific enthalpy";
   algorithm
-    assert(phase <> 2, "specificEnthalpy_pT error: pressure and temperature are not independent variables in two-phase state");
-    d := density_pT(p=p, T=T, phase=phase);
-    delta := d/d_crit;
-    f.it  := f_it(tau=tau, delta=delta);
-    f.rt  := f_rt(tau=tau, delta=delta);
-    f.rd  := f_rd(tau=tau, delta=delta);
-    h :=   T*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
-
-    // this is an iterative backward function
-    // the two inverse functions are T=temperature_ph and p=pressure_Th
-    annotation (inverse(T=temperature_ph(p=p, h=h, phase=phase)));
+    h := specificEnthalpy(setState_pTX(p=p, T=T, phase=phase));
+  annotation (
+    inverse(T=temperature_ph(p=p, h=h, phase=phase)));
   end specificEnthalpy_pT;
 
 
@@ -1656,8 +1713,16 @@ protected
 
 
   redeclare function extends pressure_dT
+  // input, output and algorithm are inherited from PartialTwoPhaseMedium
   annotation (
     derivative=pressure_dT_der,
     inverse(d=density_pT(p=p, T=T, phase=phase)));
   end pressure_dT;
+
+
+  redeclare function extends specificEnthalpy_dT
+  // input, output and algorithm are inherited from PartialTwoPhaseMedium
+  annotation (
+    derivative=specificEnthalpy_dT_der);
+  end specificEnthalpy_dT;
 end PartialHelmholtzMedium;
