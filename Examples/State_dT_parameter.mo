@@ -1,7 +1,7 @@
 within HelmholtzMedia.Examples;
 model State_dT_parameter "calculate state record from dT input"
 
-  package Medium = HelmholtzMedia.HelmholtzFluids.Propane;
+  package Medium = HelmholtzFluids.Propane;
 
   parameter Medium.Density d=1e-3;
   parameter Medium.Temperature T=298.15;
@@ -18,7 +18,7 @@ model State_dT_parameter "calculate state record from dT input"
   // Medium.VelocityOfSound a;
 
 equation
-  state=Medium.setState_dTX(d=d, T=T, phase=0, X={1});
+  state=Medium.setState_dTX(d=d, T=T, phase=0);
 
   // x=Medium.vapourQuality(state);
    sigma=Medium.surfaceTension(Medium.setSat_T(T=T));

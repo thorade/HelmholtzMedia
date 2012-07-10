@@ -110,6 +110,7 @@ protected
     // assert(T <= T_crit, "setSat_T error: Temperature is higher than critical temperature");
     // above critical temperature, no stable two-phase state exists
     // anyway, it is possible to extend the vapour-pressure curve into this region
+    // this can happen when called from BaseProperties
     // one possibility is use the state where ds/dT=max or ds/dp=max or dcp/dT=max or dcp/dp=max
     // here a very simple approximation is used by just setting d=d_crit
     sat.Tsat := T;
@@ -289,50 +290,38 @@ protected
 
 
   redeclare model extends BaseProperties
-  "Base properties (p, d, T, h, u, R, MM and, if applicable, X and Xi) of a medium"
+  "Base properties (p, d, T, h, u, s) of a medium"
     SpecificEntropy s;
 
   equation
     MM = fluidConstants[1].molarMass;
     R = Modelica.Constants.R/MM;
 
-  algorithm
-    if (independentVariables==IndependentVariables.dTX) then
-      // Modelica.Utilities.Streams.print("Calculate thermodynamic state from EoS using setState_dT");
-      state :=setState_dTX(d=d, T=T);
-      p := state.p;
-      h := state.h;
-      s := state.s;
-      u := h - p/d;
-    elseif (independentVariables==IndependentVariables.pT) then
-      // Modelica.Utilities.Streams.print("Calculate thermodynamic state from EoS using setState_pT");
-      state :=setState_pTX(p=p, T=T);
-      d := state.d;
-      h := state.h;
-      s := state.s;
-      u := h - p/d;
-    elseif (independentVariables==IndependentVariables.ph) then
-      // Modelica.Utilities.Streams.print("Calculate thermodynamic state from EoS using setState_ph");
-      state :=setState_phX(p=p, h=h);
-      //d := density_ph(p=p, h=h);
-      d := state.d;
-      T := state.T;
-      s := state.s;
-      u := h - p/d;
-    end if;
+    // use functions to calculate properties
+    p =  pressure_dT(d=d, T=T);
+    h =  specificEnthalpy_dT(d=d, T=T);
+    s =  specificEntropy_dT(d=d, T=T);
 
-  if (state.phase == 2) then
-      sat :=setSat_T(T=state.T);
-    else
-      // sat.Tsat :=saturationTemperature(p=p);
-      // sat.psat :=saturationPressure(T=T);
-    end if;
+    // calculate u
+    u =  h - p/d;
+
+    // set SaturationProperties
+    sat = setSat_T(T=T);
+
+    // connect state with BaseProperties
+    state.d = d;
+    state.T = T;
+    state.p = p;
+    state.h = h;
+    state.s = s;
+    state.u = u;
+    state.phase = if ((T<fluidConstants[1].criticalTemperature) and (T>fluidConstants[1].triplePointTemperature) and (d<sat.liq.d) and (d>sat.vap.d)) then 2 else 1;
 
   end BaseProperties;
 
 
   redeclare function extends setState_dTX
-  "Return thermodynamic state as function of d, T and composition X or Xi"
+  "Return thermodynamic state as function of (d, T)"
 
 protected
     MolarMass MM = fluidConstants[1].molarMass;
@@ -401,7 +390,7 @@ protected
 
 
   redeclare function extends setState_pTX
-  "Return thermodynamic state as function of p, T and composition X or Xi"
+  "Return thermodynamic state as function of (p, T)"
 
 protected
     MolarMass MM = fluidConstants[1].molarMass;
@@ -438,7 +427,7 @@ protected
 
 
   redeclare function extends setState_phX
-  "Return thermodynamic state as function of p, h and composition X or Xi"
+  "Return thermodynamic state as function of (p, h)"
 
 protected
     MolarMass MM = fluidConstants[1].molarMass;
@@ -546,7 +535,7 @@ protected
 
 
   redeclare function extends setState_psX
-  "Return thermodynamic state as function of p, s and composition X or Xi"
+  "Return thermodynamic state as function of (p, s)"
 
 protected
     MolarMass MM = fluidConstants[1].molarMass;
