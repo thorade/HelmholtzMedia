@@ -1,5 +1,5 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
-function setState_pdX "Return thermodynamic state as function of (p, d)"
+function setState_pd "Return thermodynamic state as function of (p, d)"
   extends Modelica.Icons.Function;
   input AbsolutePressure p "Pressure";
   input Density d "Density";
@@ -77,7 +77,7 @@ algorithm
   else
     // force single-phase
     state.T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-          function setState_pdX_RES(
+          function HelmholtzMedia.Interfaces.PartialHelmholtzMedium.setState_pd_RES(
             p=p,
             d=d,
             phase=1),
@@ -98,4 +98,4 @@ algorithm
     state.s :=         R*(tau*(f.it+f.rt) - (f.i+f.r));
   end if;
 
-end setState_pdX;
+end setState_pd;

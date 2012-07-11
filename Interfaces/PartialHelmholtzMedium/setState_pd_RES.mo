@@ -1,5 +1,5 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
-function setState_pdX_RES "residual function"
+function setState_pd_RES "residual function"
   extends Modelica.Math.Nonlinear.Interfaces.partialScalarFunction;
   // inherits input u (here: T=u) and output y (Residual)
 
@@ -24,4 +24,4 @@ protected
 algorithm
   // Modelica.Utilities.Streams.print("setState_pd_RES: p=" + String(p) + " p(" + String(u) + ")=" + String(p_of_u));
   y := p - p_of_u;
-end setState_pdX_RES;
+end setState_pd_RES;

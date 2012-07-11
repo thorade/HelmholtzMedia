@@ -1,5 +1,5 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
-function density_ph_der "time derivative of density (p,h are state variables)"
+function density_ph_der "time derivative of density_ph"
 
   input AbsolutePressure p;
   input SpecificEnthalpy h;
@@ -10,6 +10,7 @@ function density_ph_der "time derivative of density (p,h are state variables)"
 
 protected
   ThermodynamicState state=setState_phX(p=p, h=h, phase=phase);
+
 algorithm
   der_d := der_p*density_derp_h(state=state)
          + der_h*density_derh_p(state=state);

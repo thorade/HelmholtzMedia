@@ -10,6 +10,56 @@ partial package PartialHelmholtzMedium
 
   import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
+
+  redeclare record extends ThermodynamicState(phase(start=0))
+    // inherits phase integer
+    Density d "Density of medium";
+    Temperature T "Temperature of medium";
+    AbsolutePressure p "Absolute pressure of medium";
+    SpecificEnthalpy h "Specific enthalpy of medium";
+    SpecificEnergy u "Specific inner energy of medium";
+    SpecificEntropy s "Specific entropy of medium";
+  end ThermodynamicState;
+
+
+  redeclare record extends SaturationProperties
+    // inherits Tsat and psat
+    ThermodynamicState liq;
+    ThermodynamicState vap;
+  end SaturationProperties;
+
+
+  redeclare model extends BaseProperties
+  "Base properties (p, d, T, h, u, s) of a medium"
+    SpecificEntropy s;
+
+  equation
+    MM = fluidConstants[1].molarMass;
+    R = Modelica.Constants.R/MM;
+
+  // use functions to calculate properties
+    // d = density_ph(p=p, h=h);
+    // T = temperature_ph(p=p, h=h);
+    p =  pressure_dT(d=d, T=T);
+    h =  specificEnthalpy_dT(d=d, T=T);
+    s =  specificEntropy_dT(d=d, T=T);
+
+  // calculate u
+    u =  h - p/d;
+
+  // set SaturationProperties
+    sat = setSat_T(T=T);
+
+  // connect state with BaseProperties
+    state.d = d;
+    state.T = T;
+    state.p = p;
+    state.h = h;
+    state.s = s;
+    state.u = u;
+    state.phase = if ((T<fluidConstants[1].criticalTemperature) and (T>fluidConstants[1].triplePointTemperature) and (d<sat.liq.d) and (d>sat.vap.d)) then 2 else 1;
+
+  end BaseProperties;
   constant FluidLimits fluidLimits;
   constant IndependentVariables independentVariables=IndependentVariables.dTX;
 
@@ -179,147 +229,22 @@ protected
   end setSat_p;
 
 
-  redeclare function extends saturationPressure
-  "ancillary function: calculate saturation pressure for a given Temperature"
-    // inherits input T and output p
-
-protected
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real tau=T_crit/T "inverse reduced temperature";
-    Real T_theta=1-T/T_crit;
-    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
-
-    Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
-    Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
-    Real[nPressureSaturation] theta=ancillaryCoefficients.pressureSaturation[:, 2];
-
+  redeclare function extends setBubbleState
+  "returns bubble ThermodynamicState from given saturation properties"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat, input phase and output state
   algorithm
-    assert(T <= T_crit, "saturationPressure error: Temperature is higher than critical temperature");
-    p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation));
-
-    // this is an ancillary forward function
-    // the corresponding iterative backward function is saturationTemperature(p)
-    annotation (inverse(T=saturationTemperature(p=p)), Documentation(info="<html>
-      <p>
-      This algorithm returns the saturation pressure as a function of Temperature: psat=psat(T).
-      This type of vapor pressure equation was developed by W. Wagner.
-      Because it cannot be solved for temperature analytically, 
-      the inverse function Tsat=Tsat(p) has to find Tsat iteratively.
-      </p>
-      
-      <dl>
-      <dt>Wagner, W.</dt>
-      <dd> <b>Eine mathematisch statistische Methode zum Aufstellen thermodynamischer Gleichungen - gezeigt am Beispiel der Dampfdruckkurve reiner fluider Stoffe.</b><br>
-           Forschrittberichte der VDI Zeitschriften, Reihe 3, Nr. 39 (1974)
-      </dd>
-      </dl>
-      </html>"));
-  end saturationPressure;
+    state := sat.liq;
+  end setBubbleState;
 
 
-  redeclare function extends saturationTemperature
-  "ancillary iterative function: calculate saturation temperature for a given pressure by iterating the anciallry function"
-    // inherits input p and output T
-
-protected
-    Temperature T_trip=fluidConstants[1].triplePointTemperature;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
-    AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
-    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
-    Real tolerance=1e-9 "relative Tolerance for Density";
-
+  redeclare function extends setDewState
+  "returns dew ThermodynamicState from given saturation properties"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat, input phase and output state
   algorithm
-    assert(p >= p_trip, "saturationTemperature error: Pressure is lower than triple-point pressure");
-    assert(p <= p_crit, "saturationTemperature error: Pressure is higher than critical pressure");
-    T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-          function saturationTemperature_RES(p=p),
-          u_min=T_trip,
-          u_max=T_crit,
-          tolerance=tolerance);
-
-    // this is an iterative backward function
-    // the corresponding ancillary forward function is saturationPressure(T)
-    annotation (inverse(p=saturationPressure(T=T)));
-  end saturationTemperature;
-
-
-  redeclare function vapourQuality "returns the vapour quality"
-    // redeclare with algorithm based on d and T
-    // previously only input state and output x were defined
-    // optional input for saturation properties can save some time
-
-    input ThermodynamicState state;
-    input SaturationProperties sat=setSat_T(state.T);
-    output MassFraction x;
-
-protected
-    Temperature T_trip=fluidConstants[1].triplePointTemperature;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
-
-  algorithm
-    assert(state.T >= T_trip, "vapourQuality error: Temperature is lower than triple-point temperature");
-    assert(state.T <= T_crit, "vapourQuality error: Temperature is higher than critical temperature");
-
-    if state.d <= sat.vap.d then
-      x := 1;
-    elseif state.d >= sat.liq.d then
-      x := 0;
-    else
-      x := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
-    end if;
-
-  end vapourQuality;
-
-
-  redeclare record extends ThermodynamicState(phase(start=0))
-    // inherits phase integer
-    Density d "Density of medium";
-    Temperature T "Temperature of medium";
-    AbsolutePressure p "Absolute pressure of medium";
-    SpecificEnthalpy h "Specific enthalpy of medium";
-    SpecificEnergy u "Specific inner energy of medium";
-    SpecificEntropy s "Specific entropy of medium";
-  end ThermodynamicState;
-
-
-  redeclare record extends SaturationProperties
-    // inherits Tsat and psat
-    ThermodynamicState liq;
-    ThermodynamicState vap;
-  end SaturationProperties;
-
-
-  redeclare model extends BaseProperties
-  "Base properties (p, d, T, h, u, s) of a medium"
-    SpecificEntropy s;
-
-  equation
-    MM = fluidConstants[1].molarMass;
-    R = Modelica.Constants.R/MM;
-
-  // use functions to calculate properties
-    // d = density_ph(p=p, h=h);
-    // T = temperature_ph(p=p, h=h);
-    p =  pressure_dT(d=d, T=T);
-    h =  specificEnthalpy_dT(d=d, T=T);
-    s =  specificEntropy_dT(d=d, T=T);
-
-  // calculate u
-    u =  h - p/d;
-
-  // set SaturationProperties
-    sat = setSat_T(T=T);
-
-  // connect state with BaseProperties
-    state.d = d;
-    state.T = T;
-    state.p = p;
-    state.h = h;
-    state.s = s;
-    state.u = u;
-    state.phase = if ((T<fluidConstants[1].criticalTemperature) and (T>fluidConstants[1].triplePointTemperature) and (d<sat.liq.d) and (d>sat.vap.d)) then 2 else 1;
-
-  end BaseProperties;
+    state := sat.vap;
+  end setDewState;
 
 
   redeclare function extends setState_dTX
@@ -821,24 +746,141 @@ protected
   end setState_ThX;
 
 
-  redeclare function extends density_pT
-  // input, output and algorithm are inherited from PartialTwoPhaseMedium
-  annotation (
-    inverse(p=pressure_dT(d=d, T=T, phase=phase)));
-  end density_pT;
+  redeclare function extends saturationPressure
+  "ancillary function: calculate saturation pressure for a given Temperature"
+    // inherits input T and output p
 
+protected
+    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    Real tau=T_crit/T "inverse reduced temperature";
+    Real T_theta=1-T/T_crit;
+    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
-  redeclare function specificEnthalpy_pT
-    extends Modelica.Icons.Function;
-    input AbsolutePressure p "Pressure";
-    input Temperature T "Temperature";
-    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output SpecificEnthalpy h "specific enthalpy";
+    Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
+    Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
+    Real[nPressureSaturation] theta=ancillaryCoefficients.pressureSaturation[:, 2];
+
   algorithm
-    h := specificEnthalpy(setState_pTX(p=p, T=T, phase=phase));
-  annotation (
-    inverse(T=temperature_ph(p=p, h=h, phase=phase)));
-  end specificEnthalpy_pT;
+    assert(T <= T_crit, "saturationPressure error: Temperature is higher than critical temperature");
+    p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation));
+
+    // this is an ancillary forward function
+    // the corresponding iterative backward function is saturationTemperature(p)
+    annotation (inverse(T=saturationTemperature(p=p)), Documentation(info="<html>
+      <p>
+      This algorithm returns the saturation pressure as a function of Temperature: psat=psat(T).
+      This type of vapor pressure equation was developed by W. Wagner.
+      Because it cannot be solved for temperature analytically, 
+      the inverse function Tsat=Tsat(p) has to find Tsat iteratively.
+      </p>
+      
+      <dl>
+      <dt>Wagner, W.</dt>
+      <dd> <b>Eine mathematisch statistische Methode zum Aufstellen thermodynamischer Gleichungen - gezeigt am Beispiel der Dampfdruckkurve reiner fluider Stoffe.</b><br>
+           Forschrittberichte der VDI Zeitschriften, Reihe 3, Nr. 39 (1974)
+      </dd>
+      </dl>
+      </html>"));
+  end saturationPressure;
+
+
+  redeclare function extends saturationTemperature
+  "ancillary iterative function: calculate saturation temperature for a given pressure by iterating the anciallry function"
+    // inherits input p and output T
+
+protected
+    Temperature T_trip=fluidConstants[1].triplePointTemperature;
+    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
+    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+    Real tolerance=1e-9 "relative Tolerance for Density";
+
+  algorithm
+    assert(p >= p_trip, "saturationTemperature error: Pressure is lower than triple-point pressure");
+    assert(p <= p_crit, "saturationTemperature error: Pressure is higher than critical pressure");
+    T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
+          function saturationTemperature_RES(p=p),
+          u_min=T_trip,
+          u_max=T_crit,
+          tolerance=tolerance);
+
+    // this is an iterative backward function
+    // the corresponding ancillary forward function is saturationPressure(T)
+    annotation (inverse(p=saturationPressure(T=T)));
+  end saturationTemperature;
+
+
+  redeclare function extends temperature
+  "returns temperature from given ThermodynamicState"
+  // inherited from: PartialMedium
+  // inherits input state and output T
+  algorithm
+    T := state.T;
+  end temperature;
+
+
+  redeclare function extends density
+  "returns density from given ThermodynamicState"
+  // inherited from: PartialMedium
+  // inherits input state and output d
+  algorithm
+    d := state.d;
+  end density;
+
+
+  redeclare function extends pressure
+  "returns pressure from given ThermodynamicState"
+  // inherited from: PartialMedium
+  // inherits input state and output p
+  algorithm
+    p := state.p;
+  end pressure;
+
+
+  redeclare function extends specificEntropy
+  "returns specificEntropy from given ThermodynamicState"
+  // inherited from: PartialMedium
+  // inherits input state and output h
+  algorithm
+    s := state.s;
+  end specificEntropy;
+
+
+  redeclare function extends specificEnthalpy
+  "returns specificEnthalpy from given ThermodynamicState"
+  // inherited from: PartialMedium
+  // inherits input state and output h
+  algorithm
+    h := state.h;
+  end specificEnthalpy;
+
+
+  redeclare function vapourQuality "returns the vapour quality"
+    // redeclare with algorithm based on d and T
+    // previously only input state and output x were defined
+    // optional input for saturation properties can save some time
+
+    input ThermodynamicState state;
+    input SaturationProperties sat=setSat_T(state.T);
+    output MassFraction x;
+
+protected
+    Temperature T_trip=fluidConstants[1].triplePointTemperature;
+    Temperature T_crit=fluidConstants[1].criticalTemperature;
+
+  algorithm
+    assert(state.T >= T_trip, "vapourQuality error: Temperature is lower than triple-point temperature");
+    assert(state.T <= T_crit, "vapourQuality error: Temperature is higher than critical temperature");
+
+    if state.d <= sat.vap.d then
+      x := 1;
+    elseif state.d >= sat.liq.d then
+      x := 0;
+    else
+      x := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
+    end if;
+
+  end vapourQuality;
 
 
   redeclare function extends specificHeatCapacityCp
@@ -1412,69 +1454,6 @@ The extended version has up to three terms with two parameters each.
   end surfaceTension;
 
 
-  redeclare function extends temperature
-  "returns temperature from given ThermodynamicState"
-  // inherited from: PartialMedium
-  // inherits input state and output T
-  algorithm
-    T := state.T;
-  end temperature;
-
-
-  redeclare function extends density
-  "returns density from given ThermodynamicState"
-  // inherited from: PartialMedium
-  // inherits input state and output d
-  algorithm
-    d := state.d;
-  end density;
-
-
-  redeclare function extends pressure
-  "returns pressure from given ThermodynamicState"
-  // inherited from: PartialMedium
-  // inherits input state and output p
-  algorithm
-    p := state.p;
-  end pressure;
-
-
-  redeclare function extends specificEntropy
-  "returns specificEntropy from given ThermodynamicState"
-  // inherited from: PartialMedium
-  // inherits input state and output h
-  algorithm
-    s := state.s;
-  end specificEntropy;
-
-
-  redeclare function extends specificEnthalpy
-  "returns specificEnthalpy from given ThermodynamicState"
-  // inherited from: PartialMedium
-  // inherits input state and output h
-  algorithm
-    h := state.h;
-  end specificEnthalpy;
-
-
-  redeclare function extends setBubbleState
-  "returns bubble ThermodynamicState from given saturation properties"
-  // inherited from: PartialTwoPhaseMedium
-  // inherits input sat, input phase and output state
-  algorithm
-    state := sat.liq;
-  end setBubbleState;
-
-
-  redeclare function extends setDewState
-  "returns dew ThermodynamicState from given saturation properties"
-  // inherited from: PartialTwoPhaseMedium
-  // inherits input sat, input phase and output state
-  algorithm
-    state := sat.vap;
-  end setDewState;
-
-
   redeclare function extends bubbleEnthalpy
   "returns specificEnthalpy from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
@@ -1511,20 +1490,103 @@ The extended version has up to three terms with two parameters each.
   end bubbleDensity;
 
 
-  redeclare function saturationTemperature_derp "returns (dT/dp)@sat"
-  // does not extend, because base class output has wrong units
-  input AbsolutePressure p;
-  output DerTemperatureByPressure dTp;
+  redeclare function extends pressure_dT
+  // input, output and algorithm are inherited from PartialTwoPhaseMedium
+  annotation (
+    derivative=pressure_dT_der,
+    inverse(d=density_pT(p=p, T=T, phase=phase),
+            T=temperature_pd(p=p, d=d, phase=phase)));
+  end pressure_dT;
 
-  input SaturationProperties sat=setSat_p(p=p) "optional input sat";
-  // speeds up computation, if sat state is already known
+
+  redeclare function extends density_pT
+  // input, output and algorithm are inherited from PartialTwoPhaseMedium
+
+  annotation (
+    inverse(p=pressure_dT(d=d, T=T, phase=phase),
+            T=temperature_pd(p=p, d=d, phase=phase)));
+  end density_pT;
+
+
+  redeclare function temperature_ps "returns temperature for given p and d"
+    extends Modelica.Icons.Function;
+    input AbsolutePressure p "Pressure";
+    input SpecificEntropy s "Entropy";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    output Temperature T "Temperature";
 
   algorithm
-    // inverse of (dp/dT)@sat
-    // dTp := 1.0/saturationPressure_derT(T=sat.Tsat,sat=sat);
-    // Clausius-Clapeyron, yields same result
-    dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
-  end saturationTemperature_derp;
+    T := temperature(setState_ps(p=p, s=s, phase=phase));
+
+  annotation (
+    inverse(p=pressure_Ts(T=T, s=s, phase=phase),
+            s=specificEntropy_pT(p=p, T=T, phase=phase)));
+  end temperature_ps;
+
+
+  redeclare function specificEnthalpy_pT
+  "returns specific enthalpy for given p and T"
+    extends Modelica.Icons.Function;
+    input AbsolutePressure p "Pressure";
+    input Temperature T "Temperature";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    output SpecificEnthalpy h "specific enthalpy";
+
+  algorithm
+    h := specificEnthalpy(setState_pTX(p=p, T=T, phase=phase));
+
+  annotation (
+    inverse(T=temperature_ph(p=p, h=h, phase=phase)));
+  end specificEnthalpy_pT;
+
+
+  redeclare function temperature_ph "returns temperature for given p and h"
+    extends Modelica.Icons.Function;
+    input AbsolutePressure p "Pressure";
+    input SpecificEnthalpy h "Enthalpy";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    output Temperature T "Temperature";
+
+  algorithm
+    T := temperature(setState_ph(p=p, h=h, phase=phase));
+
+  annotation (
+    inverse(h=specificEnthalpy_pT(p=p, T=T, phase=phase)));
+  end temperature_ph;
+
+  redeclare function extends specificEnthalpy_dT
+  // input, output and algorithm are inherited from PartialTwoPhaseMedium
+  annotation (
+    derivative=specificEnthalpy_dT_der);
+  end specificEnthalpy_dT;
+
+
+  redeclare function specificEnthalpy_ps
+  "returns specific enthalpy for a given p and s"
+    extends Modelica.Icons.Function;
+    input AbsolutePressure p "Pressure";
+    input SpecificEntropy s "Entropy";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    output SpecificEnthalpy h "specific enthalpy";
+
+  algorithm
+    h := specificEnthalpy(setState_psX(p=p, s=s, phase=phase));
+
+  annotation (
+    inverse(s=specificEntropy_ph(p=p, h=h, phase=phase)));
+  end specificEnthalpy_ps;
+
+
+  redeclare function extends density_ph "returns density for given p and h"
+  // inherited from: PartialMedium
+  // inherits input p, h and phase
+  // inherits output d
+  // inherits algorithm
+
+  annotation (
+    derivative=density_ph_der,
+    inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
+  end density_ph;
 
 
   function density_derT_h "returns density derivative (dd/dT)@h=const"
@@ -1590,16 +1652,6 @@ protected
   end density_derT_p;
 
 
-  redeclare function extends density_ph "returns density for given p and h"
-  // inherited from: PartialMedium
-  // inherits input p, h and phase
-  // inherits output d
-  // inherits algorithm
-
-    annotation(derivative=density_ph_der);
-  end density_ph;
-
-
   redeclare function extends density_derp_h
   "returns density derivative (dd/dp)@h=const"
   //input state
@@ -1652,6 +1704,22 @@ protected
       ddhp := -state.d^2*(1/sat.liq.d-1/sat.vap.d)/(sat.liq.h-sat.vap.h);
     end if;
   end density_derh_p;
+
+
+  redeclare function saturationTemperature_derp "returns (dT/dp)@sat"
+  // does not extend, because base class output has wrong units
+  input AbsolutePressure p;
+  output DerTemperatureByPressure dTp;
+
+  input SaturationProperties sat=setSat_p(p=p) "optional input sat";
+  // speeds up computation, if sat state is already known
+
+  algorithm
+    // inverse of (dp/dT)@sat
+    // dTp := 1.0/saturationPressure_derT(T=sat.Tsat,sat=sat);
+    // Clausius-Clapeyron, yields same result
+    dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+  end saturationTemperature_derp;
 
 
   redeclare function extends dBubbleDensity_dPressure
@@ -1713,18 +1781,4 @@ protected
     dhvdp := dhpT + dhTp*dTp;
   end dDewEnthalpy_dPressure;
 
-
-  redeclare function extends pressure_dT
-  // input, output and algorithm are inherited from PartialTwoPhaseMedium
-  annotation (
-    derivative=pressure_dT_der,
-    inverse(d=density_pT(p=p, T=T, phase=phase)));
-  end pressure_dT;
-
-
-  redeclare function extends specificEnthalpy_dT
-  // input, output and algorithm are inherited from PartialTwoPhaseMedium
-  annotation (
-    derivative=specificEnthalpy_dT_der);
-  end specificEnthalpy_dT;
 end PartialHelmholtzMedium;
