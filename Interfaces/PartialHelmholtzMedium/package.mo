@@ -343,12 +343,14 @@ protected
 
     if (state.phase == 0) then
       //phase unknown, check phase first
-      if ((T>T_trip) and (T < T_crit)) then
+      if ((T>=T_trip) and (T<=T_crit)) then
         // two-phase possible, do simple density check
-        if ((d > 1.02*bubbleDensity_T_ANC(T=T)) or (d < 0.98*dewDensity_T_ANC(T=T))) then
+        // Modelica.Utilities.Streams.print("setState_dT: dliq=" + String(bubbleDensity_T_ANC(T=T)) + " dvap=" + String(dewDensity_T_ANC(T=T)) + ", simple check only");
+        if ((d > 1.05*bubbleDensity_T_ANC(T=T)) or (d < 0.98*dewDensity_T_ANC(T=T))) then
           state.phase := 1;
         else
-          // two-phase state or close to it, get saturation properties from EoS
+          // Modelica.Utilities.Streams.print("setState_dT: d=" + String(d) + " T=" + String(T) + ", two-phase state or close to it");
+          // get saturation properties from EoS, use Tsat as starting value
           sat := setSat_T(T=T);
           if ((d < sat.liq.d) and (d > sat.vap.d)) then
             state.phase := 2;

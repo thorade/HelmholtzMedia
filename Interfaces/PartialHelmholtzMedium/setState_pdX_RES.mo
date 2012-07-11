@@ -15,9 +15,9 @@ protected
   Real delta=d/d_crit "reduced density";
   Real tau=T_crit/u "inverse reduced temperature";
 
-  AbsolutePressure p_of_u;
+  AbsolutePressure p_of_u = pressure(setState_dTX(d=d,T=u)); // ((1 + delta*f_rd(delta=delta, tau=tau))*d*R*u);
 
 algorithm
-  p_of_u := ((1 + delta*f_rd(delta=delta, tau=tau))*d*R*u);
+  Modelica.Utilities.Streams.print("setState_pd_RES: p=" + String(p) + " p(" + String(u) + ")=" + String(p_of_u));
   y := p - p_of_u;
 end setState_pdX_RES;

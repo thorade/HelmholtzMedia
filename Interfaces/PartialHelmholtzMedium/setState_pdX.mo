@@ -39,15 +39,19 @@ algorithm
       sat.Tsat := saturationTemperature(p=p);
       sat.liq.d := bubbleDensity_T_ANC(T=sat.Tsat);
       sat.vap.d := dewDensity_T_ANC(T=sat.Tsat);
+      // Modelica.Utilities.Streams.print("setState_pd: sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d) + ", simple check only");
 
-      if ((d < sat.liq.d + abs(0.02*sat.liq.d)) and (d > sat.vap.d - abs(0.02*sat.vap.d))) then
-        // two-phase state or close to it, get saturation properties from EoS, use Tsat as starting value
+      if ((d < sat.liq.d + abs(0.05*sat.liq.d)) and (d > sat.vap.d - abs(0.05*sat.vap.d))) then
+        // Modelica.Utilities.Streams.print("setState_pd: p = " + String(p) + "d = " + String(d) + ", two-phase state or close to it");
+        // get saturation properties from EoS, use Tsat as starting value
         sat := setSat_p(p=p, T_guess=sat.Tsat);
+        // Modelica.Utilities.Streams.print("setState_pd: sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d) + ", from EoS");
       end if;
 
       if (d > sat.liq.d) then
         state.phase := 1; // single phase liquid
         Tmax := sat.Tsat;
+        // Tmin := Tsat(d);
       elseif (d < sat.vap.d) then
         state.phase := 1; // single phase vapor
         Tmin := sat.Tsat;
