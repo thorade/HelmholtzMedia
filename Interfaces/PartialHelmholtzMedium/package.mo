@@ -271,7 +271,7 @@ protected
   end vapourQuality;
 
 
-  redeclare record extends ThermodynamicState
+  redeclare record extends ThermodynamicState(phase(start=0))
     // inherits phase integer
     Density d "Density of medium";
     Temperature T "Temperature of medium";

@@ -8,11 +8,11 @@ package Isopentane "Isopentane"
     surfaceTensionCoefficients=surfaceTensionCoefficientsIsopentane,
     ancillaryCoefficients=ancillaryCoefficientsIsopentane,
     fluidLimits=fluidLimitsIsopentane,
-    Density(min=fluidLimitsIsopentane.DMIN, max=fluidLimitsIsopentane.DMAX),
-    Temperature(min=fluidLimitsIsopentane.TMIN, max=fluidLimitsIsopentane.TMAX),
-    AbsolutePressure(min=0, max=35e6),
-    SpecificEnthalpy(min=fluidLimitsIsopentane.HMIN, max=fluidLimitsIsopentane.HMAX),
-    SpecificEntropy(min=fluidLimitsIsopentane.SMIN, max=fluidLimitsIsopentane.SMAX));
+    Density(min=fluidLimitsIsopentane.DMIN, max=fluidLimitsIsopentane.DMAX, start=fluidConstantsIsopentane.molarMass/fluidConstantsIsopentane.criticalMolarVolume),
+    Temperature(min=fluidLimitsIsopentane.TMIN, max=fluidLimitsIsopentane.TMAX, start=298.15),
+    AbsolutePressure(min=0, max=35e6, start=101325),
+    SpecificEnthalpy(min=fluidLimitsIsopentane.HMIN, max=fluidLimitsIsopentane.HMAX, start=(fluidLimitsIsopentane.HMIN+fluidLimitsIsopentane.HMAX)/2),
+    SpecificEntropy(min=fluidLimitsIsopentane.SMIN, max=fluidLimitsIsopentane.SMAX, start=(fluidLimitsIsopentane.SMIN+fluidLimitsIsopentane.SMAX)/2));
 
   final constant Interfaces.PartialHelmholtzMedium.FluidConstants
   fluidConstantsIsopentane(

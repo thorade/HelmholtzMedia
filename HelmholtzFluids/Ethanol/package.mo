@@ -8,11 +8,11 @@ extends Interfaces.PartialHelmholtzMedium(
   surfaceTensionCoefficients=surfaceTensionCoefficientsEthanol,
   ancillaryCoefficients=ancillaryCoefficientsEthanol,
   fluidLimits=fluidLimitsEthanol,
-  Density(min=fluidLimitsEthanol.DMIN, max=fluidLimitsEthanol.DMAX),
-  Temperature(min=fluidLimitsEthanol.TMIN, max=fluidLimitsEthanol.TMAX),
-  AbsolutePressure(min=0, max=280e6),
-  SpecificEnthalpy(min=fluidLimitsEthanol.HMIN, max=fluidLimitsEthanol.HMAX),
-  SpecificEntropy(min=fluidLimitsEthanol.SMIN, max=fluidLimitsEthanol.SMAX));
+  Density(min=fluidLimitsEthanol.DMIN, max=fluidLimitsEthanol.DMAX, start=fluidConstantsEthanol.molarMass/fluidConstantsEthanol.criticalMolarVolume),
+  Temperature(min=fluidLimitsEthanol.TMIN, max=fluidLimitsEthanol.TMAX, start=298.15),
+  AbsolutePressure(min=0, max=280e6, start=101325),
+  SpecificEnthalpy(min=fluidLimitsEthanol.HMIN, max=fluidLimitsEthanol.HMAX, start=(fluidLimitsEthanol.HMIN+fluidLimitsEthanol.HMAX)/2),
+  SpecificEntropy(min=fluidLimitsEthanol.SMIN, max=fluidLimitsEthanol.SMAX, start=(fluidLimitsEthanol.SMIN+fluidLimitsEthanol.SMAX)/2));
 
   final constant Interfaces.PartialHelmholtzMedium.FluidConstants
   fluidConstantsEthanol(

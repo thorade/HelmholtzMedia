@@ -8,11 +8,11 @@ package R134a "R134a"
     surfaceTensionCoefficients=surfaceTensionCoefficientsR134a,
     ancillaryCoefficients=ancillaryCoefficientsR134a,
     fluidLimits=fluidLimitsR134a,
-    Density(min=fluidLimitsR134a.DMIN, max=fluidLimitsR134a.DMAX),
-    Temperature(min=fluidLimitsR134a.TMIN, max=fluidLimitsR134a.TMAX),
-    AbsolutePressure(min=0, max=70e6),
-    SpecificEnthalpy(min=fluidLimitsR134a.HMIN, max=fluidLimitsR134a.HMAX),
-    SpecificEntropy(min=fluidLimitsR134a.SMIN, max=fluidLimitsR134a.SMAX));
+    Density(min=fluidLimitsR134a.DMIN, max=fluidLimitsR134a.DMAX, start=fluidConstantsR134a.molarMass/fluidConstantsR134a.criticalMolarVolume),
+    Temperature(min=fluidLimitsR134a.TMIN, max=fluidLimitsR134a.TMAX, start=298.15),
+    AbsolutePressure(min=0, max=70e6, start=101325),
+    SpecificEnthalpy(min=fluidLimitsR134a.HMIN, max=fluidLimitsR134a.HMAX, start=(fluidLimitsR134a.HMIN+fluidLimitsR134a.HMAX)/2),
+    SpecificEntropy(min=fluidLimitsR134a.SMIN, max=fluidLimitsR134a.SMAX, start=(fluidLimitsR134a.SMIN+fluidLimitsR134a.SMAX)/2));
 
   final constant Interfaces.PartialHelmholtzMedium.FluidConstants
   fluidConstantsR134a(

@@ -8,11 +8,11 @@ package Isobutane "Isobutane"
     surfaceTensionCoefficients=surfaceTensionCoefficientsIsobutane,
     ancillaryCoefficients=ancillaryCoefficientsIsobutane,
     fluidLimits=fluidLimitsIsobutane,
-    Density(min=fluidLimitsIsobutane.DMIN, max=fluidLimitsIsobutane.DMAX),
-    Temperature(min=fluidLimitsIsobutane.TMIN, max=fluidLimitsIsobutane.TMAX),
-    AbsolutePressure(min=0, max=35e6),
-    SpecificEnthalpy(min=fluidLimitsIsobutane.HMIN, max=fluidLimitsIsobutane.HMAX),
-    SpecificEntropy(min=fluidLimitsIsobutane.SMIN, max=fluidLimitsIsobutane.SMAX));
+    Density(min=fluidLimitsIsobutane.DMIN, max=fluidLimitsIsobutane.DMAX, start=fluidConstantsIsobutane.molarMass/fluidConstantsIsobutane.criticalMolarVolume),
+    Temperature(min=fluidLimitsIsobutane.TMIN, max=fluidLimitsIsobutane.TMAX, start=298.15),
+    AbsolutePressure(min=0, max=35e6, start=101325),
+    SpecificEnthalpy(min=fluidLimitsIsobutane.HMIN, max=fluidLimitsIsobutane.HMAX, start=(fluidLimitsIsobutane.HMIN+fluidLimitsIsobutane.HMAX)/2),
+    SpecificEntropy(min=fluidLimitsIsobutane.SMIN, max=fluidLimitsIsobutane.SMAX, start=(fluidLimitsIsobutane.SMIN+fluidLimitsIsobutane.SMAX)/2));
 
   final constant Interfaces.PartialHelmholtzMedium.FluidConstants
   fluidConstantsIsobutane(

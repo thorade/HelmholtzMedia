@@ -1,21 +1,21 @@
 within HelmholtzMedia.HelmholtzFluids;
 package Propane "Propane"
 extends Interfaces.PartialHelmholtzMedium(
-  fluidConstants={fluidConstantsButane},
-  helmholtzCoefficients=helmholtzCoefficientsButane,
-  thermalConductivityCoefficients=thermalConductivityCoefficientsButane,
-  dynamicViscosityCoefficients=dynamicViscosityCoefficientsButane,
-  surfaceTensionCoefficients=surfaceTensionCoefficientsButane,
-  ancillaryCoefficients=ancillaryCoefficientsButane,
-  fluidLimits=fluidLimitsButane,
-  Density(min=fluidLimitsButane.DMIN, max=fluidLimitsButane.DMAX),
-  Temperature(min=fluidLimitsButane.TMIN, max=fluidLimitsButane.TMAX),
-  AbsolutePressure(min=0, max=1000e6),
-  SpecificEnthalpy(min=fluidLimitsButane.HMIN, max=fluidLimitsButane.HMAX),
-  SpecificEntropy(min=fluidLimitsButane.SMIN, max=fluidLimitsButane.SMAX));
+  fluidConstants={fluidConstantsPropane},
+  helmholtzCoefficients=helmholtzCoefficientsPropane,
+  thermalConductivityCoefficients=thermalConductivityCoefficientsPropane,
+  dynamicViscosityCoefficients=dynamicViscosityCoefficientsPropane,
+  surfaceTensionCoefficients=surfaceTensionCoefficientsPropane,
+  ancillaryCoefficients=ancillaryCoefficientsPropane,
+  fluidLimits=fluidLimitsPropane,
+  Density(min=fluidLimitsPropane.DMIN, max=fluidLimitsPropane.DMAX, start=fluidConstantsPropane.molarMass/fluidConstantsPropane.criticalMolarVolume),
+  Temperature(min=fluidLimitsPropane.TMIN, max=fluidLimitsPropane.TMAX, start=298.15),
+  AbsolutePressure(min=0, max=1000e6, start=101325),
+  SpecificEnthalpy(min=fluidLimitsPropane.HMIN, max=fluidLimitsPropane.HMAX, start=(fluidLimitsPropane.HMIN+fluidLimitsPropane.HMAX)/2),
+  SpecificEntropy(min=fluidLimitsPropane.SMIN, max=fluidLimitsPropane.SMAX, start=(fluidLimitsPropane.SMIN+fluidLimitsPropane.SMAX)/2));
 
   final constant Interfaces.PartialHelmholtzMedium.FluidConstants
-  fluidConstantsButane(
+  fluidConstantsPropane(
     chemicalFormula="CH3CH2CH3",
     structureFormula="",
     casRegistryNumber="74-98-6",
@@ -42,8 +42,8 @@ extends Interfaces.PartialHelmholtzMedium(
     meltingPoint=85.525) "Fluid Constants";
 
   final constant Interfaces.PartialHelmholtzMedium.FluidLimits
-  fluidLimitsButane(
-    TMIN=fluidConstantsButane.triplePointTemperature,
+  fluidLimitsPropane(
+    TMIN=fluidConstantsPropane.triplePointTemperature,
     TMAX=650,
     DMIN=Modelica.Constants.small,
     DMAX=909,
@@ -55,7 +55,7 @@ extends Interfaces.PartialHelmholtzMedium(
     SMAX=9800) "Helmholtz EoS Limits";
 
   final constant Interfaces.PartialHelmholtzMedium.HelmholtzCoefficients
-  helmholtzCoefficientsButane(
+  helmholtzCoefficientsPropane(
     idealLog=[
       +3.0,         1.],
     idealPower=[
@@ -91,7 +91,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant
   Interfaces.PartialHelmholtzMedium.ThermalConductivityCoefficients
-  thermalConductivityCoefficientsButane(
+  thermalConductivityCoefficientsPropane(
     reducingTemperature_0=369.85,
     reducingThermalConductivity_0=1,
     lambda_0_coeffs=[
@@ -118,7 +118,7 @@ extends Interfaces.PartialHelmholtzMedium(
     T_ref=637.68) "Coefficients for the thermal conductivity";
 
   final constant Interfaces.PartialHelmholtzMedium.DynamicViscosityCoefficients
-  dynamicViscosityCoefficientsButane(
+  dynamicViscosityCoefficientsPropane(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
     collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
     sigma=0.49748,
@@ -167,13 +167,13 @@ extends Interfaces.PartialHelmholtzMedium(
   "Coefficients for the dynamic viscosity";
 
   final constant Interfaces.PartialHelmholtzMedium.SurfaceTensionCoefficients
-  surfaceTensionCoefficientsButane(
+  surfaceTensionCoefficientsPropane(
     coeffs=[
        0.05666,     1.265;
       -0.005291,    2.265]) "Coefficients for the surface tension";
 
   final constant Interfaces.PartialHelmholtzMedium.AncillaryCoefficients
-  ancillaryCoefficientsButane(
+  ancillaryCoefficientsPropane(
     pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
     pressureSaturation=[
       -6.7722,       1.0;
@@ -199,7 +199,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
 
   annotation (Documentation(info="<html>
-These are the coefficients for Butane. 
+These are the coefficients for Propane. 
 
 <dl>
 <dt> Lemmon, Eric W.; McLinden, M. O. and Wagner, W.</dt>
