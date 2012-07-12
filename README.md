@@ -5,16 +5,6 @@ It supports EoS of the form f=f(T,d) meaning Helmholtz energy as a funtion of te
 In addition to all state properties, this library calculates viscosity, thermal conductivity and surface tension.
 I am planning to submit this library to the Modelica 2012 conference.
 
-### ToDo
-* Improve `BaseProperties` (should independentVariables be used here?)
-* Add `annotation(Documentation(info=...html...))` using copy+paste from conference paper
-* Add non-analytic critical terms for residual Helmholtz energy (needed for water and CO2)
-* Add hyperbolic terms for ideal Helmholtz energy (used in short technical EoS and GERG-2008)
-* Add choice of reference state
-* Add `setState_hs` (needed for turbine calculation, when power is given and p_out is to be determined)
-* And of course: more testing!
-  
-  
 ### Implemented Fluids
 * Butane (n-Butane)
 * Ethanol
@@ -33,3 +23,12 @@ I am planning to submit this library to the Modelica 2012 conference.
 * methane
 * ammonia
 * working fluids for Organic-Rankine-Cycles.
+
+### Known issues & ToDo
+* Index reduction doesn't work (there are some numerical Jacobians). Does this 
+* Non-analytic critical terms for residual Helmholtz energy not yet implemented (needed for water and CO2)
+* Hyperbolic terms for ideal Helmholtz energy not yet implemented (used in short technical EoS and GERG-2008)
+* Reference state is fixed. Not sure how important choosing a differend reference state is.
+* Add `setState_hs` (needed for turbine calculation, when power is given and p_out is to be determined)
+* More testing would be nice (beta users welcome)
+* Documentation could be extended
