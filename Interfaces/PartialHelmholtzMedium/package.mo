@@ -1554,6 +1554,7 @@ The extended version has up to three terms with two parameters each.
     inverse(h=specificEnthalpy_pT(p=p, T=T, phase=phase)));
   end temperature_ph;
 
+
   redeclare function extends specificEnthalpy_dT
   // input, output and algorithm are inherited from PartialTwoPhaseMedium
   annotation (
