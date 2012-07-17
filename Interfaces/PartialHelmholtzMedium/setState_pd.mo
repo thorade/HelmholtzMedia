@@ -44,7 +44,7 @@ algorithm
       if ((d < sat.liq.d + abs(0.05*sat.liq.d)) and (d > sat.vap.d - abs(0.05*sat.vap.d))) then
         // Modelica.Utilities.Streams.print("setState_pd: p = " + String(p) + "d = " + String(d) + ", two-phase state or close to it");
         // get saturation properties from EoS, use Tsat as starting value
-        sat := setSat_p(p=p, T_guess=sat.Tsat);
+        sat := setSat_p(p=p);
         // Modelica.Utilities.Streams.print("setState_pd: sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d) + ", from EoS");
       end if;
 

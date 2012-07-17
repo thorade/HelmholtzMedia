@@ -201,12 +201,12 @@ with a Newton-Raphson approach for simultaneous equations.
   "iterative calculation of saturation properties from EoS for a given pressure"
     input AbsolutePressure p;
     input FixedPhase phase=2;
-    input Temperature T_guess=saturationTemperature(p=p); // optional input with default value
     output SaturationProperties sat;
 
 protected
-    Temperature T_min=max(0.98*T_guess, fluidConstants[1].triplePointTemperature);
-    Temperature T_max=min(1.02*T_guess, fluidConstants[1].criticalTemperature);
+    Temperature T_trip=fluidConstants[1].triplePointTemperature;
+    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    Temperature T_est;
     AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     Temperature T;
@@ -216,11 +216,11 @@ protected
   if (phase==2) then
     assert(p >= p_trip, "setSat_p error: Pressure is lower than triple-point pressure");
     assert(p <= p_crit, "setSat_p error: Pressure is higher than critical pressure");
-
+    T_est := 1/(1/T_crit - (1/T_trip-1/T_crit)/log(p_crit/p_trip)*log(p/p_crit));
     T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
           function setSat_p_RES(p=p),
-          u_min=T_min,
-          u_max=T_max,
+          u_min=max(T_trip,0.9*T_est),
+          u_max=min(T_crit,1.1*T_est),
           tolerance=tolerance);
 
     sat := setSat_T(T=T);
@@ -473,7 +473,7 @@ protected
 
         if ((h > sat.liq.h - abs(0.05*sat.liq.h)) and (h < sat.vap.h + abs(0.05*sat.vap.h))) then
           // two-phase state or close to it, get saturation properties from EoS, use Tsat as starting value
-          sat := setSat_p(p=p, T_guess=sat.Tsat);
+          sat := setSat_p(p=p);
         end if;
 
         if (h < sat.liq.h) then
@@ -583,7 +583,7 @@ protected
 
         if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
           // two-phase state or close to it, get saturation properties from EoS, use Tsat as starting value
-          sat := setSat_p(p=p, T_guess=sat.Tsat);
+          sat := setSat_p(p=p);
         end if;
 
         if (s < sat.liq.s) then
@@ -791,6 +791,7 @@ protected
 protected
     Temperature T_trip=fluidConstants[1].triplePointTemperature;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
+    Temperature T_est;
     AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     Real tolerance=1e-9 "relative Tolerance for Density";
@@ -798,10 +799,13 @@ protected
   algorithm
     assert(p >= p_trip, "saturationTemperature error: Pressure is lower than triple-point pressure");
     assert(p <= p_crit, "saturationTemperature error: Pressure is higher than critical pressure");
+    // a Temperature estimate can be calulated from the log(p) vs. 1/T diagram
+    // see Span (2000) page 52 / equation 3.98
+    T_est := 1/(1/T_crit - (1/T_trip-1/T_crit)/log(p_crit/p_trip)*log(p/p_crit));
     T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
           function saturationTemperature_RES(p=p),
-          u_min=T_trip,
-          u_max=T_crit,
+          u_min=max(T_trip,0.9*T_est),
+          u_max=min(T_crit,1.1*T_est),
           tolerance=tolerance);
 
     // this is an iterative backward function
