@@ -2,10 +2,11 @@ within HelmholtzMedia.Examples.Tests.Validation;
 model Validate_Derivatives_SinglePhase
   "compare analytical derivatives to numerical derivatives"
 
-  package Medium = HelmholtzFluids.R134a;
+  package Medium = HelmholtzFluids.Butane;
   // choose d and T which will result in single-phase
   parameter Medium.Density d=1e-3;
   parameter Medium.Temperature T=298.15;
+  Real eps = 1e-3;
 
   Medium.ThermodynamicState state;
   Medium.HelmholtzDerivs f;
@@ -46,10 +47,10 @@ model Validate_Derivatives_SinglePhase
 equation
   state=Medium.setState_dTX(d=d, T=T);
   f=Medium.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
-  d_plus=Medium.setState_dTX(d=d*1.00001, T=T);
-  d_minus=Medium.setState_dTX(d=d*0.99999, T=T);
-  T_plus=Medium.setState_dTX(d=d, T=T*1.00001);
-  T_minus=Medium.setState_dTX(d=d, T=T*0.99999);
+  d_plus=Medium.setState_dTX(d=d+eps*d, T=T);
+  d_minus=Medium.setState_dTX(d=d-eps*d, T=T);
+  T_plus=Medium.setState_dTX(d=d, T=T+eps*T);
+  T_minus=Medium.setState_dTX(d=d, T=T-eps*T);
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|");
 
@@ -122,7 +123,7 @@ equation
   a_analytical1 = Medium.velocityOfSound(state=state);
   a_analytical2 = sqrt(dpdT_analytical-dpTd_analytical*dsdT_analytical/dsTd_analytical);
   Modelica.Utilities.Streams.print("(dp/dd)@s=const analytical1= " + String(a_analytical1));
-  Modelica.Utilities.Streams.print("(dp/dd)@s=const  analytical2= " + String(a_analytical2));
+  Modelica.Utilities.Streams.print("(dp/dd)@s=const analytical2= " + String(a_analytical2));
 
   annotation (experiment(NumberOfIntervals=1), __Dymola_experimentSetupOutput);
 end Validate_Derivatives_SinglePhase;
