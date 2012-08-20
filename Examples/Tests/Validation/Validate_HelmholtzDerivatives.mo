@@ -11,6 +11,6 @@ model Validate_HelmholtzDerivatives
 
 algorithm
     f := Medium.setHelmholtzDerivs(T=T, d=d, phase=1);
-  annotation (experiment(StopTime=10, NumberOfIntervals=1),
-                                       __Dymola_experimentSetupOutput);
+
+annotation (experiment(NumberOfIntervals=1));
 end Validate_HelmholtzDerivatives;

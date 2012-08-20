@@ -18,7 +18,8 @@ algorithm
   h_ref := sat.liq.h;
   s_ref := sat.liq.s;
 
-annotation (Documentation(info="<html>
+annotation (
+Documentation(info="<html>
 The choice of reference state is more or less arbitrary,
 there are at least three standard reference states:
 
@@ -34,5 +35,6 @@ there are at least three standard reference states:
 <dd>at T=-40°C and saturated liquid set h=0 kJ/kg and s=0 kJ/kgK</dd>
 
 </dl>
-</html>"));
+</html>"),
+experiment(NumberOfIntervals=1));
 end checkReferenceState;

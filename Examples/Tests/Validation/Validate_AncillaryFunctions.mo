@@ -23,5 +23,5 @@ algorithm
     dliq := Medium.bubbleDensity_T_ANC(T=Tsat);
     dvap := Medium.dewDensity_T_ANC(T=Tsat);
 
-  annotation (experiment(StopTime=10), __Dymola_experimentSetupOutput);
+annotation (experiment(StopTime=11,NumberOfIntervals=600));
 end Validate_AncillaryFunctions;
