@@ -25,7 +25,6 @@ I am planning to submit this library to the Modelica 2012 conference.
 * working fluids for Organic-Rankine-Cycles.
 
 ### Known issues & ToDo
-* Iterative conversion (p,h)->(d,T) is very slow, partly due to redundant phase&region checks. Should be replaced with simoultaneous Newton-Raphson. How good do the start values have to be?
 * Index reduction doesn't work (there are some numerical Jacobians). Does this have to be fixed in `BaseProperties`, or in `density_ph`?
 * Non-analytic critical terms for residual Helmholtz energy not yet implemented (needed for water and CO2)
 * Hyperbolic terms for ideal Helmholtz energy not yet implemented (used in short technical EoS and GERG-2008)
