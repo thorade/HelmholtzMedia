@@ -11,7 +11,6 @@ partial package PartialHelmholtzMedium
   import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
 
-
   redeclare record extends ThermodynamicState(phase(start=0))
     // inherits phase integer
     Density d "Density of medium";
@@ -78,18 +77,6 @@ partial package PartialHelmholtzMedium
   constant SurfaceTensionCoefficients surfaceTensionCoefficients;
 
   constant AncillaryCoefficients ancillaryCoefficients;
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   redeclare function setSat_T
@@ -227,7 +214,6 @@ with a Newton-Raphson approach for simultaneous equations.
   redeclare function setSat_p
   "iterative calculation of saturation properties from EoS for a given pressure"
     input AbsolutePressure p;
-    input FixedPhase phase=2;
     output SaturationProperties sat;
 
 protected
@@ -263,14 +249,11 @@ protected
     Integer iter = 0;
 
   algorithm
-  if (phase==2) then
-    assert(p >= p_trip, "setSat_p error: Pressure is lower than triple-point pressure");
-    assert(p <= p_crit, "setSat_p error: Pressure is higher than critical pressure");
-
+  if ((p>=p_trip) and (p<p_crit)) then
     // calculate start values
     // a Temperature estimate can be calulated from the log(p) vs. 1/T diagram
     // see Span (2000) page 52 / equation 3.98
-    sat.Tsat := 1/(1/T_crit - (1/T_trip-1/T_crit)/log(p_crit/p_trip)*log(p/p_crit));
+    sat.Tsat  := 1/(1/T_crit - (1/T_trip-1/T_crit)/log(p_crit/p_trip)*log(p/p_crit));
     sat.liq.d := 1.02*bubbleDensity_T_ANC(T=sat.Tsat);
     sat.vap.d := 0.98*dewDensity_T_ANC(T=sat.Tsat);
 
@@ -330,11 +313,33 @@ protected
       RES_pv := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd) - p;   // f2
       RES_g  := fl.T*fl.R*(fl.i+fl.r + fl.delta*fl.rd) - fv.T*fv.R*(fv.i+fv.r + fv.delta*fv.rd);  // f3
     end while;
-    // Modelica.Utilities.Streams.print("setState_phX total iteration steps " + String(iter), "printlog.txt");
+    // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
 
     sat.psat := p;
     sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
     sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
+
+  elseif (p>=p_crit) then
+    // assert(p <= p_crit, "setSat_p error: pressure is higher than critical pressure");
+    // above critical pressure, no stable two-phase state exists
+    // anyway, it is possible to extend the vapour-pressure curve into this region
+    // this can happen when called from BaseProperties
+    // one possibility is to use the state where ds/dT=max or ds/dp=max or dcp/dT=max or dcp/dp=max
+    // here, critical values are returned
+    sat.psat  := p_crit;
+    sat.Tsat  := T_crit;
+    sat.liq.d := d_crit;
+    sat.vap.d := d_crit;
+  else
+    // assert(p >= p_trip, "setSat_p error: pressure is lower than triple-point pressure");
+    // p<p_trip: this does not make sense: if p is below the triple pressure, the medium is single phase vapour
+    // anyway, during initialization (at time=0) p=0 may happen
+    // fluidLimit values are returned
+    sat.psat  := p;
+    sat.Tsat  := T_trip;
+    sat.liq.d := fluidLimits.DMAX;
+    sat.vap.d := fluidLimits.DMIN;
+
   end if;
   end setSat_p;
 
@@ -533,7 +538,6 @@ protected
     state.u :=   T*R*(tau*(f.it+f.rt));
     state.s :=     R*(tau*(f.it+f.rt) - (f.i+f.r));
   end setState_pTX;
-
 
 
   redeclare function extends setState_phX
@@ -831,11 +835,6 @@ protected
   end setState_psX;
 
 
-
-
-
-
-
   function setState_ThX "Return thermodynamic state as function of (T, h)"
     extends Modelica.Icons.Function;
     input Temperature T "Temperature";
@@ -943,9 +942,6 @@ protected
   end setState_ThX;
 
 
-
-
-
   redeclare function extends saturationPressure
   "ancillary function: calculate saturation pressure for a given Temperature"
     // inherits input T and output p
@@ -1012,7 +1008,6 @@ protected
     // the corresponding ancillary forward function is saturationPressure(T)
     annotation (inverse(p=saturationPressure(T=T)));
   end saturationTemperature;
-
 
 
   redeclare function extends temperature
@@ -1236,8 +1231,6 @@ protected
       kappa := Modelica.Constants.inf; // divide by zero
     end if;
   end isothermalCompressibility;
-
-
 
 
   redeclare replaceable function extends thermalConductivity
@@ -1712,8 +1705,6 @@ The extended version has up to three terms with two parameters each.
   end density_pT;
 
 
-
-
   redeclare function temperature_ps "returns temperature for given p and d"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1728,9 +1719,6 @@ The extended version has up to three terms with two parameters each.
     inverse(p=pressure_Ts(T=T, s=s, phase=phase),
             s=specificEntropy_pT(p=p, T=T, phase=phase)));
   end temperature_ps;
-
-
-
 
 
   redeclare function specificEnthalpy_pT
@@ -1787,8 +1775,6 @@ The extended version has up to three terms with two parameters each.
   end specificEnthalpy_ps;
 
 
-
-
   redeclare function density_ph "returns density for given p and h"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1803,13 +1789,6 @@ The extended version has up to three terms with two parameters each.
     derivative=density_ph_der,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
-
-
-
-
-
-
-
 
 
   function density_derT_h "returns density derivative (dd/dT)@h=const"
@@ -1935,7 +1914,6 @@ protected
     // Clausius-Clapeyron, yields same result
     dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
   end saturationTemperature_derp;
-
 
 
   redeclare function extends dBubbleDensity_dPressure
