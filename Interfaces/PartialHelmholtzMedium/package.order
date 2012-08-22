@@ -29,7 +29,6 @@ f_rdd
 setHelmholtzDerivs
 setSat_T
 setSat_p
-setSat_p_RES
 setBubbleState
 setDewState
 setState_dTX
@@ -38,7 +37,6 @@ setState_px
 setState_pTX
 setState_pTX_RES
 setState_phX
-setState_phX_RES
 setState_psX
 setState_psX_RES
 setState_pd

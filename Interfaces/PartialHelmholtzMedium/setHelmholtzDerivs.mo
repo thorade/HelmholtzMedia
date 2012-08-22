@@ -1,8 +1,8 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
 function setHelmholtzDerivs
 
-  input Temperature T;
   input Density d;
+  input Temperature T;
   input FixedPhase phase=1;
   output HelmholtzDerivs f;
 

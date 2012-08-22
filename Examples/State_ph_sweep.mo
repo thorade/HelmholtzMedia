@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples;
 model State_ph_sweep
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Butane;
   Medium.AbsolutePressure p;
   Medium.SpecificEnthalpy h;
   Medium.ThermodynamicState inletState;
@@ -30,10 +30,9 @@ Modelica.Blocks.Sources.Sine sine(
     annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
 
 equation
-  p = 0.5*pcrit + 0.5*pcrit*(ramp.y*sine.y - ramp.y);
-  h = 700e3;// (hmax-hmin)/2 + 0.002*expSine.y*(hmax-hmin);
+  p = 0.7*pcrit + 0.5*pcrit*(ramp.y*sine.y - ramp.y);
+  h = 500e3;// (hmax-hmin)/2 + 0.002*expSine.y*(hmax-hmin);
 
   inletState=Medium.setState_phX(p=p, h=h, phase=0, X={1});
-  annotation (experiment(StopTime=10, NumberOfIntervals=1000),
-      __Dymola_experimentSetupOutput);
+  annotation (experiment(StopTime=10, NumberOfIntervals=1000));
 end State_ph_sweep;

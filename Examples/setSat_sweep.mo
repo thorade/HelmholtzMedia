@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples;
 model setSat_sweep
-  package Medium = HelmholtzFluids.R134a;
+  package Medium = HelmholtzFluids.Butane;
   Medium.SaturationProperties sat;
 //Medium.ThermodynamicState liq;
 //Medium.ThermodynamicState vap;
@@ -20,14 +20,15 @@ protected
     startTime=1)
     annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
   Modelica.Blocks.Sources.Ramp pramp(
-    height=pcrit - pmin,
-    offset=pmin,
     duration=8,
-    startTime=1) annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
+    startTime=1,
+    height=pcrit - pmin - 1,
+    offset=pmin + 1)
+                 annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
 
 equation
-  sat = Medium.setSat_T(T=Tramp.y);
-//sat = Medium.setSat_p(p=pramp.y);
+ // sat = Medium.setSat_T(T=Tramp.y);
+sat = Medium.setSat_p(p=pramp.y);
 
 //liq = sat.liq;
 //vap = sat.vap;
@@ -35,5 +36,5 @@ equation
   annotation (experiment(
       StopTime=10,
       NumberOfIntervals=10000,
-      Tolerance=1e-008),               __Dymola_experimentSetupOutput);
+      Tolerance=1e-008));
 end setSat_sweep;

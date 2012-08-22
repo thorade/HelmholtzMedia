@@ -2,8 +2,8 @@ within HelmholtzMedia.Examples;
 model BaseProps_sweep
   "calculate BaseProperties from any two given input properties"
   //package Medium = HelmholtzFluids.Butane;
-  package Medium = HelmholtzFluids.R134a;
-  //package Medium = HelmholtzFluids.R134a(independentVariables=IndependentVariables.pT);
+  package Medium = HelmholtzMedia.HelmholtzFluids.R134a;
+  //package Medium = HelmholtzFluids.R134a(dT_explicit=true);
   //package Medium = HelmholtzFluids.Butane(independentVariables=IndependentVariables.ph);
   //package Medium = HelmholtzFluids.R134a(independentVariables=IndependentVariables.ph);
   Medium.BaseProperties props;
@@ -45,6 +45,7 @@ model BaseProps_sweep
     amplitude=2e3,
     offset=0)
     annotation (Placement(transformation(extent={{-80,-100},{-60,-80}})));
+
 equation
   // props.d = d_generator.y;
   // props.T = T_generator.y;
@@ -52,7 +53,4 @@ equation
   props.p = p_generator.y;
   props.h = h_generator.y;
 
-  annotation (experiment(StopTime=10, NumberOfIntervals=1000),
-      __Dymola_experimentSetupOutput,
-    Diagram(graphics));
 end BaseProps_sweep;
