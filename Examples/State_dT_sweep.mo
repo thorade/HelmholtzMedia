@@ -24,11 +24,13 @@ Modelica.Blocks.Sources.Ramp ramp(
 Modelica.Blocks.Sources.ExpSine expSine(
     amplitude=0.99,
     offset=1,
-    damping=0.5)
+    damping=0.5,
+    freqHz=2)
     annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
 Modelica.Blocks.Sources.Sine sine(
     offset=1,
     amplitude=0.999,
+    freqHz=1,
     phase=1.5707963267949)
     annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
 
