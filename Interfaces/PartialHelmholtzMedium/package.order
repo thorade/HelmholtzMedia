@@ -49,7 +49,6 @@ bubbleDensity_T_ANC
 dewDensity_T_ANC
 saturationPressure
 saturationTemperature
-saturationTemperature_RES
 temperature
 density
 pressure

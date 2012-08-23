@@ -50,7 +50,7 @@ equation
   // props.d = d_generator.y;
   // props.T = T_generator.y;
   // props.s = s_generator.y;
-  props.p = p_generator.y;
-  props.h = h_generator.y;
+   props.p = p_generator.y;
+   props.h = h_generator.y;
 
 end BaseProps_sweep;
