@@ -246,7 +246,8 @@ protected
 
     Real det "determinant of Jacobi matrix";
     Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    Real tolerance=1e-6 "tolerance for sum of RES_pl, RES_pv and RES_g";
+    Real tolerance=1e-3
+    "tolerance for sum of RES_pl (in Pa), RES_pv (in Pa) and RES_g (in J/kg)";
     Integer iter = 0;
 
   algorithm
@@ -489,11 +490,17 @@ protected
 
     SaturationProperties sat;
 
-    Density dmin=fluidLimits.DMIN;
-    Density dmax=fluidLimits.DMAX;
-    Real tolerance=1e-9 "relative Tolerance for Density";
+    Density d_min = fluidLimits.DMIN;
+    Density d_max = fluidLimits.DMAX;
+    Density d_iter = d_crit;
+    Real RES_p;
+    Real dpdd;
+    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+    Real tolerance=1e-3 "tolerance for RES_p ";
+    Integer iter = 0;
 
   algorithm
+    // Modelica.Utilities.Streams.print("p=" + String(p) + " and T=" + String(T), "printlog.txt");
     assert(phase <> 2, "setState_pTX_error: pressure and temperature are not independent variables in two-phase state");
     state.phase := 1;
 
@@ -511,30 +518,60 @@ protected
 
       if (p > sat.psat) then
         // Modelica.Utilities.Streams.print("single phase liquid: d is between dliq and rho_max", "printlog.txt");
-        dmin := sat.liq.d;
+        d_min  := sat.liq.d;
+        d_max  := fluidLimits.DMAX;
+        d_iter := sat.liq.d;
       elseif (p < sat.psat) then
         // Modelica.Utilities.Streams.print("single phase vapor: d is between 0 and dvap", "printlog.txt");
-        dmax := sat.vap.d;
+        d_min  := fluidLimits.DMIN;
+        d_max  := sat.vap.d;
+        d_iter := sat.vap.d;
       else
         assert(p <> sat.psat, "setState_pTX_error: pressure equals saturation pressure");
       end if;
-
     end if;
+
+    // phase and region determination finished !
+
+    // calculate RES_p
+    delta := d_iter/d_crit;
+    f.rd  := f_rd(delta=delta, tau=tau);
+    RES_p := d_iter*T*R*(1+delta*f.rd) - p;
+
+    while ((abs(RES_p) > tolerance) and (iter<200)) loop
+      iter := iter+1;
+
+      // calculate gradient with respect to density
+      f.rdd := f_rdd(delta=delta, tau=tau);
+      dpdd := T*R*(1+2*delta*f.rd+delta^2*f.rdd);
+
+      /* // print for debugging
+    Modelica.Utilities.Streams.print(" ", "printlog.txt");
+    Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
+    Modelica.Utilities.Streams.print("d_iter=" + String(d_iter), "printlog.txt");
+    Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and dpdd=" + String(dpdd), "printlog.txt"); */
+
+      // calculate better d_iter and T_iter
+      d_iter := d_iter - gamma/dpdd*RES_p;
+
+      // check bounds
+      d_iter := max(d_min,d_iter);
+      d_iter := min(d_max,d_iter);
+
+      // calculate new RES_p and RES_s
+      delta := d_iter/d_crit;
+      f.rd  := f_rd(delta=delta, tau=tau);
+      RES_p := d_iter*T*R*(1+delta*f.rd) - p;
+    end while;
+    // Modelica.Utilities.Streams.print("setState_pTX total iteration steps " + String(iter), "printlog.txt");
 
     state.p := p;
     state.T := T;
-    state.d := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-         function setState_pTX_RES(T=T, p=p),
-          u_min=0.95*dmin,
-          u_max=1.05*dmax,
-          tolerance=tolerance);
-    delta := state.d/d_crit;
-
-    f.i   := f_i(tau=tau, delta=delta);
-    f.it  := f_it(tau=tau, delta=delta);
-    f.r   := f_r(tau=tau, delta=delta);
-    f.rt  := f_rt(tau=tau, delta=delta);
-    f.rd  := f_rd(tau=tau, delta=delta);
+    state.d := d_iter;
+    f.i  := f_i(delta=delta, tau=tau);
+    f.it := f_it(delta=delta, tau=tau);
+    f.r  := f_r(delta=delta, tau=tau);
+    f.rt := f_rt(delta=delta, tau=tau);
     state.h :=   T*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
     state.u :=   T*R*(tau*(f.it+f.rt));
     state.s :=     R*(tau*(f.it+f.rt) - (f.i+f.r));
@@ -573,7 +610,8 @@ protected
     Real dhdT;
     Real det "determinant of Jacobi matrix";
     Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    Real tolerance=1e-6 "tolerance for sum of RES_p and RES_h";
+    Real tolerance=1e-3
+    "tolerance for sum of RES_p (in Pa) and RES_h (in J/kg)";
     Integer iter = 0;
 
   algorithm
@@ -759,7 +797,8 @@ protected
     Real dsdT;
     Real det "determinant of Jacobi matrix";
     Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    Real tolerance=1e-6 "tolerance for sum of RES_p and RES_h";
+    Real tolerance=1e-3
+    "tolerance for sum of RES_p (in Pa) and RES_s (in J/kgK)";
     Integer iter = 0;
 
   algorithm
@@ -1061,8 +1100,9 @@ protected
 
     Real RES_p;
     Real dpdT;
+    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+    Real tolerance=1e-3 "tolerance for RES_p (in Pa)";
     Integer iter=0;
-    Real tolerance=1e-6 "RES_p tolerance";
 
   algorithm
     assert(p >= p_trip, "saturationTemperature error: Pressure is lower than triple-point pressure");
@@ -1072,7 +1112,7 @@ protected
     T := 1/(1/T_crit - (1/T_trip-1/T_crit)/log(p_crit/p_trip)*log(p/p_crit));
 
     // calculate RES_p
-    tau:=T_crit/T;
+    tau := T_crit/T;
     T_theta := 1 - T/T_crit;
     RES_p   := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
 
@@ -1090,16 +1130,16 @@ protected
     Modelica.Utilities.Streams.print("T=" + String(T) + " and dpdT=" + String(dpdT), "printlog.txt"); */
 
       // calculate better T
-      T := T - 1/dpdT*RES_p;
+      T := T - gamma/dpdT*RES_p;
 
       // check bounds
       T := max(T,T_trip);
       T := min(T,T_crit);
 
       // calculate new RES_p
-      tau:=T_crit/T;
-      T_theta:=1 - T/T_crit;
-      RES_p :=p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
+      tau := T_crit/T;
+      T_theta := 1 - T/T_crit;
+      RES_p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
     end while;
     // Modelica.Utilities.Streams.print("setState_phX total iteration steps " + String(iter), "printlog.txt");
 
