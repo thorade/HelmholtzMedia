@@ -4,7 +4,7 @@ model State_ps_parameter "calculate state record from ps input"
   package Medium = HelmholtzFluids.Butane;
 
   parameter Medium.AbsolutePressure p=101325;
-  parameter Medium.SpecificEntropy s=1e3;
+  parameter Medium.SpecificEntropy s=0.8e3;
 
   Medium.ThermodynamicState inletState;
 

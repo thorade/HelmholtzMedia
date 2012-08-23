@@ -216,6 +216,7 @@ with a Newton-Raphson approach for simultaneous equations.
     input AbsolutePressure p;
     output SaturationProperties sat;
 
+    // Boolean verbose=true;
 protected
     MolarMass MM = fluidConstants[1].molarMass;
     SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
@@ -313,7 +314,7 @@ protected
       RES_pv := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd) - p;   // f2
       RES_g  := fl.T*fl.R*(fl.i+fl.r + fl.delta*fl.rd) - fv.T*fv.R*(fv.i+fv.r + fv.delta*fv.rd);  // f3
     end while;
-    // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
+    // if verbose then Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt"); end if;
 
     sat.psat := p;
     sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
@@ -743,9 +744,23 @@ protected
 
     SaturationProperties sat;
     MassFraction x "vapour quality";
-    Temperature Tmin=fluidLimits.TMIN;
-    Temperature Tmax=fluidLimits.TMAX;
-    Real tolerance=1e-9 "relative Tolerance for Density";
+
+    Density d_min;
+    Density d_max;
+    Density d_iter;
+    Temperature T_min;
+    Temperature T_max;
+    Temperature T_iter;
+    Real RES_p;
+    Real RES_s;
+    Real dpdd;
+    Real dpdT;
+    Real dsdd;
+    Real dsdT;
+    Real det "determinant of Jacobi matrix";
+    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+    Real tolerance=1e-6 "tolerance for sum of RES_p and RES_h";
+    Integer iter = 0;
 
   algorithm
     state.phase := phase;
@@ -778,30 +793,51 @@ protected
         sat.vap.s := R*(tau*(f.it + f.rt) - f.i - f.r);
 
         if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
-          // two-phase state or close to it, get saturation properties from EoS
+          // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
           sat := setSat_p(p=p);
         end if;
 
         if (s < sat.liq.s) then
-          state.phase := 1; // single phase liquid
-          Tmax := sat.Tsat;
+          // Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
+          state.phase := 1;
+          d_min := sat.liq.d;
+          d_max := fluidLimits.DMAX;
+          d_iter := sat.liq.d;
+          T_min := fluidLimits.TMIN;
+          T_max := sat.Tsat;
+          T_iter:= sat.Tsat;
         elseif (s > sat.vap.s) then
-          state.phase := 1; // single phase vapor
-          Tmin := sat.Tsat;
+          // Modelica.Utilities.Streams.print("single phase vapor", "printlog.txt");
+          state.phase := 1;
+          d_min := fluidLimits.DMIN;
+          d_max := sat.liq.d;
+          d_iter := sat.liq.d;
+          T_min := sat.Tsat;
+          T_max := fluidLimits.TMAX;
+          T_iter:= sat.Tsat;
         else
-          state.phase := 2; // two-phase, all properties can be calculated from sat record
+          // Modelica.Utilities.Streams.print("two-phase, all properties can be calculated from sat record", "printlog.txt");
+          state.phase := 2;
         end if;
 
       else
-        // p>p_crit or p<p_trip, only single phase possible, do not change Tmin and Tmax
+        // Modelica.Utilities.Streams.print("p>p_crit or p<p_trip, only single phase possible", "printlog.txt");
         state.phase := 1;
+        d_min := fluidLimits.DMIN;
+        d_max := fluidLimits.DMAX;
+        d_iter := d_crit;
+        T_min := fluidLimits.TMIN;
+        T_max := fluidLimits.TMAX;
+        T_iter:= T_crit;
       end if;
     end if;
 
-    state.p := p;
-    state.s := s;
+    // phase and region determination finished !
+
     if (state.phase == 2) then
       // force two-phase
+      state.p := p;
+      state.s := s;
       state.T := sat.Tsat;
       x := (s - sat.liq.s)/(sat.vap.s - sat.liq.s);
       state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
@@ -809,27 +845,54 @@ protected
       state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
     else
       // force single-phase
-      state.T := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-            function setState_psX_RES(
-              p=p,
-              s=s,
-              phase=1),
-            u_min=0.98*Tmin,
-            u_max=1.02*Tmax,
-            tolerance=tolerance);
-      state.d := density_pT(
-            p=p,
-            T=state.T,
-            phase=1);
+      f := setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1);
+      RES_p := d_iter*T_iter*f.R*(1+f.delta*f.rd) - p;
+      RES_s := f.R*(f.tau*(f.it + f.rt) - f.i - f.r) - s;
 
-      tau := T_crit/state.T;
-      delta := state.d/d_crit;
+      while (((abs(RES_p) + abs(RES_s)) > tolerance) and (iter<200)) loop
+        iter := iter+1;
 
-      f.it  := f_it(tau=tau, delta=delta);
-      f.rt  := f_rt(tau=tau, delta=delta);
-      f.rd  := f_rd(tau=tau, delta=delta);
-      state.h := state.T*R*(tau*(f.it+f.rt) + (1+delta*f.rd));
-      state.u := state.T*R*(tau*(f.it+f.rt));
+        // calculate gradients with respect to density and temperature
+        dpdd := T_iter*f.R*(1+2*f.delta*f.rd+f.delta^2*f.rdd);
+        dpdT := d_iter*f.R*(1+f.delta*f.rd-f.delta*f.tau*f.rtd);
+        dsdd := f.R/d_iter*(-(1+f.delta*f.rd-f.delta*f.tau*f.rtd));
+        dsdT := f.R/T_iter*(-f.tau^2*(f.itt+f.rtt));
+
+        // calculate determinant of Jacobi matrix
+        det := dpdd*dsdT-dpdT*dsdd;
+
+        /* // print for debugging
+      Modelica.Utilities.Streams.print(" ", "printlog.txt");
+      Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
+      Modelica.Utilities.Streams.print("d_iter=" + String(d_iter) + " and T_iter=" + String(T_iter), "printlog.txt");
+      Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and RES_s=" + String(RES_s), "printlog.txt");
+      Modelica.Utilities.Streams.print("dpdd=" + String(dpdd) + " and dpdT=" + String(dpdT), "printlog.txt");
+      Modelica.Utilities.Streams.print("dsdd=" + String(dsdd) + " and dsdT=" + String(dsdT), "printlog.txt");
+      Modelica.Utilities.Streams.print("det(J)=" + String(det), "printlog.txt"); */
+
+        // calculate better d_iter and T_iter
+        d_iter := d_iter - gamma/det*(+dsdT*RES_p -dpdT*RES_s);
+        T_iter := T_iter - gamma/det*(-dsdd*RES_p +dpdd*RES_s);
+
+        // check bounds
+        d_iter := max(d_min,d_iter);
+        d_iter := min(d_max,d_iter);
+        T_iter := max(T_min,T_iter);
+        T_iter := min(T_max,T_iter);
+
+        // calculate new RES_p and RES_s
+        f := setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1);
+        RES_p := d_iter*T_iter*f.R*(1+f.delta*f.rd) - p;
+        RES_s := f.R*(f.tau*(f.it + f.rt) - f.i - f.r) - s;
+      end while;
+      // Modelica.Utilities.Streams.print("setState_phX total iteration steps " + String(iter), "printlog.txt");
+
+      state.p := p;
+      state.s := s;
+      state.d := d_iter;
+      state.T := T_iter;
+      state.h := state.T*R*(f.tau*(f.it+f.rt) + (1+f.delta*f.rd));
+      state.u := state.T*R*(f.tau*(f.it+f.rt));
     end if;
 
   end setState_psX;
