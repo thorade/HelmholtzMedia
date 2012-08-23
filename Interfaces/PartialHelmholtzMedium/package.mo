@@ -249,6 +249,7 @@ protected
     Real tolerance=1e-3
     "tolerance for sum of RES_pl (in Pa), RES_pv (in Pa) and RES_g (in J/kg)";
     Integer iter = 0;
+    constant Integer iter_max = 200;
 
   algorithm
   if ((p>=p_trip) and (p<p_crit)) then
@@ -267,7 +268,7 @@ protected
     RES_g  := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd))
             - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));  // f3
 
-    while (((abs(RES_pl) + abs(RES_pv) + abs(RES_g)) > tolerance) and (iter<200)) loop
+    while (((abs(RES_pl) + abs(RES_pv) + abs(RES_g)) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
 
       // calculate gradients of f1,f2,f3 with respect to x,y,z
@@ -316,6 +317,8 @@ protected
       RES_g  := fl.T*fl.R*(fl.i+fl.r + fl.delta*fl.rd) - fv.T*fv.R*(fv.i+fv.r + fv.delta*fv.rd);  // f3
     end while;
     // if verbose then Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt"); end if;
+    // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
+    assert(iter<iter_max, "setSat_p did not converge, input was p=" + String(p));
 
     sat.psat := p;
     sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
@@ -486,9 +489,28 @@ protected
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta(unit="1") "reduced density";
     Real tau(unit="1")=T_crit/T "inverse reduced temperature";
+    AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
+    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     HelmholtzDerivs f;
-
     SaturationProperties sat;
+
+    // Redlic-Kwong-Soave
+    Real omega = fluidConstants[1].acentricFactor;
+    Real m;
+    Real a;
+    Real b;
+    Real A;
+    Real B;
+    Real r;
+    Real q;
+    Real D "discriminant";
+    Real u;
+    Real Y1;
+    Real Y2;
+    Real Y3;
+    Real Theta;
+    Real phi;
+    import Modelica.Constants.pi;
 
     Density d_min = fluidLimits.DMIN;
     Density d_max = fluidLimits.DMAX;
@@ -498,54 +520,116 @@ protected
     Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
     Real tolerance=1e-3 "tolerance for RES_p ";
     Integer iter = 0;
+    constant Integer iter_max=200;
 
   algorithm
     // Modelica.Utilities.Streams.print("p=" + String(p) + " and T=" + String(T), "printlog.txt");
     assert(phase <> 2, "setState_pTX_error: pressure and temperature are not independent variables in two-phase state");
     state.phase := 1;
 
-    if (T <= T_crit) then
-      sat.psat := saturationPressure(T=T);
+    // get start values from Redlich-Kwong-Soave (see Soave 1972 and Span 2000)
+    m := 0.480 + 1.574*omega - 0.176*omega^2;
+    a := 0.42747*R^2*T_crit^2/p_crit*(1 + m*(1 - sqrt(T/T_crit)))^2;
+    b := 0.08664*R*T_crit/p_crit;
+    A := a*p/(R^2*T^2);
+    B := b*p/(R*T);
+    r := (A-B-B^2)-1/3;
+    q := -2/27+1/3*(A-B-B^2)-A*B;
+    D := (r/3)^3 + (q/2)^2;
 
-      if (p > 1.02*sat.psat) then
-        sat.liq.d := bubbleDensity_T_ANC(T=T);
-      elseif (p < 0.98*sat.psat) then
-        sat.vap.d := dewDensity_T_ANC(T=T);
+    if (D >= 0) then
+      u := (-q/2+D^0.5)^(1/3);
+      Y1 := u-r/(3*u);
+      // Modelica.Utilities.Streams.print("RKS has one root (Y1=" + String(Y1) + "), start Newton-Raphson directly", "printlog.txt");
+      d_iter := p/(R*T*(Y1+1/3));
+    elseif ((abs(D) < 1e-8) and (abs(r) < 1e-3)) then
+      // Modelica.Utilities.Streams.print("close to critical region, use critical density");
+      d_iter := d_crit;
+    else
+      Theta := sqrt(-r^3/27);
+      phi := acos(-q/(2*Theta));
+      Y1 := 2*Theta^(1/3)*cos(phi/3);
+      Y2 := 2*Theta^(1/3)*cos(phi/3+2*pi/3);
+      Y3 := 2*Theta^(1/3)*cos(phi/3+4*pi/3);
+      // Modelica.Utilities.Streams.print("D=" + String(D) + " is negative, RKS has three roots(Y1=" + String(Y1) + ", Y2=" + String(Y2) + ", Y3=" + String(Y3) + "), further checks required", "printlog.txt");
+
+      if (T <= T_crit) then
+        // Modelica.Utilities.Streams.print("T<T_crit: multiple roots due to phase boundary", "printlog.txt");
+        sat.psat := saturationPressure(T=T);
+
+        if (p > 1.02*sat.psat) then
+          sat.liq.d := bubbleDensity_T_ANC(T=T);
+        elseif (p < 0.98*sat.psat) then
+          sat.vap.d := dewDensity_T_ANC(T=T);
+        else
+          // Modelica.Utilities.Streams.print("close to saturation boundary, get saturation properties from EoS", "printlog.txt");
+          sat := setSat_T(T=T);
+        end if;
+
+        if (p > sat.psat) then
+          // Modelica.Utilities.Streams.print("single phase liquid: d is between dliq and rho_max", "printlog.txt");
+          Y1 := min(Y1,Y2);
+          Y1 := min(Y1,Y3);
+          d_iter := p/(R*T*(Y1+1/3));
+          d_min  := sat.liq.d;
+          d_max  := fluidLimits.DMAX;
+        elseif (p < sat.psat) then
+          // Modelica.Utilities.Streams.print("single phase vapor: d is between 0 and dvap", "printlog.txt");
+          Y1 := max(Y1,Y2);
+          Y1 := max(Y1,Y3);
+          d_iter := p/(R*T*(Y1+1/3));
+          d_min  := fluidLimits.DMIN;
+          d_max  := sat.vap.d;
+        else
+          assert(p <> sat.psat, "setState_pTX_error: pressure equals saturation pressure");
+        end if;
+        // check bounds, RKS is not very accurate for VLE densities
+        d_iter := max(d_min,d_iter);
+        d_iter := min(d_max,d_iter);
       else
-        // Modelica.Utilities.Streams.print("close to saturation boundary, get saturation properties from EoS", "printlog.txt");
-        sat := setSat_T(T=T);
-      end if;
-
-      if (p > sat.psat) then
-        // Modelica.Utilities.Streams.print("single phase liquid: d is between dliq and rho_max", "printlog.txt");
-        d_min  := sat.liq.d;
-        d_max  := fluidLimits.DMAX;
-        d_iter := sat.liq.d;
-      elseif (p < sat.psat) then
-        // Modelica.Utilities.Streams.print("single phase vapor: d is between 0 and dvap", "printlog.txt");
+        // Modelica.Utilities.Streams.print("T>T_crit: multiple roots can occur, but two of the roots result in negative densities", "printlog.txt");
+        d_iter := max(p/(R*T*(Y1+1/3)), p/(R*T*(Y2+1/3)));
+        d_iter := max(p/(R*T*(Y3+1/3)), d_iter);
         d_min  := fluidLimits.DMIN;
-        d_max  := sat.vap.d;
-        d_iter := sat.vap.d;
-      else
-        assert(p <> sat.psat, "setState_pTX_error: pressure equals saturation pressure");
+        d_max  := fluidLimits.DMAX;
       end if;
     end if;
 
-    // phase and region determination finished !
+    // Modelica.Utilities.Streams.print("RKS finished, start Newton-Raphson with d_iter=" + String(d_iter), "printlog.txt");
 
     // calculate RES_p
     delta := d_iter/d_crit;
     f.rd  := f_rd(delta=delta, tau=tau);
     RES_p := d_iter*T*R*(1+delta*f.rd) - p;
 
-    while ((abs(RES_p) > tolerance) and (iter<200)) loop
+    while ((abs(RES_p) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
 
       // calculate gradient with respect to density
       f.rdd := f_rdd(delta=delta, tau=tau);
       dpdd := T*R*(1+2*delta*f.rd+delta^2*f.rdd);
+      if (dpdd<0) then
+        // Modelica.Utilities.Streams.print("ran into two-phase region, probably close to critical point", "printlog.txt");
+        sat := setSat_T(T=T);
+        if (p > sat.psat) then
+          d_iter := p/(R*T*(Y1+1/3));
+          d_min  := sat.liq.d;
+          d_max  := fluidLimits.DMAX;
+        elseif (p < sat.psat) then
+          d_iter := p/(R*T*(Y1+1/3));
+          d_min  := fluidLimits.DMIN;
+          d_max  := sat.vap.d;
+        else
+          d_iter := d_crit;
+        end if;
+        delta := d_iter/d_crit;
+        f.rd  := f_rd(delta=delta, tau=tau);
+        RES_p := d_iter*T*R*(1+delta*f.rd) - p;
+        f.rdd := f_rdd(delta=delta, tau=tau);
+        dpdd := T*R*(1+2*delta*f.rd+delta^2*f.rdd);
+      end if;
 
-      /* // print for debugging
+      /* // print for Newton debugging
     Modelica.Utilities.Streams.print(" ", "printlog.txt");
     Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
     Modelica.Utilities.Streams.print("d_iter=" + String(d_iter), "printlog.txt");
@@ -564,6 +648,7 @@ protected
       RES_p := d_iter*T*R*(1+delta*f.rd) - p;
     end while;
     // Modelica.Utilities.Streams.print("setState_pTX total iteration steps " + String(iter), "printlog.txt");
+    assert(iter<iter_max, "setState_pTX did not converge, input was p=" + String(p) + " and T=" + String(T));
 
     state.p := p;
     state.T := T;
@@ -613,6 +698,7 @@ protected
     Real tolerance=1e-3
     "tolerance for sum of RES_p (in Pa) and RES_h (in J/kg)";
     Integer iter = 0;
+    constant Integer iter_max = 200;
 
   algorithm
     state.phase := phase;
@@ -701,7 +787,7 @@ protected
       //RES_p := (1+delta*f.rd) - p/(d_iter*R*T_iter);
       //RES_h := ((1+delta*f.rd)+tau*(f.it+f.rt)) - h/(R*T_iter);
 
-      while (((abs(RES_p) + abs(RES_h)) > tolerance) and (iter<200)) loop
+      while (((abs(RES_p) + abs(RES_h)) > tolerance) and (iter<iter_max)) loop
         iter := iter+1;
 
         // calculate gradients with respect to density and temperature
@@ -753,6 +839,7 @@ protected
         //RES_h := ((1+delta*f.rd)+tau*(f.it+f.rt)) - h/(R*T_iter);
       end while;
       // Modelica.Utilities.Streams.print("setState_phX total iteration steps " + String(iter), "printlog.txt");
+      assert(iter<iter_max, "setState_phX did not converge, input was p=" + String(p) + " and h=" + String(h));
 
       state.p := p;
       state.h := h;
@@ -800,6 +887,7 @@ protected
     Real tolerance=1e-3
     "tolerance for sum of RES_p (in Pa) and RES_s (in J/kgK)";
     Integer iter = 0;
+    constant Integer iter_max = 200;
 
   algorithm
     state.phase := phase;
@@ -888,7 +976,7 @@ protected
       RES_p := d_iter*T_iter*f.R*(1+f.delta*f.rd) - p;
       RES_s := f.R*(f.tau*(f.it + f.rt) - f.i - f.r) - s;
 
-      while (((abs(RES_p) + abs(RES_s)) > tolerance) and (iter<200)) loop
+      while (((abs(RES_p) + abs(RES_s)) > tolerance) and (iter<iter_max)) loop
         iter := iter+1;
 
         // calculate gradients with respect to density and temperature
@@ -925,6 +1013,7 @@ protected
         RES_s := f.R*(f.tau*(f.it + f.rt) - f.i - f.r) - s;
       end while;
       // Modelica.Utilities.Streams.print("setState_phX total iteration steps " + String(iter), "printlog.txt");
+      assert(iter<iter_max, "setState_psX did not converge, input was p=" + String(p) + " and s=" + String(s));
 
       state.p := p;
       state.s := s;
@@ -1103,6 +1192,7 @@ protected
     Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
     Real tolerance=1e-3 "tolerance for RES_p (in Pa)";
     Integer iter=0;
+    constant Integer iter_max = 200;
 
   algorithm
     assert(p >= p_trip, "saturationTemperature error: Pressure is lower than triple-point pressure");
@@ -1116,7 +1206,7 @@ protected
     T_theta := 1 - T/T_crit;
     RES_p   := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
 
-    while ((abs(RES_p)>tolerance) and (iter<200)) loop
+    while ((abs(RES_p)>tolerance) and (iter<iter_max)) loop
       iter:=iter + 1;
 
       // calculate gradient of RES_p (= gradient of Wagner equation)

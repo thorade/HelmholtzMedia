@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples;
 model State_pT_sweep
-  package Medium = HelmholtzFluids.R134a;
+  package Medium = HelmholtzFluids.Butane;
   Medium.AbsolutePressure p;
   Medium.Temperature T;
   Medium.ThermodynamicState inletState;
