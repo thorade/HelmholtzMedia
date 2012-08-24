@@ -4,8 +4,7 @@ function setHelmholtzDerivs
   input Density d;
   input Temperature T;
   input FixedPhase phase=1;
-  output HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.HelmholtzDerivs
-                         f;
+  output HelmholtzDerivs f;
 
 protected
   MolarMass MM = fluidConstants[1].molarMass;
@@ -23,25 +22,16 @@ algorithm
   f.delta := delta;
 
   if (phase==1) then
-    f.i   := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.f_i(
-                 tau=tau, delta=delta);
-    f.it  := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.f_it(
-                  tau=tau, delta=delta);
-    f.itt := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.f_itt(
-                   tau=tau, delta=delta);
+    f.i   := f_i(tau=tau, delta=delta);
+    f.it  := f_it(tau=tau, delta=delta);
+    f.itt := f_itt(tau=tau, delta=delta);
 
-    f.r   := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.f_r(
-                 tau=tau, delta=delta);
-    f.rt  := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.f_rt(
-                  tau=tau, delta=delta);
-    f.rtt := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.f_rtt(
-                   tau=tau, delta=delta);
-    f.rtd := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.f_rtd(
-                   tau=tau, delta=delta);
-    f.rd  := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.f_rd(
-                  tau=tau, delta=delta);
-    f.rdd := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.f_rdd(
-                   tau=tau, delta=delta);
+    f.r   := f_r(tau=tau, delta=delta);
+    f.rt  := f_rt(tau=tau, delta=delta);
+    f.rtt := f_rtt(tau=tau, delta=delta);
+    f.rtd := f_rtd(tau=tau, delta=delta);
+    f.rd  := f_rd(tau=tau, delta=delta);
+    f.rdd := f_rdd(tau=tau, delta=delta);
   // else: do nothing
   end if;
 end setHelmholtzDerivs;

@@ -1,5 +1,6 @@
 HelmholtzDerivs
 HelmholtzCoefficients
+setHelmholtzDerivs
 f_i
 f_it
 f_itt
@@ -11,4 +12,3 @@ f_rtt
 f_rtd
 f_rd
 f_rdd
-setHelmholtzDerivs
