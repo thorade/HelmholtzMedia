@@ -13,8 +13,7 @@ protected
   Temperature T_crit=fluidConstants[1].criticalTemperature;
   Real delta(unit="1")=d/d_crit "reduced density";
   Real tau(unit="1") "inverse reduced temperature";
-  EoS.HelmholtzDerivs
-                  f;
+  EoS.HelmholtzDerivs f;
 
   AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
   AbsolutePressure p_crit=fluidConstants[1].criticalPressure;

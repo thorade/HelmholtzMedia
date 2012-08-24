@@ -13,8 +13,7 @@ protected
   Temperature T_trip=fluidConstants[1].triplePointTemperature;
   Real delta "reduced density";
   Real tau(unit="1")=T_crit/T "inverse reduced temperature";
-  EoS.HelmholtzDerivs
-                  f;
+  EoS.HelmholtzDerivs f;
 
   SaturationProperties sat;
   MassFraction x "vapour quality";

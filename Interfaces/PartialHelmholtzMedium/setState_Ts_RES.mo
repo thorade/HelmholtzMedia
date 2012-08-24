@@ -18,11 +18,7 @@ protected
   SpecificEntropy s_of_u;
 
 algorithm
-  s_of_u := R*(tau*(EoS.f_it(
-                         tau=tau, delta=delta) + EoS.f_rt(
-                                                      tau=tau, delta=delta)) - EoS.f_i(
-                                                                                   tau=tau, delta=delta) - EoS.f_r(
-                                                                                                  tau=tau, delta=delta));
+  s_of_u := R*(tau*(EoS.f_it(tau=tau, delta=delta) + EoS.f_rt(tau=tau, delta=delta)) - EoS.f_i(tau=tau, delta=delta) - EoS.f_r(tau=tau, delta=delta));
   // return the RESidual
   y := s - s_of_u;
 end setState_Ts_RES;

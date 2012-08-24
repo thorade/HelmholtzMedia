@@ -10,10 +10,6 @@ partial package PartialHelmholtzMedium
 
   import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
-
-
-
-
   constant FluidLimits fluidLimits;
 
   constant EoS.HelmholtzCoefficients helmholtzCoefficients;
@@ -499,8 +495,7 @@ protected
     Real tau(unit="1")=T_crit/T "inverse reduced temperature";
     AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
-    EoS.HelmholtzDerivs
-                    f;
+    EoS.HelmholtzDerivs f;
     SaturationProperties sat;
 
     // Redlich-Kwong-Soave
@@ -682,8 +677,7 @@ protected
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta "reduced density";
     Real tau "inverse reduced temperature";
-    EoS.HelmholtzDerivs
-                    f;
+    EoS.HelmholtzDerivs f;
 
     AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
@@ -872,8 +866,7 @@ protected
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta "reduced density";
     Real tau "inverse reduced temperature";
-    EoS.HelmholtzDerivs
-                    f;
+    EoS.HelmholtzDerivs f;
 
     AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
@@ -1037,9 +1030,6 @@ protected
   end setState_psX;
 
 
-
-
-
   function setState_ThX "Return thermodynamic state as function of (T, h)"
     extends Modelica.Icons.Function;
     input Temperature T "Temperature";
@@ -1054,8 +1044,7 @@ protected
     Temperature T_trip=fluidConstants[1].triplePointTemperature;
     Real delta "reduced density";
     Real tau(unit="1")=T_crit/T "inverse reduced temperature";
-    EoS.HelmholtzDerivs
-                    f;
+    EoS.HelmholtzDerivs f;
 
     SaturationProperties sat;
     MassFraction x "vapour quality";
@@ -1146,7 +1135,6 @@ protected
     end if;
 
   end setState_ThX;
-
 
 
   redeclare function extends temperature
@@ -1366,8 +1354,6 @@ protected
       kappa := Modelica.Constants.inf; // divide by zero
     end if;
   end isothermalCompressibility;
-
-
 
 
   redeclare replaceable function extends thermalConductivity
@@ -1842,8 +1828,6 @@ The extended version has up to three terms with two parameters each.
   end density_pT;
 
 
-
-
   redeclare function temperature_ps "returns temperature for given p and d"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1858,9 +1842,6 @@ The extended version has up to three terms with two parameters each.
     inverse(p=pressure_Ts(T=T, s=s, phase=phase),
             s=specificEntropy_pT(p=p, T=T, phase=phase)));
   end temperature_ps;
-
-
-
 
 
   redeclare function specificEnthalpy_pT
@@ -1917,8 +1898,6 @@ The extended version has up to three terms with two parameters each.
   end specificEnthalpy_ps;
 
 
-
-
   redeclare function density_ph "returns density for given p and h"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1933,13 +1912,6 @@ The extended version has up to three terms with two parameters each.
     derivative=density_ph_der,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
-
-
-
-
-
-
-
 
 
   function density_derT_h "returns density derivative (dd/dT)@h=const"
@@ -2058,6 +2030,7 @@ protected
   algorithm
     T := sat.Tsat;
   end saturationTemperature;
+
 
   redeclare function saturationTemperature_derp "returns (dT/dp)@sat"
   // does not extend, because base class output has wrong units

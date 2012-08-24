@@ -2,9 +2,6 @@ within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
 package Ancillary 
 
 
-
-
-
   function saturationPressure_T
   "ancillary function: calculate saturation pressure for a given Temperature"
     input Modelica.SIunits.Temperature T;
@@ -113,4 +110,5 @@ protected
     // the corresponding ancillary forward function is saturationPressure(T)
     annotation (inverse(p=saturationPressure(T=T)));
   end saturationTemperature_p;
+
 end Ancillary;

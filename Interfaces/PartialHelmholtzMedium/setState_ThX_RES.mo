@@ -18,10 +18,7 @@ protected
   SpecificEnthalpy h_of_u;
 
 algorithm
-  h_of_u := T*R*(tau*(EoS.f_it(
-                           delta=delta, tau=tau) + EoS.f_rt(
-                                                        delta=delta, tau=tau)) + (1+delta*EoS.f_rd(
-                                                                                               delta=delta, tau=tau)));
+  h_of_u := T*R*(tau*(EoS.f_it(delta=delta, tau=tau) + EoS.f_rt(delta=delta, tau=tau)) + (1+delta*EoS.f_rd(delta=delta, tau=tau)));
   // return the RESidual
   y := h - h_of_u;
 end setState_ThX_RES;
