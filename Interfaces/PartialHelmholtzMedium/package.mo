@@ -228,10 +228,8 @@ protected
     AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
-    EoS.HelmholtzDerivs
-                    fl;
-    EoS.HelmholtzDerivs
-                    fv;
+    EoS.HelmholtzDerivs fl;
+    EoS.HelmholtzDerivs fv;
 
     Real RES_pl;
     Real f1dx;
@@ -350,6 +348,158 @@ protected
 
   end if;
   end setSat_p;
+
+
+  function setSat_d
+  "iterative calculation of saturation properties from EoS with Newton-Raphson algorithm"
+    input Density d;
+    output SaturationProperties sat;
+
+protected
+    Temperature T_trip=fluidConstants[1].triplePointTemperature;
+    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    Real tau(unit="1") "inverse reduced temperature";
+    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+    Real R=Modelica.Constants.R/fluidConstants[1].molarMass
+    "specific gas constant in J/kg.K";
+
+    Density d_min =  fluidLimits.DMIN;
+    Density d_max =  fluidLimits.DMAX;
+
+    EoS.HelmholtzDerivs fl;
+    EoS.HelmholtzDerivs fv;
+
+    Real RES_p;
+    Real RES_g;
+    Real dpdd;
+    Real dpdT;
+    Real dgdd;
+    Real dgdT;
+    Real det "determinant of Jacobi matrix";
+    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+    Real tolerance=1e-3
+    "tolerance for sum of RES_p (in Pa) and RES_g (in J/kg)";
+    Integer iter = 0;
+    constant Integer iter_max = 200;
+
+  algorithm
+     Modelica.Utilities.Streams.print(" ", "printlog.txt");
+     Modelica.Utilities.Streams.print("setSat_d: d="+String(d),"printlog.txt");
+
+    sat.Tsat := Ancillary.saturationTemperature_d(d=d);
+    if (d-d_crit<tolerance) then
+       Modelica.Utilities.Streams.print("d<d_crit: vapour side", "printlog.txt");
+      sat.vap.d := d; // d'' is a constant
+      sat.liq.d := Ancillary.bubbleDensity_T(sat.Tsat);
+
+      // calculate residuals: liq-vap
+      fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
+      fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
+      RES_p := fl.d*fl.T*fl.R*(1+fl.delta*fl.rd)
+             - fv.d*fv.T*fv.R*(1+fv.delta*fv.rd);
+      RES_g := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd))
+             - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
+
+      while (abs(RES_p) + abs(RES_g) > tolerance) and iter<iter_max loop
+        // Modelica.Utilities.Streams.print(" ", "printlog.txt");
+         Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
+         Modelica.Utilities.Streams.print("sat.liq.d=" + String(sat.liq.d) + "  and dpdd=" + String(dpdd) + " and dgdd=" + String(dgdd), "printlog.txt");
+         Modelica.Utilities.Streams.print(" sat.Tsat=" + String(sat.Tsat)  + " and dpdT=" + String(dpdT) + " and dgdT=" + String(dgdT), "printlog.txt");
+        iter := iter+1;
+
+        // calculate gradients ragrding d_liq and T
+        dpdd := fl.T*fl.R*(1+2*fl.delta*fl.rd + fl.delta^2*fl.rdd);
+        dpdT := fl.d*fl.R*(1+fl.delta*fl.rd-fl.delta*fl.tau*fl.rtd)
+              - fv.d*fv.R*(1+fv.delta*fv.rd-fv.delta*fv.tau*fv.rtd);
+        dgdd := fl.T*fl.R/fl.d*(1+2*fl.delta*fl.rd + fl.delta^2*fl.rdd);
+        dgdT := fl.R*(-fl.tau*(fl.it+fl.rt) +(fl.i+fl.r) +(1+fl.delta*fl.rd-fl.delta*fl.tau*fl.rtd))
+              - fv.R*(-fv.tau*(fv.it+fv.rt) +(fv.i+fv.r) +(1+fv.delta*fv.rd-fv.delta*fv.tau*fv.rtd));
+
+        // calculate determinant of Jacobi matrix det=ad-bc
+        det := dpdd*dgdT-dpdT*dgdd;
+
+        // calculate better values for sat.liq.d and sat.Tsat
+        sat.liq.d := sat.liq.d -gamma/det*(+dgdT*RES_p -dpdT*RES_g);
+        sat.Tsat  := sat.Tsat  -gamma/det*(-dgdd*RES_p +dpdd*RES_g);
+
+        // check bounds
+        sat.liq.d := max(sat.liq.d, d_crit);
+        sat.liq.d := min(sat.liq.d, d_max);
+        sat.Tsat  := max(sat.Tsat,  T_trip);
+        sat.Tsat  := min(sat.Tsat,  T_crit);
+
+        // calculate new residuals: liq-vap
+        fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
+        fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
+        RES_p := fl.d*fl.T*fl.R*(1+fl.delta*fl.rd)
+               - fv.d*fv.T*fv.R*(1+fv.delta*fv.rd);
+        RES_g := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd))
+               - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
+      end while;
+
+    elseif (d-d_crit>tolerance) then
+      // Modelica.Utilities.Streams.print("d>d_crit: liquid side", "printlog.txt");
+      sat.liq.d := d; // d' is a constant
+      sat.vap.d := Ancillary.dewDensity_T(sat.Tsat);
+
+      // calculate residuals: vap-liq
+      fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
+      fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
+      RES_p := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd)
+             - fl.d*fl.T*fl.R*(1+fl.delta*fl.rd);
+      RES_g := fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd))
+             - fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
+
+      while (abs(RES_p) + abs(RES_g) > tolerance) and iter<iter_max loop
+        // Modelica.Utilities.Streams.print(" ", "printlog.txt");
+         Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
+         Modelica.Utilities.Streams.print("sat.liq.d=" + String(sat.liq.d) + "  and dpdd=" + String(dpdd) + " and dgdd=" + String(dgdd), "printlog.txt");
+         Modelica.Utilities.Streams.print(" sat.Tsat=" + String(sat.Tsat)  + " and dpdT=" + String(dpdT) + " and dgdT=" + String(dgdT), "printlog.txt");
+        iter := iter+1;
+
+        // calculate gradients ragrding d_liq and T
+        dpdd := fl.T*fl.R*(1+2*fl.delta*fl.rd + fl.delta^2*fl.rdd);
+        dpdT := fv.d*fv.R*(1+fv.delta*fv.rd-fv.delta*fv.tau*fv.rtd)
+              - fl.d*fl.R*(1+fl.delta*fl.rd-fl.delta*fl.tau*fl.rtd);
+        dgdd := fl.T*fl.R/fl.d*(1+2*fl.delta*fl.rd + fl.delta^2*fl.rdd);
+        dgdT := fv.R*(-fv.tau*(fv.it+fv.rt) +(fv.i+fv.r) +(1+fv.delta*fv.rd-fv.delta*fv.tau*fv.rtd))
+              - fl.R*(-fl.tau*(fl.it+fl.rt) +(fl.i+fl.r) +(1+fl.delta*fl.rd-fl.delta*fl.tau*fl.rtd));
+
+        // calculate determinant of Jacobi matrix det=ad-bc
+        det := dpdd*dgdT-dpdT*dgdd;
+
+        // calculate better values for sat.liq.d and sat.Tsat
+        sat.vap.d := sat.liq.d -gamma/det*(+dgdT*RES_p -dpdT*RES_g);
+        sat.Tsat  := sat.Tsat  -gamma/det*(-dgdd*RES_p +dpdd*RES_g);
+
+        // check bounds
+        sat.vap.d := max(sat.vap.d, d_min);
+        sat.vap.d := min(sat.vap.d, d_crit);
+        sat.Tsat  := max(sat.Tsat,  T_trip);
+        sat.Tsat  := min(sat.Tsat,  T_crit);
+
+        // calculate new residuals: liq-vap
+        fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
+        fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
+        RES_p := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd)
+               - fl.d*fl.T*fl.R*(1+fl.delta*fl.rd);
+        RES_g := fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd))
+               - fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
+      end while;
+    else
+      // Modelica.Utilities.Streams.print("d=d_crit: return critical Temperature", "printlog.txt");
+      sat.Tsat  := T_crit;
+      sat.liq.d := d_crit;
+      sat.vap.d := d_crit;
+    end if;
+     Modelica.Utilities.Streams.print("setSat_d total iteration steps " + String(iter), "printlog.txt");
+    assert(iter<iter_max, "setSat_d did not converge, input was d=" + String(d));
+
+    sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
+    sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
+    sat.psat := sat.liq.p;
+
+  end setSat_d;
 
 
   redeclare function extends setBubbleState

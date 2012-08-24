@@ -61,8 +61,8 @@ algorithm
         // Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
         state.phase := 1;
         T_max := sat.Tsat;
-        T_min := Ancillary.saturationTemperature_d(d=d); // look at subcritical isobars in T,d-Diagram !!
-        T_iter:= T_min;
+        T_iter:= Ancillary.saturationTemperature_d(d=d); // look at subcritical isobars in T,d-Diagram !!
+        T_min := 0.98*T_iter;
       elseif (d < sat.vap.d) then
         // Modelica.Utilities.Streams.print("single phase vapour", "printlog.txt");
         state.phase := 1;

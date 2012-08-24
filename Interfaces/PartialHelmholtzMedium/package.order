@@ -13,6 +13,7 @@ SaturationProperties
 BaseProperties
 setSat_T
 setSat_p
+setSat_d
 setBubbleState
 setDewState
 setState_dTX
