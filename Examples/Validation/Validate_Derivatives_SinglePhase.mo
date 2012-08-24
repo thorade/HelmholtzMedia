@@ -39,9 +39,7 @@ model Validate_Derivatives_SinglePhase
 protected
   Real eps= 1e-3;
   Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
-  HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.HelmholtzDerivs
-                         f=HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS.setHelmholtzDerivs(
-                                                     T=state.T, d=state.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
   Medium.ThermodynamicState d_plus=Medium.setState_dTX(d=d+eps*d, T=T);
   Medium.ThermodynamicState d_minus=Medium.setState_dTX(d=d-eps*d, T=T);
   Medium.ThermodynamicState T_plus=Medium.setState_dTX(d=d, T=T+eps*T);

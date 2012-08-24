@@ -17,7 +17,7 @@ Modelica.Blocks.Sources.Ramp ramp(
     height=1,
     duration=5,
     offset=0,
-    startTime=1)
+    startTime=0.01)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
 Modelica.Blocks.Sources.ExpSine expSine(
     amplitude=0.99,
@@ -34,7 +34,7 @@ Modelica.Blocks.Sources.Sine sine(
 
 equation
   p = pcrit + pcrit*(ramp.y*sine.y - ramp.y);
-  d = dcrit - ramp.y*dcrit + ramp.y*sine.y*dcrit;
+  d = 0.7*dcrit + expSine.y*(dcrit-dmin);
   state=Medium.setState_pd(p=p, d=d, phase=0);
 
   annotation (experiment(StopTime=10, NumberOfIntervals=1000),

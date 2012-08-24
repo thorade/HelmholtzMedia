@@ -19,12 +19,9 @@ protected
 
 algorithm
     Tsat := Temp_ramp.y;
-    psat := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Ancillary.saturationPressure_T(
-                                      T=Tsat);
-    dliq := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Ancillary.bubbleDensity_T(
-                                       T=Tsat);
-    dvap := HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Ancillary.dewDensity_T(
-                                    T=Tsat);
+    psat := Medium.Ancillary.saturationPressure_T(T=Tsat);
+    dliq := Medium.Ancillary.bubbleDensity_T(T=Tsat);
+    dvap := Medium.Ancillary.dewDensity_T(T=Tsat);
 
 annotation (experiment(StopTime=11,NumberOfIntervals=600));
 end Validate_AncillaryFunctions;

@@ -23,7 +23,7 @@ protected
 
     // this is an ancillary forward function
     // the corresponding iterative backward function is saturationTemperature(p)
-    annotation (inverse(T=saturationTemperature(p=p)), Documentation(info="<html>
+    annotation (inverse(T=saturationTemperature_p(p=p)), Documentation(info="<html>
       <p>
       This algorithm returns the saturation pressure as a function of Temperature: psat=psat(T).
       This type of vapor pressure equation was developed by W. Wagner.
@@ -42,7 +42,7 @@ protected
 
 
   function saturationTemperature_p
-  "ancillary iterative function: calculate saturation temperature for a given pressure by iterating the anciallry function"
+  "ancillary iterative function: calculate saturation temperature for a given pressure by iterating the ancillary function"
 
     input Modelica.SIunits.AbsolutePressure p;
     output Modelica.SIunits.Temperature T;
@@ -73,10 +73,11 @@ protected
     // calculate start value from the log(p) vs. 1/T diagram
     // see Span (2000) page 52 / equation 3.98
     T := 1/(1/T_crit - (1/T_trip-1/T_crit)/log(p_crit/p_trip)*log(p/p_crit));
+    T := min(T,T_crit- Modelica.Constants.eps);
 
     // calculate RES_p
     tau := T_crit/T;
-    T_theta := 1 - T/T_crit;
+    T_theta := 1-T/T_crit;
     RES_p   := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
 
     while ((abs(RES_p)>tolerance) and (iter<iter_max)) loop
@@ -104,11 +105,12 @@ protected
       T_theta := 1 - T/T_crit;
       RES_p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
     end while;
-    // Modelica.Utilities.Streams.print("setState_phX total iteration steps " + String(iter), "printlog.txt");
+    // Modelica.Utilities.Streams.print("saturationTemperature_p total iteration steps " + String(iter), "printlog.txt");
+    assert(iter<iter_max, "saturationTemperature_p did not converge, input was p=" + String(p));
 
     // this is an iterative backward function
     // the corresponding ancillary forward function is saturationPressure(T)
-    annotation (inverse(p=saturationPressure(T=T)));
+    annotation (inverse(p=saturationPressure_T(T=T)));
   end saturationTemperature_p;
 
 end Ancillary;

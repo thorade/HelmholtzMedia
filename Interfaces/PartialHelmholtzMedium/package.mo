@@ -1220,10 +1220,7 @@ protected
 
   algorithm
     if (state.phase == 1) then
-      f:=EoS.setHelmholtzDerivs(
-          T=state.T,
-          d=state.d,
-          phase=1);
+      f:=EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1);
       cp := f.R*(-f.tau^2*(f.itt + f.rtt)
                  + (1 + f.delta*f.rd - f.delta*f.tau*f.rtd)^2/(1 + 2*f.delta*f.rd + f.delta^2*f.rdd));
   //  alternatively, yields same result
@@ -1327,8 +1324,8 @@ protected
       // Attention: wrong in Span(2000) table 3.10
       // correct in Lemmon(2000)
       // 1/v*(dv/dT)@p = -1/d*(dd/dT)@p = +1/d * (dp/dT)@d / (dp/dT)@d
-      dpTd := pressure_derT_d(state=state, f=f);
-      dpdT := pressure_derd_T(state=state, f=f);
+      dpTd := pressure_derT_d(state=state);
+      dpdT := pressure_derd_T(state=state);
       beta := 1/state.d*dpTd/dpdT;
     elseif (state.phase == 2) then
       beta := Modelica.Constants.small; // zero
@@ -1348,7 +1345,7 @@ protected
   algorithm
     if (state.phase == 1) then
       f:=EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1);
-      dpdT := pressure_derd_T(state=state, f=f);
+      dpdT := pressure_derd_T(state=state);
       kappa := 1/(state.d*dpdT);
     elseif (state.phase == 2) then
       kappa := Modelica.Constants.inf; // divide by zero

@@ -32,6 +32,8 @@ protected
   constant Integer iter_max = 200;
 
 algorithm
+  // Modelica.Utilities.Streams.print(" ", "printlog.txt");
+  // Modelica.Utilities.Streams.print("setState_pdX: p=" + String(p) + " and d=" + String(d), "printlog.txt");
   state.phase := phase;
 
   if (state.phase == 2) then
@@ -41,7 +43,7 @@ algorithm
     assert(d <= sat.liq.d, "setState_pdX_error: density is higher than saturated liquid density: this is single phase liquid");
     assert(d >= sat.vap.d, "setState_pdX_error: density is lower than saturated vapor density: this is single phase vapor");
   else
-    if ((p <= p_crit) and (p >= p_trip)) then
+    if ((p < p_crit) and (p > p_trip)) then
       // two-phase possible, do simple check first
       sat.Tsat := Ancillary.saturationTemperature_p(p=p);
       sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
@@ -56,25 +58,27 @@ algorithm
       end if;
 
       if (d > sat.liq.d) then
-        Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
+        // Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
         state.phase := 1;
         T_max := sat.Tsat;
-        T_iter:= sat.Tsat;
+        T_min := Ancillary.saturationTemperature_d(d=d); // look at subcritical isobars in T,d-Diagram !!
+        T_iter:= T_min;
       elseif (d < sat.vap.d) then
-        Modelica.Utilities.Streams.print("single phase vapour", "printlog.txt");
+        // Modelica.Utilities.Streams.print("single phase vapour", "printlog.txt");
         state.phase := 1;
         T_min := sat.Tsat;
         T_iter:= sat.Tsat;
       else
-        Modelica.Utilities.Streams.print("two-phase, all properties can be calculated from sat record", "printlog.txt");
+        // Modelica.Utilities.Streams.print("two-phase, all properties can be calculated from sat record", "printlog.txt");
         state.phase := 2;
       end if;
 
-    elseif (p < p_trip) then
-      Modelica.Utilities.Streams.print("p>p_crit or p<p_trip, only single phase possible", "printlog.txt");
-    elseif
-          (p > p_crit) then
-      Modelica.Utilities.Streams.print("p>p_crit or p<p_trip, only single phase possible", "printlog.txt");
+    elseif (p <= p_trip) then
+      // not very realistic, but can happen during initialization
+      // Modelica.Utilities.Streams.print("p<p_trip, only single phase possible", "printlog.txt");
+      T_iter:= T_min;
+    elseif (p >= p_crit) then
+      // Modelica.Utilities.Streams.print("p>p_crit , only single phase possible", "printlog.txt");
       state.phase := 1;
     end if;
   end if;
@@ -106,9 +110,9 @@ algorithm
       dpdT := d*R*(1+delta*f.rd-delta*tau*f.rtd);
 
       // print for debugging
-      Modelica.Utilities.Streams.print(" ", "printlog.txt");
-      Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-      Modelica.Utilities.Streams.print("T_iter=" + String(T_iter) + " and dpdT=" + String(dpdT), "printlog.txt");
+      // Modelica.Utilities.Streams.print(" ", "printlog.txt");
+      // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
+      // Modelica.Utilities.Streams.print("T_iter=" + String(T_iter) + " and dpdT=" + String(dpdT), "printlog.txt");
 
       // calculate better d_iter and T_iter
       T_iter := T_iter - gamma/dpdT*RES_p;
@@ -119,11 +123,10 @@ algorithm
 
       // calculate new RES_p
       tau := T_crit/T_iter;
-      f.rd  := EoS.f_rd(
-                    delta=delta, tau=tau);
+      f.rd  := EoS.f_rd(delta=delta, tau=tau);
       RES_p := d*T_iter*R*(1+delta*f.rd) - p;
     end while;
-    Modelica.Utilities.Streams.print("setState_phX total iteration steps " + String(iter), "printlog.txt");
+    // Modelica.Utilities.Streams.print("setState_pdX total iteration steps " + String(iter), "printlog.txt");
     assert(iter<iter_max, "setState_pdX did not converge, input was p=" + String(p) + " and d=" + String(d));
 
     state.p := p;
