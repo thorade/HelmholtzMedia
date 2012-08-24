@@ -54,7 +54,7 @@ package Isobutane "Isobutane"
     SMIN=-3036,
     SMAX=9283) "Helmholtz EoS Limits";
 
-  final constant Interfaces.PartialHelmholtzMedium.HelmholtzCoefficients
+  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
   helmholtzCoefficientsIsobutane(
     idealLog=[
       +3.05956619,         1.],
@@ -97,7 +97,7 @@ package Isobutane "Isobutane"
   "Coefficients of the Helmholtz EoS";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.ThermalConductivityCoefficients
+  Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsIsobutane(
     reducingTemperature_0 = 407.85,
     reducingThermalConductivity_0 = 1,
@@ -124,7 +124,8 @@ package Isobutane "Isobutane"
     qd_inverse=0.657661E-9,
     T_ref=611.73) "Coefficients for the thermal conductivity";
 
-  final constant Interfaces.PartialHelmholtzMedium.DynamicViscosityCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsIsobutane(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
     collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
@@ -173,13 +174,15 @@ package Isobutane "Isobutane"
      -1.,                0.0,    1.00,  0.00,  0])
   "Coefficients for the dynamic viscosity";
 
-  final constant Interfaces.PartialHelmholtzMedium.SurfaceTensionCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsIsobutane(
     coeffs=[
        0.05756,     1.290;
       -0.009554,    2.290]) "Coefficients for the surface tension";
 
-  final constant Interfaces.PartialHelmholtzMedium.AncillaryCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
   ancillaryCoefficientsIsobutane(
     pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
     pressureSaturation=[

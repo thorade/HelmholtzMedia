@@ -54,7 +54,7 @@ extends Interfaces.PartialHelmholtzMedium(
     SMIN=-465,
     SMAX=8100) "Helmholtz EoS Limits";
 
-  final constant Interfaces.PartialHelmholtzMedium.HelmholtzCoefficients
+  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
   helmholtzCoefficientsButane(
     idealLog=[
       +3.24680487,         1.],
@@ -97,7 +97,7 @@ extends Interfaces.PartialHelmholtzMedium(
   "Coefficients of the Helmholtz EoS";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.ThermalConductivityCoefficients
+  Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsButane(
     reducingTemperature_0=425.16,
     reducingThermalConductivity_0=1,
@@ -124,7 +124,8 @@ extends Interfaces.PartialHelmholtzMedium(
     qd_inverse=0.875350E-9,
     T_ref=637.68) "Coefficients for the thermal conductivity";
 
-  final constant Interfaces.PartialHelmholtzMedium.DynamicViscosityCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsButane(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
     collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
@@ -173,12 +174,14 @@ extends Interfaces.PartialHelmholtzMedium(
     -1.,                 0.0,    1,  0,  0])
   "Coefficients for the dynamic viscosity";
 
-  final constant Interfaces.PartialHelmholtzMedium.SurfaceTensionCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsButane(
     coeffs=[
       0.05418,    1.26]) "Coefficients for the surface tension";
 
-  final constant Interfaces.PartialHelmholtzMedium.AncillaryCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
   ancillaryCoefficientsButane(
     pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
     pressureSaturation=[

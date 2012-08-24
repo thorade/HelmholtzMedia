@@ -4,12 +4,12 @@ function pressure_derT_d "returns pressure derivative (dp/dT)@d=const"
   output DerPressureByTemperature dpTd;
 
 protected
-  HelmholtzDerivs f;
+  EoS.HelmholtzDerivs f;
   SaturationProperties sat;
 
 algorithm
   if (state.phase == 1) then
-    f := setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+    f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
     dpTd := state.d*f.R*(1 + f.delta*f.rd - f.delta*f.tau*f.rtd);
   elseif (state.phase == 2) then
     sat:=setSat_T(T=state.T);

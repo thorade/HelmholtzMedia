@@ -54,7 +54,7 @@ package R134a "R134a"
     SMIN=0,
     SMAX=1e12) "Helmholtz EoS Limits";
 
-  final constant Interfaces.PartialHelmholtzMedium.HelmholtzCoefficients
+  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
   helmholtzCoefficientsR134a(
     idealLog=[
       -1.629789E+0,     1.00E0],
@@ -90,7 +90,7 @@ package R134a "R134a"
    residualGauss=fill(0.0, 0, 12)) "Coefficients of the Helmholtz EoS";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.ThermalConductivityCoefficients
+  Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsR134a(
     reducingTemperature_0=1,
     reducingThermalConductivity_0=1,
@@ -110,7 +110,8 @@ package R134a "R134a"
     qd_inverse=5.285356E-10,
     T_ref=561.411) "Coefficients for the thermal conductivity";
 
-  final constant Interfaces.PartialHelmholtzMedium.DynamicViscosityCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsR134a(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1_alternative,
     collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
@@ -154,12 +155,14 @@ package R134a "R134a"
     -1.00,                   0.00,  1.00,  0.00,  0])
   "Coefficients for the dynamic viscosity";
 
-  final constant Interfaces.PartialHelmholtzMedium.SurfaceTensionCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsR134a(
     coeffs=[
       0.06016,    1.26]) "Coefficients for the surface tension";
 
-  final constant Interfaces.PartialHelmholtzMedium.AncillaryCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
   ancillaryCoefficientsR134a(
     pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
     pressureSaturation=[

@@ -3,7 +3,7 @@ function isothermalThrottlingCoefficient
   "returns isothermal throttling coefficient (dh/dp)@T=const"
   input ThermodynamicState state;
 //input HelmholtzDerivs is optional and will be used for single-phase only
-  input HelmholtzDerivs f=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+  input EoS.HelmholtzDerivs f=EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
 output DerEnthalpyByPressure delta_T;
 
 algorithm

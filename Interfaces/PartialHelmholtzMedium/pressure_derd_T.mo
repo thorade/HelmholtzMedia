@@ -4,11 +4,11 @@ function pressure_derd_T "returns pressure derivative (dp/dd)@T=const"
   output DerPressureByDensity dpdT;
 
 protected
-  HelmholtzDerivs f;
+  EoS.HelmholtzDerivs f;
 
 algorithm
   if (state.phase == 1) then
-    f:=setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+    f:=EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
     dpdT := state.T*f.R*(1 + 2*f.delta*f.rd + f.delta^2*f.rdd);
   elseif (state.phase == 2) then
     dpdT := Modelica.Constants.small; // zero

@@ -4,15 +4,12 @@ function specificEnthalpy_derT_d "returns enthalpy derivative (dh/dT)@d=const"
   output DerEnthalpyByTemperature dhTd;
 
 protected
-  HelmholtzDerivs f;
+  EoS.HelmholtzDerivs f;
   SaturationProperties sat;
 
 algorithm
   if (state.phase == 1) then
-    f:=setHelmholtzDerivs(
-      T=state.T,
-      d=state.d,
-      phase=state.phase);
+    f:=EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
     dhTd := f.R*(1 - f.tau^2*(f.itt+f.rtt) + f.delta*f.rd - f.tau*f.delta*f.rtd);
   elseif (state.phase == 2) then
     sat:=setSat_T(T=state.T);

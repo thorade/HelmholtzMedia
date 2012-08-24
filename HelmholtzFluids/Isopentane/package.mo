@@ -54,7 +54,7 @@ package Isopentane "Isopentane"
     SMIN=-3036,
     SMAX=9283) "Helmholtz EoS Limits";
 
-  final constant Interfaces.PartialHelmholtzMedium.HelmholtzCoefficients
+  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
   helmholtzCoefficientsIsopentane(
     idealLog=[
       +3.0000000000,    1],
@@ -83,7 +83,7 @@ package Isopentane "Isopentane"
    residualGauss=fill(0.0, 0, 12)) "Coefficients of the Helmholtz EoS";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.ThermalConductivityCoefficients
+  Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsIsopentane(
     reducingTemperature_0 = 341.06,
     reducingThermalConductivity_0 = 1e-3,
@@ -106,7 +106,8 @@ package Isopentane "Isopentane"
     qd_inverse=0.9316E-9,
     T_ref=690.525) "Coefficients for the thermal conductivity";
 
-  final constant Interfaces.PartialHelmholtzMedium.DynamicViscosityCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsIsopentane(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS2,
     collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI0,
@@ -129,12 +130,14 @@ package Isopentane "Isopentane"
       -20914.7951660000;
        3.24]) "Coefficients for the dynamic viscosity";
 
-  final constant Interfaces.PartialHelmholtzMedium.SurfaceTensionCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsIsopentane(
     coeffs=[
        0.05106,     1.21]) "Coefficients for the surface tension";
 
-  final constant Interfaces.PartialHelmholtzMedium.AncillaryCoefficients
+  final constant
+  Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
   ancillaryCoefficientsIsopentane(
     pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
     pressureSaturation=[

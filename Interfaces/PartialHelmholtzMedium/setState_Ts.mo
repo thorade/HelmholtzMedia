@@ -13,7 +13,8 @@ protected
   Temperature T_trip=fluidConstants[1].triplePointTemperature;
   Real delta "reduced density";
   Real tau(unit="1")=T_crit/T "inverse reduced temperature";
-  HelmholtzDerivs f;
+  EoS.HelmholtzDerivs
+                  f;
 
   SaturationProperties sat;
   MassFraction x "vapour quality";
@@ -35,20 +36,20 @@ algorithm
       // two-phase possible, do simple check first
       sat.Tsat := T;
       tau := T_crit/sat.Tsat;
-      sat.liq.d := bubbleDensity_T_ANC(T=sat.Tsat);
+      sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
       delta := sat.liq.d/d_crit;
-      f.i   := f_i(tau=tau, delta=delta);
-      f.it  := f_it(tau=tau, delta=delta);
-      f.r   := f_r(tau=tau, delta=delta);
-      f.rt  := f_rt(tau=tau, delta=delta);
+      f.i   := EoS.f_i(tau=tau, delta=delta);
+      f.it  := EoS.f_it(tau=tau, delta=delta);
+      f.r   := EoS.f_r(tau=tau, delta=delta);
+      f.rt  := EoS.f_rt(tau=tau, delta=delta);
       sat.liq.s := R*(tau*(f.it + f.rt) - f.i - f.r);
 
-      sat.vap.d := dewDensity_T_ANC(T=sat.Tsat);
+      sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
       delta := sat.vap.d/d_crit;
-      f.i   := f_i(tau=tau, delta=delta);
-      f.it  := f_it(tau=tau, delta=delta);
-      f.r   := f_r(tau=tau, delta=delta);
-      f.rt  := f_rt(tau=tau, delta=delta);
+      f.i   := EoS.f_i(tau=tau, delta=delta);
+      f.it  := EoS.f_it(tau=tau, delta=delta);
+      f.r   := EoS.f_r(tau=tau, delta=delta);
+      f.rt  := EoS.f_rt(tau=tau, delta=delta);
       sat.vap.s := R*(tau*(f.it + f.rt) - f.i - f.r);
 
       if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
@@ -84,7 +85,7 @@ algorithm
   else
     // force single-phase
     state.d := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-          function HelmholtzMedia.Interfaces.PartialHelmholtzMedium.setState_Ts_RES(
+          function setState_Ts_RES(
             T=T,
             s=s,
             phase=1),
@@ -95,9 +96,9 @@ algorithm
     tau := T_crit/state.T;
     delta := state.d/d_crit;
 
-    f.it  := f_it(tau=tau, delta=delta);
-    f.rt  := f_rt(tau=tau, delta=delta);
-    f.rd  := f_rd(tau=tau, delta=delta);
+    f.it  := EoS.f_it(tau=tau, delta=delta);
+    f.rt  := EoS.f_rt(tau=tau, delta=delta);
+    f.rd  := EoS.f_rd(tau=tau, delta=delta);
     state.p := state.d*T*R*(1+delta*f.rd);
     state.h := state.T*R*(tau*(f.it + f.rt) + (1+delta*f.rd));
     state.u := state.T*R*(tau*(f.it+f.rt));

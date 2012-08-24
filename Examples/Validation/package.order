@@ -1,0 +1,8 @@
+printCoefficients
+checkReferenceState
+Validate_HelmholtzDerivatives
+Validate_Derivatives_SinglePhase
+Validate_Derivatives_SaturationBoundary
+Validate_Derivatives_TwoPhase
+Validate_AncillaryFunctions
+acentricFactor
