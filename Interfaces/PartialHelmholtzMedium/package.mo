@@ -383,8 +383,8 @@ protected
     constant Integer iter_max = 200;
 
   algorithm
-     Modelica.Utilities.Streams.print(" ", "printlog.txt");
-     Modelica.Utilities.Streams.print("setSat_d: d="+String(d),"printlog.txt");
+    // Modelica.Utilities.Streams.print(" ", "printlog.txt");
+    // Modelica.Utilities.Streams.print("setSat_d: d="+String(d),"printlog.txt");
 
     sat.Tsat := Ancillary.saturationTemperature_d(d=d);
     if (d-d_crit<tolerance) then
@@ -402,9 +402,9 @@ protected
 
       while (abs(RES_p) + abs(RES_g) > tolerance) and iter<iter_max loop
         // Modelica.Utilities.Streams.print(" ", "printlog.txt");
-         Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-         Modelica.Utilities.Streams.print("sat.liq.d=" + String(sat.liq.d) + "  and dpdd=" + String(dpdd) + " and dgdd=" + String(dgdd), "printlog.txt");
-         Modelica.Utilities.Streams.print(" sat.Tsat=" + String(sat.Tsat)  + " and dpdT=" + String(dpdT) + " and dgdT=" + String(dgdT), "printlog.txt");
+        // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
+        // Modelica.Utilities.Streams.print("sat.liq.d=" + String(sat.liq.d) + "  and dpdd=" + String(dpdd) + " and dgdd=" + String(dgdd), "printlog.txt");
+        // Modelica.Utilities.Streams.print(" sat.Tsat=" + String(sat.Tsat)  + " and dpdT=" + String(dpdT) + " and dgdT=" + String(dgdT), "printlog.txt");
         iter := iter+1;
 
         // calculate gradients ragrding d_liq and T
@@ -438,7 +438,7 @@ protected
       end while;
 
     elseif (d-d_crit>tolerance) then
-      Modelica.Utilities.Streams.print("d>d_crit: liquid side known; find d_vap and T_sat", "printlog.txt");
+      // Modelica.Utilities.Streams.print("d>d_crit: liquid side known; find d_vap and T_sat", "printlog.txt");
       sat.vap.d := Ancillary.dewDensity_T(sat.Tsat);
       sat.liq.d := d; // d' is a constant
 
@@ -452,9 +452,9 @@ protected
 
       while (abs(RES_p) + abs(RES_g) > tolerance) and iter<iter_max loop
         // Modelica.Utilities.Streams.print(" ", "printlog.txt");
-         Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-         Modelica.Utilities.Streams.print("sat.vap.d=" + String(sat.vap.d) + "  and dpdd=" + String(dpdd) + " and dgdd=" + String(dgdd), "printlog.txt");
-         Modelica.Utilities.Streams.print(" sat.Tsat=" + String(sat.Tsat)  + " and dpdT=" + String(dpdT) + " and dgdT=" + String(dgdT), "printlog.txt");
+        // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
+        // Modelica.Utilities.Streams.print("sat.vap.d=" + String(sat.vap.d) + "  and dpdd=" + String(dpdd) + " and dgdd=" + String(dgdd), "printlog.txt");
+        // Modelica.Utilities.Streams.print(" sat.Tsat=" + String(sat.Tsat)  + " and dpdT=" + String(dpdT) + " and dgdT=" + String(dgdT), "printlog.txt");
         iter := iter+1;
 
         // calculate gradients ragrding d_liq and T
@@ -493,7 +493,7 @@ protected
       sat.liq.d := d_crit;
       sat.vap.d := d_crit;
     end if;
-     Modelica.Utilities.Streams.print("setSat_d total iteration steps " + String(iter), "printlog.txt");
+    // Modelica.Utilities.Streams.print("setSat_d total iteration steps " + String(iter), "printlog.txt");
     assert(iter<iter_max, "setSat_d did not converge, input was d=" + String(d));
 
     sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
