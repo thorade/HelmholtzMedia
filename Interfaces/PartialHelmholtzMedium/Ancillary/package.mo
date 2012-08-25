@@ -8,10 +8,10 @@ package Ancillary
     output Modelica.SIunits.AbsolutePressure p;
 
 protected
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real tau=T_crit/T "inverse reduced temperature";
-    Real T_theta=1-T/T_crit;
-    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+    constant Temperature T_crit=fluidConstants[1].criticalTemperature;
+    constant Real tau=T_crit/T "inverse reduced temperature";
+    constant Real T_theta=1-T/T_crit;
+    constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
     Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
     Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
@@ -48,12 +48,12 @@ protected
     output Modelica.SIunits.Temperature T;
 
 protected
-    Temperature T_trip=fluidConstants[1].triplePointTemperature;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
+    constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real tau "inverse reduced temperature";
     Real T_theta;
-    AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
-    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+    constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
+    constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
     Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
     Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
@@ -61,8 +61,8 @@ protected
 
     Real RES_p;
     Real dpdT;
-    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    Real tolerance=1e-3 "tolerance for RES_p (in Pa)";
+    constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+    constant Real tolerance=1e-3 "tolerance for RES_p (in Pa)";
     Integer iter=0;
     constant Integer iter_max = 200;
 
