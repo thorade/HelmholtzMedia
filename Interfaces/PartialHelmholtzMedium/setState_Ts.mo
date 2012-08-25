@@ -17,9 +17,20 @@ protected
 
   SaturationProperties sat;
   MassFraction x "vapour quality";
-  Density dmin=fluidLimits.DMIN;
-  Density dmax=fluidLimits.DMAX;
-  Real tolerance=1e-9 "relative Tolerance for Density";
+
+  Density d_min=fluidLimits.DMIN;
+  Density d_max=fluidLimits.DMAX;
+  Density d_med;
+  Density d_iter=d_crit;
+  Real RES_s;
+  Real RES_min;
+  Real RES_max;
+  Real RES_med;
+  Real dsdd;
+  Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+  Real tolerance=1e-6 "tolerance for RES_s (in J/kgK)";
+  Integer iter = 0;
+  constant Integer iter_max = 200;
 
 algorithm
   state.phase := phase;
@@ -52,30 +63,38 @@ algorithm
       sat.vap.s := R*(tau*(f.it + f.rt) - f.i - f.r);
 
       if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
-        // two-phase state or close to it, get saturation properties from EoS
+         Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
         sat := setSat_T(T=sat.Tsat);
       end if;
 
       if (s < sat.liq.s) then
-        state.phase := 1; // single phase liquid
-        dmin := sat.liq.d;
+         Modelica.Utilities.Streams.print("single phase liquid: d is between dliq and rho_max", "printlog.txt");
+        state.phase := 1;
+        d_min := sat.liq.d;
+        d_iter := sat.liq.d;
       elseif (s > sat.vap.s) then
-        state.phase := 1; // single phase vapor
-        dmax := sat.vap.d;
+         Modelica.Utilities.Streams.print("single phase vapor: d is between 0 and dvap", "printlog.txt");
+        state.phase := 1;
+        d_max := sat.vap.d;
+        d_iter := sat.vap.d;
       else
-        state.phase := 2; // two-phase, all properties can be calculated from sat record
+         Modelica.Utilities.Streams.print("two-phase, all properties can be calculated from sat record", "printlog.txt");
+        state.phase := 2;
       end if;
 
     else
-      // T>T_crit or T<T_trip, only single phase possible, do not change dmin and dmax
+      Modelica.Utilities.Streams.print("T>T_crit or T<T_trip, only single phase possible, do not change dmin and dmax", "printlog.txt");
       state.phase := 1;
+      // d_iter := 1;
     end if;
   end if;
 
-  state.T := T;
-  state.s := s;
+  // phase and region determination finished !
+
   if (state.phase == 2) then
     // force two-phase, SaturationProperties are already known
+    state.T := T;
+    state.s := s;
     state.p := sat.psat;
     x := (s - sat.liq.s)/(sat.vap.s - sat.liq.s);
     state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
@@ -83,21 +102,90 @@ algorithm
     state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
   else
     // force single-phase
-    state.d := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
-          function setState_Ts_RES(
-            T=T,
-            s=s,
-            phase=1),
-          u_min=0.98*dmin,
-          u_max=1.02*dmax,
-          tolerance=tolerance);
 
-    tau := T_crit/state.T;
-    delta := state.d/d_crit;
+    // calculate RES_s
+    delta := d_iter/d_crit;
+    f.i  := EoS.f_i(delta=delta, tau=tau);
+    f.it := EoS.f_it(delta=delta, tau=tau);
+    f.r  := EoS.f_r(delta=delta, tau=tau);
+    f.rt := EoS.f_rt(delta=delta, tau=tau);
+    RES_s := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
 
-    f.it  := EoS.f_it(tau=tau, delta=delta);
-    f.rt  := EoS.f_rt(tau=tau, delta=delta);
-    f.rd  := EoS.f_rd(tau=tau, delta=delta);
+    while ((abs(RES_s) > tolerance) and (iter<iter_max)) loop
+      iter := iter+1;
+
+      // calculate gradient with respect to density
+      f.rd := EoS.f_rd(delta=delta, tau=tau);
+      f.rtd := EoS.f_rtd(delta=delta, tau=tau);
+      dsdd := R/d_iter*(-(1+delta*f.rd-delta*tau*f.rtd));
+
+      // print for debugging
+      // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
+      // Modelica.Utilities.Streams.print("d_iter=" + String(d_iter) + " and dsdd=" + String(dsdd), "printlog.txt");
+
+      // calculate better d_iter
+      d_iter := d_iter - gamma/dsdd*RES_s;
+
+      // check bounds
+      if (d_iter<d_min) or (d_iter>d_max) then
+        Modelica.Utilities.Streams.print("d_iter out of bounds, fallback to Ridder's method (step=" + String(iter) + ", d_iter=" + String(d_iter), "printlog.txt");
+        // calculate RES_s for d_min
+        delta := d_min/d_crit;
+        f.i  := EoS.f_i(delta=delta, tau=tau);
+        f.it := EoS.f_it(delta=delta, tau=tau);
+        f.r  := EoS.f_r(delta=delta, tau=tau);
+        f.rt := EoS.f_rt(delta=delta, tau=tau);
+        RES_min := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
+        // calculate RES_s for d_max
+        delta := d_max/d_crit;
+        f.i  := EoS.f_i(delta=delta, tau=tau);
+        f.it := EoS.f_it(delta=delta, tau=tau);
+        f.r  := EoS.f_r(delta=delta, tau=tau);
+        f.rt := EoS.f_rt(delta=delta, tau=tau);
+        RES_max := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
+        // calculate RES_s for d_med
+        d_med := (d_max+3*d_min)/4;
+        delta := d_med/d_crit;
+        f.i  := EoS.f_i(delta=delta, tau=tau);
+        f.it := EoS.f_it(delta=delta, tau=tau);
+        f.r  := EoS.f_r(delta=delta, tau=tau);
+        f.rt := EoS.f_rt(delta=delta, tau=tau);
+        RES_med := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
+        // Ridder's method
+        d_iter := d_med + (d_med-d_min)*sign(RES_min-RES_max)*RES_med/sqrt(RES_med^2-RES_min*RES_max);
+        // calculate new RES_s
+        delta := d_iter/d_crit;
+        f.i  := EoS.f_i(delta=delta, tau=tau);
+        f.it := EoS.f_it(delta=delta, tau=tau);
+        f.r  := EoS.f_r(delta=delta, tau=tau);
+        f.rt := EoS.f_rt(delta=delta, tau=tau);
+        RES_s := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
+        // thighten the bounds
+        if (RES_s*RES_min<0) then
+          // opposite sign, d_min and d_iter bracket the root
+          d_max := d_iter;
+        else
+          d_min := d_iter;
+        end if;
+        Modelica.Utilities.Streams.print("false position method: new d_min=" + String(d_min) + ", new d_max=" + String(d_max), "printlog.txt");
+      else
+        // use d_iter from Newton
+        // calculate new RES_s
+        delta := d_iter/d_crit;
+        f.i  := EoS.f_i(delta=delta, tau=tau);
+        f.it := EoS.f_it(delta=delta, tau=tau);
+        f.r  := EoS.f_r(delta=delta, tau=tau);
+        f.rt := EoS.f_rt(delta=delta, tau=tau);
+        RES_s := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
+        end if;
+    end while;
+     Modelica.Utilities.Streams.print("setState_Ts total iteration steps " + String(iter) + " for T=" + String(T) + " and s=" + String(s), "printlog.txt");
+     Modelica.Utilities.Streams.print(" ", "printlog.txt");
+    assert(iter<iter_max, "setState_Ts did not converge, input was T=" + String(T) + " and s=" + String(s));
+
+    state.T := T;
+    state.s :=s;
+    state.d := d_iter;
     state.p := state.d*T*R*(1+delta*f.rd);
     state.h := state.T*R*(tau*(f.it + f.rt) + (1+delta*f.rd));
     state.u := state.T*R*(tau*(f.it+f.rt));

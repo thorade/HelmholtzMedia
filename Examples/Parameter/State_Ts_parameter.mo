@@ -1,9 +1,9 @@
 within HelmholtzMedia.Examples.Parameter;
 model State_Ts_parameter "calculate state record from Ts input"
 
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.R134a;
 
-  parameter Medium.Temperature T=298.15;
+  parameter Medium.Temperature T=379.747;
   parameter Medium.SpecificEntropy s=2e3;
 
   Medium.ThermodynamicState inletState;

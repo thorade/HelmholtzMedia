@@ -388,7 +388,7 @@ protected
 
     sat.Tsat := Ancillary.saturationTemperature_d(d=d);
     if (d-d_crit<tolerance) then
-       Modelica.Utilities.Streams.print("d<d_crit: vapour side knwon: find d_liq and T_sat", "printlog.txt");
+       Modelica.Utilities.Streams.print("d<d_crit: vapour side known: find d_liq and T_sat", "printlog.txt");
       sat.liq.d := Ancillary.bubbleDensity_T(sat.Tsat);
       sat.vap.d := d; // d'' is a constant
 

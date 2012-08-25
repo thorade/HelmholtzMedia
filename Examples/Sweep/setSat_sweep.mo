@@ -47,7 +47,7 @@ protected
 equation
 // sat = medium.setSat_T(T=T_ramp.y);
 // sat = medium.setSat_p(p=p_ramp.y);
-sat = medium.setSat_d(d=d_liq_ramp.y);
+sat = medium.setSat_d(d=d_vap_ramp.y);
 
   annotation (experiment(StopTime=11), __Dymola_experimentSetupOutput);
 end setSat_sweep;
