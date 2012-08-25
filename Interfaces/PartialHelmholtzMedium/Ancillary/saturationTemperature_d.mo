@@ -29,10 +29,10 @@ protected
   constant Integer iter_max = 200;
 
 algorithm
-  Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_d, d=" + String(d), "printlog.txt");
+  // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_d, d=" + String(d), "printlog.txt");
 
   if (d<d_crit-tolerance) then
-    Modelica.Utilities.Streams.print("d<d_crit: vapour side", "printlog.txt");
+    // Modelica.Utilities.Streams.print("d<d_crit: vapour side", "printlog.txt");
     R1 := Ancillary.dewDensity_T(T1)-d;
     R2 := d_crit-d;
     while (abs(R4)>tolerance) and (iter<iter_max) loop
@@ -57,11 +57,11 @@ algorithm
           R2 := R4;
         end if;
       end if;
-      Modelica.Utilities.Streams.print("Ridders' method: current residual R4=" + String(R4), "printlog.txt");
-      Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
+      // Modelica.Utilities.Streams.print("Ridders' method: current residual R4=" + String(R4), "printlog.txt");
+      // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
     end while;
-    Modelica.Utilities.Streams.print("saturationTemperature_d_vap total iteration steps " + String(iter) + " for d_vap=" + String(d), "printlog.txt");
-    Modelica.Utilities.Streams.print(" ", "printlog.txt");
+    // Modelica.Utilities.Streams.print("saturationTemperature_d_vap total iteration steps " + String(iter) + " for d_vap=" + String(d), "printlog.txt");
+    // Modelica.Utilities.Streams.print(" ", "printlog.txt");
     assert(iter<iter_max, "saturationTemperature_d_vap did not converge, input was d_vap=" + String(d));
     T := T4;
 
@@ -91,11 +91,11 @@ algorithm
           R2 := R4;
         end if;
       end if;
-      Modelica.Utilities.Streams.print("Ridders' method: current residual R4=" + String(R4), "printlog.txt");
-      Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
+      // Modelica.Utilities.Streams.print("Ridders' method: current residual R4=" + String(R4), "printlog.txt");
+      // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
     end while;
-    Modelica.Utilities.Streams.print("saturationTemperature_d_liq total iteration steps " + String(iter) + " for d_liq=" + String(d), "printlog.txt");
-    Modelica.Utilities.Streams.print(" ", "printlog.txt");
+    // Modelica.Utilities.Streams.print("saturationTemperature_d_liq total iteration steps " + String(iter) + " for d_liq=" + String(d), "printlog.txt");
+    // Modelica.Utilities.Streams.print(" ", "printlog.txt");
     assert(iter<iter_max, "saturationTemperature_d_liq did not converge, input was d_liq=" + String(d));
     T := T4;
 
