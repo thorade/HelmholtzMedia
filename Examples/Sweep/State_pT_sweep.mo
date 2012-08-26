@@ -20,26 +20,27 @@ protected
 
 Modelica.Blocks.Sources.Ramp ramp(
     height=1,
-    duration=5,
     offset=0,
-    startTime=1)
+    startTime=0.001,
+    duration=9.5)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
 Modelica.Blocks.Sources.ExpSine expSine(
     amplitude=0.99,
-    offset=1,
     damping=0.5,
-    freqHz=2)
+    freqHz=2,
+    offset=0,
+    startTime=3)
     annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
 Modelica.Blocks.Sources.Sine sine(
-    offset=1,
     amplitude=0.999,
     freqHz=1,
-    phase=1.5707963267949)
+    startTime=2,
+    phase=0)
     annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
 
 equation
-  p = pcrit + pcrit*(ramp.y*sine.y - ramp.y);
-  T = 0.7*Tcrit + expSine.y*(Tcrit-Tmin);
+  p = 0.7*pcrit + (0.7*pcrit)*(sine.y);
+  T = 0.7*Tcrit + (0.7*Tcrit-Tmin)*(expSine.y);
 
   inletState=Medium.setState_pTX(p=p, T=T, phase=0, X={1});
   d_in=inletState.d;
