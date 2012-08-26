@@ -76,7 +76,7 @@ algorithm
         // Modelica.Utilities.Streams.print("single phase vapor: d is between 0 and dvap", "printlog.txt");
         state.phase := 1;
         d_max := sat.vap.d;
-        d_iter := sat.vap.d;
+        d_iter := sat.vap.d/100;
       else
         // Modelica.Utilities.Streams.print("two-phase, all properties can be calculated from sat record", "printlog.txt");
         state.phase := 2;

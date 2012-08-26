@@ -710,8 +710,9 @@ protected
 
       if (T <= T_crit) then
         // Modelica.Utilities.Streams.print("T<T_crit: multiple roots due to phase boundary", "printlog.txt");
-        sat.psat := Ancillary.saturationPressure_T(T=T);
 
+        // determine p_sat
+        sat.psat := Ancillary.saturationPressure_T(T=T);
         if (p > 1.02*sat.psat) then
           sat.liq.d := Ancillary.bubbleDensity_T(T=T);
         elseif (p < 0.98*sat.psat) then
@@ -721,26 +722,31 @@ protected
           sat := setSat_T(T=T);
         end if;
 
+        // phase boundary now known sufficiently accurate
         if (p > sat.psat) then
           // Modelica.Utilities.Streams.print("single phase liquid: d is between dliq and rho_max", "printlog.txt");
+          d_min  := sat.liq.d;
+          d_max  := fluidLimits.DMAX;
           Y1 := min(Y1,Y2);
           Y1 := min(Y1,Y3);
           d_iter := p/(R*T*(Y1+1/3));
-          d_min  := sat.liq.d;
-          d_max  := fluidLimits.DMAX;
+          // check bounds, RKS is not very accurate for VLE densities
+          d_iter := max(d_min,d_iter);
+          d_iter := min(d_max,d_iter);
         elseif (p < sat.psat) then
           // Modelica.Utilities.Streams.print("single phase vapor: d is between 0 and dvap", "printlog.txt");
+          d_min  := fluidLimits.DMIN;
+          d_max  := sat.vap.d;
           Y1 := max(Y1,Y2);
           Y1 := max(Y1,Y3);
           d_iter := p/(R*T*(Y1+1/3));
-          d_min  := fluidLimits.DMIN;
-          d_max  := sat.vap.d;
+          // check bounds, RKS is not very accurate for VLE densities
+          d_iter := max(d_min,d_iter);
+          d_iter := min(d_max,d_iter);
         else
+          // this should not happen
           assert(p <> sat.psat, "setState_pTX_error: pressure equals saturation pressure");
         end if;
-        // check bounds, RKS is not very accurate for VLE densities
-        d_iter := max(d_min,d_iter);
-        d_iter := min(d_max,d_iter);
       else
         // Modelica.Utilities.Streams.print("T>T_crit: multiple roots can occur, but two of the roots result in negative densities", "printlog.txt");
         d_iter := max(p/(R*T*(Y1+1/3)), p/(R*T*(Y2+1/3)));
@@ -763,17 +769,19 @@ protected
       // calculate gradient with respect to density
       f.rdd := EoS.f_rdd(delta=delta, tau=tau);
       dpdd := T*R*(1+2*delta*f.rd+delta^2*f.rdd);
-      if (dpdd<0) then
-        // Modelica.Utilities.Streams.print("ran into two-phase region, probably close to critical point", "printlog.txt");
+      if (dpdd<0) and (T<T_crit) then
+        // Modelica.Utilities.Streams.print("ran into two-phase region, probably due to inaccurate RKS start value close to critical point", "printlog.txt");
         sat := setSat_T(T=T);
         if (p > sat.psat) then
-          d_iter := p/(R*T*(Y1+1/3));
           d_min  := sat.liq.d;
           d_max  := fluidLimits.DMAX;
+          d_iter := max(d_min,d_iter);
+          d_iter := min(d_max,d_iter);
         elseif (p < sat.psat) then
-          d_iter := p/(R*T*(Y1+1/3));
           d_min  := fluidLimits.DMIN;
           d_max  := sat.vap.d;
+          d_iter := max(d_min,d_iter);
+          d_iter := min(d_max,d_iter);
         else
           d_iter := d_crit;
         end if;
