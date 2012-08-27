@@ -1,5 +1,5 @@
 within HelmholtzMedia.Examples.Validation;
-model Validate_HelmholtzDerivatives
+model HelmholtzDerivatives
   // validate derivatives of Helmholtz energy (single phase state)
   // values for comparison are given in IAPWS-95 (Table 6)
   // http://iapws.org/relguide/IAPWS-95.htm
@@ -13,4 +13,4 @@ algorithm
     f := medium.EoS.setHelmholtzDerivs(T=T, d=d, phase=1);
 
 annotation (experiment(NumberOfIntervals=1));
-end Validate_HelmholtzDerivatives;
+end HelmholtzDerivatives;

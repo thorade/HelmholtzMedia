@@ -1,5 +1,5 @@
 within HelmholtzMedia.Examples.Validation;
-model checkReferenceState
+model ReferenceState
   package Medium = HelmholtzMedia.HelmholtzFluids.Ethanol;
   Medium.SpecificEnthalpy h_ref;
   Medium.SpecificEntropy s_ref;
@@ -37,4 +37,4 @@ there are at least three standard reference states:
 </dl>
 </html>"),
 experiment(NumberOfIntervals=1));
-end checkReferenceState;
+end ReferenceState;

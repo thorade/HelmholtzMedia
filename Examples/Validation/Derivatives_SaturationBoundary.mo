@@ -1,5 +1,5 @@
 within HelmholtzMedia.Examples.Validation;
-model Validate_Derivatives_SaturationBoundary
+model Derivatives_SaturationBoundary
   "compare analytical derivatives to numerical derivatives"
 
   package Medium = HelmholtzFluids.Butane;
@@ -182,4 +182,4 @@ equation
   Modelica.Utilities.Streams.print("  (du/dT)@vap analytical= " + String(duT_vap_analytical));
 
   annotation (experiment(NumberOfIntervals=1));
-end Validate_Derivatives_SaturationBoundary;
+end Derivatives_SaturationBoundary;

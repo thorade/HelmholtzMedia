@@ -1,5 +1,5 @@
 within HelmholtzMedia.Examples.Validation;
-model Validate_Derivatives_SinglePhase
+model Derivatives_SinglePhase
   "compare analytical derivatives to numerical derivatives"
 
   package Medium = HelmholtzFluids.Butane;
@@ -123,4 +123,4 @@ equation
   Modelica.Utilities.Streams.print("  (dp/dd)@s=const analytical2= " + String(a_analytical2));
 
 annotation (experiment(NumberOfIntervals=1));
-end Validate_Derivatives_SinglePhase;
+end Derivatives_SinglePhase;
