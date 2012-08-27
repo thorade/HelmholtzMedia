@@ -387,8 +387,8 @@ protected
     // Modelica.Utilities.Streams.print("setSat_d: d="+String(d),"printlog.txt");
 
     sat.Tsat := Ancillary.saturationTemperature_d(d=d);
-    if (d-d_crit<tolerance) then
-       Modelica.Utilities.Streams.print("d<d_crit: vapour side known: find d_liq and T_sat", "printlog.txt");
+    if (d>d_crit+tolerance) then
+      // Modelica.Utilities.Streams.print("d<d_crit: vapour side known: find d_liq and T_sat", "printlog.txt");
       sat.liq.d := Ancillary.bubbleDensity_T(sat.Tsat);
       sat.vap.d := d; // d'' is a constant
 
@@ -437,7 +437,7 @@ protected
                - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
       end while;
 
-    elseif (d-d_crit>tolerance) then
+    elseif (d<d_crit-tolerance) then
       // Modelica.Utilities.Streams.print("d>d_crit: liquid side known; find d_vap and T_sat", "printlog.txt");
       sat.vap.d := Ancillary.dewDensity_T(sat.Tsat);
       sat.liq.d := d; // d' is a constant

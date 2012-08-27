@@ -40,21 +40,22 @@ algorithm
       T3 := (T1+T2)/2;
       R3 := Ancillary.dewDensity_T(T3)-d;
       // caclutate better T from Ridder's method
-      T4  := T3 + (T3 - T1)*sign(R1-R2)*R3/sqrt(R3^2 - R1*R2);
+      T4  := T3 + (T3 - T1)*sign(R1-R2)*R3/sqrt(R3*R3 - R1*R2);
       R4 := Ancillary.dewDensity_T(T4)-d;
-      if (R4*R3<0) then
-        // opposite sign, T4 and T3 bracket the root
+      if (R4*R3<=0) then
         T1 := T3;
         R1 := R3;
         T2 := T4;
         R2 := R4;
       else
         if (R4*R1<0) then
+          T2 := T4;
+          R2 := R4;
+        elseif (R4*R2<0) then
           T1 := T4;
           R1 := R4;
         else
-          T2 := T4;
-          R2 := R4;
+          assert(false, "never get here");
         end if;
       end if;
       // Modelica.Utilities.Streams.print("Ridders' method: current residual R4=" + String(R4), "printlog.txt");
@@ -74,9 +75,9 @@ algorithm
       T3 := (T1+T2)/2;
       R3 := Ancillary.bubbleDensity_T(T3)-d;
       // caclutate better T from Ridder's method
-      T4  := T3 + (T3 - T1)*sign(R1-R2)*R3/sqrt(R3^2 - R1*R2);
+      T4  := T3 + (T3 - T1)*sign(R1-R2)*R3/sqrt(R3*R3 - R1*R2);
       R4 := Ancillary.bubbleDensity_T(T4)-d;
-      if (R4*R3<0) then
+      if (R4*R3<=0) then
         // opposite sign, T4 and T3 bracket the root
         T1 := T3;
         R1 := R3;
@@ -84,11 +85,13 @@ algorithm
         R2 := R4;
       else
         if (R4*R1<0) then
+          T2 := T4;
+          R2 := R4;
+        elseif (R4*R2<0) then
           T1 := T4;
           R1 := R4;
         else
-          T2 := T4;
-          R2 := R4;
+          assert(false, "never get here");
         end if;
       end if;
       // Modelica.Utilities.Streams.print("Ridders' method: current residual R4=" + String(R4), "printlog.txt");

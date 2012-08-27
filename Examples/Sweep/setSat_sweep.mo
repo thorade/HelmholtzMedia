@@ -18,14 +18,14 @@ model setSat_sweep
   Modelica.Blocks.Sources.Ramp d_vap_ramp(
     duration=8,
     startTime=1,
-    height=dcrit - dmin - 1e-3,
-    offset=dmin + 1e-3)
+    height=dcrit - dmin - 1,
+    offset=dmin + 1)
     annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
   Modelica.Blocks.Sources.Ramp d_liq_ramp(
     duration=8,
     startTime=1,
     offset=dcrit,
-    height=dmax - dcrit - 100)
+    height=0.8*dmax - dcrit)
     annotation (Placement(transformation(extent={{-80,-80},{-60,-60}})));
 
 protected
@@ -49,5 +49,8 @@ equation
 // sat = medium.setSat_p(p=p_ramp.y);
 sat = medium.setSat_d(d=d_vap_ramp.y);
 
-  annotation (experiment(StopTime=11), __Dymola_experimentSetupOutput);
+  annotation (experiment(
+      StopTime=11,
+      NumberOfIntervals=1000,
+      Tolerance=1e-005),               __Dymola_experimentSetupOutput);
 end setSat_sweep;

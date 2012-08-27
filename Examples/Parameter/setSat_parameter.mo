@@ -7,7 +7,7 @@ model setSat_parameter
 
   parameter medium.Temperature T_input = 423.15;
   parameter medium.AbsolutePressure p_input = 101325;
-  parameter medium.Density d_input = 229;
+  parameter medium.Density d_input = 209.3;
 
 equation
 // sat = medium.setSat_T(T=T_input);

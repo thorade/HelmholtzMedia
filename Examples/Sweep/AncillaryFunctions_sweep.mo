@@ -12,10 +12,10 @@ model AncillaryFunctions_sweep
 
   Modelica.Blocks.Sources.Ramp T_ramp(
     duration=5,
-    startTime=2,
     height=T_crit - T_trip,
-    offset=T_trip)
-    annotation (Placement(transformation(extent={{-60,20},{-40,40}})));
+    offset=T_trip,
+    startTime=1)
+    annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
 
 protected
   constant medium.Temperature T_trip=medium.fluidConstants[1].triplePointTemperature;
@@ -33,5 +33,8 @@ algorithm
   T_dl := medium.Ancillary.saturationTemperature_d(d=dliq);
   T_dv := medium.Ancillary.saturationTemperature_d(d=dvap);
 
-annotation (experiment(StopTime=11,NumberOfIntervals=600));
+annotation (experiment(
+      StopTime=11,
+      NumberOfIntervals=1000,
+      Tolerance=1e-005), __Dymola_experimentSetupOutput);
 end AncillaryFunctions_sweep;
