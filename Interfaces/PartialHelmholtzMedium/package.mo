@@ -658,7 +658,7 @@ protected
   Real A = a*p/(R^2*T^2);
   Real B = b*p/(R*T);
   Real r = (A-B-B^2)-1/3;
-  Real q = -2/27+1/3*(A-B-B^2)-A*B;
+  Real q = -2/27 + 1/3*(A-B-B^2) - A*B;
   Real D = (r/3)^3 + (q/2)^2 "discriminant";
   Real u;
   Real Y1;
@@ -719,7 +719,7 @@ protected
       d_iter := d_crit/100;
     end if;
 
-    /* // get density start value from Redlich-Kwong-Soave (see Span 2000, page )  
+    /* // get density start value from Redlich-Kwong-Soave (see Span 2000, section "3.3.1 Calculations based on pT" )  
   Modelica.Utilities.Streams.print("RKS discriminant D=" + String(D), "printlog.txt");
   if (D >= 0) then
     u := (sqrt(D)-(q/2))^(1/3);
