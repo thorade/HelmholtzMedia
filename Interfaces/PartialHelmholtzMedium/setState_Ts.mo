@@ -161,15 +161,17 @@ algorithm
         f.rt := EoS.f_rt(delta=delta, tau=tau);
         RES_s := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
         // thighten the bounds
-        if (RES_s*RES_med<0) then
+        if (RES_s*RES_med<=0) then
           // opposite sign, d_med and d_iter bracket the root
           d_min := min(d_med,d_iter);
           d_max := max(d_med,d_iter);
         else
           if (RES_s*RES_min<0) then
             d_max := d_iter;
-          else
+          elseif (RES_s*RES_max<0) then
             d_min := d_iter;
+          else
+            assert(false,"never get here");
           end if;
         end if;
         // Modelica.Utilities.Streams.print("Ridders' method: new d_min=" + String(d_min) + ", new d_max=" + String(d_max), "printlog.txt");
