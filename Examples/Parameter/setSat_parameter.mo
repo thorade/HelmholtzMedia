@@ -7,7 +7,7 @@ model setSat_parameter
   medium.SaturationProperties sat_dl;
   medium.SaturationProperties sat_dv;
 
-  parameter medium.Temperature T_input = 298.15;
+  parameter medium.Temperature T_input= 298.15;
 
 protected
   constant medium.Temperature Tmin=medium.fluidLimits.TMIN;
@@ -22,4 +22,5 @@ equation
   sat_dl = medium.setSat_d(d=sat.liq.d);
   sat_dv = medium.setSat_d(d=sat.vap.d);
 
+  annotation (experiment(NumberOfIntervals=1));
 end setSat_parameter;

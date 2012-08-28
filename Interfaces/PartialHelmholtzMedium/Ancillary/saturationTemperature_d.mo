@@ -14,8 +14,8 @@ protected
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
 
-  Density d_min =  fluidLimits.DMIN;
-  Density d_max =  fluidLimits.DMAX;
+  constant Density dv_trip = Ancillary.dewDensity_T(T_trip);
+  constant Density dl_trip = Ancillary.bubbleDensity_T(T_trip);
 
   Temperature T1=0.98*T_trip;
   Temperature T2=T_crit;
@@ -27,14 +27,14 @@ protected
   Density R3 "residual of T3";
   Density R4= Modelica.Constants.inf "residual of T4";
 
-  Real tolerance=1e-9 "relative tolerance for RES_d";
+  constant Real tolerance=1e-9 "relative tolerance for RES_d";
   Integer iter=0;
   constant Integer iter_max = 200;
 
 algorithm
   // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_d, d=" + String(d), "printlog.txt");
 
-  if (d<d_crit-tolerance) then
+  if (d<d_crit-tolerance) and (d>dv_trip+tolerance) then
     // Modelica.Utilities.Streams.print("d<d_crit: vapour side", "printlog.txt");
     R1 := Ancillary.dewDensity_T(T1)-d;
     R2 := d_crit-d;
@@ -79,7 +79,7 @@ algorithm
       end if;
     end if;
 
-  elseif (d>d_crit+tolerance) and (d<d_max) then
+  elseif (d>d_crit+tolerance) and (d<dl_trip-tolerance) then
     // Modelica.Utilities.Streams.print("d>d_crit: liquid side", "printlog.txt");
     R1 := Ancillary.bubbleDensity_T(T1)-d +tolerance;
     R2 := d_crit-d;
@@ -124,7 +124,7 @@ algorithm
       end if;
     end if;
 
-  elseif (d>d_max) then
+  elseif (d>=dl_trip-tolerance) or (d<=dv_trip+tolerance) then
     T := T_trip;
   else
     // Modelica.Utilities.Streams.print("d=d_crit: return critical Temperature", "printlog.txt");

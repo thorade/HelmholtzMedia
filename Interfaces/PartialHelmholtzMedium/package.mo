@@ -229,6 +229,8 @@ protected
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+    constant Density dv_trip = Ancillary.dewDensity_T(T_trip);
+    constant Density dl_trip = Ancillary.bubbleDensity_T(T_trip);
 
     EoS.HelmholtzDerivs fl;
     EoS.HelmholtzDerivs fv;
@@ -259,10 +261,11 @@ protected
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");
     // Modelica.Utilities.Streams.print("setSat_p: p=" + String(p), "printlog.txt");
 
-  if ((p>p_trip+tolerance) and (p<p_crit-tolerance)) then
+  if ((p>p_trip) and (p<p_crit)) then
     // calculate start values
     // sat.Tsat  := 1/(1/T_crit - (1/T_trip-1/T_crit)/log(p_crit/p_trip)*log(p/p_crit));
-    sat.Tsat := Ancillary.saturationTemperature_p(p=p);
+    // at lower p the difference between dl and dv is bigger
+    sat.Tsat := 0.99*Ancillary.saturationTemperature_p(p=p);
     sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
     sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
 
@@ -299,7 +302,7 @@ protected
     Modelica.Utilities.Streams.print("f1dx=" + String(f1dx) + " and f1dz=" + String(f1dz), "printlog.txt");
     Modelica.Utilities.Streams.print("f2dy=" + String(f2dy) + " and f2dz=" + String(f2dz), "printlog.txt");
     Modelica.Utilities.Streams.print("f3dx=" + String(f3dx) + " and f3dy=" + String(f3dy), "printlog.txt");
-    Modelica.Utilities.Streams.print("det(J)=" + String(det), "printlog.txt"); */
+    Modelica.Utilities.Streams.print("det(J)=" + String(det), "printlog.txt");  */
 
       // calculate better sat.liq.d, sat.vap.d and sat.Tsat
       sat.liq.d := sat.liq.d - gamma/det*(RES_pl*(f2dy*f3dz-f2dz*f3dy) +RES_pv*(f1dz*f3dy-0)         +RES_g*(0-f1dz*f2dy));
@@ -307,29 +310,26 @@ protected
       sat.Tsat  := sat.Tsat  - gamma/det*(RES_pl*(0-f2dy*f3dx)         +RES_pv*(0-f1dx*f3dy)         +RES_g*(f1dx*f2dy-0));
 
       // check bounds
-      sat.liq.d := max(sat.liq.d, d_crit);
-      sat.liq.d := min(sat.liq.d, fluidLimits.DMAX);
-      sat.vap.d := max(sat.vap.d, fluidLimits.DMIN);
-      sat.vap.d := min(sat.vap.d, d_crit);
-      sat.Tsat := max(sat.Tsat, T_trip);
-      sat.Tsat := min(sat.Tsat, T_crit);
+      sat.liq.d := max(sat.liq.d, 0.98*d_crit);
+      sat.liq.d := min(sat.liq.d, 1.02*dl_trip);
+      sat.vap.d := max(sat.vap.d, 0.98*dv_trip);
+      sat.vap.d := min(sat.vap.d, 1.02*d_crit);
+      sat.Tsat := max(sat.Tsat, 0.98*T_trip);
+      sat.Tsat := min(sat.Tsat, 1.02*T_crit);
 
       // calculate new residual
       fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
       fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
       RES_pl := fl.d*fl.T*fl.R*(1+fl.delta*fl.rd) - p;   // f1
       RES_pv := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd) - p;   // f2
-      RES_g  := fl.T*fl.R*(fl.i+fl.r + fl.delta*fl.rd) - fv.T*fv.R*(fv.i+fv.r + fv.delta*fv.rd);  // f3
+      RES_g  := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd))
+              - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));  // f3
     end while;
     // if verbose then Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt"); end if;
     // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
     assert(iter<iter_max, "setSat_p did not converge, input was p=" + String(p) + "; the remaining residuals are RES_pl=" + String(RES_pl) + " and RES_pv=" + String(RES_pv) + " and RES_g=" + String(RES_g));
 
-    sat.psat := p;
-    sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
-    sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
-
-  elseif (p>=p_crit-tolerance) then
+  elseif (p>=p_crit) then
     // assert(p <= p_crit, "setSat_p error: pressure is higher than critical pressure");
     // above critical pressure, no stable two-phase state exists
     // anyway, it is possible to extend the vapour-pressure curve into this region
@@ -340,18 +340,19 @@ protected
     sat.Tsat  := T_crit;
     sat.liq.d := d_crit;
     sat.vap.d := d_crit;
-  elseif (p<=p_trip+tolerance) then
-    // assert(p >= p_trip, "setSat_p error: pressure is lower than triple-point pressure");
-    // p<p_trip: this does not make sense: if p is below the triple pressure, the medium is single phase vapour
-    // anyway, during initialization (at time=0) p=0 may happen
-    // fluidLimit values are returned
+  elseif (p<=p_trip) then
     sat.psat  := p;
     sat.Tsat  := T_trip;
-    sat.liq.d := fluidLimits.DMAX;
-    sat.vap.d := fluidLimits.DMIN;
+    sat.liq.d := dl_trip;
+    sat.vap.d := dv_trip;
   else
     assert(false, "setSat_p: this should not happen, check p");
   end if;
+
+    sat.psat := p;
+    sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
+    sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
+
   end setSat_p;
 
 
@@ -369,8 +370,8 @@ protected
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real tau(unit="1") "inverse reduced temperature";
 
-    Density d_min =  fluidLimits.DMIN;
-    Density d_max =  fluidLimits.DMAX;
+    constant Density dv_trip = Ancillary.dewDensity_T(T_trip);
+    constant Density dl_trip = Ancillary.bubbleDensity_T(T_trip);
 
     EoS.HelmholtzDerivs fl;
     EoS.HelmholtzDerivs fv;
@@ -392,8 +393,8 @@ protected
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");
     // Modelica.Utilities.Streams.print("setSat_d: d="+String(d),"printlog.txt");
 
-    sat.Tsat := Ancillary.saturationTemperature_d(d=d);
-    if (d<d_crit+tolerance) then
+    sat.Tsat := 0.99*Ancillary.saturationTemperature_d(d=d);
+    if (d<d_crit-tolerance) and (d>dv_trip+tolerance) then
       // Modelica.Utilities.Streams.print("d<d_crit: input is on vapour side: find d_liq and T_sat", "printlog.txt");
       sat.liq.d := Ancillary.bubbleDensity_T(sat.Tsat);
       sat.vap.d := d; // d'' is a constant
@@ -406,13 +407,10 @@ protected
       RES_g := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd))
              - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
 
-      while (abs(RES_p) + abs(RES_g) > tolerance) and iter<iter_max loop
-        // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-        // Modelica.Utilities.Streams.print("sat.liq.d=" + String(sat.liq.d) + "  and dpdd=" + String(dpdd) + " and dgdd=" + String(dgdd), "printlog.txt");
-        // Modelica.Utilities.Streams.print(" sat.Tsat=" + String(sat.Tsat)  + " and dpdT=" + String(dpdT) + " and dgdT=" + String(dgdT), "printlog.txt");
+      while (abs(RES_p) + abs(RES_g) > tolerance) and (iter<iter_max) loop
         iter := iter+1;
 
-        // calculate gradients ragrding d_liq and T
+        // calculate gradients regarding d_liq and T
         dpdd := fl.T*fl.R*(1+2*fl.delta*fl.rd + fl.delta^2*fl.rdd);
         dpdT := fl.d*fl.R*(1+fl.delta*fl.rd-fl.delta*fl.tau*fl.rtd)
               - fv.d*fv.R*(1+fv.delta*fv.rd-fv.delta*fv.tau*fv.rtd);
@@ -423,15 +421,22 @@ protected
         // calculate determinant of Jacobi matrix det=ad-bc
         det := dpdd*dgdT-dpdT*dgdd;
 
+        // print for Newton debugging
+        // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
+        // Modelica.Utilities.Streams.print("sat.liq.d=" + String(sat.liq.d) + " and sat.Tsat=" + String(sat.Tsat), "printlog.txt");
+        // Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and dpdd=" + String(dpdd) + " and dpdT=" + String(dpdT), "printlog.txt");
+        // Modelica.Utilities.Streams.print("RES_g=" + String(RES_g) + " and dgdd=" + String(dgdd) + " and dgdT=" + String(dgdT), "printlog.txt");
+        // Modelica.Utilities.Streams.print("Jacobi determinant det=" +String(det), "printlog.txt");
+
         // calculate better values for sat.liq.d and sat.Tsat
         sat.liq.d := sat.liq.d -gamma/det*(+dgdT*RES_p -dpdT*RES_g);
         sat.Tsat  := sat.Tsat  -gamma/det*(-dgdd*RES_p +dpdd*RES_g);
 
         // check bounds
-        sat.liq.d := max(sat.liq.d, d_crit);
-        sat.liq.d := min(sat.liq.d, d_max);
-        sat.Tsat  := max(sat.Tsat,  T_trip);
-        sat.Tsat  := min(sat.Tsat,  T_crit);
+        sat.liq.d := max(sat.liq.d, 0.98*d_crit);
+        sat.liq.d := min(sat.liq.d, 1.02*dl_trip);
+        sat.Tsat  := max(sat.Tsat,  0.98*T_trip);
+        sat.Tsat  := min(sat.Tsat,  1.02*T_crit);
 
         // calculate new residuals: liq-vap
         fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
@@ -442,7 +447,7 @@ protected
                - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
       end while;
 
-    elseif (d>d_crit-tolerance) then
+    elseif (d>d_crit+tolerance) and (d<dl_trip-tolerance) then
       // Modelica.Utilities.Streams.print("d>d_crit: input is on liquid side: find d_vap and T_sat", "printlog.txt");
       sat.vap.d := Ancillary.dewDensity_T(sat.Tsat);
       sat.liq.d := d; // d' is a constant
@@ -456,12 +461,9 @@ protected
              - fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
 
       while (abs(RES_p) + abs(RES_g) > tolerance) and iter<iter_max loop
-        // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-        // Modelica.Utilities.Streams.print("sat.vap.d=" + String(sat.vap.d) + "  and dpdd=" + String(dpdd) + " and dgdd=" + String(dgdd), "printlog.txt");
-        // Modelica.Utilities.Streams.print(" sat.Tsat=" + String(sat.Tsat)  + " and dpdT=" + String(dpdT) + " and dgdT=" + String(dgdT), "printlog.txt");
         iter := iter+1;
 
-        // calculate gradients ragrding d_liq and T
+        // calculate gradients regarding d_liq and T
         dpdd := fv.T*fv.R*(1+2*fv.delta*fv.rd + fv.delta^2*fv.rdd);
         dpdT := fv.d*fv.R*(1+fv.delta*fv.rd-fv.delta*fv.tau*fv.rtd)
               - fl.d*fl.R*(1+fl.delta*fl.rd-fl.delta*fl.tau*fl.rtd);
@@ -472,15 +474,22 @@ protected
         // calculate determinant of Jacobi matrix det=ad-bc
         det := dpdd*dgdT-dpdT*dgdd;
 
+        /* // print for Newton debugging      
+      Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
+      Modelica.Utilities.Streams.print("sat.vap.d=" + String(sat.vap.d) + " and sat.Tsat=" + String(sat.Tsat), "printlog.txt");
+      Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and dpdd=" + String(dpdd) + " and dpdT=" + String(dpdT), "printlog.txt");
+      Modelica.Utilities.Streams.print("RES_g=" + String(RES_g) + " and dgdd=" + String(dgdd) + " and dgdT=" + String(dgdT), "printlog.txt");
+      Modelica.Utilities.Streams.print("Jacobi determinant det=" +String(det), "printlog.txt");  */
+
         // calculate better values for sat.vap.d and sat.Tsat
         sat.vap.d := sat.vap.d -gamma/det*(+dgdT*RES_p -dpdT*RES_g);
         sat.Tsat  := sat.Tsat  -gamma/det*(-dgdd*RES_p +dpdd*RES_g);
 
         // check bounds
-        sat.vap.d := max(sat.vap.d, d_min);
-        sat.vap.d := min(sat.vap.d, d_crit);
-        sat.Tsat  := max(sat.Tsat,  T_trip);
-        sat.Tsat  := min(sat.Tsat,  T_crit);
+        sat.vap.d := max(sat.vap.d, 0.98*dv_trip);
+        sat.vap.d := min(sat.vap.d, 1.02*d_crit);
+        sat.Tsat  := max(sat.Tsat,  0.98*T_trip);
+        sat.Tsat  := min(sat.Tsat,  1.02*T_crit);
 
         // calculate new residuals: liq-vap
         fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
@@ -491,6 +500,11 @@ protected
                - fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
       end while;
 
+    elseif (d>=dl_trip-tolerance) or (d<=dv_trip+tolerance) then
+      // Modelica.Utilities.Streams.print("d>d_max: this is single-phase fluid, or probably solid, return input values", "printlog.txt");
+      sat.Tsat := T_trip;
+      sat.liq.d := dl_trip;
+      sat.vap.d := dv_trip;
     else
       // Modelica.Utilities.Streams.print("d=d_crit: return critical Temperature", "printlog.txt");
       sat.Tsat  := T_crit;
@@ -723,7 +737,7 @@ protected
         assert(p <> sat.psat, "setState_pTX_error: pressure equals saturation pressure");
       end if;
     else
-      // Modelica.Utilities.Streams.print("T>T_crit: d is between dmin and dmax", "printlog.txt");
+      // Modelica.Utilities.Streams.print("T>=T_crit: d is between dmin and dmax", "printlog.txt");
       d_min  := fluidLimits.DMIN;
       d_max  := 1.1*fluidLimits.DMAX;
       d_iter := d_crit/50;
@@ -912,16 +926,17 @@ protected
     constant Integer iter_max = 200;
 
   algorithm
+     Modelica.Utilities.Streams.print(" ", "printlog.txt");
+     Modelica.Utilities.Streams.print("setState_phX: p=" + String(p) + " and h=" + String(h), "printlog.txt");
     state.phase := phase;
 
     if (state.phase == 2) then
-      assert(p >= p_trip, "setState_phX_error: pressure is lower than triple point pressure");
       assert(p <= p_crit, "setState_phX_error: pressure is higher than critical pressure");
       sat := setSat_p(p=p);
       assert(h >= sat.liq.h, "setState_phX_error: enthalpy is lower than saturated liquid enthalpy: this is single phase liquid");
       assert(h <= sat.vap.h, "setState_phX_error: enthalpy is higher than saturated vapor enthalpy: this is single phase vapor");
     else
-      if ((p < p_crit) and (p >= p_trip)) then
+      if (p < p_crit) then
         // two-phase possible, do simple check first
         sat.Tsat := Ancillary.saturationTemperature_p(p=p);
         tau := T_crit/sat.Tsat;
@@ -939,13 +954,14 @@ protected
         f.rd  := EoS.f_rd(delta=delta, tau=tau);
         sat.vap.h := sat.Tsat*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
 
-        if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02*sat.vap.h))) then
-          // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
+        if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02*sat.vap.h))) or (p<300*p_trip) or (p>0.98*p_crit) then
+           Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
           sat := setSat_p(p=p);
         end if;
 
+         Modelica.Utilities.Streams.print("phase boundary determined; sat.liq.h=" + String(sat.liq.h) + " and sat.vap.h=" + String(sat.vap.h), "printlog.txt");
         if (h < sat.liq.h) then
-          // Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
+           Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
           state.phase := 1;
           d_min := sat.liq.d;
           d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
@@ -954,7 +970,7 @@ protected
           T_max := sat.Tsat;
           T_iter:= sat.Tsat;
         elseif (h > sat.vap.h) then
-          // Modelica.Utilities.Streams.print("single phase vapor", "printlog.txt");
+           Modelica.Utilities.Streams.print("single phase vapor", "printlog.txt");
           state.phase := 1;
           d_min := fluidLimits.DMIN;
           d_max := sat.liq.d;
@@ -968,7 +984,7 @@ protected
         end if;
 
       else
-        // Modelica.Utilities.Streams.print("p>=p_crit or p<p_trip, only single phase possible", "printlog.txt");
+        // Modelica.Utilities.Streams.print("p>=p_crit, only single phase possible", "printlog.txt");
         state.phase := 1;
         d_min := fluidLimits.DMIN;
         d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
@@ -1024,7 +1040,7 @@ protected
       Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and RES_h=" + String(RES_h), "printlog.txt");
       Modelica.Utilities.Streams.print("dpdd=" + String(dpdd) + " and dpdT=" + String(dpdT), "printlog.txt");
       Modelica.Utilities.Streams.print("dhdd=" + String(dhdd) + " and dhdT=" + String(dhdT), "printlog.txt");
-      Modelica.Utilities.Streams.print("det(J)=" + String(det), "printlog.txt"); */
+      Modelica.Utilities.Streams.print("det(J)=" + String(det), "printlog.txt");  */
 
         // calculate better d_iter and T_iter
         d_iter := d_iter - gamma/det*(+dhdT*RES_p -dpdT*RES_h);
@@ -1037,10 +1053,10 @@ protected
       T_iter := T_crit/tau;*/
 
         // check bounds
-        d_iter := max(d_min,d_iter);
-        d_iter := min(d_max,d_iter);
-        T_iter := max(T_min,T_iter);
-        T_iter := min(T_max,T_iter);
+        d_iter := max(d_iter, 0.98*d_min);
+        d_iter := min(d_iter, 1.02*d_max);
+        T_iter := max(T_iter, 0.98*T_min);
+        T_iter := min(T_iter, 1.02*T_max);
 
         // calculate new RES_p and RES_h
         f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1);
@@ -1104,13 +1120,12 @@ protected
     state.phase := phase;
 
     if (state.phase == 2) then
-      assert(p >= p_trip, "setState_psX_error: pressure is lower than triple point pressure");
       assert(p <= p_crit, "setState_psX_error: pressure is higher than critical pressure");
       sat := setSat_p(p=p);
       assert(s >= sat.liq.s, "setState_psX_error: entropy is lower than saturated liquid entropy: this is single phase liquid");
       assert(s <= sat.vap.s, "setState_psX_error: entropy is higher than saturated vapor entropy: this is single phase vapor");
     else
-      if ((p < p_crit) and (p >= p_trip)) then
+      if (p < p_crit) then
         // two-phase possible, do simple check first
         sat.Tsat := Ancillary.saturationTemperature_p(p=p);
         tau := T_crit/sat.Tsat;
@@ -1130,11 +1145,12 @@ protected
         f.rt  := EoS.f_rt(tau=tau, delta=delta);
         sat.vap.s := R*(tau*(f.it + f.rt) - f.i - f.r);
 
-        if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
+        if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) or (p<300*p_trip) or (p>0.98*p_crit) then
           // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
           sat := setSat_p(p=p);
         end if;
 
+        // Modelica.Utilities.Streams.print("phase boundary determined; sat.liq.s=" + String(sat.liq.s) + " and sat.vap.s=" + String(sat.vap.s), "printlog.txt");
         if (s < sat.liq.s) then
           // Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
           state.phase := 1;
@@ -1213,10 +1229,10 @@ protected
         T_iter := T_iter - gamma/det*(-dsdd*RES_p +dpdd*RES_s);
 
         // check bounds
-        d_iter := max(d_min,d_iter);
-        d_iter := min(d_max,d_iter);
-        T_iter := max(T_min,T_iter);
-        T_iter := min(T_max,T_iter);
+        d_iter := max(d_iter, 0.98*d_min);
+        d_iter := min(d_iter, 1.02*d_max);
+        T_iter := max(T_iter, 0.98*T_min);
+        T_iter := min(T_iter, 1.02*T_max);
 
         // calculate new RES_p and RES_s
         f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1);

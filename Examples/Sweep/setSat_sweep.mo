@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Sweep;
 model setSat_sweep
-  package medium = HelmholtzFluids.Isopentane;
+  package medium = HelmholtzFluids.Propane;
   medium.SaturationProperties sat;
   medium.SaturationProperties sat_p;
   medium.SaturationProperties sat_dl;
@@ -14,7 +14,7 @@ model setSat_sweep
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
 
 protected
-  constant medium.Temperature Tmin=medium.fluidLimits.TMIN+5;
+  constant medium.Temperature Tmin=medium.fluidLimits.TMIN;
   constant medium.Temperature Tcrit=medium.fluidConstants[1].criticalTemperature;
   constant medium.Temperature Tmax=medium.fluidLimits.TMAX;
 
@@ -27,7 +27,7 @@ equation
   sat_dv = medium.setSat_d(d=sat.vap.d);
 
   annotation (experiment(
-      StopTime=11,
-      NumberOfIntervals=1000,
-      Tolerance=1e-005),               __Dymola_experimentSetupOutput);
+      StopTime=10,
+      NumberOfIntervals=10000,
+      Tolerance=1e-005));
 end setSat_sweep;

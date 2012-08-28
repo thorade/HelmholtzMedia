@@ -67,9 +67,7 @@ protected
     constant Integer iter_max = 200;
 
   algorithm
-    assert(p >= p_trip, "saturationTemperature error: Pressure is lower than triple-point pressure");
-    assert(p <= p_crit, "saturationTemperature error: Pressure is higher than critical pressure");
-
+  if (p<p_crit) and (p>p_trip) then
     // calculate start value from the log(p) vs. 1/T diagram
     // see Span (2000) page 52 / equation 3.98
     T := 1/(1/T_crit - (1/T_trip-1/T_crit)/log(p_crit/p_trip)*log(p/p_crit));
@@ -108,6 +106,13 @@ protected
     // Modelica.Utilities.Streams.print("saturationTemperature_p total iteration steps " + String(iter), "printlog.txt");
     assert(iter<iter_max, "saturationTemperature_p did not converge, input was p=" + String(p));
 
+  elseif (p<=p_trip) then
+    T := T_trip;
+  elseif (p>=p_crit) then
+    T := T_crit;
+  else
+    assert(false, "Ancillary.saturationTemperature_p: this should not happen, check p");
+  end if;
     // this is an iterative backward function
     // the corresponding ancillary forward function is saturationPressure(T)
     annotation (inverse(p=saturationPressure_T(T=T)));

@@ -1,10 +1,10 @@
 within HelmholtzMedia.Examples.Parameter;
 model State_ph_parameter "calculate state record from ph input"
 
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.Propane;
 
-  parameter Medium.AbsolutePressure p=5e6;
-  parameter Medium.SpecificEnthalpy h=500e3;
+  parameter Medium.AbsolutePressure p=101325;
+  parameter Medium.SpecificEnthalpy h=2e3;
 
   Medium.ThermodynamicState inletState;
 
