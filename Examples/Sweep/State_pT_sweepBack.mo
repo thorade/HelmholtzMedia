@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Sweep;
 model State_pT_sweepBack
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.Ethanol;
   Medium.AbsolutePressure p;
   Medium.Temperature T;
   Medium.ThermodynamicState state;

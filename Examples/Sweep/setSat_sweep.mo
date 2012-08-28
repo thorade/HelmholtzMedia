@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Sweep;
 model setSat_sweep
-  package medium = HelmholtzFluids.Butane;
+  package medium = HelmholtzFluids.Isopentane;
   medium.SaturationProperties sat;
   medium.SaturationProperties sat_p;
   medium.SaturationProperties sat_dl;
@@ -14,7 +14,7 @@ model setSat_sweep
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
 
 protected
-  constant medium.Temperature Tmin=medium.fluidLimits.TMIN;
+  constant medium.Temperature Tmin=medium.fluidLimits.TMIN+5;
   constant medium.Temperature Tcrit=medium.fluidConstants[1].criticalTemperature;
   constant medium.Temperature Tmax=medium.fluidLimits.TMAX;
 

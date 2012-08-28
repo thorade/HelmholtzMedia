@@ -256,12 +256,15 @@ protected
     constant Integer iter_max = 200;
 
   algorithm
-  if ((p>=p_trip) and (p<p_crit)) then
+    // Modelica.Utilities.Streams.print(" ", "printlog.txt");
+    // Modelica.Utilities.Streams.print("setSat_p: p=" + String(p), "printlog.txt");
+
+  if ((p>p_trip+tolerance) and (p<p_crit-tolerance)) then
     // calculate start values
     // sat.Tsat  := 1/(1/T_crit - (1/T_trip-1/T_crit)/log(p_crit/p_trip)*log(p/p_crit));
     sat.Tsat := Ancillary.saturationTemperature_p(p=p);
-    sat.liq.d := 1.02*Ancillary.bubbleDensity_T(T=sat.Tsat);
-    sat.vap.d := 0.98*Ancillary.dewDensity_T(T=sat.Tsat);
+    sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
+    sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
 
     // calculate residuals
     fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
@@ -290,7 +293,6 @@ protected
       det := f1dx*f2dy*f3dz -f3dx*f2dy*f1dz - f3dy*f2dz*f1dx;
 
       /* // print for debugging
-    Modelica.Utilities.Streams.print(" ", "printlog.txt");
     Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
     Modelica.Utilities.Streams.print("sat.liq.d=" + String(sat.liq.d) + " and sat.vap.d=" + String(sat.vap.d) + " and sat.Tsat=" + String(sat.Tsat), "printlog.txt");
     Modelica.Utilities.Streams.print("RES_pl=" + String(RES_pl) + " and RES_pv=" + String(RES_pv) + " and RES_g=" + String(RES_g), "printlog.txt");
@@ -321,13 +323,13 @@ protected
     end while;
     // if verbose then Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt"); end if;
     // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
-    assert(iter<iter_max, "setSat_p did not converge, input was p=" + String(p));
+    assert(iter<iter_max, "setSat_p did not converge, input was p=" + String(p) + "; the remaining residuals are RES_pl=" + String(RES_pl) + " and RES_pv=" + String(RES_pv) + " and RES_g=" + String(RES_g));
 
     sat.psat := p;
     sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
     sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
 
-  elseif (p>=p_crit) then
+  elseif (p>=p_crit-tolerance) then
     // assert(p <= p_crit, "setSat_p error: pressure is higher than critical pressure");
     // above critical pressure, no stable two-phase state exists
     // anyway, it is possible to extend the vapour-pressure curve into this region
@@ -338,7 +340,7 @@ protected
     sat.Tsat  := T_crit;
     sat.liq.d := d_crit;
     sat.vap.d := d_crit;
-  else
+  elseif (p<=p_trip+tolerance) then
     // assert(p >= p_trip, "setSat_p error: pressure is lower than triple-point pressure");
     // p<p_trip: this does not make sense: if p is below the triple pressure, the medium is single phase vapour
     // anyway, during initialization (at time=0) p=0 may happen
@@ -347,7 +349,8 @@ protected
     sat.Tsat  := T_trip;
     sat.liq.d := fluidLimits.DMAX;
     sat.vap.d := fluidLimits.DMIN;
-
+  else
+    assert(false, "setSat_p: this should not happen, check p");
   end if;
   end setSat_p;
 
@@ -709,12 +712,12 @@ protected
         // Modelica.Utilities.Streams.print("single phase liquid: d is between dliq and rho_max", "printlog.txt");
         d_min  := sat.liq.d;
         d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
-        d_iter := sat.liq.d;
+        d_iter := 1.1*sat.liq.d;
       elseif (p < sat.psat) then
         // Modelica.Utilities.Streams.print("single phase vapor: d is between 0 and dvap", "printlog.txt");
         d_min  := fluidLimits.DMIN;
         d_max  := sat.vap.d;
-        d_iter := sat.vap.d/10;
+        d_iter := 0.1*sat.vap.d;
       else
         // this should not happen
         assert(p <> sat.psat, "setState_pTX_error: pressure equals saturation pressure");

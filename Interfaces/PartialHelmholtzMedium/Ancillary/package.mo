@@ -10,7 +10,7 @@ package Ancillary
 protected
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     constant Real tau=T_crit/T "inverse reduced temperature";
-    constant Real T_theta=1-T/T_crit;
+    constant Real T_theta=max((1 - T/T_crit), Modelica.Constants.small);
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
     Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
@@ -77,7 +77,7 @@ protected
 
     // calculate RES_p
     tau := T_crit/T;
-    T_theta := 1-T/T_crit;
+    T_theta := max((1 - T/T_crit), Modelica.Constants.small);
     RES_p   := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
 
     while ((abs(RES_p/p)>tolerance) and (iter<iter_max)) loop
@@ -102,7 +102,7 @@ protected
 
       // calculate new RES_p
       tau := T_crit/T;
-      T_theta := 1 - T/T_crit;
+      T_theta := max((1 - T/T_crit), Modelica.Constants.small);
       RES_p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
     end while;
     // Modelica.Utilities.Streams.print("saturationTemperature_p total iteration steps " + String(iter), "printlog.txt");

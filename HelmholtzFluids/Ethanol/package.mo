@@ -43,7 +43,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant Interfaces.PartialHelmholtzMedium.FluidLimits
   fluidLimitsEthanol(
-    TMIN=fluidConstantsEthanol.triplePointTemperature,
+    TMIN=250,
     TMAX=650,
     DMIN=Modelica.Constants.small,
     DMAX=893.73,
