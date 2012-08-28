@@ -35,72 +35,91 @@ algorithm
     // Modelica.Utilities.Streams.print("d<d_crit: vapour side", "printlog.txt");
     R1 := Ancillary.dewDensity_T(T1)-d;
     R2 := d_crit-d;
-    while (abs(R4)>tolerance) and (iter<iter_max) loop
-      iter:=iter+1;
-      T3 := (T1+T2)/2;
-      R3 := Ancillary.dewDensity_T(T3)-d;
-      // caclutate better T from Ridder's method
-      T4  := T3 + (T3 - T1)*sign(R1-R2)*R3/sqrt(R3*R3 - R1*R2);
-      R4 := Ancillary.dewDensity_T(T4)-d;
-      if (R4*R3<=0) then
-        T1 := T3;
-        R1 := R3;
-        T2 := T4;
-        R2 := R4;
-      else
-        if (R4*R1<0) then
+    if (R1*R2<0) then
+      while (abs(R4)>tolerance) and (iter<iter_max) loop
+        iter:=iter+1;
+        T3 := (T1+T2)/2;
+        R3 := Ancillary.dewDensity_T(T3)-d;
+        // caclutate better T from Ridder's method
+        T4  := T3 + (T3 - T1)*sign(R1-R2)*R3/sqrt(R3*R3 - R1*R2);
+        R4 := Ancillary.dewDensity_T(T4)-d;
+        // Modelica.Utilities.Streams.print("Ridders' method: current residuals: R1=" + String(R1) + ", R2=" + String(R2) + ", R3=" + String(R3) + ", R4=" + String(R4), "printlog.txt");
+        if (R4*R3<=0) then
+          T1 := T3;
+          R1 := R3;
           T2 := T4;
           R2 := R4;
-        elseif (R4*R2<0) then
-          T1 := T4;
-          R1 := R4;
         else
-          assert(false, "never get here");
+          if (R4*R1<0) then
+            T2 := T4;
+            R2 := R4;
+          elseif (R4*R2<0) then
+            T1 := T4;
+            R1 := R4;
+          else
+            assert(false, "Ancillary.saturationTemperature_d (vapour side): this should not happen");
+          end if;
         end if;
+        // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
+      end while;
+      assert(iter<iter_max, "saturationTemperature_d_vap did not converge, input was d_vap=" + String(d));
+      // Modelica.Utilities.Streams.print("saturationTemperature_d_vap total iteration steps " + String(iter) + " for d_vap=" + String(d), "printlog.txt");
+      // Modelica.Utilities.Streams.print(" ", "printlog.txt");
+      T := T4;
+    else
+      if (R1<tolerance) then
+        T:= T1;
+      elseif (R2<tolerance) then
+        T:=T2;
+      else
+        assert(false, "Ancillary.saturationTemperature_d (vapour side): T1 and T2 did not bracket the root");
       end if;
-      // Modelica.Utilities.Streams.print("Ridders' method: current residual R4=" + String(R4), "printlog.txt");
-      // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
-    end while;
-    // Modelica.Utilities.Streams.print("saturationTemperature_d_vap total iteration steps " + String(iter) + " for d_vap=" + String(d), "printlog.txt");
-    // Modelica.Utilities.Streams.print(" ", "printlog.txt");
-    assert(iter<iter_max, "saturationTemperature_d_vap did not converge, input was d_vap=" + String(d));
-    T := T4;
+    end if;
 
   elseif (d>d_crit+tolerance) then
     // Modelica.Utilities.Streams.print("d>d_crit: liquid side", "printlog.txt");
-    R1 := Ancillary.bubbleDensity_T(T1)-d;
+    R1 := Ancillary.bubbleDensity_T(T1)-d +tolerance;
     R2 := d_crit-d;
-    while (abs(R4)>tolerance) and (iter<iter_max) loop
-      iter:=iter+1;
-      T3 := (T1+T2)/2;
-      R3 := Ancillary.bubbleDensity_T(T3)-d;
-      // caclutate better T from Ridder's method
-      T4  := T3 + (T3 - T1)*sign(R1-R2)*R3/sqrt(R3*R3 - R1*R2);
-      R4 := Ancillary.bubbleDensity_T(T4)-d;
-      if (R4*R3<=0) then
-        // opposite sign, T4 and T3 bracket the root
-        T1 := T3;
-        R1 := R3;
-        T2 := T4;
-        R2 := R4;
-      else
-        if (R4*R1<0) then
+    if (R1*R2<0) then
+      while (abs(R4)>tolerance) and (iter<iter_max) loop
+        iter:=iter+1;
+        T3 := (T1+T2)/2;
+        R3 := Ancillary.bubbleDensity_T(T3)-d;
+        // caclutate better T from Ridder's method
+        T4  := T3 + (T3 - T1)*sign(R1-R2)*R3/sqrt(R3*R3 - R1*R2);
+        R4 := Ancillary.bubbleDensity_T(T4)-d;
+        // Modelica.Utilities.Streams.print("Ridders' method: current residuals: R1=" + String(R1) + ", R2=" + String(R2) + ", R3=" + String(R3) + ", R4=" + String(R4), "printlog.txt");
+        if (R4*R3<=0) then
+          T1 := T3;
+          R1 := R3;
           T2 := T4;
           R2 := R4;
-        elseif (R4*R2<0) then
-          T1 := T4;
-          R1 := R4;
         else
-          assert(false, "never get here");
+          if (R4*R1<0) then
+            T2 := T4;
+            R2 := R4;
+          elseif (R4*R2<0) then
+            T1 := T4;
+            R1 := R4;
+          else
+            assert(false, "Ancillary.saturationTemperature_d (liquid side): this should not happen");
+          end if;
         end if;
+        // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
+      end while;
+      assert(iter<iter_max, "saturationTemperature_d_liq did not converge, input was d_liq=" + String(d));
+      // Modelica.Utilities.Streams.print("saturationTemperature_d_liq total iteration steps " + String(iter) + " for d_liq=" + String(d), "printlog.txt");
+      // Modelica.Utilities.Streams.print(" ", "printlog.txt");
+      T := T4;
+    else
+      if (R1<tolerance) then
+        T:= T1;
+      elseif (R2<tolerance) then
+        T:=T2;
+      else
+        assert(false, "Ancillary.saturationTemperature_d (vapour side): T1 and T2 did not bracket the root");
       end if;
-      // Modelica.Utilities.Streams.print("Ridders' method: current residual R4=" + String(R4), "printlog.txt");
-      // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
-    end while;
-    // Modelica.Utilities.Streams.print("saturationTemperature_d_liq total iteration steps " + String(iter) + " for d_liq=" + String(d), "printlog.txt");
-    // Modelica.Utilities.Streams.print(" ", "printlog.txt");
-    assert(iter<iter_max, "saturationTemperature_d_liq did not converge, input was d_liq=" + String(d));
-    T := T4;
+    end if;
 
   else
     // Modelica.Utilities.Streams.print("d=d_crit: return critical Temperature", "printlog.txt");

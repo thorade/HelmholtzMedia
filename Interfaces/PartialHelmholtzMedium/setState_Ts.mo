@@ -31,6 +31,7 @@ protected
   Real tolerance=1e-6 "tolerance for RES_s (in J/kgK)";
   Integer iter = 0;
   constant Integer iter_max = 200;
+  Boolean RiddersIsInitialized=false;
 
 algorithm
   state.phase := phase;
@@ -129,52 +130,70 @@ algorithm
       // check bounds
       if (d_iter<d_min) or (d_iter>d_max) then
         // Modelica.Utilities.Streams.print("d_iter out of bounds, fallback to Ridders' method, step=" + String(iter) + ", d_iter=" + String(d_iter), "printlog.txt");
-        // calculate RES_s for d_min
-        delta := d_min/d_crit;
-        f.i  := EoS.f_i(delta=delta, tau=tau);
-        f.it := EoS.f_it(delta=delta, tau=tau);
-        f.r  := EoS.f_r(delta=delta, tau=tau);
-        f.rt := EoS.f_rt(delta=delta, tau=tau);
-        RES_min := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
-        // calculate RES_s for d_max
-        delta := d_max/d_crit;
-        f.i  := EoS.f_i(delta=delta, tau=tau);
-        f.it := EoS.f_it(delta=delta, tau=tau);
-        f.r  := EoS.f_r(delta=delta, tau=tau);
-        f.rt := EoS.f_rt(delta=delta, tau=tau);
-        RES_max := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
-        // calculate RES_s for d_med
-        d_med := (d_max+1*d_min)/2;
-        delta := d_med/d_crit;
-        f.i  := EoS.f_i(delta=delta, tau=tau);
-        f.it := EoS.f_it(delta=delta, tau=tau);
-        f.r  := EoS.f_r(delta=delta, tau=tau);
-        f.rt := EoS.f_rt(delta=delta, tau=tau);
-        RES_med := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
-        // Ridders' method
-        d_iter := d_med + (d_med-d_min)*sign(RES_min-RES_max)*RES_med/sqrt(RES_med^2-RES_min*RES_max);
-        // calculate new RES_s
-        delta := d_iter/d_crit;
-        f.i  := EoS.f_i(delta=delta, tau=tau);
-        f.it := EoS.f_it(delta=delta, tau=tau);
-        f.r  := EoS.f_r(delta=delta, tau=tau);
-        f.rt := EoS.f_rt(delta=delta, tau=tau);
-        RES_s := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
-        // thighten the bounds
-        if (RES_s*RES_med<=0) then
-          // opposite sign, d_med and d_iter bracket the root
-          d_min := min(d_med,d_iter);
-          d_max := max(d_med,d_iter);
-        else
-          if (RES_s*RES_min<0) then
-            d_max := d_iter;
-          elseif (RES_s*RES_max<0) then
+        if not RiddersIsInitialized then
+          // calculate RES_s for d_min
+          delta := d_min/d_crit;
+          f.i  := EoS.f_i(delta=delta, tau=tau);
+          f.it := EoS.f_it(delta=delta, tau=tau);
+          f.r  := EoS.f_r(delta=delta, tau=tau);
+          f.rt := EoS.f_rt(delta=delta, tau=tau);
+          RES_min := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
+          // calculate RES_s for d_max
+          delta := d_max/d_crit;
+          f.i  := EoS.f_i(delta=delta, tau=tau);
+          f.it := EoS.f_it(delta=delta, tau=tau);
+          f.r  := EoS.f_r(delta=delta, tau=tau);
+          f.rt := EoS.f_rt(delta=delta, tau=tau);
+          RES_max := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
+          // Modelica.Utilities.Streams.print("initialize Ridders, RES_min=" + String(RES_min) + " and RES_max=" + String( RES_max), "printlog.txt");
+          RiddersIsInitialized := true;
+        end if;
+        if (RES_min*RES_max<0) then
+          // calculate RES_s for d_med
+          d_med := (d_max+1*d_min)/2;
+          delta := d_med/d_crit;
+          f.i  := EoS.f_i(delta=delta, tau=tau);
+          f.it := EoS.f_it(delta=delta, tau=tau);
+          f.r  := EoS.f_r(delta=delta, tau=tau);
+          f.rt := EoS.f_rt(delta=delta, tau=tau);
+          RES_med := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
+          // find better d_iter by Ridders' method
+          d_iter := d_med + (d_med-d_min)*sign(RES_min-RES_max)*RES_med/sqrt(RES_med^2-RES_min*RES_max);
+          // calculate new RES_s
+          delta := d_iter/d_crit;
+          f.i  := EoS.f_i(delta=delta, tau=tau);
+          f.it := EoS.f_it(delta=delta, tau=tau);
+          f.r  := EoS.f_r(delta=delta, tau=tau);
+          f.rt := EoS.f_rt(delta=delta, tau=tau);
+          RES_s := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
+          // thighten the bounds
+          if (RES_s*RES_med<=0) then
+            // opposite sign, d_med and d_iter bracket the root
             d_min := d_iter;
+            RES_min := RES_s;
+            d_max := d_med;
+            RES_max := RES_med;
           else
-            assert(false,"never get here");
+            if (RES_s*RES_min<0) then
+              d_max := d_iter;
+              RES_max := RES_s;
+            elseif (RES_s*RES_max<0) then
+              d_min := d_iter;
+              RES_min := RES_s;
+            else
+              assert(false,"setState_Ts: this should never happen");
+            end if;
+          end if;
+        // Modelica.Utilities.Streams.print("Ridders' method: new brackets d_min=" + String(d_min) + ", d_max=" + String(d_max), "printlog.txt");
+        else
+          if (RES_min<tolerance) then
+            d_iter:= d_min;
+          elseif (RES_max<tolerance) then
+            d_iter:=d_max;
+          else
+            assert(false, "Ancillary.saturationTemperature_d (vapour side): d_min and d_max did not bracket the root");
           end if;
         end if;
-        // Modelica.Utilities.Streams.print("Ridders' method: new d_min=" + String(d_min) + ", new d_max=" + String(d_max), "printlog.txt");
       else
         // use d_iter from Newton
         // calculate new RES_s
