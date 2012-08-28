@@ -3,17 +3,20 @@ model setSat_parameter
   package medium = HelmholtzFluids.Butane;
 
   medium.SaturationProperties sat;
-  medium.Temperature T_test;
+  medium.SaturationProperties sat_p;
+  medium.SaturationProperties sat_dl;
+  medium.SaturationProperties sat_dv;
 
-  parameter medium.Temperature T_input = 423.15;
-  parameter medium.AbsolutePressure p_input = 101325;
-  parameter medium.Density d_input = 209.3;
+  parameter medium.Temperature T_input = 135;
 
 equation
-// sat = medium.setSat_T(T=T_input);
-// sat = medium.setSat_p(p=p_input);
-sat = medium.setSat_d(d=d_input);
-T_test = medium.Ancillary.saturationTemperature_d(sat.vap.d);
+  // forward
+  sat = medium.setSat_T(T=T_input);
+
+  // backward
+  sat_p  = medium.setSat_p(p=sat.psat);
+  sat_dl = medium.setSat_d(d=sat.liq.d);
+  sat_dv = medium.setSat_d(d=sat.vap.d);
 
   annotation (experiment(Tolerance=1e-012), __Dymola_experimentSetupOutput);
 end setSat_parameter;

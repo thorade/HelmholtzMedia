@@ -390,8 +390,8 @@ protected
     // Modelica.Utilities.Streams.print("setSat_d: d="+String(d),"printlog.txt");
 
     sat.Tsat := Ancillary.saturationTemperature_d(d=d);
-    if (d>d_crit+tolerance) then
-      // Modelica.Utilities.Streams.print("d<d_crit: vapour side known: find d_liq and T_sat", "printlog.txt");
+    if (d<d_crit+tolerance) then
+      // Modelica.Utilities.Streams.print("d<d_crit: input is on vapour side: find d_liq and T_sat", "printlog.txt");
       sat.liq.d := Ancillary.bubbleDensity_T(sat.Tsat);
       sat.vap.d := d; // d'' is a constant
 
@@ -404,7 +404,6 @@ protected
              - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
 
       while (abs(RES_p) + abs(RES_g) > tolerance) and iter<iter_max loop
-        // Modelica.Utilities.Streams.print(" ", "printlog.txt");
         // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
         // Modelica.Utilities.Streams.print("sat.liq.d=" + String(sat.liq.d) + "  and dpdd=" + String(dpdd) + " and dgdd=" + String(dgdd), "printlog.txt");
         // Modelica.Utilities.Streams.print(" sat.Tsat=" + String(sat.Tsat)  + " and dpdT=" + String(dpdT) + " and dgdT=" + String(dgdT), "printlog.txt");
@@ -440,8 +439,8 @@ protected
                - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
       end while;
 
-    elseif (d<d_crit-tolerance) then
-      // Modelica.Utilities.Streams.print("d>d_crit: liquid side known; find d_vap and T_sat", "printlog.txt");
+    elseif (d>d_crit-tolerance) then
+      // Modelica.Utilities.Streams.print("d>d_crit: input is on liquid side: find d_vap and T_sat", "printlog.txt");
       sat.vap.d := Ancillary.dewDensity_T(sat.Tsat);
       sat.liq.d := d; // d' is a constant
 
@@ -454,7 +453,6 @@ protected
              - fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
 
       while (abs(RES_p) + abs(RES_g) > tolerance) and iter<iter_max loop
-        // Modelica.Utilities.Streams.print(" ", "printlog.txt");
         // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
         // Modelica.Utilities.Streams.print("sat.vap.d=" + String(sat.vap.d) + "  and dpdd=" + String(dpdd) + " and dgdd=" + String(dgdd), "printlog.txt");
         // Modelica.Utilities.Streams.print(" sat.Tsat=" + String(sat.Tsat)  + " and dpdT=" + String(dpdT) + " and dgdT=" + String(dgdT), "printlog.txt");
