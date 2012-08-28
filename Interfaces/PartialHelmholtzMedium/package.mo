@@ -394,7 +394,7 @@ protected
     // Modelica.Utilities.Streams.print("setSat_d: d="+String(d),"printlog.txt");
 
     sat.Tsat := 0.99*Ancillary.saturationTemperature_d(d=d);
-    if (d<d_crit-tolerance) and (d>dv_trip+tolerance) then
+    if (d<d_crit) and (d>dv_trip) then
       // Modelica.Utilities.Streams.print("d<d_crit: input is on vapour side: find d_liq and T_sat", "printlog.txt");
       sat.liq.d := Ancillary.bubbleDensity_T(sat.Tsat);
       sat.vap.d := d; // d'' is a constant
@@ -447,7 +447,7 @@ protected
                - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
       end while;
 
-    elseif (d>d_crit+tolerance) and (d<dl_trip-tolerance) then
+    elseif (d>d_crit) and (d<dl_trip) then
       // Modelica.Utilities.Streams.print("d>d_crit: input is on liquid side: find d_vap and T_sat", "printlog.txt");
       sat.vap.d := Ancillary.dewDensity_T(sat.Tsat);
       sat.liq.d := d; // d' is a constant
@@ -500,13 +500,13 @@ protected
                - fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
       end while;
 
-    elseif (d>=dl_trip-tolerance) or (d<=dv_trip+tolerance) then
+    elseif (d>=dl_trip) or (d<=dv_trip) then
       // Modelica.Utilities.Streams.print("d>d_max: this is single-phase fluid, or probably solid, return input values", "printlog.txt");
       sat.Tsat := T_trip;
       sat.liq.d := dl_trip;
       sat.vap.d := dv_trip;
     else
-      // Modelica.Utilities.Streams.print("d=d_crit: return critical Temperature", "printlog.txt");
+      // Modelica.Utilities.Streams.print("d=d_crit: return critical values", "printlog.txt");
       sat.Tsat  := T_crit;
       sat.liq.d := d_crit;
       sat.vap.d := d_crit;

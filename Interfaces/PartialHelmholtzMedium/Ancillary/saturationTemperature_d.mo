@@ -34,7 +34,7 @@ protected
 algorithm
   // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_d, d=" + String(d), "printlog.txt");
 
-  if (d<d_crit-tolerance) and (d>dv_trip+tolerance) then
+  if (d<d_crit) and (d>dv_trip) then
     // Modelica.Utilities.Streams.print("d<d_crit: vapour side", "printlog.txt");
     R1 := Ancillary.dewDensity_T(T1)-d;
     R2 := d_crit-d;
@@ -79,7 +79,7 @@ algorithm
       end if;
     end if;
 
-  elseif (d>d_crit+tolerance) and (d<dl_trip-tolerance) then
+  elseif (d>d_crit) and (d<dl_trip) then
     // Modelica.Utilities.Streams.print("d>d_crit: liquid side", "printlog.txt");
     R1 := Ancillary.bubbleDensity_T(T1)-d +tolerance;
     R2 := d_crit-d;
@@ -124,10 +124,9 @@ algorithm
       end if;
     end if;
 
-  elseif (d>=dl_trip-tolerance) or (d<=dv_trip+tolerance) then
+  elseif (d>=dl_trip) or (d<=dv_trip) then
     T := T_trip;
   else
-    // Modelica.Utilities.Streams.print("d=d_crit: return critical Temperature", "printlog.txt");
     T := T_crit;
   end if;
 
