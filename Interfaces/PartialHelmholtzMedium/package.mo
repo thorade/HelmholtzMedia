@@ -544,7 +544,7 @@ protected
 
     if (state.phase == 0) then
       //phase unknown, check phase first
-      if ((T>=T_trip) and (T<=T_crit)) then
+      if ((T>=T_trip) and (T<T_crit)) then
         // two-phase possible, do simple density check
         // Modelica.Utilities.Streams.print("setState_dT: dliq=" + String(bubbleDensity_T_ANC(T=T)) + " dvap=" + String(dewDensity_T_ANC(T=T)) + ", simple check only");
         if ((d > 1.05*Ancillary.bubbleDensity_T(T=T)) or (d < 0.98*Ancillary.dewDensity_T(T=T))) then
@@ -560,7 +560,7 @@ protected
           end if;
         end if;
       else
-        // T>T_crit
+        // T>=T_crit
         state.phase := 1;
       end if;
     elseif (state.phase == 2) then
@@ -685,7 +685,7 @@ protected
     assert(phase <> 2, "setState_pTX_error: pressure and temperature are not independent variables in two-phase state");
     state.phase := 1;
 
-    if (T <= T_crit) then
+    if (T < T_crit) then
       // determine p_sat
       sat.psat := Ancillary.saturationPressure_T(T=T);
       if (p > 1.02*sat.psat) then
@@ -766,7 +766,7 @@ protected
   d_iter := min(d_max,d_iter);
   */
 
-    // Modelica.Utilities.Streams.print("start Newton with d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
+     Modelica.Utilities.Streams.print("start Newton with d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
     // calculate RES_p
     delta := d_iter/d_crit;
     f.rd  := EoS.f_rd(delta=delta, tau=tau);
@@ -780,8 +780,8 @@ protected
       dpdd := T*R*(1+2*delta*f.rd+delta^2*f.rdd);
 
       // print for Newton debugging
-      // Modelica.Utilities.Streams.print("Iteration step " +String(iter) + ", current d_iter=" + String(d_iter), "printlog.txt");
-      // Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and dpdd=" + String(dpdd), "printlog.txt");
+       Modelica.Utilities.Streams.print("Iteration step " +String(iter) + ", current d_iter=" + String(d_iter), "printlog.txt");
+       Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and dpdd=" + String(dpdd), "printlog.txt");
 
       // calculate better d_iter
       d_iter := d_iter - gamma/dpdd*RES_p;
@@ -859,7 +859,7 @@ protected
       assert(h >= sat.liq.h, "setState_phX_error: enthalpy is lower than saturated liquid enthalpy: this is single phase liquid");
       assert(h <= sat.vap.h, "setState_phX_error: enthalpy is higher than saturated vapor enthalpy: this is single phase vapor");
     else
-      if ((p <= p_crit) and (p >= p_trip)) then
+      if ((p < p_crit) and (p >= p_trip)) then
         // two-phase possible, do simple check first
         sat.Tsat := Ancillary.saturationTemperature_p(p=p);
         tau := T_crit/sat.Tsat;
@@ -906,7 +906,7 @@ protected
         end if;
 
       else
-        // Modelica.Utilities.Streams.print("p>p_crit or p<p_trip, only single phase possible", "printlog.txt");
+        // Modelica.Utilities.Streams.print("p>=p_crit or p<p_trip, only single phase possible", "printlog.txt");
         state.phase := 1;
         d_min := fluidLimits.DMIN;
         d_max := fluidLimits.DMAX;
@@ -1048,7 +1048,7 @@ protected
       assert(s >= sat.liq.s, "setState_psX_error: entropy is lower than saturated liquid entropy: this is single phase liquid");
       assert(s <= sat.vap.s, "setState_psX_error: entropy is higher than saturated vapor entropy: this is single phase vapor");
     else
-      if ((p <= p_crit) and (p >= p_trip)) then
+      if ((p < p_crit) and (p >= p_trip)) then
         // two-phase possible, do simple check first
         sat.Tsat := Ancillary.saturationTemperature_p(p=p);
         tau := T_crit/sat.Tsat;
@@ -1097,7 +1097,7 @@ protected
         end if;
 
       else
-        // Modelica.Utilities.Streams.print("p>p_crit or p<p_trip, only single phase possible", "printlog.txt");
+        // Modelica.Utilities.Streams.print("p>=p_crit or p<p_trip, only single phase possible", "printlog.txt");
         state.phase := 1;
         d_min := fluidLimits.DMIN;
         d_max := fluidLimits.DMAX;

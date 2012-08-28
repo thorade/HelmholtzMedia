@@ -43,7 +43,7 @@ algorithm
     assert(s >= sat.liq.s, "setState_TsX_error: entropy is lower than saturated liquid entropy: this is single phase liquid");
     assert(s <= sat.vap.s, "setState_TsX_error: entropy is higher than saturated vapor entropy: this is single phase vapor");
   else
-    if ((T <= T_crit) and (T >= T_trip)) then
+    if ((T < T_crit) and (T >= T_trip)) then
       // two-phase possible, do simple check first
       sat.Tsat := T;
       tau := T_crit/sat.Tsat;
@@ -84,7 +84,7 @@ algorithm
       end if;
 
     else
-      // Modelica.Utilities.Streams.print("T>T_crit or T<T_trip, only single phase possible, do not change dmin and dmax", "printlog.txt");
+      // Modelica.Utilities.Streams.print("T>=T_crit or T<T_trip, only single phase possible, do not change dmin and dmax", "printlog.txt");
       state.phase := 1;
       d_iter := d_crit/100;
     end if;
