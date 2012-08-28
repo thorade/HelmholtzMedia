@@ -766,7 +766,7 @@ protected
   d_iter := min(d_max,d_iter);
   */
 
-     Modelica.Utilities.Streams.print("start Newton with d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
+    // Modelica.Utilities.Streams.print("start Newton with d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
     // calculate RES_p
     delta := d_iter/d_crit;
     f.rd  := EoS.f_rd(delta=delta, tau=tau);
@@ -780,8 +780,8 @@ protected
       dpdd := T*R*(1+2*delta*f.rd+delta^2*f.rdd);
 
       // print for Newton debugging
-       Modelica.Utilities.Streams.print("Iteration step " +String(iter) + ", current d_iter=" + String(d_iter), "printlog.txt");
-       Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and dpdd=" + String(dpdd), "printlog.txt");
+      // Modelica.Utilities.Streams.print("Iteration step " +String(iter) + ", current d_iter=" + String(d_iter), "printlog.txt");
+      // Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and dpdd=" + String(dpdd), "printlog.txt");
 
       // calculate better d_iter
       d_iter := d_iter - gamma/dpdd*RES_p;

@@ -19,7 +19,9 @@ protected
   constant medium.Temperature Tmax=medium.fluidLimits.TMAX;
 
 equation
+  // forward
   sat = medium.setSat_T(T=T_ramp.y);
+  // backward
   sat_p = medium.setSat_p(p=sat.psat);
   sat_dl = medium.setSat_d(d=sat.liq.d);
   sat_dv = medium.setSat_d(d=sat.vap.d);

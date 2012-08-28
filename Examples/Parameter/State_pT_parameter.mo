@@ -3,13 +3,11 @@ model State_pT_parameter "calculate state record from pT input"
 
   package Medium = HelmholtzFluids.Butane;
 
-  parameter Medium.AbsolutePressure p=2.6e+006;
-  parameter Medium.Temperature T=298.15;
+  parameter Medium.AbsolutePressure p=3.79723e+006;
+  parameter Medium.Temperature T=425.125;
 
   Medium.ThermodynamicState state;
-  // Medium.SpecificEnthalpy h;
 
 equation
-  state=Medium.setState_pTX(p=p, T=T, phase=0);
-  // h = Medium.specificEnthalpy_pT(p=p, T=T);
+  state=Medium.setState_pT(p=p, T=T, phase=0);
 end State_pT_parameter;
