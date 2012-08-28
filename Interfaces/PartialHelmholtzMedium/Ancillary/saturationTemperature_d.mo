@@ -14,7 +14,10 @@ protected
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
 
-  Temperature T1=T_trip;
+  Density d_min =  fluidLimits.DMIN;
+  Density d_max =  fluidLimits.DMAX;
+
+  Temperature T1=0.98*T_trip;
   Temperature T2=T_crit;
   Temperature T3;
   Temperature T4;
@@ -24,7 +27,7 @@ protected
   Density R3 "residual of T3";
   Density R4= Modelica.Constants.inf "residual of T4";
 
-  Real tolerance=1e-6 "tolerance for RES_d (in kg/m3)";
+  Real tolerance=1e-9 "relative tolerance for RES_d";
   Integer iter=0;
   constant Integer iter_max = 200;
 
@@ -36,7 +39,7 @@ algorithm
     R1 := Ancillary.dewDensity_T(T1)-d;
     R2 := d_crit-d;
     if (R1*R2<0) then
-      while (abs(R4)>tolerance) and (iter<iter_max) loop
+      while (abs(R4/d)>tolerance) and (iter<iter_max) loop
         iter:=iter+1;
         T3 := (T1+T2)/2;
         R3 := Ancillary.dewDensity_T(T3)-d;
@@ -67,21 +70,21 @@ algorithm
       // Modelica.Utilities.Streams.print(" ", "printlog.txt");
       T := T4;
     else
-      if (R1<tolerance) then
+      if (abs(R1/d)<tolerance) then
         T:= T1;
-      elseif (R2<tolerance) then
+      elseif (abs(R2/d)<tolerance) then
         T:=T2;
       else
-        assert(false, "Ancillary.saturationTemperature_d (vapour side): T1 and T2 did not bracket the root");
+        assert(false, "Ancillary.saturationTemperature_d (vapour side): T1=" + String(T1) + " and T2=" + String(T2) + " did not bracket the root");
       end if;
     end if;
 
-  elseif (d>d_crit+tolerance) then
+  elseif (d>d_crit+tolerance) and (d<d_max) then
     // Modelica.Utilities.Streams.print("d>d_crit: liquid side", "printlog.txt");
     R1 := Ancillary.bubbleDensity_T(T1)-d +tolerance;
     R2 := d_crit-d;
     if (R1*R2<0) then
-      while (abs(R4)>tolerance) and (iter<iter_max) loop
+      while (abs(R4/d)>tolerance) and (iter<iter_max) loop
         iter:=iter+1;
         T3 := (T1+T2)/2;
         R3 := Ancillary.bubbleDensity_T(T3)-d;
@@ -112,18 +115,20 @@ algorithm
       // Modelica.Utilities.Streams.print(" ", "printlog.txt");
       T := T4;
     else
-      if (R1<tolerance) then
+      if (abs(R1/d)<tolerance) then
         T:= T1;
-      elseif (R2<tolerance) then
+      elseif (abs(R2/d)<tolerance) then
         T:=T2;
       else
-        assert(false, "Ancillary.saturationTemperature_d (vapour side): T1 and T2 did not bracket the root");
+        assert(false, "Ancillary.saturationTemperature_d (liquid side): T1=" + String(T1) + " and T2=" + String(T2) + " did not bracket the root");
       end if;
     end if;
 
+  elseif (d>d_max) then
+    T := T_trip;
   else
     // Modelica.Utilities.Streams.print("d=d_crit: return critical Temperature", "printlog.txt");
-    T := fluidConstants[1].criticalTemperature;
+    T := T_crit;
   end if;
 
 end saturationTemperature_d;

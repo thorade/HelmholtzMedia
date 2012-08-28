@@ -11,18 +11,11 @@ model State_pT_sweepBack
   Medium.ThermodynamicState state_Ts;
 
 Modelica.Blocks.Sources.Ramp T_sub(
-    height=Tcrit - Tmin,
     duration=4,
-    offset=Tmin,
-    startTime=0.1)
+    startTime=0.1,
+    height=Tcrit - Tmin,
+    offset=Tmin)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
-Modelica.Blocks.Sources.Sine p_sine(
-    phase=0,
-    amplitude=(pmax - pmin)/2,
-    offset=(pmax - pmin)/2,
-    startTime=0,
-    freqHz=100)
-    annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
 
 Modelica.Blocks.Sources.Ramp T_super(
     height=Tmax - Tcrit,
@@ -30,6 +23,13 @@ Modelica.Blocks.Sources.Ramp T_super(
     startTime=6,
     offset=0)
     annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
+
+Modelica.Blocks.Sources.Sine p_sine(
+    amplitude=(pmax - pmin)/2,
+    offset=(pmax - pmin)/2,
+    freqHz=100,
+    startTime=0)
+    annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
 
 protected
   constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;

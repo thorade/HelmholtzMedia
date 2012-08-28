@@ -19,7 +19,7 @@ protected
   MassFraction x "vapour quality";
 
   Density d_min=fluidLimits.DMIN;
-  Density d_max=fluidLimits.DMAX;
+  Density d_max=1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
   Density d_med;
   Density d_iter=d_crit;
   Real RES_s;
@@ -28,7 +28,7 @@ protected
   Real RES_med;
   Real dsdd;
   Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-  Real tolerance=1e-6 "tolerance for RES_s (in J/kgK)";
+  Real tolerance=1e-9 "relative tolerance for RES_s (in J/kgK)";
   Integer iter = 0;
   constant Integer iter_max = 200;
   Boolean RiddersIsInitialized=false;
@@ -112,7 +112,7 @@ algorithm
     f.rt := EoS.f_rt(delta=delta, tau=tau);
     RES_s := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
 
-    while ((abs(RES_s) > tolerance) and (iter<iter_max)) loop
+    while ((abs(RES_s/s) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
 
       // calculate gradient with respect to density
@@ -186,9 +186,9 @@ algorithm
           end if;
         // Modelica.Utilities.Streams.print("Ridders' method: new brackets d_min=" + String(d_min) + ", d_max=" + String(d_max), "printlog.txt");
         else
-          if (RES_min<tolerance) then
+          if (abs(RES_min/s)<tolerance) then
             d_iter:= d_min;
-          elseif (RES_max<tolerance) then
+          elseif (abs(RES_max/s)<tolerance) then
             d_iter:=d_max;
           else
             assert(false, "Ancillary.saturationTemperature_d (vapour side): d_min and d_max did not bracket the root");
@@ -203,7 +203,7 @@ algorithm
         f.r  := EoS.f_r(delta=delta, tau=tau);
         f.rt := EoS.f_rt(delta=delta, tau=tau);
         RES_s := R*(tau*(f.it + f.rt) - f.i - f.r) - s;
-        end if;
+      end if;
     end while;
     // Modelica.Utilities.Streams.print("setState_Ts total iteration steps " + String(iter) + " for T=" + String(T) + " and s=" + String(s), "printlog.txt");
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");

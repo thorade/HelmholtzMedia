@@ -62,7 +62,7 @@ protected
     Real RES_p;
     Real dpdT;
     constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-3 "tolerance for RES_p (in Pa)";
+    constant Real tolerance=1e-9 "relative tolerance for RES_p";
     Integer iter=0;
     constant Integer iter_max = 200;
 
@@ -80,7 +80,7 @@ protected
     T_theta := 1-T/T_crit;
     RES_p   := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
 
-    while ((abs(RES_p)>tolerance) and (iter<iter_max)) loop
+    while ((abs(RES_p/p)>tolerance) and (iter<iter_max)) loop
       iter:=iter + 1;
 
       // calculate gradient of RES_p (= gradient of Wagner equation)

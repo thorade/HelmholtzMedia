@@ -27,7 +27,7 @@ protected
   Real RES_p;
   Real dpdT;
   Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-  Real tolerance=1e-6 "tolerance for sum of RES_p (in Pa)";
+  Real tolerance=1e-9 "relative tolerance for RES_p";
   Integer iter = 0;
   constant Integer iter_max = 200;
 
@@ -48,13 +48,13 @@ algorithm
       sat.Tsat := Ancillary.saturationTemperature_p(p=p);
       sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
       sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
-      // Modelica.Utilities.Streams.print("setState_pd: sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d) + ", simple check only");
+      // Modelica.Utilities.Streams.print("setState_pd: sat.Tsat=" + String(sat.Tsat) + " and sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d) + ", simple check only", "printlog.txt");
 
       if ((d < sat.liq.d + abs(0.05*sat.liq.d)) and (d > sat.vap.d - abs(0.05*sat.vap.d))) then
-        // Modelica.Utilities.Streams.print("setState_pd: p = " + String(p) + "d = " + String(d) + ", two-phase state or close to it");
+        // Modelica.Utilities.Streams.print("setState_pd: p = " + String(p) + "d = " + String(d) + ", two-phase state or close to it", "printlog.txt");
         // get saturation properties from EoS
         sat := setSat_p(p=p);
-        // Modelica.Utilities.Streams.print("setState_pd: sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d) + ", from EoS");
+        // Modelica.Utilities.Streams.print("setState_pd: sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d) + ", from EoS", "printlog.txt");
       end if;
 
       if (d > sat.liq.d) then
@@ -102,7 +102,7 @@ algorithm
     f.rd  := EoS.f_rd(delta=delta, tau=tau);
     RES_p := d*T_iter*R*(1+delta*f.rd) - p;
 
-    while ((abs(RES_p) > tolerance) and (iter<iter_max)) loop
+    while ((abs(RES_p/p) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
 
       // calculate gradients with respect to temperature
@@ -110,7 +110,6 @@ algorithm
       dpdT := d*R*(1+delta*f.rd-delta*tau*f.rtd);
 
       // print for debugging
-      // Modelica.Utilities.Streams.print(" ", "printlog.txt");
       // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
       // Modelica.Utilities.Streams.print("T_iter=" + String(T_iter) + " and dpdT=" + String(dpdT), "printlog.txt");
 

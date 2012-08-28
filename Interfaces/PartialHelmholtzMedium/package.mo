@@ -672,15 +672,21 @@ protected
 
     Density d_min;
     Density d_max;
+    Density d_med;
     Density d_iter;
     Real RES_p;
+    Real RES_min;
+    Real RES_max;
+    Real RES_med;
     Real dpdd;
     constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-6 "tolerance for RES_p ";
+    constant Real tolerance=1e-9 "relativ tolerance for RES_p";
     Integer iter = 0;
     constant Integer iter_max=200;
+    Boolean RiddersIsInitialized=false;
 
   algorithm
+    // Modelica.Utilities.Streams.print(" ", "printlog.txt");
     // Modelica.Utilities.Streams.print("p=" + String(p) + " and T=" + String(T), "printlog.txt");
     assert(phase <> 2, "setState_pTX_error: pressure and temperature are not independent variables in two-phase state");
     state.phase := 1;
@@ -689,9 +695,9 @@ protected
       // determine p_sat
       sat.psat := Ancillary.saturationPressure_T(T=T);
       if (p > 1.02*sat.psat) then
-        sat.liq.d := 0.98*Ancillary.bubbleDensity_T(T=T);
+        sat.liq.d := 0.97*Ancillary.bubbleDensity_T(T=T);
       elseif (p < 0.98*sat.psat) then
-        sat.vap.d := 1.02*Ancillary.dewDensity_T(T=T);
+        sat.vap.d := 1.03*Ancillary.dewDensity_T(T=T);
       else
         // Modelica.Utilities.Streams.print("close to saturation boundary, get saturation properties from EoS", "printlog.txt");
         sat := setSat_T(T=T);
@@ -702,13 +708,13 @@ protected
       if (p > sat.psat) then
         // Modelica.Utilities.Streams.print("single phase liquid: d is between dliq and rho_max", "printlog.txt");
         d_min  := sat.liq.d;
-        d_max  := fluidLimits.DMAX;
+        d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
         d_iter := sat.liq.d;
       elseif (p < sat.psat) then
         // Modelica.Utilities.Streams.print("single phase vapor: d is between 0 and dvap", "printlog.txt");
         d_min  := fluidLimits.DMIN;
         d_max  := sat.vap.d;
-        d_iter := sat.vap.d/2;
+        d_iter := sat.vap.d/10;
       else
         // this should not happen
         assert(p <> sat.psat, "setState_pTX_error: pressure equals saturation pressure");
@@ -716,8 +722,8 @@ protected
     else
       // Modelica.Utilities.Streams.print("T>T_crit: d is between dmin and dmax", "printlog.txt");
       d_min  := fluidLimits.DMIN;
-      d_max  := fluidLimits.DMAX;
-      d_iter := d_crit/100;
+      d_max  := 1.1*fluidLimits.DMAX;
+      d_iter := d_crit/50;
     end if;
 
     /* // get density start value from Redlich-Kwong-Soave (see Span 2000, section "3.3.1 Calculations based on pT" )  
@@ -772,7 +778,7 @@ protected
     f.rd  := EoS.f_rd(delta=delta, tau=tau);
     RES_p := d_iter*T*R*(1+delta*f.rd) - p;
 
-    while ((abs(RES_p) > tolerance) and (iter<iter_max)) loop
+    while ((abs(RES_p/p) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
 
       // calculate gradient with respect to density
@@ -783,20 +789,73 @@ protected
       // Modelica.Utilities.Streams.print("Iteration step " +String(iter) + ", current d_iter=" + String(d_iter), "printlog.txt");
       // Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and dpdd=" + String(dpdd), "printlog.txt");
 
-      // calculate better d_iter
+      // calculate better d_iter from Newton
       d_iter := d_iter - gamma/dpdd*RES_p;
 
-      // check bounds
-      d_iter := max(d_min,d_iter);
-      d_iter := min(d_max,d_iter);
-
-      // calculate new RES_p and RES_s
-      delta := d_iter/d_crit;
-      f.rd  := EoS.f_rd(delta=delta, tau=tau);
-      RES_p := d_iter*T*R*(1+delta*f.rd) - p;
+      // check bounds, if out of bounds use Ridders
+        if (d_iter<d_min) or (d_iter>d_max) then
+          // Modelica.Utilities.Streams.print("d_iter out of bounds, fallback to Ridders' method, step=" + String(iter) + ", d_iter=" + String(d_iter), "printlog.txt");
+          if not RiddersIsInitialized then
+            // calculate RES_p for d_min
+            delta := d_min/d_crit;
+            f.rd  := EoS.f_rd(delta=delta, tau=tau);
+            RES_min := d_min*T*R*(1+delta*f.rd) - p;
+            // calculate RES_p for d_max
+            delta := d_max/d_crit;
+            f.rd  := EoS.f_rd(delta=delta, tau=tau);
+            RES_max := d_max*T*R*(1+delta*f.rd) - p;
+            // Modelica.Utilities.Streams.print("initialize Ridders, RES_min=" + String(RES_min) + " and RES_max=" + String( RES_max), "printlog.txt");
+            RiddersIsInitialized := true;
+          end if;
+          if (RES_min*RES_max<0) then
+            // calculate RES_p for d_med
+            d_med := (d_max+1*d_min)/2;
+            delta := d_med/d_crit;
+            f.rd  := EoS.f_rd(delta=delta, tau=tau);
+            RES_med := d_med*T*R*(1+delta*f.rd) - p;
+            // find better d_iter by Ridders' method
+            d_iter := d_med + (d_med-d_min)*sign(RES_min-RES_max)*RES_med/sqrt(RES_med^2-RES_min*RES_max);
+            // calculate new RES_s
+            delta := d_iter/d_crit;
+            f.rd  := EoS.f_rd(delta=delta, tau=tau);
+            RES_p := d_iter*T*R*(1+delta*f.rd) - p;
+            // thighten the bounds
+            if (RES_p*RES_med<=0) then
+              // opposite sign, d_med and d_iter bracket the root
+              d_min := d_iter;
+              RES_min := RES_p;
+              d_max := d_med;
+              RES_max := RES_med;
+            else
+              if (RES_p*RES_min<0) then
+                d_max := d_iter;
+                RES_max := RES_p;
+              elseif (RES_p*RES_max<0) then
+                d_min := d_iter;
+                RES_min := RES_p;
+              else
+                assert(false,"setState_pTX: this should never happen");
+              end if;
+            end if;
+          // Modelica.Utilities.Streams.print("Ridders' method: new brackets d_min=" + String(d_min) + ", d_max=" + String(d_max), "printlog.txt");
+          else
+            if (abs(RES_min/p)<tolerance) then
+              d_iter:= d_min;
+            elseif (abs(RES_max/p)<tolerance) then
+              d_iter:=d_max;
+            else
+              assert(false, "setState_pTX: d_min=" +String(d_min) + " and d_max =" + String(d_max) + " did not bracket the root, input was p=" + String(p) + " and T=" + String(T));
+            end if;
+          end if;
+        else
+          // d_iter from Newton is within bounds
+          // calculate new RES_p
+          delta := d_iter/d_crit;
+          f.rd  := EoS.f_rd(delta=delta, tau=tau);
+          RES_p := d_iter*T*R*(1+delta*f.rd) - p;
+        end if;
     end while;
     // Modelica.Utilities.Streams.print("setState_pTX total iteration steps " + String(iter), "printlog.txt");
-    // Modelica.Utilities.Streams.print(" ", "printlog.txt");
     assert(iter<iter_max, "setState_pTX did not converge, input was p=" + String(p) + " and T=" + String(T));
 
     state.p := p;
@@ -844,8 +903,8 @@ protected
     Real dhdT;
     Real det "determinant of Jacobi matrix";
     Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    Real tolerance=1e-3
-    "tolerance for sum of RES_p (in Pa) and RES_h (in J/kg)";
+    Real tolerance=1e-9
+    "tolerance for sum of relative RES_p and relative RES_h";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -886,7 +945,7 @@ protected
           // Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
           state.phase := 1;
           d_min := sat.liq.d;
-          d_max := fluidLimits.DMAX;
+          d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
           d_iter := sat.liq.d;
           T_min := fluidLimits.TMIN;
           T_max := sat.Tsat;
@@ -909,7 +968,7 @@ protected
         // Modelica.Utilities.Streams.print("p>=p_crit or p<p_trip, only single phase possible", "printlog.txt");
         state.phase := 1;
         d_min := fluidLimits.DMIN;
-        d_max := fluidLimits.DMAX;
+        d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
         d_iter := d_crit;
         T_min := fluidLimits.TMIN;
         T_max := fluidLimits.TMAX;
@@ -936,7 +995,7 @@ protected
       //RES_p := (1+delta*f.rd) - p/(d_iter*R*T_iter);
       //RES_h := ((1+delta*f.rd)+tau*(f.it+f.rt)) - h/(R*T_iter);
 
-      while (((abs(RES_p) + abs(RES_h)) > tolerance) and (iter<iter_max)) loop
+      while (((abs(RES_p/p) + abs(RES_h/h)) > tolerance) and (iter<iter_max)) loop
         iter := iter+1;
 
         // calculate gradients with respect to density and temperature
@@ -1033,8 +1092,8 @@ protected
     Real dsdT;
     Real det "determinant of Jacobi matrix";
     Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    Real tolerance=1e-3
-    "tolerance for sum of RES_p (in Pa) and RES_s (in J/kgK)";
+    Real tolerance=1e-9
+    "tolerance for sum of relative RES_p and relative RES_s ";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -1077,7 +1136,7 @@ protected
           // Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
           state.phase := 1;
           d_min := sat.liq.d;
-          d_max := fluidLimits.DMAX;
+          d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
           d_iter := sat.liq.d;
           T_min := fluidLimits.TMIN;
           T_max := sat.Tsat;
@@ -1100,7 +1159,7 @@ protected
         // Modelica.Utilities.Streams.print("p>=p_crit or p<p_trip, only single phase possible", "printlog.txt");
         state.phase := 1;
         d_min := fluidLimits.DMIN;
-        d_max := fluidLimits.DMAX;
+        d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
         d_iter := d_crit;
         T_min := fluidLimits.TMIN;
         T_max := fluidLimits.TMAX;
@@ -1125,7 +1184,7 @@ protected
       RES_p := d_iter*T_iter*f.R*(1+f.delta*f.rd) - p;
       RES_s := f.R*(f.tau*(f.it + f.rt) - f.i - f.r) - s;
 
-      while (((abs(RES_p) + abs(RES_s)) > tolerance) and (iter<iter_max)) loop
+      while (((abs(RES_p/p) + abs(RES_s/s)) > tolerance) and (iter<iter_max)) loop
         iter := iter+1;
 
         // calculate gradients with respect to density and temperature
