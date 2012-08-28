@@ -87,12 +87,13 @@ partial package PartialHelmholtzMedium
     output SaturationProperties sat;
 
 protected
-    Temperature T_trip=fluidConstants[1].triplePointTemperature;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    constant MolarMass MM = fluidConstants[1].molarMass;
+    constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+    "specific gas constant";
+    constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+    constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
+    constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real tau(unit="1") "inverse reduced temperature";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
-    Real R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
 
     Real delta_liq(unit="1", min=0);
     Real delta_vap(unit="1", min=0);
@@ -220,13 +221,14 @@ with a Newton-Raphson approach for simultaneous equations.
 
     // Boolean verbose=true;
 protected
-    MolarMass MM = fluidConstants[1].molarMass;
-    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
-    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-    Temperature T_trip=fluidConstants[1].triplePointTemperature;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
-    AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
-    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+    constant MolarMass MM = fluidConstants[1].molarMass;
+    constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+    "specific gas constant";
+    constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+    constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
+    constant Temperature T_crit=fluidConstants[1].criticalTemperature;
+    constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
+    constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
     EoS.HelmholtzDerivs fl;
     EoS.HelmholtzDerivs fv;
@@ -356,12 +358,13 @@ protected
     output SaturationProperties sat;
 
 protected
-    Temperature T_trip=fluidConstants[1].triplePointTemperature;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    constant MolarMass MM = fluidConstants[1].molarMass;
+    constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+    "specific gas constant";
+    constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+    constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
+    constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real tau(unit="1") "inverse reduced temperature";
-    Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
-    Real R=Modelica.Constants.R/fluidConstants[1].molarMass
-    "specific gas constant in J/kg.K";
 
     Density d_min =  fluidLimits.DMIN;
     Density d_max =  fluidLimits.DMAX;
