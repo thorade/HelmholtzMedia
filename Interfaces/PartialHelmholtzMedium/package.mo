@@ -219,7 +219,6 @@ with a Newton-Raphson approach for simultaneous equations.
     input AbsolutePressure p;
     output SaturationProperties sat;
 
-    // Boolean verbose=true;
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
     constant SpecificHeatCapacity R=Modelica.Constants.R/MM
@@ -245,6 +244,9 @@ protected
     Real f2dy;
     Real f2dz;
 
+    Real gl;
+    Real gv;
+    Real g;
     Real RES_g;
     Real f3dx;
     Real f3dy;
@@ -252,8 +254,8 @@ protected
 
     Real det "determinant of Jacobi matrix";
     Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    Real tolerance=1e-3
-    "tolerance for sum of RES_pl (in Pa), RES_pv (in Pa) and RES_g (in J/kg)";
+    Real tolerance=1e-6
+    "tolerance for sum of relative RES_pl, RES_pv and RES_g";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -269,15 +271,17 @@ protected
     sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
     sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
 
-    // calculate residuals
+    // calculate residuals: RES=calc-input
     fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
     fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
     RES_pl := fl.d*fl.T*fl.R*(1+fl.delta*fl.rd) - p;   // f1
     RES_pv := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd) - p;   // f2
-    RES_g  := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd))
-            - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));  // f3
+    gl     := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
+    gv     := fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
+    g      := (gl+gv)/2;
+    RES_g  := gl - gv;  // f3
 
-    while (((abs(RES_pl) + abs(RES_pv) + abs(RES_g)) > tolerance) and (iter<iter_max)) loop
+    while (((abs(RES_pl/p) + abs(RES_pv/p) + abs(RES_g/g)) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
 
       // calculate gradients of f1,f2,f3 with respect to x,y,z
@@ -314,20 +318,29 @@ protected
       sat.liq.d := min(sat.liq.d, 1.02*dl_trip);
       sat.vap.d := max(sat.vap.d, 0.98*dv_trip);
       sat.vap.d := min(sat.vap.d, 1.02*d_crit);
-      sat.Tsat := max(sat.Tsat, 0.98*T_trip);
-      sat.Tsat := min(sat.Tsat, 1.02*T_crit);
+      sat.Tsat  := max(sat.Tsat,  0.98*T_trip);
+      sat.Tsat  := min(sat.Tsat,  1.02*T_crit);
 
-      // calculate new residual
+      // calculate new residuals: RES=calc-input
       fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
       fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
       RES_pl := fl.d*fl.T*fl.R*(1+fl.delta*fl.rd) - p;   // f1
       RES_pv := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd) - p;   // f2
-      RES_g  := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd))
-              - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));  // f3
+      gl     := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
+      gv     := fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
+      g      := (gl+gv)/2;
+      RES_g  := gl - gv;  // f3
     end while;
     // if verbose then Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt"); end if;
     // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
     assert(iter<iter_max, "setSat_p did not converge, input was p=" + String(p) + "; the remaining residuals are RES_pl=" + String(RES_pl) + " and RES_pv=" + String(RES_pv) + " and RES_g=" + String(RES_g));
+    // check bounds, more strict
+    sat.liq.d := max(sat.liq.d, d_crit);
+    sat.liq.d := min(sat.liq.d, dl_trip);
+    sat.vap.d := max(sat.vap.d, dv_trip);
+    sat.vap.d := min(sat.vap.d, d_crit);
+    sat.Tsat  := max(sat.Tsat,  T_trip);
+    sat.Tsat  := min(sat.Tsat,  T_crit);
 
   elseif (p>=p_crit) then
     // assert(p <= p_crit, "setSat_p error: pressure is higher than critical pressure");
@@ -368,15 +381,19 @@ protected
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real tau(unit="1") "inverse reduced temperature";
-
+    constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
+    constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     constant Density dv_trip = Ancillary.dewDensity_T(T_trip);
     constant Density dl_trip = Ancillary.bubbleDensity_T(T_trip);
 
     EoS.HelmholtzDerivs fl;
     EoS.HelmholtzDerivs fv;
 
+    Real pl;
+    Real pv;
     Real RES_p;
+    Real gl;
+    Real gv;
     Real RES_g;
     Real dpdd;
     Real dpdT;
@@ -384,8 +401,7 @@ protected
     Real dgdT;
     Real det "determinant of Jacobi matrix";
     Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    Real tolerance=1e-3
-    "tolerance for sum of RES_p (in Pa) and RES_g (in J/kg)";
+    Real tolerance=1e-6 "tolerance for sum of relative RES_p and RES_g";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -397,18 +413,21 @@ protected
     if (d<d_crit) and (d>dv_trip) then
       // Modelica.Utilities.Streams.print("d<d_crit: input is on vapour side: find d_liq and T_sat", "printlog.txt");
       sat.liq.d := Ancillary.bubbleDensity_T(sat.Tsat);
-      sat.vap.d := d; // d'' is a constant
+      sat.vap.d := d; // d_vap is a constant
 
-      // calculate residuals: liq-vap
+      // calculate residuals: liq-vap (=var-const)
       fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
       fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
-      RES_p := fl.d*fl.T*fl.R*(1+fl.delta*fl.rd)
-             - fv.d*fv.T*fv.R*(1+fv.delta*fv.rd);
-      RES_g := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd))
-             - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
+      pl := fl.d*fl.T*fl.R*(1+fl.delta*fl.rd);
+      pv := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd);
+      gl := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
+      gv := fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
+      RES_p  := pl - pv;
+      RES_g  := gl - gv;
 
-      while (abs(RES_p) + abs(RES_g) > tolerance) and (iter<iter_max) loop
+      while (abs(RES_p)>tolerance or abs(RES_g)>tolerance) and (iter<iter_max) loop
         iter := iter+1;
+        // gamma := (iter_max-iter)/iter_max;
 
         // calculate gradients regarding d_liq and T
         dpdd := fl.T*fl.R*(1+2*fl.delta*fl.rd + fl.delta^2*fl.rdd);
@@ -441,26 +460,33 @@ protected
         // calculate new residuals: liq-vap
         fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
         fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
-        RES_p := fl.d*fl.T*fl.R*(1+fl.delta*fl.rd)
-               - fv.d*fv.T*fv.R*(1+fv.delta*fv.rd);
-        RES_g := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd))
-               - fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
+        pl := fl.d*fl.T*fl.R*(1+fl.delta*fl.rd);
+        pv := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd);
+        RES_p := pl - pv;
+        gl    := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
+        gv    := fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
+        RES_g := gl - gv;
       end while;
+      sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
+      sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
+      sat.psat := sat.liq.p;
 
     elseif (d>d_crit) and (d<dl_trip) then
       // Modelica.Utilities.Streams.print("d>d_crit: input is on liquid side: find d_vap and T_sat", "printlog.txt");
       sat.vap.d := Ancillary.dewDensity_T(sat.Tsat);
-      sat.liq.d := d; // d' is a constant
+      sat.liq.d := d; // d_liq is a constant
 
-      // calculate residuals: vap-liq
+      // calculate residuals: vap-liq (=var-const)
       fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
       fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
-      RES_p := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd)
-             - fl.d*fl.T*fl.R*(1+fl.delta*fl.rd);
-      RES_g := fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd))
-             - fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
+      pv := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd);
+      pl := fl.d*fl.T*fl.R*(1+fl.delta*fl.rd);
+      RES_p := pv - pl;
+      gv     := fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
+      gl     := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
+      RES_g  := gv - gl;
 
-      while (abs(RES_p) + abs(RES_g) > tolerance) and iter<iter_max loop
+      while (abs(RES_p)>tolerance or abs(RES_g)>tolerance) and (iter<iter_max) loop
         iter := iter+1;
 
         // calculate gradients regarding d_liq and T
@@ -491,32 +517,35 @@ protected
         sat.Tsat  := max(sat.Tsat,  0.98*T_trip);
         sat.Tsat  := min(sat.Tsat,  1.02*T_crit);
 
-        // calculate new residuals: liq-vap
+        // calculate new residuals: vap-liq
         fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1);
         fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1);
-        RES_p := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd)
-               - fl.d*fl.T*fl.R*(1+fl.delta*fl.rd);
-        RES_g := fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd))
-               - fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
+        pv := fv.d*fv.T*fv.R*(1+fv.delta*fv.rd);
+        pl := fl.d*fl.T*fl.R*(1+fl.delta*fl.rd);
+        RES_p := pv - pl;
+        gv     := fv.T*fv.R*((fv.i+fv.r)+(1+fv.delta*fv.rd));
+        gl     := fl.T*fl.R*((fl.i+fl.r)+(1+fl.delta*fl.rd));
+        RES_g  := gv - gl;
       end while;
+      sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
+      sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
+      sat.psat := sat.liq.p;
 
     elseif (d>=dl_trip) or (d<=dv_trip) then
       // Modelica.Utilities.Streams.print("d>d_max: this is single-phase fluid, or probably solid, return input values", "printlog.txt");
-      sat.Tsat := T_trip;
-      sat.liq.d := dl_trip;
-      sat.vap.d := dv_trip;
+      sat.Tsat:= T_trip;
+      sat.psat:= p_trip;
+      sat.liq := setState_dTX(d=dl_trip, T=T_trip, phase=1);
+      sat.vap := setState_dTX(d=dv_trip, T=T_trip, phase=1);
     else
       // Modelica.Utilities.Streams.print("d=d_crit: return critical values", "printlog.txt");
-      sat.Tsat  := T_crit;
-      sat.liq.d := d_crit;
-      sat.vap.d := d_crit;
+      sat.Tsat := T_crit;
+      sat.psat := p_crit;
+      sat.liq := setState_dTX(d=d_crit, T=T_crit, phase=1);
+      sat.vap := setState_dTX(d=d_crit, T=T_crit, phase=1);
     end if;
     // Modelica.Utilities.Streams.print("setSat_d total iteration steps " + String(iter), "printlog.txt");
     assert(iter<iter_max, "setSat_d did not converge, input was d=" + String(d));
-
-    sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
-    sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
-    sat.psat := sat.liq.p;
 
   end setSat_d;
 

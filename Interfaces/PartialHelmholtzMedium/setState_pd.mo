@@ -53,7 +53,7 @@ algorithm
       // Modelica.Utilities.Streams.print("setState_pd: sat.Tsat=" + String(sat.Tsat) + " and sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d) + ", simple check only", "printlog.txt");
 
       if ((d < sat.liq.d + abs(0.05*sat.liq.d)) and (d > sat.vap.d - abs(0.05*sat.vap.d))) or (p<300*p_trip) or (p>0.98*p_crit) then
-         Modelica.Utilities.Streams.print("setState_pd: p = " + String(p) + "d = " + String(d) + ", two-phase state or close to it", "printlog.txt");
+        // Modelica.Utilities.Streams.print("setState_pd: p = " + String(p) + "d = " + String(d) + ", two-phase state or close to it", "printlog.txt");
         // get saturation properties from EoS
         sat := setSat_p(p=p);
       end if;
@@ -66,7 +66,7 @@ algorithm
         T_iter:= Ancillary.saturationTemperature_d(d=d); // look at subcritical isobars in T,d-Diagram !!
         T_min := 0.98*T_iter;
       elseif (d < sat.vap.d) then
-         Modelica.Utilities.Streams.print("single phase vapour", "printlog.txt");
+        // Modelica.Utilities.Streams.print("single phase vapour", "printlog.txt");
         state.phase := 1;
         T_min := sat.Tsat;
         T_iter:= sat.Tsat;
@@ -110,8 +110,8 @@ algorithm
       dpdT := d*R*(1+delta*f.rd-delta*tau*f.rtd);
 
       // print for debugging
-       Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-       Modelica.Utilities.Streams.print("T_iter=" + String(T_iter) + " and dpdT=" + String(dpdT), "printlog.txt");
+      // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
+      // Modelica.Utilities.Streams.print("T_iter=" + String(T_iter) + " and dpdT=" + String(dpdT), "printlog.txt");
 
       // calculate better d_iter and T_iter
       T_iter := T_iter - gamma/dpdT*RES_p;

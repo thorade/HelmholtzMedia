@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Sweep;
 model setSat_sweep
-  package medium = HelmholtzFluids.Propane;
+  package medium = HelmholtzFluids.Butane;
   medium.SaturationProperties sat;
   medium.SaturationProperties sat_p;
   medium.SaturationProperties sat_dl;
