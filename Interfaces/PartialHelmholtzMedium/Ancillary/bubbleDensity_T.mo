@@ -44,6 +44,9 @@ algorithm
     T_theta := max((1 - T/T_crit)^(1/3), Modelica.Constants.small); // even
     delta   := sum(n[i]*T_theta^theta[i] for i in 1:nDliq);
     delta   := exp(tau*delta);   // DL5 or DL6
+
+  else
+    assert(false, "bubbleDensity_d: this should not happen, check DensityLiquidModel");
   end if;
 
   dliq := d_crit*delta;

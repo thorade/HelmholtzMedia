@@ -44,7 +44,11 @@ algorithm
     T_theta := max((1 - T/T_crit)^(1/3), Modelica.Constants.small); // even
     delta := sum(n[i]*T_theta^theta[i] for i in 1:nDvap);
     delta := exp(tau*delta);   // DV5 or DV6
+
+  else
+    assert(false, "dewDensity_d: this should not happen, check DensityVaporModel");
   end if;
 
   dvap := d_crit*delta;
+
 end dewDensity_T;
