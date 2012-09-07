@@ -1504,10 +1504,8 @@ protected
 
     SaturationProperties sat;
     DerPressureByTemperature dpT;
-    EoS.HelmholtzDerivs
-                    f_liq;
-    EoS.HelmholtzDerivs
-                    f_vap;
+    EoS.HelmholtzDerivs f_liq;
+    EoS.HelmholtzDerivs f_vap;
     DerPressureByTemperature dpTd_liq;
     DerPressureByTemperature dpTd_vap;
     DerPressureByDensity dpdT_liq;
