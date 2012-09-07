@@ -10,7 +10,7 @@ protected
 algorithm
   if (state.phase == 1) then
     f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
-    dhdT := state.T*f.R/state.d*(0+f.tau*f.delta*f.rtd + f.delta*f.rd + f.delta^2*f.rdd);
+    dhdT := EoS.dhdT(f);
   elseif (state.phase == 2) then
     // dhvT = (h"-h')/(v"-v')
     // dhdT = -1/d^2 * dhvT

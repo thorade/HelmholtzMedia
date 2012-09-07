@@ -8,9 +8,8 @@ protected
 
 algorithm
   if (state.phase == 1) then
-    f:=EoS.setHelmholtzDerivsSecond(
-                              T=state.T, d=state.d, phase=state.phase);
-    dpdT := state.T*f.R*(1 + 2*f.delta*f.rd + f.delta^2*f.rdd);
+    f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
+    dpdT := EoS.dpdT(f);
   elseif (state.phase == 2) then
     dpdT := Modelica.Constants.small; // zero
   end if;

@@ -10,7 +10,7 @@ protected
 algorithm
   if (state.phase == 1) then
     f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
-    dpTd := state.d*f.R*(1 + f.delta*f.rd - f.delta*f.tau*f.rtd);
+    dpTd := EoS.dpTd(f);
   elseif (state.phase == 2) then
     sat:=setSat_T(T=state.T);
     dpTd := saturationPressure_derT(T=state.T, sat=sat);
