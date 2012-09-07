@@ -13,24 +13,22 @@ protected
   constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-  constant Real delta(unit="1")=d/d_crit "reduced density";
-  Real tau(unit="1") "inverse reduced temperature";
   constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
   constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
   constant Density dv_trip = Ancillary.dewDensity_T(T_trip);
   constant Density dl_trip = Ancillary.bubbleDensity_T(T_trip);
 
-  EoS.HelmholtzDerivs f;
+  EoS.HelmholtzDerivs f(d=d);
   SaturationProperties sat;
   MassFraction x "vapour quality";
 
   Temperature T_min=fluidLimits.TMIN;
   Temperature T_max=fluidLimits.TMAX;
   Temperature T_iter=T_crit;
-  Real RES_p;
-  Real dpdT;
-  Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-  Real tolerance=1e-9 "relative tolerance for RES_p";
+  AbsolutePressure RES_p;
+  DerPressureByTemperature dpTd "(dp/dT)@d=const";
+  constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+  constant Real tolerance=1e-9 "relative tolerance for RES_p";
   Integer iter = 0;
   constant Integer iter_max = 200;
 
@@ -98,32 +96,34 @@ algorithm
     // force single-phase
 
     // calculate RES_p
-    tau := T_crit/T_iter;
-    f.rd  := EoS.f_rd(delta=delta, tau=tau);
-    RES_p := d*T_iter*R*(1+delta*f.rd) - p;
+    f.T := T_iter;
+    f.tau := T_crit/f.T;
+    f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+    RES_p := EoS.p(f) - p;
 
     while ((abs(RES_p/p) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
 
       // calculate gradients with respect to temperature
-      f.rtd := EoS.f_rtd(delta=delta, tau=tau);
-      dpdT := d*R*(1+delta*f.rd-delta*tau*f.rtd);
+      f.rtd := EoS.f_rtd(delta=f.delta, tau=f.tau);
+      dpTd := EoS.dpTd(f);
 
       // print for debugging
       // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
       // Modelica.Utilities.Streams.print("T_iter=" + String(T_iter) + " and dpdT=" + String(dpdT), "printlog.txt");
 
       // calculate better d_iter and T_iter
-      T_iter := T_iter - gamma/dpdT*RES_p;
+      T_iter := T_iter - gamma/dpTd*RES_p;
 
       // check bounds
       T_iter := max(T_iter,0.98*T_min);
       T_iter := min(T_iter,1.02*T_max);
 
       // calculate new RES_p
-      tau := T_crit/T_iter;
-      f.rd  := EoS.f_rd(delta=delta, tau=tau);
-      RES_p := d*T_iter*R*(1+delta*f.rd) - p;
+      f.T := T_iter;
+      f.tau := T_crit/f.T;
+      f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+      RES_p := EoS.p(f) - p;
     end while;
     // Modelica.Utilities.Streams.print("setState_pdX total iteration steps " + String(iter), "printlog.txt");
     assert(iter<iter_max, "setState_pdX did not converge, input was p=" + String(p) + " and d=" + String(d));
@@ -131,13 +131,10 @@ algorithm
     state.p := p;
     state.d := d;
     state.T := T_iter;
-    f.i   := EoS.f_i(tau=tau, delta=delta);
-    f.it  := EoS.f_it(tau=tau, delta=delta);
-    f.r   := EoS.f_r(tau=tau, delta=delta);
-    f.rt  := EoS.f_rt(tau=tau, delta=delta);
-    state.h := state.T*R*(tau*(f.it + f.rt) + (1+delta*f.rd));
-    state.u := state.T*R*(tau*(f.it+f.rt));
-    state.s :=         R*(tau*(f.it+f.rt) - (f.i+f.r));
+    f := EoS.setHelmholtzDerivsFirst(d=state.d, T=state.T);
+    state.h := EoS.h(f);
+    state.u := EoS.u(f);
+    state.s := EoS.s(f);
   end if;
 
 end setState_pd;

@@ -9,7 +9,7 @@ protected
 
 algorithm
   if (state.phase == 1) then
-    f:=EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase);
+    f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
     dhTd := f.R*(1 - f.tau^2*(f.itt+f.rtt) + f.delta*f.rd - f.tau*f.delta*f.rtd);
   elseif (state.phase == 2) then
     sat:=setSat_T(T=state.T);

@@ -8,19 +8,16 @@ function setHelmholtzDerivsFirst
 
 protected
   constant MolarMass MM = fluidConstants[1].molarMass;
-  constant SpecificHeatCapacity R=Modelica.Constants.R/MM
-    "specific gas constant";
   constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
   constant Real delta(unit="1")=d/d_crit "reduced density";
   constant Real tau(unit="1")=T_crit/T "inverse reduced temperature";
 
 algorithm
-  f.T := T;
   f.d := d;
-  f.R := R;
-  f.tau := tau;
+  f.T := T;
   f.delta := delta;
+  f.tau := tau;
 
   if (phase==1) then
     f.i   := f_i(tau=tau, delta=delta);
