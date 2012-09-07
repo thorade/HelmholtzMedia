@@ -1345,8 +1345,8 @@ protected
 
     SaturationProperties sat;
     DerPressureByTemperature dpT;
-    EoS.HelmholtzDerivs f_liq;
-    EoS.HelmholtzDerivs f_vap;
+    EoS.HelmholtzDerivs fl;
+    EoS.HelmholtzDerivs fv;
     DerPressureByTemperature dpTd_liq;
     DerPressureByTemperature dpTd_vap;
     DerPressureByDensity dpdT_liq;
@@ -1359,26 +1359,24 @@ protected
 
   algorithm
     if (state.phase == 1) then
-      f:=EoS.setHelmholtzDerivsSecond(
-                                T=state.T, d=state.d, phase=1);
-      cv := R*(-tau^2*(f.itt + f.rtt));
+      f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      cv := EoS.duTd(f);
+
     elseif (state.phase == 2) then
       sat:=setSat_T(T=state.T);
       // assert(false, "specificHeatCapacityCv warning: using cv in two-phase region", level=AssertionLevel.warning);
       // two-phase definition as in Span(2000), eq. 3.79 + 3.80 + 3.86
       // Attention: wrong sign in eq. 3.80
       dpT := saturationPressure_derT(T=state.T, sat=sat);
-      f_liq := EoS.setHelmholtzDerivsSecond(
-                                      T=state.T, d=sat.liq.d, phase=1);
-      f_vap := EoS.setHelmholtzDerivsSecond(
-                                      T=state.T, d=sat.vap.d, phase=1);
-      dpTd_liq := pressure_derT_d(state=sat.liq);
-      dpTd_vap := pressure_derT_d(state=sat.vap);
-      dpdT_liq := pressure_derd_T(state=sat.liq);
-      dpdT_vap := pressure_derd_T(state=sat.vap);
+      fl := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.liq.d, phase=1);
+      fv := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.vap.d, phase=1);
+      dpTd_liq := EoS.dpTd(fl);
+      dpTd_vap := EoS.dpTd(fv);
+      dpdT_liq := EoS.dpdT(fl);
+      dpdT_vap := EoS.dpdT(fv);
 
-      cv_lim2liq := R*(-tau^2*(f_liq.itt + f_liq.rtt)) + state.T/sat.liq.d^2 * (dpTd_liq-dpT)^2/dpdT_liq;
-      cv_lim2vap := R*(-tau^2*(f_vap.itt + f_vap.rtt)) + state.T/sat.vap.d^2 * (dpTd_vap-dpT)^2/dpdT_vap;
+      cv_lim2liq := R*(-tau^2*(fl.itt + fl.rtt)) + state.T/sat.liq.d^2 * (dpTd_liq-dpT)^2/dpdT_liq;
+      cv_lim2vap := R*(-tau^2*(fv.itt + fv.rtt)) + state.T/sat.vap.d^2 * (dpTd_vap-dpT)^2/dpdT_vap;
 
       x := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
       cv := cv_lim2liq + x*(cv_lim2vap-cv_lim2liq);
@@ -1415,13 +1413,9 @@ protected
 
   algorithm
     if (state.phase == 1) then
-      f:=EoS.setHelmholtzDerivsSecond(
-                                 T=state.T, d=state.d, phase=1);
-      // Attention: wrong in Span(2000) table 3.10
-      // correct in Lemmon(2000)
-      // 1/v*(dv/dT)@p = -1/d*(dd/dT)@p = +1/d * (dp/dT)@d / (dp/dT)@d
-      dpTd := pressure_derT_d(state=state);
-      dpdT := pressure_derd_T(state=state);
+      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      dpTd := EoS.dpTd(f);
+      dpdT := EoS.dpdT(f);
       beta := 1/state.d*dpTd/dpdT;
     elseif (state.phase == 2) then
       beta := Modelica.Constants.small; // zero
@@ -1440,9 +1434,8 @@ protected
 
   algorithm
     if (state.phase == 1) then
-      f:=EoS.setHelmholtzDerivsSecond(
-                                T=state.T, d=state.d, phase=1);
-      dpdT := pressure_derd_T(state=state);
+      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      dpdT := EoS.dpdT(f);
       kappa := 1/(state.d*dpdT);
     elseif (state.phase == 2) then
       kappa := Modelica.Constants.inf; // divide by zero
@@ -2013,15 +2006,13 @@ The extended version has up to three terms with two parameters each.
     output DerDensityByTemperature ddTh "Density derivative w.r.t. temperature";
 
 protected
+    EoS.HelmholtzDerivs f;
     SaturationProperties sat;
-    Types.DerEnthalpyByTemperature dhTd;
-    Types.DerEnthalpyByDensity dhdT;
 
   algorithm
     if (state.phase == 1) then
-      dhTd := specificEnthalpy_derT_d(state=state);
-      dhdT := specificEnthalpy_derd_T(state=state);
-      ddTh := -dhTd/dhdT;
+      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
+      ddTh := -EoS.dhTd(f)/EoS.dhdT(f);
     elseif (state.phase == 2) then
       sat:=setSat_T(T=state.T);
       ddTh := 50000000000000000;
@@ -2034,12 +2025,12 @@ protected
   //input state and output ddpT are inherited
 
 protected
-    Types.DerPressureByDensity dpdT;
+    EoS.HelmholtzDerivs f;
 
   algorithm
     if (state.phase == 1) then
-      dpdT := pressure_derd_T(state=state);
-      ddpT := 1.0/dpdT;
+      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
+      ddpT := 1.0/EoS.dpdT(f);
     elseif (state.phase == 2) then
       ddpT := Modelica.Constants.inf; // divide by zero
     end if;
@@ -2051,14 +2042,12 @@ protected
   //input state and output ddTp are inherited
 
 protected
-    Types.DerPressureByTemperature dpTd;
-    Types.DerPressureByDensity dpdT;
+    EoS.HelmholtzDerivs f;
 
   algorithm
     if (state.phase == 1) then
-      dpdT := pressure_derd_T(state=state);
-      dpTd := pressure_derT_d(state=state);
-      ddTp := -dpTd/dpdT;
+      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
+      ddTp := -EoS.dpTd(f)/EoS.dpdT(f);
     elseif (state.phase == 2) then
       ddTp := Modelica.Constants.inf; // divide by zero
     end if;
@@ -2071,22 +2060,17 @@ protected
   //output ddph
 
 protected
+    EoS.HelmholtzDerivs f;
     SaturationProperties sat;
-    Types.DerPressureByDensity dpdT;
-    Types.DerPressureByTemperature dpTd;
-          DerDensityByTemperature ddTh;
 
   algorithm
     if (state.phase == 1) then
-      dpdT := pressure_derd_T(state=state);
-      dpTd := pressure_derT_d(state=state);
-      ddTh := density_derT_h(state=state);
-      ddph := 1.0/(dpdT + dpTd/ddTh);
+      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
+      ddph := 1.0/(EoS.dpdT(f) - EoS.dpTd(f)*EoS.dhdT(f)/EoS.dhTd(f));
     elseif (state.phase == 2) then
       sat:=setSat_T(T=state.T);
-      dpTd := pressure_derT_d(state=state);
-      ddph := state.d^2/state.T*specificHeatCapacityCv(state=state)/dpTd^2
-              + state.d/state.T/dpTd;
+      ddph := state.d^2/state.T*specificHeatCapacityCv(state=state)/saturationPressure_derT(T=state.T, sat=sat)^2
+              + state.d/state.T/saturationPressure_derT(T=state.T, sat=sat);
     end if;
   end density_derp_h;
 
@@ -2097,17 +2081,13 @@ protected
   //output ddhp
 
 protected
+    EoS.HelmholtzDerivs f;
     SaturationProperties sat;
-    Types.DerEnthalpyByDensity dhdT;
-    Types.DerEnthalpyByTemperature dhTd;
-          DerDensityByTemperature ddTp;
 
   algorithm
     if (state.phase == 1) then
-      dhdT := specificEnthalpy_derd_T(state=state);
-      dhTd := specificEnthalpy_derT_d(state=state);
-      ddTp := density_derT_p(state=state);
-      ddhp := 1.0/(dhdT + dhTd/ddTp);
+      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
+      ddhp := 1.0/(EoS.dhdT(f) - EoS.dhTd(f)*EoS.dpdT(f)/EoS.dpTd(f));
     elseif (state.phase == 2) then
       sat:=setSat_T(T=state.T);
       // dvhp = (v"-v')/(h"-h')
