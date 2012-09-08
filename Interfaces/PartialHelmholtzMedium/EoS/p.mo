@@ -1,5 +1,5 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS;
-function p "returns p from EoS"
+function p "returns pressure p from EoS"
   input HelmholtzDerivs f;
   output AbsolutePressure p;
 

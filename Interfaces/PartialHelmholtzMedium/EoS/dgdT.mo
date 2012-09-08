@@ -1,5 +1,5 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS;
-function dgdT "returns pressure derivative (dg/dd)@T=const"
+function dgdT "returns Gibbs energy derivative (dg/dd)@T=const"
   input EoS.HelmholtzDerivs f;
   output DerEnergyByDensity dgdT;
 

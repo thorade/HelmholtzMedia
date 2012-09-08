@@ -1,5 +1,5 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS;
-function dsdT "returns pressure derivative (ds/dd)@T=const"
+function dsdT "returns entropy derivative (ds/dd)@T=const"
   input EoS.HelmholtzDerivs f;
   output DerEntropyByDensity dsdT;
 

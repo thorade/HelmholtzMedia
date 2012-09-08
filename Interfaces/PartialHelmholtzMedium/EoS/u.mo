@@ -1,5 +1,5 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS;
-function u "returns specifc energy u from EoS"
+function u "returns specifc internal energy u from EoS"
   input HelmholtzDerivs f;
   output SpecificEnergy u;
 
