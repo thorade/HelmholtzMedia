@@ -47,6 +47,8 @@ model Derivatives_TwoPhase
 protected
   Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
+  Medium.Types.DerPressureByTemperature dpT = (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);
+  Medium.Types.DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
   Medium.EoS.HelmholtzDerivs fl=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs fv=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.vap.d, phase=1);
   Medium.MassFraction x=Medium.vapourQuality(state=state);
@@ -63,38 +65,38 @@ protected
   Medium.Types.DerEntropyByDensity dsdT_liq = fl.R/sat.liq.d*(-(1+fl.delta*fl.rd)+(0+fl.tau*fl.delta*fl.rtd));
   Medium.Types.DerEntropyByTemperature dsTp_liq = dsTd_liq-dsdT_liq*Medium.pressure_derT_d(state=sat.liq)/Medium.pressure_derd_T(state=sat.liq);
   Medium.Types.DerEntropyByPressure dspT_liq = dsdT_liq/Medium.pressure_derd_T(state=sat.liq);
-  Medium.Types.DerEntropyByTemperature dsT_liq = dsTp_liq+dspT_liq*Medium.saturationPressure_derT(T=T);
+  Medium.Types.DerEntropyByTemperature dsT_liq = dsTp_liq+dspT_liq*dpT;
   Medium.Types.DerEntropyByPressure dsp_liq = dspT_liq+dsTp_liq*Medium.saturationTemperature_derp(p=state.p);
   Medium.Types.DerEntropyByTemperature dsTd_vap = fv.R/T*(-fv.tau^2*(fv.itt+fv.rtt));
   Medium.Types.DerEntropyByDensity dsdT_vap = fv.R/sat.vap.d*(-(1+fv.delta*fv.rd)+(0+fv.tau*fv.delta*fv.rtd));
   Medium.Types.DerEntropyByTemperature dsTp_vap = dsTd_vap-dsdT_vap*Medium.pressure_derT_d(state=sat.vap)/Medium.pressure_derd_T(state=sat.vap);
   Medium.Types.DerEntropyByPressure dspT_vap = dsdT_vap/Medium.pressure_derd_T(state=sat.vap);
-  Medium.Types.DerEntropyByTemperature dsT_vap = dsTp_vap+dspT_vap*Medium.saturationPressure_derT(T=T);
-  Medium.Types.DerEntropyByPressure dsp_vap = dspT_vap+dsTp_vap*Medium.saturationTemperature_derp(p=state.p);
+  Medium.Types.DerEntropyByTemperature dsT_vap = dsTp_vap+dspT_vap*dpT;
+  Medium.Types.DerEntropyByPressure dsp_vap = dspT_vap+dsTp_vap*dTp;
 // Internal energy derivatives along saturation line
   Medium.Types.DerEnergyByDensity dudT_liq = fl.R*T/sat.liq.d*fl.tau*fl.delta*fl.rtd;
   Medium.Types.DerEnergyByTemperature duTd_liq = Medium.specificHeatCapacityCv(state=sat.liq);
   Medium.Types.DerEnergyByTemperature duTp_liq = duTd_liq-dudT_liq*Medium.pressure_derT_d(state=sat.liq)/Medium.pressure_derd_T(state=sat.liq);
   Medium.Types.DerEnergyByPressure dupT_liq = dudT_liq/Medium.pressure_derd_T(state=sat.liq);
-  Medium.Types.DerEnergyByTemperature duT_liq = duTp_liq+dupT_liq*Medium.saturationPressure_derT(T=T);
+  Medium.Types.DerEnergyByTemperature duT_liq = duTp_liq+dupT_liq*dpT;
   Medium.Types.DerEnergyByDensity dudT_vap = fv.R*T/sat.vap.d*fv.tau*fv.delta*fv.rtd;
   Medium.Types.DerEnergyByTemperature duTd_vap = Medium.specificHeatCapacityCv(state=sat.vap);
   Medium.Types.DerEnergyByTemperature duTp_vap = duTd_vap-dudT_vap*Medium.pressure_derT_d(state=sat.vap)/Medium.pressure_derd_T(state=sat.vap);
   Medium.Types.DerEnergyByPressure dupT_vap = dudT_vap/Medium.pressure_derd_T(state=sat.vap);
-  Medium.Types.DerEnergyByTemperature duT_vap = duTp_vap+dupT_vap*Medium.saturationPressure_derT(T=T);
+  Medium.Types.DerEnergyByTemperature duT_vap = duTp_vap+dupT_vap*dpT;
 // Density derivatives along saturation line
-  Medium.DerDensityByTemperature ddT_liq = Medium.density_derT_p(state=sat.liq) +Medium.density_derp_T(state=sat.liq)*Medium.saturationPressure_derT(T=sat.Tsat);
-  Medium.DerDensityByTemperature ddT_vap = Medium.density_derT_p(state=sat.vap) +Medium.density_derp_T(state=sat.vap)*Medium.saturationPressure_derT(T=sat.Tsat);
-  Medium.DerDensityByPressure ddp_liq = Medium.density_derp_T(state=sat.liq) +Medium.density_derT_p(state=sat.liq)*Medium.saturationTemperature_derp(p=sat.psat);
-  Medium.DerDensityByPressure ddp_vap = Medium.density_derp_T(state=sat.vap) +Medium.density_derT_p(state=sat.vap)*Medium.saturationTemperature_derp(p=sat.psat);
+  Medium.DerDensityByTemperature ddT_liq = Medium.density_derT_p(state=sat.liq) +Medium.density_derp_T(state=sat.liq)*dpT;
+  Medium.DerDensityByTemperature ddT_vap = Medium.density_derT_p(state=sat.vap) +Medium.density_derp_T(state=sat.vap)*dpT;
+  Medium.DerDensityByPressure ddp_liq = Medium.density_derp_T(state=sat.liq) +Medium.density_derT_p(state=sat.liq)*dTp;
+  Medium.DerDensityByPressure ddp_vap = Medium.density_derp_T(state=sat.vap) +Medium.density_derT_p(state=sat.vap)*dTp;
 // Specific Volume derivatives along saturatin line
   Real dvT_liq = -1/sat.liq.d^2 * ddT_liq;
   Real dvT_vap = -1/sat.vap.d^2 * ddT_vap;
   Real dvp_liq = -1/sat.liq.d^2 * ddp_liq;
   Real dvp_vap = -1/sat.vap.d^2 * ddp_vap;
 // Enthalpy derivatives along saturation line
-  Medium.Types.DerEnthalpyByTemperature dhT_liq = Medium.specificHeatCapacityCp(state=sat.liq) + Medium.isothermalThrottlingCoefficient(state=sat.liq)*Medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
-  Medium.Types.DerEnthalpyByTemperature dhT_vap = Medium.specificHeatCapacityCp(state=sat.vap) + Medium.isothermalThrottlingCoefficient(state=sat.vap)*Medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
+  Medium.Types.DerEnthalpyByTemperature dhT_liq = Medium.specificHeatCapacityCp(state=sat.liq) + Medium.isothermalThrottlingCoefficient(state=sat.liq)*dpT;
+  Medium.Types.DerEnthalpyByTemperature dhT_vap = Medium.specificHeatCapacityCp(state=sat.vap) + Medium.isothermalThrottlingCoefficient(state=sat.vap)*dpT;
   Medium.Types.DerEnthalpyByPressure dhp_liq = Medium.dBubbleEnthalpy_dPressure(sat=sat);
   Medium.Types.DerEnthalpyByPressure dhp_vap = Medium.dDewEnthalpy_dPressure(sat=sat);
 
@@ -161,7 +163,7 @@ equation
   ddhp_numerical = (h_plus.d-h_minus.d)/(h_plus.h-h_minus.h);
   ddhp_analytical1 = Medium.density_derh_p(state=state);
   ddhp_analytical2 = -state.d^2*(1/sat.liq.d-1/sat.vap.d)/(sat.liq.h-sat.vap.h);
-  ddhp_analytical3 = -state.d^2/T*Medium.saturationTemperature_derp(p=state.p);
+  ddhp_analytical3 = -state.d^2/T*dTp;
   Modelica.Utilities.Streams.print("  (dd/dh)@p=const   numerical= " + String(ddhp_numerical));
   Modelica.Utilities.Streams.print("  (dd/dh)@p=const analytical1= " + String(ddhp_analytical1));
   Modelica.Utilities.Streams.print("  (dd/dh)@p=const analytical2= " + String(ddhp_analytical2));
@@ -183,7 +185,7 @@ equation
   Modelica.Utilities.Streams.print("  (dh/dd)@T=const analytical= " + String(dhdT_analytical));
   // check (dh/dT)@d=const
   dhTd_numerical = (T_plus.h-T_minus.h)/(T_plus.T-T_minus.T);
-  dhTd_analytical = Medium.specificHeatCapacityCv(state=state)+1/state.d*Medium.saturationPressure_derT(T=state.T);
+  dhTd_analytical = Medium.specificHeatCapacityCv(state=state)+1/state.d*dpT;
   Modelica.Utilities.Streams.print("  (dh/dT)@d=const  numerical= " + String(dhTd_numerical));
   Modelica.Utilities.Streams.print("  (dh/dT)@d=const analytical= " + String(dhTd_analytical));
 

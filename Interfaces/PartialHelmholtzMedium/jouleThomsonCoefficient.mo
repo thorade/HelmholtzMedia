@@ -16,6 +16,6 @@ algorithm
            ((1+f.delta*f.rd)^2 - f.tau^2*(f.itt + f.rtt)*(1+2*f.delta*f.rd + f.delta^2*f.rdd));
   elseif (state.phase == 2) then
     sat := setSat_T(T=state.T);
-    mu := saturationTemperature_derp(p=state.p, sat=sat);
+    mu := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
   end if;
 end jouleThomsonCoefficient;

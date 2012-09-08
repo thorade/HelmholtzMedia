@@ -49,8 +49,10 @@ model Derivatives_SaturationBoundary
 
 protected
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
-  Medium.EoS.HelmholtzDerivs    fl=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.liq.d, phase=1);
-  Medium.EoS.HelmholtzDerivs    fv=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.vap.d, phase=1);
+  Medium.EoS.HelmholtzDerivs fl=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.liq.d, phase=1);
+  Medium.EoS.HelmholtzDerivs fv=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.vap.d, phase=1);
+  Medium.Types.DerPressureByTemperature dpT = (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);
+  Medium.Types.DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
   Medium.SaturationProperties sat_Tplus = Medium.setSat_T(T=1.0001*T);
   Medium.SaturationProperties sat_Tminus= Medium.setSat_T(T=0.9999*T);
   Medium.SaturationProperties sat_pplus = Medium.setSat_p(p=1.0001*sat.psat);
@@ -82,24 +84,24 @@ equation
   Modelica.Utilities.Streams.print("Density");
   // check (dd/dT)@liq
   ddT_liq_numerical = (sat_Tplus.liq.d - sat_Tminus.liq.d)/(sat_Tplus.liq.T - sat_Tminus.liq.T);
-  ddT_liq_analytical = Medium.density_derT_p(state=sat.liq) +Medium.density_derp_T(state=sat.liq)*Medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
+  ddT_liq_analytical = Medium.density_derT_p(state=sat.liq) +Medium.density_derp_T(state=sat.liq)*dpT;
   Modelica.Utilities.Streams.print("  (dd/dT)@liq  numerical= " + String(ddT_liq_numerical));
   Modelica.Utilities.Streams.print("  (dd/dT)@liq analytical= " + String(ddT_liq_analytical));
   // check (dd/dT)@vap
   ddT_vap_numerical = (sat_Tplus.vap.d - sat_Tminus.vap.d)/(sat_Tplus.vap.T - sat_Tminus.vap.T);
-  ddT_vap_analytical = Medium.density_derT_p(state=sat.vap) +Medium.density_derp_T(state=sat.vap)*Medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
+  ddT_vap_analytical = Medium.density_derT_p(state=sat.vap) +Medium.density_derp_T(state=sat.vap)*dpT;
   Modelica.Utilities.Streams.print("  (dd/dT)@vap   numerical= " + String(ddT_vap_numerical));
   Modelica.Utilities.Streams.print("  (dd/dT)@vap analytical= " + String(ddT_vap_analytical));
   // check (dd/dp)@liq
   ddp_liq_numerical = (sat_pplus.liq.d - sat_pminus.liq.d)/(sat_pplus.liq.p - sat_pminus.liq.p);
-  ddp_liq_analytical1 = Medium.density_derp_T(state=sat.liq) +Medium.density_derT_p(state=sat.liq)*Medium.saturationTemperature_derp(p=sat.psat, sat=sat);
+  ddp_liq_analytical1 = Medium.density_derp_T(state=sat.liq) +Medium.density_derT_p(state=sat.liq)*dTp;
   ddp_liq_analytical2 = Medium.dBubbleDensity_dPressure(sat=sat);
   Modelica.Utilities.Streams.print("  (dd/dp)@liq   numerical= " + String(ddp_liq_numerical));
   Modelica.Utilities.Streams.print("  (dd/dp)@liq analytical1= " + String(ddp_liq_analytical1));
   Modelica.Utilities.Streams.print("  (dd/dp)@liq analytical2= " + String(ddp_liq_analytical2));
   // check (dd/dp)@vap
   ddp_vap_numerical = (sat_pplus.vap.d - sat_pminus.vap.d)/(sat_pplus.vap.p - sat_pminus.vap.p);
-  ddp_vap_analytical1 = Medium.density_derp_T(state=sat.vap) +Medium.density_derT_p(state=sat.vap)*Medium.saturationTemperature_derp(p=sat.psat, sat=sat);
+  ddp_vap_analytical1 = Medium.density_derp_T(state=sat.vap) +Medium.density_derT_p(state=sat.vap)*dTp;
   ddp_vap_analytical2 = Medium.dDewDensity_dPressure(sat=sat);
   Modelica.Utilities.Streams.print("  (dd/dp)@vap   numerical= " + String(ddp_vap_numerical));
   Modelica.Utilities.Streams.print("  (dd/dp)@vap analytical1= " + String(ddp_vap_analytical1));
@@ -109,12 +111,12 @@ equation
   Modelica.Utilities.Streams.print("Enthalpy");
   // check (dh/dT)@liq
   dhT_liq_numerical = (sat_Tplus.liq.h-sat_Tminus.liq.h)/(sat_Tplus.liq.T-sat_Tminus.liq.T);
-  dhT_liq_analytical = Medium.specificHeatCapacityCp(state=sat.liq) +Medium.isothermalThrottlingCoefficient(state=sat.liq)*Medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
+  dhT_liq_analytical = Medium.specificHeatCapacityCp(state=sat.liq) +Medium.isothermalThrottlingCoefficient(state=sat.liq)*dpT;
   Modelica.Utilities.Streams.print("  (dh/dT)@liq  numerical= " + String(dhT_liq_numerical));
   Modelica.Utilities.Streams.print("  (dh/dT)@liq analytical= " + String(dhT_liq_analytical));
   // check (dh/dT)@vap
   dhT_vap_numerical = (sat_Tplus.vap.h-sat_Tminus.vap.h)/(sat_Tplus.vap.T-sat_Tminus.vap.T);
-  dhT_vap_analytical = Medium.specificHeatCapacityCp(state=sat.vap) +Medium.isothermalThrottlingCoefficient(state=sat.vap)*Medium.saturationPressure_derT(T=sat.Tsat, sat=sat);
+  dhT_vap_analytical = Medium.specificHeatCapacityCp(state=sat.vap) +Medium.isothermalThrottlingCoefficient(state=sat.vap)*dpT;
   Modelica.Utilities.Streams.print("  (dh/dT)@vap  numerical= " + String(dhT_vap_numerical));
   Modelica.Utilities.Streams.print("  (dh/dT)@vap analytical= " + String(dhT_vap_analytical));
   // check (dh/dp)@liq
@@ -132,22 +134,22 @@ equation
   Modelica.Utilities.Streams.print("Entropy");
   // check (ds/dT)@liq
   dsT_liq_numerical = (sat_Tplus.liq.s-sat_Tminus.liq.s)/(sat_Tplus.liq.T-sat_Tminus.liq.T);
-  dsT_liq_analytical = dsTp_liq+dspT_liq*Medium.saturationPressure_derT(T=T);
+  dsT_liq_analytical = dsTp_liq+dspT_liq*dpT;
   Modelica.Utilities.Streams.print("  (ds/dT)@liq  numerical= " + String(dsT_liq_numerical));
   Modelica.Utilities.Streams.print("  (ds/dT)@liq analytical= " + String(dsT_liq_analytical));
   // check (ds/dT)@vap
   dsT_vap_numerical = (sat_Tplus.vap.s-sat_Tminus.vap.s)/(sat_Tplus.vap.T-sat_Tminus.vap.T);
-  dsT_vap_analytical = dsTp_vap+dspT_vap*Medium.saturationPressure_derT(T=T);
+  dsT_vap_analytical = dsTp_vap+dspT_vap*dpT;
   Modelica.Utilities.Streams.print("  (ds/dT)@vap  numerical= " + String(dsT_vap_numerical));
   Modelica.Utilities.Streams.print("  (ds/dT)@vap analytical= " + String(dsT_vap_analytical));
   // check (ds/dp)@liq
   dsp_liq_numerical = (sat_pplus.liq.s-sat_pminus.liq.s)/(sat_pplus.liq.p-sat_pminus.liq.p);
-  dsp_liq_analytical = dspT_liq+dsTp_liq*Medium.saturationTemperature_derp(p=sat.psat);
+  dsp_liq_analytical = dspT_liq+dsTp_liq*dTp;
   Modelica.Utilities.Streams.print("  (ds/dp)@liq  numerical= " + String(dsp_liq_numerical));
   Modelica.Utilities.Streams.print("  (ds/dp)@liq analytical= " + String(dsp_liq_analytical));
   // check (ds/dp)@vap
   dsp_vap_numerical = (sat_pplus.vap.s-sat_pminus.vap.s)/(sat_pplus.vap.p-sat_pminus.vap.p);
-  dsp_vap_analytical = dspT_vap+dsTp_vap*Medium.saturationTemperature_derp(p=sat.psat);
+  dsp_vap_analytical = dspT_vap+dsTp_vap*dTp;
   Modelica.Utilities.Streams.print("  (ds/dp)@vap  numerical= " + String(dsp_vap_numerical));
   Modelica.Utilities.Streams.print("  (ds/dp)@vap analytical= " + String(dsp_vap_analytical));
 
@@ -172,12 +174,12 @@ equation
   Modelica.Utilities.Streams.print("internal Energy");
   // check (du/dT)@liq
   duT_liq_numerical = (sat_Tplus.liq.u-sat_Tminus.liq.u)/(sat_Tplus.liq.T-sat_Tminus.liq.T);
-  duT_liq_analytical = duTp_liq+dupT_liq*Medium.saturationPressure_derT(T=T);
+  duT_liq_analytical = duTp_liq+dupT_liq*dpT;
   Modelica.Utilities.Streams.print("  (du/dT)@liq  numerical= " + String(duT_liq_numerical));
   Modelica.Utilities.Streams.print("  (du/dT)@liq analytical= " + String(duT_liq_analytical));
   // check (du/dT)@vap
   duT_vap_numerical = (sat_Tplus.vap.u-sat_Tminus.vap.u)/(sat_Tplus.vap.T-sat_Tminus.vap.T);
-  duT_vap_analytical = duTp_vap+dupT_vap*Medium.saturationPressure_derT(T=T);
+  duT_vap_analytical = duTp_vap+dupT_vap*dpT;
   Modelica.Utilities.Streams.print("  (du/dT)@vap  numerical= " + String(duT_vap_numerical));
   Modelica.Utilities.Streams.print("  (du/dT)@vap analytical= " + String(duT_vap_analytical));
 
