@@ -35,11 +35,13 @@ model Derivatives_SinglePhase
 // Further derivatives
   Medium.VelocityOfSound a_analytical1;
   Medium.VelocityOfSound a_analytical2;
+  Medium.DerDensityByTemperature ddTp_analytical1;
+  Medium.DerDensityByTemperature ddTp_analytical2;
 
 protected
   Real eps= 1e-3;
   Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
-  Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=d, phase=state.phase);
   Medium.ThermodynamicState d_plus=Medium.setState_dTX(d=d+eps*d, T=T);
   Medium.ThermodynamicState d_minus=Medium.setState_dTX(d=d-eps*d, T=T);
   Medium.ThermodynamicState T_plus=Medium.setState_dTX(d=d, T=T+eps*T);
@@ -116,10 +118,16 @@ equation
 
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Further derivatives");
+  // check (dp/dd)@s=const
   a_analytical1 = Medium.velocityOfSound(state=state);
   a_analytical2 = sqrt(dpdT_analytical-dpTd_analytical*dsdT_analytical/dsTd_analytical);
   Modelica.Utilities.Streams.print("  (dp/dd)@s=const analytical1= " + String(a_analytical1));
   Modelica.Utilities.Streams.print("  (dp/dd)@s=const analytical2= " + String(a_analytical2));
+  // check (dd/dT)@p=const
+  ddTp_analytical1 = Medium.density_derT_p(state=state);
+  ddTp_analytical2 = -Medium.EoS.dpTd(f)/Medium.EoS.dpdT(f);
+  Modelica.Utilities.Streams.print("  (dd/dT)@p=const analytical1= " + String(ddTp_analytical1));
+  Modelica.Utilities.Streams.print("  (dd/dT)@p=const analytical2= " + String(ddTp_analytical2));
 
 annotation (experiment(NumberOfIntervals=1));
 end Derivatives_SinglePhase;

@@ -7,7 +7,7 @@ record HelmholtzDerivs "dimensionless Helmholtz energy and its derivatives"
   Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
   Temperature T_crit=fluidConstants[1].criticalTemperature;
 
-  Density d;
+  Density d(min=0);
   Real delta(unit="1")=d/d_crit "reduced density";
   Temperature T;
   Real tau(unit="1")=T_crit/T "inverse reduced temperature";

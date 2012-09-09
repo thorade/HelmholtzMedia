@@ -138,6 +138,7 @@ algorithm
           // thighten the bounds
           if (RES_s*RES_med<=0) then
             // opposite sign, d_med and d_iter bracket the root
+            // best case, both boundaries tightened
             d_min := d_iter;
             RES_min := RES_s;
             d_max := d_med;
