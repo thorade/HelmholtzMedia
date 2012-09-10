@@ -388,8 +388,7 @@ protected
     DerEnergyByTemperature dgTd "(dg/dT)@d=const";
     Real det "determinant of Jacobi matrix";
     constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-6
-    "tolerance for sum of relative RES_p and RES_g";
+    constant Real tolerance=1e-6 "tolerance for relative RES_p or RES_g";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -409,7 +408,7 @@ protected
       RES_p  := EoS.p(fl) - EoS.p(fv);
       RES_g  := EoS.g(fl) - EoS.g(fv);
 
-      while (abs(RES_p)>tolerance or abs(RES_g)>tolerance) and (iter<iter_max) loop
+      while (abs(RES_p/(fv.d*fv.T*fv.R))>tolerance or abs(RES_g/(fv.T*fv.R))>tolerance) and (iter<iter_max) loop
         iter := iter+1;
         // gamma := (iter_max-iter)/iter_max;
 
@@ -460,7 +459,7 @@ protected
       RES_p  := EoS.p(fv) - EoS.p(fl);
       RES_g  := EoS.g(fv) - EoS.g(fl);
 
-      while (abs(RES_p)>tolerance or abs(RES_g)>tolerance) and (iter<iter_max) loop
+      while (abs(RES_p/(fl.d*fl.T*fl.R))>tolerance or abs(RES_g/(fl.T*fl.R))>tolerance) and (iter<iter_max) loop
         iter := iter+1;
 
         // calculate gradients of residual functions regarding d_vap and T
@@ -500,7 +499,7 @@ protected
       sat.psat := sat.liq.p;
 
     elseif (d>=dl_trip) or (d<=dv_trip) then
-      // Modelica.Utilities.Streams.print("d>d_max: this is single-phase fluid, or probably solid, return input values", "printlog.txt");
+      // Modelica.Utilities.Streams.print("d out of two-phase range, return triple point values", "printlog.txt");
       sat.Tsat:= T_trip;
       sat.psat:= p_trip;
       sat.liq := setState_dTX(d=dl_trip, T=T_trip, phase=1);
