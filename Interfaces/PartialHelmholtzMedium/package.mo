@@ -2147,7 +2147,7 @@ protected
 
 protected
     EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.liq.T);
-    DerEnthalpyByPressure dhpT = EoS.dhdT(f)*EoS.dpdT(f);
+    DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
     DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
     DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
 
@@ -2163,7 +2163,7 @@ protected
 
 protected
     EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.vap.T);
-    DerEnthalpyByPressure dhpT = EoS.dhdT(f)*EoS.dpdT(f);
+    DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
     DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
     DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
 

@@ -119,6 +119,7 @@ equation
   Modelica.Utilities.Streams.print("  (dx/dT)@v=const analytical3= " + String(dxTv_analytical3));
   Modelica.Utilities.Streams.print("  (dx/dT)@v=const analytical4= " + String(dxTv_analytical4));
 
+  Modelica.Utilities.Streams.print(" ");
   dxph_numerical = (Medium.vapourQuality(p_plus) - Medium.vapourQuality(p_minus))/(p_plus.p - p_minus.p);
   dxph_analytical1 = (-dhp_liq*(sat.vap.h - sat.liq.h) - (state.h - sat.liq.h)*(dhp_vap - dhp_liq))/(sat.vap.h - sat.liq.h)^2;
   dxph_analytical2 = (x*dhp_vap + (1 - x)*dhp_liq)/(sat.liq.h - sat.vap.h);

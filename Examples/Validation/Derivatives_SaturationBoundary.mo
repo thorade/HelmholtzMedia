@@ -90,7 +90,7 @@ equation
   // check (dd/dT)@vap
   ddT_vap_numerical = (sat_Tplus.vap.d - sat_Tminus.vap.d)/(sat_Tplus.vap.T - sat_Tminus.vap.T);
   ddT_vap_analytical = Medium.density_derT_p(state=sat.vap) +Medium.density_derp_T(state=sat.vap)*dpT;
-  Modelica.Utilities.Streams.print("  (dd/dT)@vap   numerical= " + String(ddT_vap_numerical));
+  Modelica.Utilities.Streams.print("  (dd/dT)@vap  numerical= " + String(ddT_vap_numerical));
   Modelica.Utilities.Streams.print("  (dd/dT)@vap analytical= " + String(ddT_vap_analytical));
   // check (dd/dp)@liq
   ddp_liq_numerical = (sat_pplus.liq.d - sat_pminus.liq.d)/(sat_pplus.liq.p - sat_pminus.liq.p);
