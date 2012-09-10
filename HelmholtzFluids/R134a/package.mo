@@ -87,7 +87,7 @@ package R134a "R134a"
       0.6995038000E-02,  18.00,   5.00,   3;
      -0.1452184000E-01,  22.00,   3.00,   3;
      -0.1285458000E-03,  50.00,  10.00,   4],
-   residualGauss=fill(0.0, 0, 12)) "Coefficients of the Helmholtz EoS";
+   residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
   final constant
   Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients

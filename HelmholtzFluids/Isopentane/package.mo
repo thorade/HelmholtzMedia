@@ -80,7 +80,7 @@ package Isopentane "Isopentane"
       -0.10107,         3.625,   4.0,   2;
       -0.035484,       14.5,     3.0,   3;
        0.018156,       12.0,     4.0,   3],
-   residualGauss=fill(0.0, 0, 12)) "Coefficients of the Helmholtz EoS";
+   residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
   final constant
   Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients

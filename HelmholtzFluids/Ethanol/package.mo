@@ -91,7 +91,7 @@ extends Interfaces.PartialHelmholtzMedium(
        0.722046283076E-2,   1.0,   8,   2;
        0.299286406225E-2,  22.0,   2,   4;
        0.972795913095E-3,  23.0,   7,   4],
-     residualGauss=fill(0.0, 0, 12)) "Coefficients of the Helmholtz EoS";
+     residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
   final constant
   Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients

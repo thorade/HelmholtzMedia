@@ -13,7 +13,7 @@ protected
 
   Real[nPoly,4] p = helmholtzCoefficients.residualPoly;
   Real[nBwr,4] b = helmholtzCoefficients.residualBwr;
-  Real[nGauss,12] g = helmholtzCoefficients.residualGauss;
+  Real[nGauss,9] g = helmholtzCoefficients.residualGauss;
 
 algorithm
   f_residual_delta_delta :=
