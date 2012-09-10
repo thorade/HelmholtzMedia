@@ -16,3 +16,7 @@ DerEnergyByPressure
 DerEntropyByDensity
 DerEntropyByTemperature
 DerEntropyByPressure
+DerVolumeByTemperature
+DerVolumeByPressure
+DerFractionByTemperature
+DerFractionByPressure

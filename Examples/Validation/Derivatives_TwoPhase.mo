@@ -44,7 +44,8 @@ model Derivatives_TwoPhase
   Medium.Types.DerEnthalpyByDensity dhdT_numerical;
   Medium.Types.DerEnthalpyByDensity dhdT_analytical;
   Medium.Types.DerEnthalpyByTemperature dhTd_numerical;
-  Medium.Types.DerEnthalpyByTemperature dhTd_analytical;
+  Medium.Types.DerEnthalpyByTemperature dhTd_analytical1;
+  Medium.Types.DerEnthalpyByTemperature dhTd_analytical2;
 
 protected
   Medium.Types.DerPressureByTemperature dpT = (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);
@@ -186,9 +187,11 @@ equation
   Modelica.Utilities.Streams.print("  (dh/dd)@T=const analytical= " + String(dhdT_analytical));
   // check (dh/dT)@d=const
   dhTd_numerical = (T_plus.h - T_minus.h)/(T_plus.T - T_minus.T);
-  dhTd_analytical = Medium.specificHeatCapacityCv(state=state) + 1/state.d*dpT;
-  Modelica.Utilities.Streams.print("  (dh/dT)@d=const  numerical= " + String(dhTd_numerical));
-  Modelica.Utilities.Streams.print("  (dh/dT)@d=const analytical= " + String(dhTd_analytical));
+  dhTd_analytical1 = Medium.specificHeatCapacityCv(state=state) + 1/state.d*dpT;
+  dhTd_analytical2 = Medium.specificEnthalpy_derT_d(state=state);
+  Modelica.Utilities.Streams.print("  (dh/dT)@d=const   numerical= " + String(dhTd_numerical));
+  Modelica.Utilities.Streams.print("  (dh/dT)@d=const analytical1= " + String(dhTd_analytical1));
+  Modelica.Utilities.Streams.print("  (dh/dT)@d=const analytical2= " + String(dhTd_analytical2));
 
 annotation (experiment(NumberOfIntervals=1));
 end Derivatives_TwoPhase;

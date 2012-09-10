@@ -1334,27 +1334,19 @@ protected
 protected
     EoS.HelmholtzDerivs f;
 
-    // two-phase
-    MolarMass MM = fluidConstants[1].molarMass;
-    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
-    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real delta=state.d/d_crit "reduced density";
-    Real tau=T_crit/state.T "inverse reduced temperature";
-
     SaturationProperties sat;
+    MassFraction x "vapour quality";
     DerPressureByTemperature dpT;
     EoS.HelmholtzDerivs fl;
     EoS.HelmholtzDerivs fv;
-    DerPressureByTemperature dpTd_liq;
-    DerPressureByTemperature dpTd_vap;
-    DerPressureByDensity dpdT_liq;
-    DerPressureByDensity dpdT_vap;
-    SpecificHeatCapacity cv_lim2liq
-    "limiting cv when approaching liq from within 2phase";
-    SpecificHeatCapacity cv_lim2vap
-    "limiting cv when approaching vap from within 2phase";
-    MassFraction x "vapour quality";
+
+    DerEnergyByTemperature duT_liq;
+    DerEnergyByTemperature duT_vap;
+    DerDensityByTemperature ddT_liq;
+    DerDensityByTemperature ddT_vap;
+    DerVolumeByTemperature dvT_liq;
+    DerVolumeByTemperature dvT_vap;
+    DerFractionByTemperature dxTv;
 
   algorithm
     if (state.phase == 1) then
@@ -1363,23 +1355,21 @@ protected
 
     elseif (state.phase == 2) then
       sat:=setSat_T(T=state.T);
-      // assert(false, "specificHeatCapacityCv warning: using cv in two-phase region", level=AssertionLevel.warning);
-      // two-phase definition as in Span(2000), eq. 3.79 + 3.80 + 3.86
-      // Attention: wrong sign in eq. 3.80
+      x := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
       dpT := (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);
+
       fl := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.liq.d, phase=1);
       fv := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.vap.d, phase=1);
-      dpTd_liq := EoS.dpTd(fl);
-      dpTd_vap := EoS.dpTd(fv);
-      dpdT_liq := EoS.dpdT(fl);
-      dpdT_vap := EoS.dpdT(fv);
 
-      cv_lim2liq := R*(-tau^2*(fl.itt + fl.rtt)) + state.T/sat.liq.d^2 * (dpTd_liq-dpT)^2/dpdT_liq;
-      cv_lim2vap := R*(-tau^2*(fv.itt + fv.rtt)) + state.T/sat.vap.d^2 * (dpTd_vap-dpT)^2/dpdT_vap;
+      duT_liq := EoS.duTd(fl)-EoS.dudT(fl)*EoS.dpTd(fl)/EoS.dpdT(fl) + EoS.dudT(fl)/EoS.dpdT(fl)*dpT;
+      duT_vap := EoS.duTd(fv)-EoS.dudT(fv)*EoS.dpTd(fv)/EoS.dpdT(fv) + EoS.dudT(fv)/EoS.dpdT(fv)*dpT;
+      ddT_liq := -EoS.dpTd(fl)/EoS.dpdT(fl) + 1.0/EoS.dpdT(fl)*dpT;
+      ddT_vap := -EoS.dpTd(fv)/EoS.dpdT(fv) + 1.0/EoS.dpdT(fv)*dpT;
+      dvT_liq := -1/sat.liq.d^2 * ddT_liq;
+      dvT_vap := -1/sat.vap.d^2 * ddT_vap;
+      dxTv :=(x*dvT_vap + (1 - x)*dvT_liq)/(1/sat.liq.d - 1/sat.vap.d);
 
-      x := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
-      cv := cv_lim2liq + x*(cv_lim2vap-cv_lim2liq);
-      // cv := (x*cv_lim2vap+(1-x)*cv_lim2liq) - (sat.vap.u-sat.liq.u)/(sat.vap.d-sat.liq.d)*(x*density_derT+(1-x)/sat.liq.d);
+      cv := duT_liq + dxTv*(sat.vap.u-sat.liq.u) + x*(duT_vap-duT_liq);
     end if;
 
   end specificHeatCapacityCv;
@@ -2003,8 +1993,21 @@ The extended version has up to three terms with two parameters each.
 
 protected
     EoS.HelmholtzDerivs f;
+
     SaturationProperties sat;
+    MassFraction x "vapour quality";
     DerTemperatureByPressure dTp;
+    EoS.HelmholtzDerivs fl;
+    EoS.HelmholtzDerivs fv;
+
+    DerEnthalpyByPressure dhp_liq;
+    DerEnthalpyByPressure dhp_vap;
+    DerDensityByPressure ddp_liq;
+    DerDensityByPressure ddp_vap;
+    DerVolumeByPressure dvp_liq;
+    DerVolumeByPressure dvp_vap;
+    DerVolumeByPressure dvph;
+    DerFractionByPressure dxph;
 
   algorithm
     if (state.phase == 1) then
@@ -2012,8 +2015,22 @@ protected
       ddph := 1.0/(EoS.dpdT(f) - EoS.dpTd(f)*EoS.dhdT(f)/EoS.dhTd(f));
     elseif (state.phase == 2) then
       sat := setSat_T(T=state.T);
+      x := (state.h - sat.liq.h)/(sat.vap.h - sat.liq.h);
       dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
-      ddph := state.d*state.d*specificHeatCapacityCv(state=state)/state.T*dTp*dTp + state.d/state.T*dTp;
+
+      fl := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.liq.d, phase=1);
+      fv := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.vap.d, phase=1);
+
+      dhp_liq := EoS.dhdT(fl)/EoS.dpdT(fl) + (EoS.dhTd(fl)-EoS.dhdT(fl)*EoS.dpTd(fl)/EoS.dpdT(fl))*dTp;
+      dhp_vap := EoS.dhdT(fv)/EoS.dpdT(fv) + (EoS.dhTd(fv)-EoS.dhdT(fv)*EoS.dpTd(fv)/EoS.dpdT(fv))*dTp;
+      ddp_liq := 1.0/EoS.dpdT(fl) - EoS.dpTd(fl)/EoS.dpdT(fl)*dTp;
+      ddp_vap := 1.0/EoS.dpdT(fv) - EoS.dpTd(fv)/EoS.dpdT(fv)*dTp;
+      dvp_liq := -1.0/sat.liq.d^2 * ddp_liq;
+      dvp_vap := -1.0/sat.vap.d^2 * ddp_vap;
+      dxph :=(x*dhp_vap + (1 - x)*dhp_liq)/(sat.liq.h - sat.vap.h);
+
+      dvph := dvp_liq + dxph*(1.0/sat.vap.d-1.0/sat.liq.d) + x*(dvp_vap-dvp_liq);
+      ddph := -state.d*state.d*dvph;
     end if;
   end density_derp_h;
 
