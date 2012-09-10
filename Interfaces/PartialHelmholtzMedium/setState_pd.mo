@@ -87,7 +87,7 @@ algorithm
     // force two-phase, SaturationProperties are already known
     state.p := p;
     state.d := d;
-    x := (1/d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
+    x := (1.0/d - 1.0/sat.liq.d)/(1.0/sat.vap.d - 1.0/sat.liq.d);
     state.T := sat.Tsat;
     state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
     state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);

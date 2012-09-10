@@ -87,7 +87,7 @@ algorithm
     state.s := s;
     state.p := sat.psat;
     x := (s - sat.liq.s)/(sat.vap.s - sat.liq.s);
-    state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
+    state.d := 1.0/(1.0/sat.liq.d + x*(1.0/sat.vap.d - 1.0/sat.liq.d));
     state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
     state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
   else

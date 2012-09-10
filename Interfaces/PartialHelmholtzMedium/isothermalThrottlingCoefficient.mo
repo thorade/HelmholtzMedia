@@ -10,8 +10,7 @@ protected
 algorithm
   if (state.phase == 1) then
     f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
-    // single phase definition as in Span(2000)
-    delta_T := 1/state.d*(1-(1+f.delta*f.rd-f.delta*f.tau*f.rtd)/(1+2*f.delta*f.rd+f.delta^2*f.rdd));
+    delta_T := EoS.dhdT(f)/EoS.dpdT(f);
   elseif (state.phase == 2) then
     delta_T := Modelica.Constants.inf; // divide by zero
   end if;

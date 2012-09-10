@@ -585,7 +585,7 @@ protected
     state.T := T;
     if (state.phase == 2) then
       // force two-phase
-      x := (1/d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
+      x := (1.0/d - 1.0/sat.liq.d)/(1.0/sat.vap.d - 1.0/sat.liq.d);
       state.p := sat.psat;
       state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
       state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
@@ -615,7 +615,7 @@ protected
     state.phase := 2;
     state.p := sat.psat;
     state.T := sat.Tsat;
-    state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
+    state.d := 1.0/(1.0/sat.liq.d + x*(1.0/sat.vap.d - 1.0/sat.liq.d));
     state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
     state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
     state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
@@ -635,7 +635,7 @@ protected
     state.phase := 2;
     state.p := sat.psat;
     state.T := sat.Tsat;
-    state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
+    state.d := 1.0/(1.0/sat.liq.d + x*(1.0/sat.vap.d - 1.0/sat.liq.d));
     state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
     state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
     state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
@@ -1296,7 +1296,7 @@ protected
     elseif state.d >= sat.liq.d then
       x := 0;
     else
-      x := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
+      x := (1.0/state.d - 1.0/sat.liq.d)/(1.0/sat.vap.d - 1.0/sat.liq.d);
     end if;
 
   end vapourQuality;
@@ -1312,11 +1312,8 @@ protected
 
   algorithm
     if (state.phase == 1) then
-      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
-      cp := f.R*(-f.tau^2*(f.itt + f.rtt)
-                 + (1 + f.delta*f.rd - f.delta*f.tau*f.rtd)^2/(1 + 2*f.delta*f.rd + f.delta^2*f.rdd));
-  //  alternatively, yields same result
-  //  cp := specificEnthalpy_derT_d(state,f) + specificEnthalpy_derd_T(state,f)*density_derT_p(state,f);
+      f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      cp := EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
     elseif (state.phase == 2) then
       assert(false, "specificHeatCapacityCp warning: property not defined in two-phase region");
       cp := Modelica.Constants.inf; // division by zero
@@ -1385,9 +1382,7 @@ protected
   algorithm
     assert(state.phase <> 2, "velocityOfSound error: property not defined in two-phase region");
     f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
-    a := sqrt(state.T*f.R*( 1 + 2*f.delta*f.rd+ f.delta^2*f.rdd
-              - ((1 + f.delta*f.rd) - f.delta*f.tau*f.rtd)^2 /
-              (f.tau^2*(f.itt + f.rtt))));
+    a := sqrt(EoS.dpdT(f)-EoS.dpTd(f)*EoS.dsdT(f)/EoS.dsTd(f));
   end velocityOfSound;
 
 
@@ -1398,15 +1393,11 @@ protected
 
 protected
     EoS.HelmholtzDerivs f;
-    Types.DerPressureByTemperature dpTd;
-    Types.DerPressureByDensity dpdT;
 
   algorithm
     if (state.phase == 1) then
       f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
-      dpTd := EoS.dpTd(f);
-      dpdT := EoS.dpdT(f);
-      beta := 1/state.d*dpTd/dpdT;
+      beta := 1.0/state.d*EoS.dpTd(f)/EoS.dpdT(f);
     elseif (state.phase == 2) then
       beta := Modelica.Constants.small; // zero
     end if;
@@ -1420,13 +1411,11 @@ protected
 
 protected
     EoS.HelmholtzDerivs f;
-    Types.DerPressureByDensity dpdT;
 
   algorithm
     if (state.phase == 1) then
       f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
-      dpdT := EoS.dpdT(f);
-      kappa := 1/(state.d*dpdT);
+      kappa := 1.0/state.d/EoS.dpdT(f);
     elseif (state.phase == 2) then
       kappa := Modelica.Constants.inf; // divide by zero
     end if;
