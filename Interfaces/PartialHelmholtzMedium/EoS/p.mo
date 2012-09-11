@@ -4,5 +4,5 @@ function p "returns pressure p from EoS"
   output AbsolutePressure p;
 
 algorithm
-  p:=f.d*f.T*f.R*(1+f.delta*f.rd);
+  p := f.d*f.T*f.R*(1+f.delta*f.rd);
 end p;

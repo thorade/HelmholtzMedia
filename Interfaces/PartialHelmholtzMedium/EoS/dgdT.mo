@@ -4,5 +4,5 @@ function dgdT "returns Gibbs energy derivative (dg/dd)@T=const"
   output DerEnergyByDensity dgdT;
 
 algorithm
-  dgdT := f.T*f.R/f.d*(1+2*f.delta*f.rd + f.delta^2*f.rdd);
+  dgdT := f.T*f.R/f.d*(1+2*f.delta*f.rd + f.delta*f.delta*f.rdd);
 end dgdT;

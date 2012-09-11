@@ -4,5 +4,5 @@ function duTd "returns internal energy derivative (du/dT)@d=const"
   output DerEnergyByTemperature duTd;
 
 algorithm
-  duTd := f.R*(-f.tau^2*(f.itt + f.rtt));
+  duTd := f.R*(-f.tau*f.tau*(f.itt + f.rtt));
 end duTd;
