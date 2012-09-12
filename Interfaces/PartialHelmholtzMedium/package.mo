@@ -1373,8 +1373,8 @@ protected
 
   redeclare function extends velocityOfSound
   "returns the speed or velocity of sound"
-  //input state and output a are inherited from PartialMedium
-  //input HelmholtzDerivs is optional and will be used for single-phase only
+  //input state and
+  //output a are inherited from PartialMedium
 
 protected
     EoS.HelmholtzDerivs f;
@@ -1406,7 +1406,7 @@ protected
 
   redeclare function extends isothermalCompressibility
   "returns -1/v*(dv/dp)@T=const"
-  //input state
+  //input state and
   //output kappa are inherited from PartialMedium
 
 protected
