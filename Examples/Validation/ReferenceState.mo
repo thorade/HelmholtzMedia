@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model ReferenceState
-  package Medium = HelmholtzMedia.HelmholtzFluids.Pentane;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Ethanol;
   Medium.SpecificEnthalpy h_ref;
   Medium.SpecificEntropy s_ref;
 

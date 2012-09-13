@@ -2,7 +2,7 @@ within HelmholtzMedia.Examples;
 model BaseProps_sweep
   "calculate BaseProperties from any two given input properties"
   //package Medium = HelmholtzFluids.Butane;
-  package Medium = HelmholtzMedia.HelmholtzFluids.Pentane;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Butane;
   //package Medium = HelmholtzFluids.R134a(dT_explicit=true);
   //package Medium = HelmholtzFluids.Butane(independentVariables=IndependentVariables.ph);
   //package Medium = HelmholtzFluids.R134a(independentVariables=IndependentVariables.ph);
