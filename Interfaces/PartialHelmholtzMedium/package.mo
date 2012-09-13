@@ -252,7 +252,7 @@ protected
 
     Real det "determinant of Jacobi matrix";
     constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-6
+    constant Real tolerance=1e-5
     "tolerance for sum of relative RES_pl, RES_pv and RES_g";
     Integer iter = 0;
     constant Integer iter_max = 200;
@@ -276,7 +276,7 @@ protected
     RES_pv := EoS.p(fv) - p;   // f2
     RES_g  := EoS.g(fl) - EoS.g(fv);  // f3
 
-    while (((abs(RES_pl/p) + abs(RES_pv/p) + abs(RES_g/(fl.R*fl.T))) > tolerance) and (iter<iter_max)) loop
+    while ((abs(RES_pl/p)>tolerance) or (abs(RES_pv/p)>tolerance) or (abs(RES_g/(fl.R*fl.T))>tolerance)) and (iter<iter_max) loop
       iter := iter+1;
 
       // calculate gradients of f1,f2,f3 with respect to x,y,z
