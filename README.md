@@ -11,6 +11,7 @@ In addition to all state properties, this library calculates viscosity, thermal 
 * Isopentane
 * Propane
 * R134a
+* Pentane (Hyperbolic terms for ideal Helmholtz energy is now implemented - used in short technical EoS and GERG-2008)
 
 ### Fluids that might be included in future versions
 * Butane (short technical EoS)
@@ -26,7 +27,6 @@ In addition to all state properties, this library calculates viscosity, thermal 
 ### Known issues & ToDo
 * Index reduction doesn't work (there are some numerical Jacobians). Does this have to be fixed in `BaseProperties`, or in `density_ph`?
 * Non-analytic critical terms for residual Helmholtz energy not yet implemented (needed for water and CO2)
-* Hyperbolic terms for ideal Helmholtz energy not yet implemented (used in short technical EoS and GERG-2008)
 * Reference state is fixed. Not sure how important choosing a differend reference state is.
 * Add `setState_hs` (needed for turbine calculation, when power is given and p_out is to be determined)
 * More testing would be nice (beta users welcome)
