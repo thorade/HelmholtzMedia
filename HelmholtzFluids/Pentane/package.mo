@@ -59,28 +59,28 @@ package Pentane "Pentane"
     idealLog=[
       3,    1],
     idealPower=[
-      7.840639316,    0;
+      7.840639316,     0;
       -84.68310031,    1],
     idealEinstein=fill(0.0, 0, 2),
     idealCosh=[
-    21.836,   1.789520971],
+      21.836,   1.789520971],
     idealSinh=[
-    8.95043,    0.380391739;
-    33.4032,    3.777411113],
+      8.95043,    0.380391739;
+      33.4032,    3.777411113],
     residualPoly=[
-      1.0968643,          0.25,    1.0,   0;
-      -2.9988888,          1.125,   1.0,   0;
-       0.99516887,          1.5,     1.0,   0;
-      -0.16170709,         1.375,   2.0,   0;
-       0.1133446,         0.25,    3.0,   0;
-       0.000267606,      0.875,   7.0,   0],
+      1.0968643,        0.25,    1.0,   0;
+     -2.9988888,        1.125,   1.0,   0;
+      0.99516887,       1.5,     1.0,   0;
+     -0.16170709,       1.375,   2.0,   0;
+      0.1133446,        0.25,    3.0,   0;
+      0.000267606,      0.875,   7.0,   0],
     residualBwr=[
       0.40979882,         0.625,   2.0,   1;
-      -0.040876423,        1.75,    5.0,   1;
-      -0.38169482,         3.625,   1.0,   2;
-      -0.10931957,         3.625,   4.0,   2;
-      -0.032073223,       14.5,     3.0,   3;
-       0.016877016,       12.0,     4.0,   3],
+     -0.040876423,        1.75,    5.0,   1;
+     -0.38169482,         3.625,   1.0,   2;
+     -0.10931957,         3.625,   4.0,   2;
+     -0.032073223,       14.5,     3.0,   3;
+      0.016877016,       12.0,     4.0,   3],
    residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
   final constant
@@ -144,27 +144,27 @@ package Pentane "Pentane"
   ancillaryCoefficientsPentane(
     pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
     pressureSaturation=[
-    -0.73918E+01,   1.0;
-     0.31102E+01,   1.5;
-    -0.22415E+01,   1.74;
-    -0.31585E+01,   3.75;
-    -0.90451E+00,   8.0],
+     -0.73918E+01,   1.0;
+      0.31102E+01,   1.5;
+     -0.22415E+01,   1.74;
+     -0.31585E+01,   3.75;
+     -0.90451E+00,   8.0],
     densityLiquidModel=Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel.DL1,
     densityLiquid=[
-     0.10178E+01,   0.27;
-     0.42703E+00,   0.44;
-     0.11334E+01,   0.6;
-     0.41518E+00,   4.0;
-    -0.47950E-01,   5.0],
+      0.10178E+01,   0.27;
+      0.42703E+00,   0.44;
+      0.11334E+01,   0.6;
+      0.41518E+00,   4.0;
+     -0.47950E-01,   5.0],
     densityVaporModel=Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel.DV3,
     densityVapor=[
-    -0.29389E+01,   0.4;
-    -0.62784E+01,   1.18;
-    -0.19941E+02,   3.2;
-    -0.16709E+02,   6.6;
-    -0.36543E+02,   7.0;
-    -0.12799E+03,  15.0])
-  "Coefficients for the ancillary equations (PS5, DL2, DV6)";
+     -0.29389E+01,   0.4;
+     -0.62784E+01,   1.18;
+     -0.19941E+02,   3.2;
+     -0.16709E+02,   6.6;
+     -0.36543E+02,   7.0;
+     -0.12799E+03,  15.0])
+  "Coefficients for the ancillary equations (PS5, DL1, DV3)";
 
 
   annotation (Documentation(info="<html>
