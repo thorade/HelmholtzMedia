@@ -93,7 +93,7 @@ package ConvergenceTest
   end SinglePhase_setState;
 
   model TwoPhase_setState
-    package Medium = HelmholtzFluids.Butane;
+    package Medium = HelmholtzFluids.Pentane;
     Medium.Density d;
     Medium.Temperature T;
     Medium.ThermodynamicState state;
@@ -114,7 +114,7 @@ package ConvergenceTest
     constant Medium.Density dmin=Medium.fluidLimits.DMIN;
     constant Medium.Density dcrit=Medium.fluidConstants[1].molarMass/Medium.fluidConstants[1].criticalMolarVolume;
     constant Medium.Density dmax=Medium.fluidLimits.DMAX;
-    constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
+    constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN+1;
     constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
     constant Medium.Temperature Tmax=Medium.fluidLimits.TMAX;
 
@@ -136,7 +136,7 @@ package ConvergenceTest
   end TwoPhase_setState;
 
   model AncillaryFunctions
-    package medium = HelmholtzFluids.Butane;
+    package medium = HelmholtzFluids.Pentane;
     medium.Temperature Tsat;
     medium.AbsolutePressure psat;
     medium.Density dliq;
@@ -170,9 +170,9 @@ package ConvergenceTest
     T_dv := medium.Ancillary.saturationTemperature_d(d=dvap);
 
   annotation (experiment(
-        StopTime=11,
+        StopTime=7,
         NumberOfIntervals=1000,
-        Tolerance=1e-005), __Dymola_experimentSetupOutput);
+        Tolerance=1e-005));
   end AncillaryFunctions;
 
   model SinglePhase_Transport
