@@ -94,7 +94,7 @@ extends Interfaces.PartialHelmholtzMedium(
   thermalConductivityCoefficientsPropane(
     reducingTemperature_0=369.85,
     reducingThermalConductivity_0=1,
-    lambda_0_coeffs=[
+    lambda_0_num_coeffs=[
       -1.24778E-3,    0;
        8.16371E-3,    1;
        1.99374E-2,    2],

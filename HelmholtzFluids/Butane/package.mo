@@ -101,7 +101,7 @@ extends Interfaces.PartialHelmholtzMedium(
   thermalConductivityCoefficientsButane(
     reducingTemperature_0=425.16,
     reducingThermalConductivity_0=1,
-    lambda_0_coeffs=[
+    lambda_0_num_coeffs=[
      1.62676E-03,    0;
      9.75703E-04,    1;
      2.89887E-02,    2],

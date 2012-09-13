@@ -3,13 +3,17 @@ record ThermalConductivityCoefficients
   // dilute gas / zero density terms
   constant Temperature reducingTemperature_0=1 "reducing temperature";
   constant Real reducingThermalConductivity_0=1 "usually unity";
-  constant Real[:,2] lambda_0_coeffs "coeffs for dilute contribution";
+  constant Real[:,2] lambda_0_num_coeffs = fill(0.0, 0, 2)
+    "coeffs for dilute contribution numerator";
+  constant Real[:,2] lambda_0_den_coeffs = fill(0.0, 0, 2)
+    "coeffs for dilute contribution denominator";
 
   // residual / background terms
   constant Temperature reducingTemperature_residual=1 "reducing temperature";
   constant MolarVolume reducingMolarVolume_residual "reducing molar volume";
   constant Real reducingThermalConductivity_residual=1 "usually unity";
-  constant Real[:,4] lambda_r_coeffs "coeffs for residual contribution";
+  constant Real[:,4] lambda_r_coeffs = fill(0.0, 0, 4)
+    "coeffs for residual contribution";
 
   // critical enhancement terms
   constant Real nu=0.63 "universal exponent";

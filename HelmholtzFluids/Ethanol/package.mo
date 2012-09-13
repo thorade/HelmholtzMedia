@@ -98,7 +98,7 @@ extends Interfaces.PartialHelmholtzMedium(
   thermalConductivityCoefficientsEthanol(
     reducingTemperature_0=513.9,
     reducingThermalConductivity_0=1,
-    lambda_0_coeffs=[
+    lambda_0_num_coeffs=[
      0.123120E-01,    0;
     -0.153612E-01,    1;
      0.426611E-01,    2],

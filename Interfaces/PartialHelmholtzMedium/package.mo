@@ -1422,344 +1422,20 @@ protected
   end isothermalCompressibility;
 
 
-  redeclare replaceable function extends thermalConductivity
-  "Return thermal conductivity"
-    // inherits input state and output lambda
-    // depends on dynamicViscosity, specificHeatCapacityCp, specificHeatCapacityCv and dpdd=1/dddp
-
-protected
-    MolarMass MM = fluidConstants[1].molarMass;
-    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
-    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-    Density d_red_residual=fluidConstants[1].molarMass/
-        thermalConductivityCoefficients.reducingMolarVolume_residual;
-    Real delta "reduced density";
-
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Temperature T_red_0=thermalConductivityCoefficients.reducingTemperature_0;
-    Temperature T_red_residual=thermalConductivityCoefficients.reducingTemperature_residual;
-    Real tau "reduced temperature";
-
-    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
-
-    // coeffs for dilute contribution
-    Real[size(thermalConductivityCoefficients.lambda_0_coeffs, 1),2] A=
-        thermalConductivityCoefficients.lambda_0_coeffs;
-
-    // coeffs for residual contribution
-    Real[size(thermalConductivityCoefficients.lambda_r_coeffs, 1),4] B=
-        thermalConductivityCoefficients.lambda_r_coeffs;
-
-    // coeffs for critical enhancement
-    Real nu=thermalConductivityCoefficients.nu;
-    Real gamma=thermalConductivityCoefficients.gamma;
-    Real R0=thermalConductivityCoefficients.R0;
-    Real z=thermalConductivityCoefficients.z;
-    Real c=thermalConductivityCoefficients.c;
-    Real xi_0=thermalConductivityCoefficients.xi_0;
-    Real Gamma_0=thermalConductivityCoefficients.Gamma_0;
-    Real q_D=1/thermalConductivityCoefficients.qd_inverse;
-    Temperature T_ref=thermalConductivityCoefficients.T_ref;
-
-    // interim variables for critical enhancement
-    constant Real pi=Modelica.Constants.pi;
-    constant Real k_b=Modelica.Constants.k;
-    EoS.HelmholtzDerivs f;
-    EoS.HelmholtzDerivs f_ref;
-    Real ddpT;
-    Real ddpT_ref;
-    Real chi;
-    Real chi_ref;
-    Real Delta_chi;
-    Real xi;
-    Real Omega_0;
-    Real Omega;
-
-    SpecificHeatCapacity Cp;
-    SpecificHeatCapacity Cv;
-    DynamicViscosity eta_b;
-
-    Real lambda_red_0=thermalConductivityCoefficients.reducingThermalConductivity_0;
-    Real lambda_red_residual=thermalConductivityCoefficients.reducingThermalConductivity_residual;
-    ThermalConductivity lambda_0=0;
-    ThermalConductivity lambda_r=0;
-    ThermalConductivity lambda_c=0;
-    constant Real milli=1e-3;
-
-  algorithm
-    assert(state.phase <> 2, "thermalConductivity error: property not defined in two-phase region");
-
-    // dilute gas contribution
-    tau := state.T/T_red_0;
-    lambda_0 := sum(A[i, 1]*tau^A[i, 2] for i in 1:size(A, 1));
-    lambda_0 := lambda_0*lambda_red_0;
-
-    // residual contribution; RefProp uses the name background contribution
-    tau := state.T/T_red_residual;
-    delta := state.d/d_red_residual;
-    lambda_r := sum((B[i, 1]*tau^B[i, 2])*(delta)^B[i, 3] for i in 1:size(B, 1));
-    lambda_r := lambda_r*lambda_red_residual;
-
-    // critical enhancement by the simplified crossover model by Olchowy and Sengers
-    if ((state.T > T_ref) or (state.d < d_crit/100)) then
-      lambda_c := 0; // far away from critical point
-    else
-      // use critical values from EoS to calculate chi, Omega and lambda_c
-      // watch out: algorithm for chi and chi_ref are different (chi_ref is multiplied with T_ref/state.T)
-      f     := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
-      f_ref := EoS.setHelmholtzDerivsSecond(T=T_ref,   d=state.d, phase=1);
-      ddpT     := 1.0/EoS.dpdT(f);
-      ddpT_ref := 1.0/EoS.dpdT(f_ref);
-      chi     := p_crit/d_crit^2*state.d*ddpT;
-      chi_ref := p_crit/d_crit^2*state.d*ddpT_ref*T_ref/state.T;
-
-      Delta_chi := chi - chi_ref;
-
-      if (Delta_chi < 0) then
-        lambda_c := 0;
-      else
-        xi := xi_0*(Delta_chi/Gamma_0)^(nu/gamma);
-
-        Cp := specificHeatCapacityCp(state=state);
-        Cv := specificHeatCapacityCv(state=state);
-        Omega := 2/pi*((Cp - Cv)/Cp*atan(q_D*xi) + Cv/Cp*q_D*xi);
-        Omega_0 := 2/pi*(1 - exp(-1/(1/(q_D*xi) + ((q_D*xi*d_crit/state.d)^2)/3)));
-
-        eta_b := dynamicViscosity(state=state);
-        lambda_c := (state.d*Cp*R0*k_b*state.T)/(6*pi*eta_b*xi)*(Omega - Omega_0);
-        lambda_c := max(0, lambda_c);
-      end if;
-    end if;
-
-    // RefPropresults are in mW/m·K but SI default is W/m·K
-    lambda := milli*(lambda_0 + lambda_r + lambda_c);
-
-    /* // following lines are for debugging only
-  Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("        d = " + String(state.d) + " and T = " + String(state.T));
-  Modelica.Utilities.Streams.print(" lambda_0 = " + String(lambda_0));
-  Modelica.Utilities.Streams.print(" lambda_r = " + String(lambda_r));
-  Modelica.Utilities.Streams.print("   dpdd   = " + String(dpdd) + " and dpdd_ref = " + String(dpdd_ref));
-  Modelica.Utilities.Streams.print("   chi    = " + String(chi) + "  and  chi_ref = " + String(chi_ref));
-  Modelica.Utilities.Streams.print("Delta_chi = " + String(Delta_chi));
-  Modelica.Utilities.Streams.print("       xi = " + String(xi));
-  Modelica.Utilities.Streams.print("       Cp = " + String(Cp) + "  and  Cv = " + String(Cv));
-  Modelica.Utilities.Streams.print("  Omega_0 = " + String(Omega_0));
-  Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
-  Modelica.Utilities.Streams.print("    eta_b = " + String(eta_b));
-  Modelica.Utilities.Streams.print(" lambda_c = " + String(lambda_c));
-  Modelica.Utilities.Streams.print("  lambda  = " + String(lambda));
-  Modelica.Utilities.Streams.print("===========================================");
-  */
-
-    annotation (Documentation(info="<html>
-  <p>
-The thermal conductivity (TC) is split into three parts: ideal gas TC lamda_0, residual TC lambda_r and critical TC enhancement lambda_c.
-Sometimes the residual TC is again split into two parts.
-This allows to develop functions for each contribution seperately.
-The sum of ideal gas TC and residual TC is called background TC.
-Ideal gas TC depends on Temperature only and can be modelled by a quadratic function.
-Residual TC is also modeled by a polynominal.
-At the critical point TC becomes infinite; TC is enhanced for a large region around the critical point.
-The critical enhancement can be described by various alternative approaches.
-Here, the simplified approach as suggested by Olchowy and Sengers is implemented.
-
-Special thanks go to Eric W. Lemmon for answering all my emails 
-and programming a special version of RefProp that outputs also intermediate values.
-
-</p>
-<dl>
-<dt>Olchowy, G.A. and Sengers, J.V</dt>
-<dd> <b>A simplified representation for the thermal conductivity of fluids in the critical region</b>.<br>
-     International Journal of Thermophysics (1998) 10, 417-426.<br>
-     DOI: <a href=\"http://dx.doi.org/10.1007/BF01133538\">10.1007/BF01133538</a>
-</dd>
-</dl>
-</html>"));
-  end thermalConductivity;
-
-
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
     // inherits input state and output eta
 
 protected
-    DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
-    CollisionIntegralModel collisionIntegralModel=dynamicViscosityCoefficients.collisionIntegralModel;
-    MolarMass MM = fluidConstants[1].molarMass;
-    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
-    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-    Density d_red_residual=MM/dynamicViscosityCoefficients.reducingMolarVolume_residual;
-    Real delta=0 "reduced density";
-    Real delta_exp=0 "reduced density in exponential term";
-    Real delta_0=0 "close packed density";
-    Real dm=state.d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
-  //Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
-
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
-    Temperature T_red_residual=dynamicViscosityCoefficients.reducingTemperature_residual;
-    Real T_star "reduced temperature";
-    Real tau "reduced temperature";
-
-    Real[size(dynamicViscosityCoefficients.a, 1),2] a=dynamicViscosityCoefficients.a;
-    Real[size(dynamicViscosityCoefficients.b, 1),2] b=dynamicViscosityCoefficients.b;
-    Real[size(dynamicViscosityCoefficients.c, 1),1] c=dynamicViscosityCoefficients.c;
-
-    Real[size(dynamicViscosityCoefficients.g, 1),2] g=dynamicViscosityCoefficients.g;
-    Real[size(dynamicViscosityCoefficients.e, 1),5] e=dynamicViscosityCoefficients.e;
-    Real[size(dynamicViscosityCoefficients.nu_po, 1),5] nu_po=dynamicViscosityCoefficients.nu_po;
-    Real[size(dynamicViscosityCoefficients.de_po, 1),5] de_po=dynamicViscosityCoefficients.de_po;
-    // Real[size(dynamicViscosityCoefficients.nu_ex,1),5] nu_ex=dynamicViscosityCoefficients.nu_ex;
-    // Real[size(dynamicViscosityCoefficients.de_ex,1),5] de_ex=dynamicViscosityCoefficients.de_ex;
-
-    Real[size(dynamicViscosityCoefficients.CET, 1),2] CET=dynamicViscosityCoefficients.CET; // Chapman-Enskog-Term
-    Real Omega=0 "reduced effective cross section / Omega collision integral";
-    Real sigma=dynamicViscosityCoefficients.sigma;
-    Real B_star=0 "reduced second viscosity virial coefficient";
-    Real B=0 "second viscosity virial coefficient, l/mol";
-    Real visci=0 "RefProp      visci temporary variable";
-    Real xnum=0 "RefProp   numerator temporary variable";
-    Real xden=0 "RefProp denominator temporary variable";
-    Real G=0 "RefProp temporary variable";
-    Real H=0 "RefProp temporary variable";
-    Real F=0 "RefProp temporary variable";
-
-    Real eta_red_0=dynamicViscosityCoefficients.reducingViscosity_0;
-    Real eta_red_1=dynamicViscosityCoefficients.reducingViscosity_1;
-    Real eta_red_residual=dynamicViscosityCoefficients.reducingViscosity_residual;
-    DynamicViscosity eta_0=0 "zero density contribution";
-    DynamicViscosity eta_1=0 "initial density contribution";
-    DynamicViscosity eta_r=0 "residual viscosity";
     constant Real micro=1e-6;
 
   algorithm
     assert(state.phase <> 2, "dynamicViscosity error: property not defined in two-phase region");
 
-    // collision integral
-    if (collisionIntegralModel == CollisionIntegralModel.CI0) then
-      T_star := (state.T/dynamicViscosityCoefficients.epsilon_kappa);
-      Omega := 1.16145/T_star^0.14874 + 0.52487*exp(-0.77320*T_star) + 2.16178*exp(-2.43787*T_star);
-    elseif (collisionIntegralModel == CollisionIntegralModel.CI1) then
-      T_star := Modelica.Math.log(state.T/dynamicViscosityCoefficients.epsilon_kappa);
-      Omega := exp(sum(a[i, 1]*(T_star)^a[i, 2] for i in 1:size(a, 1)));
-    elseif (collisionIntegralModel == CollisionIntegralModel.CI2) then
-      T_star := (dynamicViscosityCoefficients.epsilon_kappa/state.T)^(1/3);
-      Omega := 1/(sum(a[i, 1]*(T_star)^(4-i) for i in 1:size(a, 1)));
-    end if;
-
-    // dilute gas (zero density) contribution
-    // using the Chapman-Enskog-Term and the collision integral Omega
-    if ((dynamicViscosityModel == DynamicViscosityModel.VS1)
-    or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
-      tau := state.T/T_red_0;
-      // first term is the Chapman-Enskog-Term
-      eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);
-      // possibly further empirical terms
-      eta_0 := eta_0 + sum(CET[i, 1]*(tau)^CET[i, 2] for i in 2:size(CET, 1));
-    elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
-      eta_0 := CET[1, 1]*state.T^CET[1,2]/(sigma^2*Omega);
-    elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
-    end if;
-    eta_0 := eta_0*eta_red_0;
-
-    // inital density contribution
-    if ((dynamicViscosityModel == DynamicViscosityModel.VS1)
-    or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)
-    or  (dynamicViscosityModel == DynamicViscosityModel.VS4)) then
-      // use the second viscosity virial coefficient B according to Rainwater and Friend
-      T_star := (state.T/dynamicViscosityCoefficients.epsilon_kappa);
-      B_star := sum(b[i, 1]*T_star^b[i, 2] for i in 1:size(b, 1));
-      B := B_star*0.6022137*sigma^3;
-      eta_1 := eta_0*B*dm;
-    elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
-      eta_1 := dm * (b[1,1] + b[2,1]*(b[3,1]-log(state.T/b[4,1]))^2);
-    end if;
-    eta_1 := eta_1*eta_red_1;
-
-    // residual contribution
-    if ((dynamicViscosityModel == DynamicViscosityModel.VS1)
-    or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
-      // use the reduced close-packed density delta_0,
-      // a simple polynominal, a rational polynominal and an exponential term
-      tau := state.T/T_red_residual;
-      delta := state.d/d_red_residual;
-      if (abs(d_red_residual - 1) > 0.001) then
-        delta_exp := state.d/d_crit;
-      else
-        delta_exp := delta;
-      end if;
-
-      if (dynamicViscosityModel == DynamicViscosityModel.VS1) then
-        // generalized RefProp algorithm, be careful with coeffs: they may differ from article
-        delta_0 := sum(g[i, 1]*tau^g[i, 2] for i in 1:size(g, 1));
-      elseif (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative) then
-        // alternative inverse form
-        delta_0 := g[1, 1]/(1 + sum(g[i, 1]*tau^g[i, 2] for i in 2:size(g, 1)));
-      end if;
-      for i in 1:size(e, 1) loop
-        visci := e[i, 1]*tau^e[i, 2]*delta^e[i, 3]*delta_0^e[i, 4]; // simple polynominal terms
-        if (e[i, 5] > 0) then
-          visci := visci*exp(-delta_exp^e[i, 5]);
-        end if;
-        eta_r := eta_r + visci;
-      end for;
-
-      for i in 1:size(nu_po, 1) loop
-        // numerator of rational poly terms, RefProp algorithm
-        xnum := xnum + (nu_po[i, 1]*tau^nu_po[i, 2]*delta^nu_po[i, 3]*delta_0^nu_po[i, 4]);
-        if (nu_po[i, 5] > 0) then
-          xnum := xnum*exp(-delta_exp^nu_po[i, 5]);
-        end if;
-      end for;
-      for i in 1:size(de_po, 1) loop
-        // denominator of rational poly terms, RefProp algorithm
-        xden := xden + (de_po[i, 1]*tau^de_po[i, 2]*delta^de_po[i, 3]*delta_0^de_po[i, 4]);
-        if (de_po[i, 5] > 0) then
-          xden := xden*exp(-delta_exp^de_po[i, 5]);
-        end if;
-      end for;
-      eta_r := eta_r + xnum/xden;
-      // exponential terms not yet implemented!!
-
-    elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
-      G := c[1,1] + c[2,1]/state.T;
-    //H := sqrt(dm)*(dm-dm_crit)/dm_crit;
-      H := sqrt(dm)*(dm- c[8,1])/c[8,1];
-      F := G + (c[3,1] + c[4,1]*state.T^(-3/2))*dm^0.1
-             + (c[5,1] + c[6,1]/state.T + c[7,1]/state.T^2)*H;
-      eta_r :=exp(F) - exp(G);
-
-    elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
-      // not yet implemented!!
-    end if;
-    eta_r := eta_r*eta_red_residual;
-
     // RefProp results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
-    eta := micro*(eta_0 + eta_1 + eta_r);
-
-    /* // following lines are for debugging only
-  Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("        T = " + String(state.T));
-  Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
-  Modelica.Utilities.Streams.print("      tau = " + String(tau));
-  Modelica.Utilities.Streams.print("        d = " + String(state.d));
-  Modelica.Utilities.Streams.print("       dm = " + String(dm));
-  Modelica.Utilities.Streams.print("    delta = " + String(delta));
-  Modelica.Utilities.Streams.print("delta_exp = " + String(delta_exp));
-  Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("    Omega = " + String(Omega));
-  Modelica.Utilities.Streams.print("    eta_0 = " + String(eta_0));
-  Modelica.Utilities.Streams.print("   B_star = " + String(B_star));
-  Modelica.Utilities.Streams.print("        B = " + String(B));
-  Modelica.Utilities.Streams.print("    eta_1 = " + String(eta_1));
-  Modelica.Utilities.Streams.print("  delta_0 = " + String(delta_0));
-  Modelica.Utilities.Streams.print("     xnum = " + String(xnum) + " and xden = " + String(xden));
-  Modelica.Utilities.Streams.print("    eta_r = " + String(eta_r));
-  Modelica.Utilities.Streams.print(" eta_r_RP = " + String(eta_r+eta_1));
-  Modelica.Utilities.Streams.print("      eta = " + String(eta));
-  Modelica.Utilities.Streams.print("===========================================");
-  */
+    eta := micro*(Transport.dynamicViscosity_dilute(state)
+                + Transport.dynamicViscosity_initial(state)
+                + Transport.dynamicViscosity_residual(state));
 
     annotation (Documentation(info="<html>
 <p>
@@ -1795,6 +1471,42 @@ and programming a special version of RefProp that outputs also intermediate valu
 </dl>
 </html>"));
   end dynamicViscosity;
+
+
+  redeclare replaceable function extends thermalConductivity
+  "Return thermal conductivity"
+    // inherits input state and output lambda
+
+protected
+    constant Real milli=1e-3;
+
+  algorithm
+    assert(state.phase <> 2, "thermalConductivity error: property not defined in two-phase region");
+
+    // RefProp results are in mW/m·K but SI default is W/m·K
+    lambda := milli*(Transport.thermalConductivity_dilute(state)
+                   + Transport.thermalConductivity_residual(state)
+                   + Transport.thermalConductivity_critical(state));
+
+    annotation (Documentation(info="<html>
+  <p>
+The thermal conductivity (TC) is split into three parts: ideal gas TC lamda_0, residual TC lambda_r and critical TC enhancement lambda_c.
+Sometimes the residual TC is again split into two parts.
+This allows to develop functions for each contribution seperately.
+The sum of ideal gas TC and residual TC is called background TC.
+Ideal gas TC depends on Temperature only and can be modelled by a quadratic function.
+Residual TC is also modeled by a polynominal.
+At the critical point TC becomes infinite; TC is enhanced for a large region around the critical point.
+The critical enhancement can be described by various alternative approaches.
+Here, the simplified approach as suggested by Olchowy and Sengers is implemented.
+
+Special thanks go to Eric W. Lemmon for answering all my emails 
+and programming a special version of RefProp that outputs also intermediate values.
+
+</p>
+
+</html>"));
+  end thermalConductivity;
 
 
   redeclare replaceable function extends surfaceTension

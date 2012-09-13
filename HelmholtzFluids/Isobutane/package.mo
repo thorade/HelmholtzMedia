@@ -101,7 +101,7 @@ package Isobutane "Isobutane"
   thermalConductivityCoefficientsIsobutane(
     reducingTemperature_0 = 407.85,
     reducingThermalConductivity_0 = 1,
-    lambda_0_coeffs=[
+    lambda_0_num_coeffs=[
      -2.37901E-3,    0;
       1.06601E-2,    1;
       2.15811E-2,    2],

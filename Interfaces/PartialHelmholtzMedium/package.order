@@ -37,8 +37,8 @@ isobaricExpansionCoefficient
 isothermalCompressibility
 jouleThomsonCoefficient
 isothermalThrottlingCoefficient
-thermalConductivity
 dynamicViscosity
+thermalConductivity
 surfaceTension
 bubbleEnthalpy
 dewEnthalpy

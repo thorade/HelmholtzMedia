@@ -1,26 +1,26 @@
 within HelmholtzMedia.Examples.Parameter;
 model State_pT_parameter_Transport "calculate state record from pT input"
 
-  package Medium = HelmholtzFluids.Propane;
+  package Medium = HelmholtzFluids.Isopentane;
 
   parameter Medium.AbsolutePressure p=101325;
   parameter Medium.Temperature T=298.15;
   Medium.ThermodynamicState state;
-
   // pT always results in single phase states
-  // order of properties as in RefProp
 
+  Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsSecond(d=state.d,T=state.T);
+
+  // order of properties as in RefProp
   // derived properties
   Medium.SpecificHeatCapacity cv;
   Medium.SpecificHeatCapacity cp;
+  Medium.SpecificHeatCapacity cp0;
   Medium.VelocityOfSound a;
   Medium.Types.DerTemperatureByPressure mu;
-
   // transport proerties
   Medium.ThermalConductivity lambda;
   Medium.DynamicViscosity eta;
   Medium.PrandtlNumber Pr;
-
   // more derived properties
   Modelica.SIunits.IsothermalCompressibility kappa;
   Medium.IsobaricExpansionCoefficient beta;
@@ -32,6 +32,7 @@ equation
   // derived properties
   cv=Medium.specificHeatCapacityCv(state);
   cp=Medium.specificHeatCapacityCp(state);
+  cp0=f.R*(1-f.tau*f.tau*f.itt);
   a=Medium.velocityOfSound(state);
   mu=Medium.jouleThomsonCoefficient(state);
   beta=Medium.isobaricExpansionCoefficient(state);

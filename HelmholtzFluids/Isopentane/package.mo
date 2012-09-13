@@ -87,7 +87,7 @@ package Isopentane "Isopentane"
   thermalConductivityCoefficientsIsopentane(
     reducingTemperature_0 = 341.06,
     reducingThermalConductivity_0 = 1e-3,
-    lambda_0_coeffs=[
+    lambda_0_num_coeffs=[
        1.35558587,              0.0;
       -0.152666315743857,      -1.0;
        1.,                    -96.0],

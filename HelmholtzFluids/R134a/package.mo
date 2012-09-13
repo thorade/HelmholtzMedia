@@ -94,7 +94,7 @@ package R134a "R134a"
   thermalConductivityCoefficientsR134a(
     reducingTemperature_0=1,
     reducingThermalConductivity_0=1,
-    lambda_0_coeffs=[
+    lambda_0_num_coeffs=[
     -1.05248E-2,    0;
      8.00982E-5,    1],
     reducingTemperature_residual=1,

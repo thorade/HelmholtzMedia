@@ -1,3 +1,9 @@
 ThermalConductivityCoefficients
 DynamicViscosityCoefficients
 SurfaceTensionCoefficients
+dynamicViscosity_dilute
+dynamicViscosity_initial
+dynamicViscosity_residual
+thermalConductivity_dilute
+thermalConductivity_residual
+thermalConductivity_critical
