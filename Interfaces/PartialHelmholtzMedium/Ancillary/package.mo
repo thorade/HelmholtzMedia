@@ -17,8 +17,10 @@ protected
     Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
     Real[nPressureSaturation] theta=ancillaryCoefficients.pressureSaturation[:, 2];
 
+    constant Real eps=1e-9;
+
   algorithm
-    assert(T <= T_crit, "saturationPressure error: Temperature is higher than critical temperature");
+    assert(T <= T_crit+eps, "saturationPressure error: Temperature is higher than critical temperature");
     p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation));
 
     // this is an ancillary forward function
