@@ -5,13 +5,13 @@ It supports EoS of the form f=f(T,d) meaning Helmholtz energy as a funtion of te
 In addition to all state properties, this library calculates viscosity, thermal conductivity and surface tension.
 
 ### Implemented Fluids
-* Butane (n-Butane)
+* Butane
 * Ethanol
 * Isobutane
 * Isopentane
+* Pentane (hyperbolic terms by Martin Ryhl Kærn)
 * Propane
 * R134a
-* Pentane (hyperbolic terms for ideal Helmholtz energy is implemented - used in short technical EoS and GERG-2008)
 
 ### Fluids that might be included in future versions
 * Butane (short technical EoS)
@@ -22,6 +22,7 @@ In addition to all state properties, this library calculates viscosity, thermal 
 * nitrogen
 * methane
 * ammonia
+* helium
 * working fluids for Organic-Rankine-Cycles.
 
 ### Known issues & ToDo
