@@ -4,13 +4,7 @@ package MediaTestModels "Test models to test all media"
 
 
 
-
-
-
-
-
   annotation (Documentation(info="<html>
 
 </html>"));
-
 end MediaTestModels;
