@@ -21,15 +21,17 @@ protected
   Integer nDilute_den = size(thermalConductivityCoefficients.lambda_0_den_coeffs,1);
   Real[nDilute_den, 2] A_den= thermalConductivityCoefficients.lambda_0_den_coeffs;
   Real denom= 1;
-  constant Real eps = Modelica.Constants.eps;
   Real lambda_red_0=thermalConductivityCoefficients.reducingThermalConductivity_0;
 
+  // interim variables for flagged algorithms
+  constant Real eps = Modelica.Constants.eps;
   EoS.HelmholtzDerivs f;
-  SpecificHeatCapacity cp0=1;
-  DynamicViscosity eta_0=1;
+  Real wm = 1000*MM; // RefProp uses g per mol
+  Real cp0=1;  // ideal gas cp
+  Real eta_0=1; // dilute contribution only
 
 algorithm
-  // dilute gas contribution
+  Modelica.Utilities.Streams.print("thermalConductivity_dilute: d = " + String(state.d) + " and T = " + String(state.T));
   tau := state.T/T_red_0;
 
   // numerator terms, check exponent
@@ -40,16 +42,17 @@ algorithm
     f:=EoS.setHelmholtzDerivsSecond(d=state.d,T=state.T);
     cp0:=f.R*(1 - f.tau*f.tau*f.itt);
     eta_0:=dynamicViscosity_dilute(state);
+    Modelica.Utilities.Streams.print("flagged algorithms, cp0=" + String(cp0) + " and eta_0=" + String(eta_0));
     if (abs(A_num[nDilute_num,2]+99)<eps) then
-      Modelica.Utilities.Streams.print("flag 99: not yet implemented");
+      Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 99: not yet implemented");
     elseif (abs(A_num[nDilute_num,2]+98)<eps) then
-      Modelica.Utilities.Streams.print("flag 98: not yet implemented");
+      Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 98: not yet implemented");
     elseif (abs(A_num[nDilute_num,2]+97)<eps) then
-      Modelica.Utilities.Streams.print("flag 97: not yet implemented");
+      Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 97: not yet implemented");
     elseif (abs(A_num[nDilute_num,2]+96)<eps) then
-      Modelica.Utilities.Streams.print("flag 96");
-      //lambda_0 := (lambda_0*(cp0/f.R-2.5)+15.0/4.0)*f.R*eta_0/MM;
-      lambda_0 := lambda_0*eta_0/MM*(cp0-2.5*f.R) + 15.0/4.0*f.R*eta_0/MM;
+      Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 96");
+      cp0 := cp0/f.R-2.5;
+      lambda_0 := (lambda_0*cp0+15.0/4.0)*f.R*eta_0/wm;
     end if;
   end if;
 
@@ -61,13 +64,6 @@ algorithm
   end if;
 
   lambda_0 := lambda_0/denom*lambda_red_0;
-
-   // following lines are for debugging only
-  Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("        d = " + String(state.d) + " and T = " + String(state.T));
-  Modelica.Utilities.Streams.print("      cp0 = " + String(cp0));
-  Modelica.Utilities.Streams.print("    eta_0 = " + String(eta_0));
   Modelica.Utilities.Streams.print(" lambda_0 = " + String(lambda_0));
-  Modelica.Utilities.Streams.print("===========================================");
 
 end thermalConductivity_dilute;
