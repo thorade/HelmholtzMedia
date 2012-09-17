@@ -35,6 +35,7 @@ specificHeatCapacityCv
 velocityOfSound
 isobaricExpansionCoefficient
 isothermalCompressibility
+isentropicExponent
 jouleThomsonCoefficient
 isothermalThrottlingCoefficient
 dynamicViscosity

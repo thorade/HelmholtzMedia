@@ -1422,6 +1422,27 @@ protected
   end isothermalCompressibility;
 
 
+  redeclare function extends isentropicExponent "returns -1/v*(dv/dp)@T=const"
+  //input state and
+  //output gamma are inherited from PartialMedium
+
+protected
+    EoS.HelmholtzDerivs f;
+    SpecificHeatCapacity cp;
+    SpecificHeatCapacity cv;
+
+  algorithm
+    if (state.phase == 1) then
+      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      cp := EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
+      cv := EoS.duTd(f);
+      gamma := cp/cv;
+    elseif (state.phase == 2) then
+      gamma := Modelica.Constants.inf;
+    end if;
+  end isentropicExponent;
+
+
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
     // inherits input state and output eta
