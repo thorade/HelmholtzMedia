@@ -15,6 +15,7 @@ model State_pT_parameter_Transport "calculate state record from pT input"
   Medium.SpecificHeatCapacity cv;
   Medium.SpecificHeatCapacity cp;
   Medium.SpecificHeatCapacity cp0;
+  Medium.IsentropicExponent gamma;
   Medium.VelocityOfSound a;
   Medium.Types.DerTemperatureByPressure mu;
   // transport proerties
@@ -33,15 +34,16 @@ equation
   cv=Medium.specificHeatCapacityCv(state);
   cp=Medium.specificHeatCapacityCp(state);
   cp0=f.R*(1-f.tau*f.tau*f.itt);
+  gamma=Medium.isentropicExponent(state);
   a=Medium.velocityOfSound(state);
   mu=Medium.jouleThomsonCoefficient(state);
-  beta=Medium.isobaricExpansionCoefficient(state);
-  kappa=Medium.isothermalCompressibility(state);
-  delta_T=Medium.isothermalThrottlingCoefficient(state);
-
   // transport properties
   lambda=Medium.thermalConductivity(state);
   eta=Medium.dynamicViscosity(state);
   Pr=Medium.prandtlNumber(state);
+  // more derived properties
+  kappa=Medium.isothermalCompressibility(state);
+  beta=Medium.isobaricExpansionCoefficient(state);
+  delta_T=Medium.isothermalThrottlingCoefficient(state);
 
 end State_pT_parameter_Transport;

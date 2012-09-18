@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Parameter;
 model setSat_parameter
-  package medium = HelmholtzFluids.Propane;
+  package medium = HelmholtzFluids.Pentane;
 
   medium.SaturationProperties sat;
   medium.SaturationProperties sat_p;
