@@ -27,8 +27,8 @@ protected
   constant Real eps = Modelica.Constants.eps;
   constant Real kilo = 1e3;
   EoS.HelmholtzDerivs f;
-  Real cp0=1;  // ideal gas cp
-  Real eta_0=1; // dilute contribution only
+  Real cp0;  // ideal gas cp
+  Real eta_0; // dilute contribution only
 
 algorithm
   // Modelica.Utilities.Streams.print("thermalConductivity_dilute: d = " + String(state.d) + " and T = " + String(state.T));
