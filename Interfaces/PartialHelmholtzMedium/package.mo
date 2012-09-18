@@ -27,11 +27,11 @@ partial package PartialHelmholtzMedium
 
   redeclare record extends ThermodynamicState(phase(start=0))
     // inherits phase integer
-    Density d "Density of medium";
     Temperature T "Temperature of medium";
     AbsolutePressure p "Absolute pressure of medium";
-    SpecificEnthalpy h "Specific enthalpy of medium";
+    Density d "Density of medium";
     SpecificEnergy u "Specific inner energy of medium";
+    SpecificEnthalpy h "Specific enthalpy of medium";
     SpecificEntropy s "Specific entropy of medium";
   end ThermodynamicState;
 
