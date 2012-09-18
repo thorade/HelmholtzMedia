@@ -54,7 +54,7 @@ algorithm
       assert(false, "not yet implemented");
     elseif (abs(A_num[nDilute_num,2]+96)<eps) then
       // Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 96");
-      // remember: RefProp uses molar units!
+      // remember: RefProp uses molar units and g/mol!
       cp0 := cp0/f.R-2.5;
       lambda_0 := (lambda_0*cp0+15.0/4.0)*f.R*eta_0/kilo;
     end if;
