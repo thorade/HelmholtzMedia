@@ -5,6 +5,6 @@ model ButaneTestModel "Test HelmholtzMedia.HelmholtzFluids.Butane"
      redeclare package Medium = HelmholtzMedia.HelmholtzFluids.Butane, ambient(
         use_p_ambient=true, use_T_ambient=false));
 
-  annotation (experiment(StopTime=1.01));
+  annotation (experiment(StopTime=1.01), Diagram(graphics));
 
 end ButaneTestModel;
