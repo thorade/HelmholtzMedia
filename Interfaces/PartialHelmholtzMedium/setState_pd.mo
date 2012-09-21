@@ -125,7 +125,7 @@ algorithm
       f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
       RES_p := EoS.p(f) - p;
     end while;
-    // Modelica.Utilities.Streams.print("setState_pdX total iteration steps " + String(iter), "printlog.txt");
+    // Modelica.Utilities.Streams.print("setState_pd total iteration steps " + String(iter), "printlog.txt");
     assert(iter<iter_max, "setState_pdX did not converge, input was p=" + String(p) + " and d=" + String(d));
 
     state.p := p;

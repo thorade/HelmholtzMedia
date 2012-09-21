@@ -360,7 +360,6 @@ protected
   end setSat_p;
 
 
-
   redeclare function extends setBubbleState
   "returns bubble ThermodynamicState from given saturation properties"
   // inherited from: PartialTwoPhaseMedium
@@ -711,7 +710,7 @@ protected
           RES_p := EoS.p(f) - p;
         end if;
     end while;
-    // Modelica.Utilities.Streams.print("setState_pTX total iteration steps " + String(iter), "printlog.txt");
+    // Modelica.Utilities.Streams.print("setState_pT total iteration steps " + String(iter)+ " for T=" + String(T) + " and p=" + String(p), "printlog.txt");
     assert(iter<iter_max, "setState_pTX did not converge, input was p=" + String(p) + " and T=" + String(T));
 
     state.p := p;
@@ -809,8 +808,8 @@ protected
           // Modelica.Utilities.Streams.print("single phase vapor", "printlog.txt");
           state.phase := 1;
           d_min := fluidLimits.DMIN;
-          d_max := sat.liq.d;
-          d_iter := sat.liq.d;
+          d_max := sat.vap.d;
+          d_iter := sat.vap.d/10;
           T_min := sat.Tsat;
           T_max := fluidLimits.TMAX;
           T_iter:= sat.Tsat;
@@ -827,7 +826,7 @@ protected
         d_iter := d_crit;
         T_min := fluidLimits.TMIN;
         T_max := fluidLimits.TMAX;
-        T_iter:= T_crit;
+        T_iter:= 0.7*T_crit;
       end if;
     end if;
 
@@ -868,7 +867,7 @@ protected
       Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and RES_h=" + String(RES_h), "printlog.txt");
       Modelica.Utilities.Streams.print("dpdT=" + String(dpdT) + " and dpTd=" + String(dpTd), "printlog.txt");
       Modelica.Utilities.Streams.print("dhdT=" + String(dhdT) + " and dhTd=" + String(dhTd), "printlog.txt");
-      Modelica.Utilities.Streams.print("det(J)=" + String(det), "printlog.txt");  */
+      Modelica.Utilities.Streams.print("det(J)=" + String(det), "printlog.txt"); */
 
         // calculate better d_iter and T_iter
         d_iter := d_iter - gamma/det*(+dhTd*RES_p -dpTd*RES_h);
@@ -885,7 +884,7 @@ protected
         RES_p := EoS.p(f) - p;
         RES_h := EoS.h(f) - h;
       end while;
-      // Modelica.Utilities.Streams.print("setState_phX total iteration steps " + String(iter), "printlog.txt");
+      // Modelica.Utilities.Streams.print("setState_ph total iteration steps " + String(iter), "printlog.txt");
       assert(iter<iter_max, "setState_phX did not converge, input was p=" + String(p) + " and h=" + String(h));
 
       state.p := p;
@@ -984,8 +983,8 @@ protected
           // Modelica.Utilities.Streams.print("single phase vapor", "printlog.txt");
           state.phase := 1;
           d_min := fluidLimits.DMIN;
-          d_max := sat.liq.d;
-          d_iter := sat.liq.d;
+          d_max := sat.vap.d;
+          d_iter := sat.vap.d/10;
           T_min := sat.Tsat;
           T_max := fluidLimits.TMAX;
           T_iter:= sat.Tsat;
@@ -1002,7 +1001,7 @@ protected
         d_iter := d_crit;
         T_min := fluidLimits.TMIN;
         T_max := fluidLimits.TMAX;
-        T_iter:= T_crit;
+        T_iter:= 0.7*T_crit;
       end if;
     end if;
 
@@ -1059,7 +1058,7 @@ protected
         RES_p := EoS.p(f) - p;
         RES_s := EoS.s(f)- s;
       end while;
-      // Modelica.Utilities.Streams.print("setState_phX total iteration steps " + String(iter), "printlog.txt");
+      // Modelica.Utilities.Streams.print("setState_ps total iteration steps " + String(iter), "printlog.txt");
       assert(iter<iter_max, "setState_psX did not converge, input was p=" + String(p) + " and s=" + String(s));
 
       state.p := p;

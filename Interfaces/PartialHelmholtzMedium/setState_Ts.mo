@@ -172,7 +172,7 @@ algorithm
         RES_s := EoS.s(f) - s;
       end if;
     end while;
-    // Modelica.Utilities.Streams.print("setState_Ts total iteration steps " + String(iter) + " for T=" + String(T) + " and s=" + String(s), "printlog.txt");
+    // Modelica.Utilities.Streams.print("setState_Ts total iteration steps " + String(iter), "printlog.txt");
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");
     assert(iter<iter_max, "setState_Ts did not converge, input was T=" + String(T) + " and s=" + String(s));
 
