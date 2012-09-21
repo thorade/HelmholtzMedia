@@ -47,7 +47,7 @@ algorithm
     RES_p  := EoS.p(fl) - EoS.p(fv);
     RES_g  := EoS.g(fl) - EoS.g(fv);
 
-    while (abs(RES_p/(fv.d*fv.T*fv.R))>tolerance or abs(RES_g/(fv.T*fv.R))>tolerance) and (iter<iter_max) loop
+    while (min(abs(RES_p), abs(RES_p/(fv.d*fv.T*fv.R)))>tolerance or abs(RES_g/(fv.T*fv.R))>tolerance) and (iter<iter_max) loop
       iter := iter+1;
       // gamma := (iter_max-iter)/iter_max;
 

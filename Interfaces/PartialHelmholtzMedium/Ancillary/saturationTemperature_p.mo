@@ -53,7 +53,7 @@ if (p<p_crit) and (p>p_trip) then
     T := T - gamma/dpdT*RES_p;
 
     // check bounds
-    T := max(T,T_trip);
+    T := max(T,T_trip*0.99);
     T := min(T,T_crit);
 
     // calculate new RES_p
@@ -61,8 +61,8 @@ if (p<p_crit) and (p>p_trip) then
     T_theta := max((1 - T/T_crit), Modelica.Constants.small);
     RES_p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
   end while;
-  // Modelica.Utilities.Streams.print("saturationTemperature_p total iteration steps " + String(iter), "printlog.txt");
-  assert(iter<iter_max, "saturationTemperature_p did not converge, input was p=" + String(p));
+  // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_p total iteration steps " + String(iter), "printlog.txt");
+  assert(iter<iter_max, "Ancillary.saturationTemperature_p did not converge, input was p=" + String(p));
 
 elseif (p<=p_trip) then
   T := T_trip;

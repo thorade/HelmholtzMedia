@@ -66,7 +66,7 @@ algorithm
         // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
       end while;
       assert(iter<iter_max, "saturationTemperature_d_vap did not converge, input was d_vap=" + String(d));
-      // Modelica.Utilities.Streams.print("saturationTemperature_d_vap total iteration steps " + String(iter) + " for d_vap=" + String(d), "printlog.txt");
+      // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_d_vap total iteration steps " + String(iter) + " for d_vap=" + String(d), "printlog.txt");
       // Modelica.Utilities.Streams.print(" ", "printlog.txt");
       T := T4;
     else
@@ -111,7 +111,7 @@ algorithm
         // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
       end while;
       assert(iter<iter_max, "saturationTemperature_d_liq did not converge, input was d_liq=" + String(d));
-      // Modelica.Utilities.Streams.print("saturationTemperature_d_liq total iteration steps " + String(iter) + " for d_liq=" + String(d), "printlog.txt");
+      // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_d_liq total iteration steps " + String(iter) + " for d_liq=" + String(d), "printlog.txt");
       // Modelica.Utilities.Streams.print(" ", "printlog.txt");
       T := T4;
     else
