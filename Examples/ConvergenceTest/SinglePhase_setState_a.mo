@@ -1,5 +1,5 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
-model SinglePhase_setState
+model SinglePhase_setState_a
   package Medium = HelmholtzFluids.Butane;
   Medium.AbsolutePressure p;
   Medium.Temperature T;
@@ -54,4 +54,4 @@ equation
   state_Ts=Medium.setState_Ts(T=state.T, s=state.s, phase=0);
 
   annotation (experiment(StopTime=12, NumberOfIntervals=10000));
-end SinglePhase_setState;
+end SinglePhase_setState_a;

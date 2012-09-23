@@ -2,7 +2,7 @@ within HelmholtzMedia.Examples.Parameter;
 model SinglePhase_setState
   package Medium = HelmholtzFluids.Butane;
 
-  parameter Medium.AbsolutePressure p=4e2;
+  parameter Medium.AbsolutePressure p=101325;
   parameter Medium.Temperature T=298.15;
 
   Medium.ThermodynamicState state;
