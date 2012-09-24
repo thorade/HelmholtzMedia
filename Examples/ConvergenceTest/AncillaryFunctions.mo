@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model AncillaryFunctions
-  package medium = HelmholtzFluids.Pentane;
+  package medium = HelmholtzFluids.Ethanol;
   medium.Temperature Tsat;
   medium.AbsolutePressure psat;
   medium.Density dliq;

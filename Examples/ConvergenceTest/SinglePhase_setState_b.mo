@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model SinglePhase_setState_b
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.Pentane;
   Medium.AbsolutePressure p;
   Medium.Temperature T;
   Medium.ThermodynamicState state;

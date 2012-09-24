@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model CriticalState
-  package Medium = HelmholtzMedia.HelmholtzFluids.Pentane;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Ethanol;
   Medium.ThermodynamicState criticalState;
 
 protected
