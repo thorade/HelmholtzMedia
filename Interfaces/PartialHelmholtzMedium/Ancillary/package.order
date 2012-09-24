@@ -4,3 +4,5 @@ dewDensity_T
 saturationPressure_T
 saturationTemperature_p
 saturationTemperature_d
+saturationTemperature_h_liq
+saturationTemperature_s_liq
