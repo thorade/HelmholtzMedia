@@ -27,7 +27,7 @@ protected
   Density R3 "residual of T3";
   Density R4= Modelica.Constants.inf "residual of T4";
 
-  constant Real tolerance=1e-9 "relative tolerance for RES_d";
+  constant Real tolerance=1e-6 "relative tolerance for RES_d";
   Integer iter=0;
   constant Integer iter_max = 200;
 

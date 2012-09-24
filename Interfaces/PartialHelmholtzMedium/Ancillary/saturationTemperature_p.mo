@@ -20,7 +20,7 @@ protected
   Real RES_p;
   Real dpdT;
   constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-  constant Real tolerance=1e-9 "relative tolerance for RES_p";
+  constant Real tolerance=1e-6 "relative tolerance for RES_p";
   Integer iter=0;
   constant Integer iter_max = 200;
 

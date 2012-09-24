@@ -34,7 +34,7 @@ protected
   SpecificEnthalpy R3 "residual of T3";
   SpecificEnthalpy R4= Modelica.Constants.inf "residual of T4";
 
-  constant Real tolerance=1e-9 "relative tolerance for RES";
+  constant Real tolerance=1e-6 "relative tolerance for RES";
   Integer iter=0;
   constant Integer iter_max = 200;
 
@@ -42,7 +42,7 @@ algorithm
   // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_h, h=" + String(h), "printlog.txt");
   // assert(h<=h_crit+tolerance,"bubble enthalpy cannot be higher than critical enthalpy, invalid input");
 
-  if (h<h_crit) and (h>hl_trip) then
+  if (h<0.98*h_crit) and (h>hl_trip) then
     // Modelica.Utilities.Streams.print("h<h_crit: liquid side", "printlog.txt");
     R1 := hl_trip-h;
     R2 := h_crit-h;
@@ -91,10 +91,10 @@ algorithm
       end if;
     end if;
 
+  elseif (h>=0.98*h_crit) then
+    T := T_crit;
   elseif (h<=hl_trip) then
     T := T_trip;
-  elseif (h>=h_crit) then
-    T := T_crit;
   else
     assert(false, "Ancillary.saturationTemperature_h (liquid side): this should also not happen");
   end if;
