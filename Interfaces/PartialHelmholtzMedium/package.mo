@@ -736,6 +736,7 @@ protected
 
     AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+    SpecificEnthalpy h_crit=fluidConstants[1].HCRIT0;
 
     EoS.HelmholtzDerivs f;
     SaturationProperties sat;
@@ -819,14 +820,25 @@ protected
         end if;
 
       else
-        // Modelica.Utilities.Streams.print("p>=p_crit, only single phase possible", "printlog.txt");
         state.phase := 1;
-        d_min := fluidLimits.DMIN;
-        d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
-        d_iter := d_crit;
-        T_min := fluidLimits.TMIN;
-        T_max := fluidLimits.TMAX;
-        T_iter:= 0.7*T_crit;
+        // Modelica.Utilities.Streams.print("p>=p_crit, liquid region or supercritical region possible", "printlog.txt");
+        if (h<=h_crit) then
+          // Modelica.Utilities.Streams.print("h<=h_crit, liquid region", "printlog.txt");
+          d_min := d_crit;
+          d_max := 1.1*fluidLimits.DMAX;
+          d_iter:= 0.9*fluidLimits.DMAX;
+          T_min := 0.98*fluidLimits.TMIN;
+          T_iter:= Ancillary.saturationTemperature_h_liq(h=h);
+          T_max := 1.2*T_iter;
+        else
+          // Modelica.Utilities.Streams.print("h>h_crit, supercritical region", "printlog.txt");
+          d_min := fluidLimits.DMIN;
+          d_max := fluidLimits.DMAX;
+          d_iter:= d_crit;
+          T_min := fluidLimits.TMIN;
+          T_max := fluidLimits.TMAX;
+          T_iter:= 1.3*T_crit;
+        end if;
       end if;
     end if;
 
@@ -912,6 +924,7 @@ protected
 
     AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+    SpecificEntropy s_crit=fluidConstants[1].SCRIT0;
 
     SaturationProperties sat;
     MassFraction x "vapour quality";
@@ -929,7 +942,7 @@ protected
     DerEntropyByDensity dsdT "(ds/dd)@T=const";
     DerEntropyByTemperature dsTd "(ds/dT)@d=const";
     Real det "determinant of Jacobi matrix";
-    constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
     constant Real tolerance=1e-9
     "tolerance for sum of relative RES_p and relative RES_s ";
     Integer iter = 0;
@@ -944,7 +957,7 @@ protected
       assert(s >= sat.liq.s, "setState_psX_error: entropy is lower than saturated liquid entropy: this is single phase liquid");
       assert(s <= sat.vap.s, "setState_psX_error: entropy is higher than saturated vapor entropy: this is single phase vapor");
     else
-      if (p < p_crit) then
+      if (p <= p_crit) then
         // two-phase possible, do simple check first
         sat.Tsat := Ancillary.saturationTemperature_p(p=p);
         tau := T_crit/sat.Tsat;
@@ -974,8 +987,8 @@ protected
           // Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
           state.phase := 1;
           d_min := sat.liq.d;
-          d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
-          d_iter := sat.liq.d;
+          d_max := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
+          d_iter:= sat.liq.d;
           T_min := fluidLimits.TMIN;
           T_max := sat.Tsat;
           T_iter:= sat.Tsat;
@@ -984,7 +997,7 @@ protected
           state.phase := 1;
           d_min := fluidLimits.DMIN;
           d_max := sat.vap.d;
-          d_iter := sat.vap.d/10;
+          d_iter:= sat.vap.d/10;
           T_min := sat.Tsat;
           T_max := fluidLimits.TMAX;
           T_iter:= sat.Tsat;
@@ -993,15 +1006,26 @@ protected
           state.phase := 2;
         end if;
 
-      else
-        // Modelica.Utilities.Streams.print("p>=p_crit or p<p_trip, only single phase possible", "printlog.txt");
+      elseif (p>=p_crit) then
         state.phase := 1;
-        d_min := fluidLimits.DMIN;
-        d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
-        d_iter := d_crit;
-        T_min := fluidLimits.TMIN;
-        T_max := fluidLimits.TMAX;
-        T_iter:= 0.7*T_crit;
+        // Modelica.Utilities.Streams.print("p>=p_crit, liquid region or supercritical region possible", "printlog.txt");
+        if (s<=s_crit) then
+          // Modelica.Utilities.Streams.print("s<=s_crit, liquid region", "printlog.txt");
+          d_min := d_crit;
+          d_max := 1.1*fluidLimits.DMAX;
+          d_iter:= 0.9*fluidLimits.DMAX;
+          T_min := 0.98*fluidLimits.TMIN;
+          T_iter:= Ancillary.saturationTemperature_s_liq(s=s);
+          T_max := 2*T_iter;
+        else
+          // Modelica.Utilities.Streams.print("s>s_crit, supercritical region", "printlog.txt");
+          d_min := fluidLimits.DMIN;
+          d_max := fluidLimits.DMAX;
+          d_iter:= d_crit;
+          T_min := T_crit;
+          T_max := fluidLimits.TMAX;
+          T_iter:= 1.3*T_crit;
+        end if;
       end if;
     end if;
 
