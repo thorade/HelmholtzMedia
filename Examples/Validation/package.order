@@ -5,3 +5,4 @@ Derivatives_SaturationBoundary
 Derivatives_TwoPhase
 HelmholtzDerivatives
 acentricFactor
+CriticalState

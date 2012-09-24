@@ -25,6 +25,8 @@ package Pentane "Pentane"
        criticalTemperature=469.7,
        criticalPressure=3370000,
        criticalMolarVolume=1/3215.5776,
+       HCRIT0=802975.214437,
+       SCRIT0=2579.64940959,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.07,

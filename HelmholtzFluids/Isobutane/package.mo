@@ -25,6 +25,8 @@ package Isobutane "Isobutane"
        criticalTemperature=407.81,
        criticalPressure=3629000,
        criticalMolarVolume=1/3879.756788,
+       HCRIT0=32272.715574784,
+       SCRIT0=-292.979471116609,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.132,

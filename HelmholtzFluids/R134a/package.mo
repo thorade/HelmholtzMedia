@@ -25,6 +25,8 @@ package R134a "R134a"
        criticalTemperature=374.21,
        criticalPressure=4059280,
        criticalMolarVolume=0.102032/511.899952,
+       HCRIT0=390096.681354104,
+       SCRIT0=1563.25213836167,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=2.058,

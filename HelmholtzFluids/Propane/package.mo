@@ -25,6 +25,8 @@ extends Interfaces.PartialHelmholtzMedium(
        criticalTemperature=369.89,
        criticalPressure=4251200,
        criticalMolarVolume=1/5000,
+       HCRIT0=555235.416244571,
+       SCRIT0=2051.62550792289,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.084,

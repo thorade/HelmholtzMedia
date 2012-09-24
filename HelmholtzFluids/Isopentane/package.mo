@@ -25,6 +25,8 @@ package Isopentane "Isopentane"
        criticalTemperature=460.35,
        criticalPressure=3378000,
        criticalMolarVolume=1/3271,
+       HCRIT0=503558.750553544,
+       SCRIT0=1282.74524346652,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.11,
