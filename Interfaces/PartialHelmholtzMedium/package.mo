@@ -1182,7 +1182,7 @@ protected
       f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
       cp := EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
     elseif (state.phase == 2) then
-      assert(false, "specificHeatCapacityCp warning: property not defined in two-phase region");
+      // assert(false, "specificHeatCapacityCp warning: property not defined in two-phase region");
       cp := Modelica.Constants.inf; // division by zero
     end if;
 
