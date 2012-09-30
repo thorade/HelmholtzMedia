@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model printCoefficients "pretty printing of EoS coefficients"
-  package medium = HelmholtzFluids.Ethanol;
+  package medium = HelmholtzFluids.Pentane;
 
 algorithm
   // print to printlog.txt or to Simulation Log -> Simulation
@@ -11,6 +11,8 @@ algorithm
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealLog), "printlog.txt");
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealPower), "printlog.txt");
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealEinstein), "printlog.txt");
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealCosh), "printlog.txt");
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealSinh), "printlog.txt");
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.residualPoly), "printlog.txt");
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.residualBwr), "printlog.txt");
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.residualGauss), "printlog.txt");
