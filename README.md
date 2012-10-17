@@ -1,8 +1,10 @@
-## HelmholtzFluids
+## HelmholtzMedia
 This library is written in Modelica.
 The purpose of this library is to calculate fluid properties from an equation of state (EoS), directly within Modelica and not from an external dll.
 It supports EoS of the form f=f(T,d) meaning Helmholtz energy as a funtion of temperature and density.
 In addition to all state properties, this library calculates viscosity, thermal conductivity and surface tension.
+Also see this [overview over the implementation][1].
+
 
 ### Implemented Fluids
 * Butane
@@ -32,3 +34,5 @@ In addition to all state properties, this library calculates viscosity, thermal 
 * Add `setState_hs` (needed for turbine calculation, when power is given and p_out is to be determined)
 * More testing would be nice (beta users welcome)
 * Documentation could be extended
+
+[1]: http://goo.gl/HeUzM "HelmholtzMedia CheatSheet"
