@@ -48,7 +48,7 @@ package Isopentane "Isopentane"
     TMIN=fluidConstantsIsopentane.triplePointTemperature,
     TMAX=500,
     DMIN=Modelica.Constants.small,
-    DMAX=800,
+    DMAX=960,
     PMIN=Modelica.Constants.small,
     PMAX=1000e6,
     HMIN=-725e3,
