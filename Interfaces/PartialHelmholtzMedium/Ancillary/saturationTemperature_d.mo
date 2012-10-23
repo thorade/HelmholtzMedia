@@ -39,11 +39,11 @@ algorithm
     R1 := Ancillary.dewDensity_T(T1)-d;
     R2 := d_crit-d;
     if (R1*R2<0) then
-      while (abs(R4/d)>tolerance) and (iter<iter_max) loop
+      while (abs(R4/d)>tolerance) and (iter<iter_max) and (abs(T1-T2)>tolerance) loop
         iter:=iter+1;
         T3 := (T1+T2)/2;
         R3 := Ancillary.dewDensity_T(T3)-d;
-        // caclutate better T from Ridder's method
+        // calculate better T from Ridder's method
         T4  := T3 + (T3 - T1)*sign(R1-R2)*R3/sqrt(R3*R3 - R1*R2);
         R4 := Ancillary.dewDensity_T(T4)-d;
         // Modelica.Utilities.Streams.print("Ridders' method: current residuals: R1=" + String(R1) + ", R2=" + String(R2) + ", R3=" + String(R3) + ", R4=" + String(R4), "printlog.txt");
@@ -81,17 +81,18 @@ algorithm
 
   elseif (d>d_crit) and (d<dl_trip) then
     // Modelica.Utilities.Streams.print("d>d_crit: liquid side", "printlog.txt");
-    R1 := Ancillary.bubbleDensity_T(T1)-d +tolerance;
+    R1 := Ancillary.bubbleDensity_T(T1)-d;
     R2 := d_crit-d;
     if (R1*R2<0) then
-      while (abs(R4/d)>tolerance) and (iter<iter_max) loop
+      while (abs(R4/d)>tolerance) and (iter<iter_max) and (abs(T1-T2)>tolerance) loop
         iter:=iter+1;
         T3 := (T1+T2)/2;
         R3 := Ancillary.bubbleDensity_T(T3)-d;
-        // caclutate better T from Ridder's method
+        // calculate better T from Ridder's method
         T4  := T3 + (T3 - T1)*sign(R1-R2)*R3/sqrt(R3*R3 - R1*R2);
         R4 := Ancillary.bubbleDensity_T(T4)-d;
-        // Modelica.Utilities.Streams.print("Ridders' method: current residuals: R1=" + String(R1) + ", R2=" + String(R2) + ", R3=" + String(R3) + ", R4=" + String(R4), "printlog.txt");
+        // Modelica.Utilities.Streams.print("Ridders' method: current temperatures: T1=" + String(T1,significantDigits=12) + ", T2=" + String(T2,significantDigits=12) + ", T3=" + String(T3,significantDigits=12) + ", T4=" + String(T4,significantDigits=12), "printlog.txt");
+        // Modelica.Utilities.Streams.print("Ridders' method: current    residuals: R1=" + String(R1) + ", R2=" + String(R2) + ", R3=" + String(R3) + ", R4=" + String(R4), "printlog.txt");
         if (R4*R3<=0) then
           T1 := T3;
           R1 := R3;
@@ -110,7 +111,7 @@ algorithm
         end if;
         // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
       end while;
-      assert(iter<iter_max, "saturationTemperature_d_liq did not converge, input was d_liq=" + String(d));
+      assert(iter<iter_max, "saturationTemperature_d_liq did not converge, remaining residuum is R4=" + String(R4) + ", input was d_liq=" + String(d));
       // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_d_liq total iteration steps " + String(iter) + " for d_liq=" + String(d), "printlog.txt");
       // Modelica.Utilities.Streams.print(" ", "printlog.txt");
       T := T4;

@@ -47,7 +47,7 @@ algorithm
     R1 := sl_trip-s;
     R2 := s_crit-s;
     if (R1*R2<0) then
-      while (abs(R4/s)>tolerance) and (iter<iter_max) loop
+      while (abs(R4/s)>tolerance) and (iter<iter_max) and (abs(T1-T2)>tolerance) loop
         iter:=iter+1;
         T3 := (T1+T2)/2;
         d3 := Ancillary.bubbleDensity_T(T3);
