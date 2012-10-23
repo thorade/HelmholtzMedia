@@ -500,25 +500,6 @@ protected
     EoS.HelmholtzDerivs f(T=T);
     SaturationProperties sat;
 
-    /* // RKS: Redlich-Kwong-Soave (see Soave 1979)
-  constant Real omega = fluidConstants[1].acentricFactor;
-  constant Real m = 0.480 + 1.574*omega - 0.176*omega^2;
-  Real a = 0.42747*R^2*T_crit^2/p_crit*(1 + m*(1 - sqrt(T/T_crit)))^2;
-  Real b = 0.08664*R*T_crit/p_crit;
-  Real A = a*p/(R^2*T^2);
-  Real B = b*p/(R*T);
-  Real r = (A-B-B^2)-1/3;
-  Real q = -2/27 + 1/3*(A-B-B^2) - A*B;
-  Real D = (r/3)^3 + (q/2)^2 "discriminant";
-  Real u;
-  Real Y1;
-  Real Y2;
-  Real Y3;
-  Real Theta;
-  Real phi;
-  import Modelica.Constants.pi;
-  */
-
     Density d_min;
     Density d_max;
     Density d_med;
@@ -544,9 +525,9 @@ protected
       // determine p_sat
       sat.psat := Ancillary.saturationPressure_T(T=T);
       if (p > 1.02*sat.psat) then
-        sat.liq.d := 0.97*Ancillary.bubbleDensity_T(T=T);
+        sat.liq.d := Ancillary.bubbleDensity_T(T=T);
       elseif (p < 0.98*sat.psat) then
-        sat.vap.d := 1.03*Ancillary.dewDensity_T(T=T);
+        sat.vap.d := Ancillary.dewDensity_T(T=T);
       else
         // Modelica.Utilities.Streams.print("close to saturation boundary, get saturation properties from EoS", "printlog.txt");
         sat := setSat_T(T=T);
@@ -555,71 +536,32 @@ protected
 
       // determine region
       if (p > sat.psat) then
-        // Modelica.Utilities.Streams.print("single phase liquid: d is between dliq and rho_max", "printlog.txt");
-        d_min  := sat.liq.d;
-        d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
-        d_iter := 1.1*sat.liq.d;
+        // Modelica.Utilities.Streams.print("single-phase liquid region", "printlog.txt");
+        d_min  := 0.98*sat.liq.d;
+        d_max  := 1.1*fluidLimits.DMAX;
+        // d_iter := 1.02*sat.liq.d;
+        d_iter := Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
       elseif (p < sat.psat) then
-        // Modelica.Utilities.Streams.print("single phase vapor: d is between 0 and dvap", "printlog.txt");
+        // Modelica.Utilities.Streams.print("single-phase vapor region", "printlog.txt");
         d_min  := fluidLimits.DMIN;
-        d_max  := sat.vap.d;
-        d_iter := 0.1*sat.vap.d;
+        d_max  := 1.02*sat.vap.d;
+        // d_iter := p/(R*T);
+        d_iter := Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
       else
-        // this should not happen
+        // Modelica.Utilities.Streams.print("two-phase region", "printlog.txt");
         assert(p <> sat.psat, "setState_pTX_error: pressure equals saturation pressure");
       end if;
     else
-      // Modelica.Utilities.Streams.print("T>=T_crit: d is between dmin and dmax", "printlog.txt");
+      // Modelica.Utilities.Streams.print("single-phase super-critical region", "printlog.txt");
       d_min  := fluidLimits.DMIN;
       d_max  := 1.1*fluidLimits.DMAX;
-      d_iter := d_crit/50;
+      // d_iter := p/(R*T);
+      d_iter := Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
     end if;
 
-    /* // get density start value from Redlich-Kwong-Soave (see Span 2000, section "3.3.1 Calculations based on pT" )  
-  Modelica.Utilities.Streams.print("RKS discriminant D=" + String(D), "printlog.txt");
-  if (D >= 0) then
-    u := (sqrt(D)-(q/2))^(1/3);
-    Y1 := u-r/(3*u);
-    Modelica.Utilities.Streams.print("RKS has one root (Y1=" + String(Y1) + ")", "printlog.txt");
-    d_iter := p/(R*T*(Y1+1/3));
-  elseif ((abs(D) < 1e-8) and (abs(r) < 1e-3)) then
-    // Modelica.Utilities.Streams.print("close to critical region, use critical density");
-    d_iter := d_crit;
-  else
-    // case D<0
-    Theta := sqrt(-r^3/27);
-    phi := acos(-q/(2*Theta));
-    Y1 := 2*Theta^(1/3)*cos(phi/3);
-    Y2 := 2*Theta^(1/3)*cos(phi/3+2*pi/3);
-    Y3 := 2*Theta^(1/3)*cos(phi/3+4*pi/3);
-     Modelica.Utilities.Streams.print("RKS has three possible roots(Y1=" + String(Y1) + ", Y2=" + String(Y2) + ", Y3=" + String(Y3), "printlog.txt");
-    if (T <= T_crit) then
-      Modelica.Utilities.Streams.print("T<T_crit: multiple roots due to phase boundary", "printlog.txt");
-      Modelica.Utilities.Streams.print("d(Y1)=" + String(p/(R*T*(Y1+1/3))) + ", d(Y2)=" + String(p/(R*T*(Y2+1/3))) + ", d(p/(R*T*(Y3+1/3)))=" + String(Y3), "printlog.txt");
-      if (p > sat.psat) then
-        Y1 := min(Y1,Y2);
-        Y1 := min(Y1,Y3);
-        d_iter := p/(R*T*(Y1+1/3));
-      elseif (p < sat.psat) then
-        Y1 := max(Y1,Y2);
-        Y1 := max(Y1,Y3);
-        d_iter := p/(R*T*(Y1+1/3));
-      else
-        // this should not happen
-        assert(p <> sat.psat, "setState_pTX error: pressure equals saturation pressure");
-      end if;
-    else
-      Modelica.Utilities.Streams.print("T>T_crit: multiple roots can occur, but two of the roots result in negative densities", "printlog.txt");
-      Modelica.Utilities.Streams.print("d(Y1)=" + String(p/(R*T*(Y1+1/3))) + ", d(Y2)=" + String(p/(R*T*(Y2+1/3))) + ", d(p/(R*T*(Y3+1/3)))=" + String(Y3), "printlog.txt");
-      d_iter := max(p/(R*T*(Y1+1/3)), p/(R*T*(Y2+1/3)));
-      d_iter := max(p/(R*T*(Y3+1/3)), d_iter);
-    end if;
-  end if;
-   Modelica.Utilities.Streams.print("RKS finished, d_iter=" + String(d_iter), "printlog.txt");
-  // check bounds, RKS is not very accurate for VLE densities
-  d_iter := max(d_min,d_iter);
-  d_iter := min(d_max,d_iter);
-  */
+    // check bounds, ideal gas and Soave are not very accurate
+    d_iter := max(d_iter, d_min);
+    d_iter := min(d_iter, d_max);
 
     // Modelica.Utilities.Streams.print("start Newton with d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
     // set necessary parts of f, then calculate RES_p
@@ -710,7 +652,7 @@ protected
           RES_p := EoS.p(f) - p;
         end if;
     end while;
-    // Modelica.Utilities.Streams.print("setState_pT total iteration steps " + String(iter)+ " for T=" + String(T) + " and p=" + String(p), "printlog.txt");
+    // Modelica.Utilities.Streams.print("setState_pT required " + String(iter) + " iterations to find d=" + String(d_iter) + " for input T=" + String(T) + " and p=" + String(p), "printlog.txt");
     assert(iter<iter_max, "setState_pTX did not converge, input was p=" + String(p) + " and T=" + String(T));
 
     state.p := p;
