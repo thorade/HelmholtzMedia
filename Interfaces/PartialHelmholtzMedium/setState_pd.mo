@@ -63,8 +63,8 @@ algorithm
         T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
         T_min := max(T_min, fluidLimits.TMIN);
         T_max := sat.Tsat;
-        // T_iter := 1.05*T_min;
-        T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
+        T_iter := 1.05*T_min;
+        // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       elseif (d < sat.vap.d) then
         // Modelica.Utilities.Streams.print("single-phase vapour region", "printlog.txt");
         state.phase := 1;
@@ -82,12 +82,15 @@ algorithm
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical liquid-like region", "printlog.txt");
         T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
         T_min := max(T_min, fluidLimits.TMIN);
+        T_max := fluidLimits.TMAX;
+        T_iter := 1.05*T_min;
+        // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       else
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical vapour-like region", "printlog.txt");
         T_min := T_crit;
+        T_max := fluidLimits.TMAX;
+        T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       end if;
-      T_max := fluidLimits.TMAX;
-      T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
     else
       assert(false, "setState_pd: this should not happen, check p");
     end if;

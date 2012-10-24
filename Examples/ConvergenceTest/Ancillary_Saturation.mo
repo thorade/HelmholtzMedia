@@ -1,5 +1,5 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
-model AncillaryFunctions
+model Ancillary_Saturation
   package medium = HelmholtzFluids.Ethanol;
   medium.Temperature Tsat;
   medium.AbsolutePressure psat;
@@ -46,4 +46,4 @@ annotation (experiment(
       StopTime=7,
       NumberOfIntervals=10000,
       Tolerance=1e-005));
-end AncillaryFunctions;
+end Ancillary_Saturation;

@@ -16,6 +16,7 @@ protected
   Real b = (R*T_crit)/(8*p_crit) "correction for volume";
 
 algorithm
+  // T := (p+a/v^2)*(v-b)/R;
   T := (p+a*d^2)*(1/d-b)/R;
   // Modelica.Utilities.Streams.print("van der Waals finished, T=" + String(T), "printlog.txt");
 
