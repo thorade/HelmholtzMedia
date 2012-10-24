@@ -88,7 +88,7 @@ algorithm
       else
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical vapour-like region", "printlog.txt");
         T_min := T_crit;
-        T_max := fluidLimits.TMAX;
+        T_max := 2*fluidLimits.TMAX;
         T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       end if;
     else

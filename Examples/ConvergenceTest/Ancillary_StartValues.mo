@@ -4,7 +4,10 @@ model Ancillary_StartValues
   Medium.AbsolutePressure p;
   Medium.Temperature T;
   Medium.Density d;
+  // ========
   Medium.AbsolutePressure psat;
+  // ========
+  Medium.AbsolutePressure p_dT_Waals;
   Medium.Density d_pT_Soave;
   Medium.Temperature T_pd_Waals;
 
@@ -47,6 +50,7 @@ equation
 
   // call Ancillary start value functions
   d_pT_Soave = Medium.Ancillary.density_pT_Soave(T=T, p=p, psat=psat);
+  p_dT_Waals = Medium.Ancillary.pressure_dT_Waals(d=d, T=T);
   T_pd_Waals = Medium.Ancillary.temperature_pd_Waals(p=p, d=d);
 
   annotation (experiment(StopTime=12, NumberOfIntervals=10000));
