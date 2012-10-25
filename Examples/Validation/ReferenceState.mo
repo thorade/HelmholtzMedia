@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model ReferenceState
-  package Medium = HelmholtzMedia.HelmholtzFluids.Butane;
+  package Medium = HelmholtzMedia.HelmholtzFluids.R134a_NBP;
   Medium.SpecificEnthalpy h_ref;
   Medium.SpecificEntropy s_ref;
 
@@ -11,12 +11,15 @@ protected
   final constant Medium.AbsolutePressure p_NBP = 101325; // 1.01325 bar = 1 atm
 
 algorithm
-  sat := Medium.setSat_T(T=T_IIR);
+  // sat := Medium.setSat_T(T=T_IIR);
   // sat := Medium.setSat_T(T=T_ASHRAE);
-  // sat := Medium.setSat_p(p=p_NBP);
+   sat := Medium.setSat_p(p=p_NBP);
 
-  h_ref := sat.liq.h;
   s_ref := sat.liq.s;
+  h_ref := sat.liq.h;
+
+  Modelica.Utilities.Streams.print("s_ref=" + String(s_ref));
+  Modelica.Utilities.Streams.print("h_ref=" + String(h_ref));
 
 annotation (
 Documentation(info="<html>
@@ -25,14 +28,14 @@ there are at least three standard reference states:
 
 <dl>
 
-<dt><b>normal boiling point (NBP)</b></dt>
-<dd>at p=1 atm = 1.01325 bar  and saturated liquid set h=0 kJ/kg and s=0 kJ/kgK</dd>
-
 <dt><b>International Institute of Refrigeration (IIR)</b></dt>
 <dd>at T=0°C and saturated liquid set h=200 kJ/kg and s=1 kJ/kgK</dd>
 
 <dt><b>American Society of Heating, Refrigerating and Air-Conditioning Engineers (ASHRAE)</b></dt>
 <dd>at T=-40°C and saturated liquid set h=0 kJ/kg and s=0 kJ/kgK</dd>
+
+<dt><b>normal boiling point (NBP)</b></dt>
+<dd>at p=1 atm = 1.01325 bar  and saturated liquid set h=0 kJ/kg and s=0 kJ/kgK</dd>
 
 </dl>
 </html>"),

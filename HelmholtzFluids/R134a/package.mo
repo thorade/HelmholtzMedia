@@ -1,5 +1,5 @@
 within HelmholtzMedia.HelmholtzFluids;
-package R134a "R134a"
+package R134a "R134a with IIR reference state"
   extends Interfaces.PartialHelmholtzMedium(
     fluidConstants={fluidConstantsR134a},
     helmholtzCoefficients=helmholtzCoefficientsR134a,
