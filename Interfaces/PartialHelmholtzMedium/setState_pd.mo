@@ -27,7 +27,7 @@ protected
   Temperature T_iter;
   AbsolutePressure RES_p;
   DerPressureByTemperature dpTd "(dp/dT)@d=const";
-  constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+  Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
   constant Real tolerance=1e-9 "relative tolerance for RES_p";
   Integer iter = 0;
   constant Integer iter_max = 200;
@@ -120,6 +120,7 @@ algorithm
 
     while ((abs(RES_p/p) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
+      // gamma := iter/(iter+1);
 
       // calculate gradients with respect to temperature
       f.rtd := EoS.f_rtd(delta=f.delta, tau=f.tau);

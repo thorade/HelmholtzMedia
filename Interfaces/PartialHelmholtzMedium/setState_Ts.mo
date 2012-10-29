@@ -26,7 +26,7 @@ protected
   SpecificEntropy RES_max;
   SpecificEntropy RES_med;
   DerEntropyByDensity dsdT "(ds/dd)@T=const";
-  constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+  Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
   constant Real tolerance=1e-9 "relative tolerance for RES_s (in J/kgK)";
   Integer iter = 0;
   constant Integer iter_max = 200;
@@ -99,6 +99,7 @@ algorithm
 
     while ((abs(RES_s/s) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
+      // gamma := iter/(iter+1);
 
       // calculate missing parts of f, then calculate gradient with respect to density
       f.rtd := EoS.f_rtd(delta=f.delta, tau=f.tau);
