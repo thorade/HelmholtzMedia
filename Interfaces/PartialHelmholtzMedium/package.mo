@@ -10,9 +10,6 @@ partial package PartialHelmholtzMedium
 
 import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
-
-
-
   constant FluidLimits fluidLimits;
 
   constant EoS.HelmholtzCoefficients helmholtzCoefficients;
@@ -363,7 +360,6 @@ protected
   end setSat_p;
 
 
-
   redeclare function extends setBubbleState
   "returns bubble ThermodynamicState from given saturation properties"
   // inherited from: PartialTwoPhaseMedium
@@ -513,7 +509,7 @@ protected
     AbsolutePressure RES_max;
     AbsolutePressure RES_med;
     DerPressureByDensity dpdT "(dp/dd)@T=const";
-    constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
     constant Real tolerance=1e-9 "relativ tolerance for RES_p";
     Integer iter = 0;
     constant Integer iter_max=200;
@@ -576,6 +572,7 @@ protected
 
     while ((abs(RES_p/p) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
+      // gamma := iter/(iter+1);
 
       // calculate gradient with respect to density
       f.rdd := EoS.f_rdd(delta=f.delta, tau=f.tau);
@@ -701,7 +698,7 @@ protected
     DerEnthalpyByDensity dhdT "(dh/dd)@T=const";
     DerEnthalpyByTemperature dhTd "(dh/dT)@d=const";
     Real det "determinant of Jacobi matrix";
-    constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
     constant Real tolerance=1e-9
     "tolerance for sum of relative RES_p and relative RES_h";
     Integer iter = 0;
@@ -807,6 +804,7 @@ protected
 
       while (((abs(RES_p/p) + abs(RES_h/h)) > tolerance) and (iter<iter_max)) loop
         iter := iter+1;
+        // gamma := iter/(iter+1);
 
         // calculate gradients with respect to density and temperature
         dpdT := EoS.dpdT(f);
@@ -994,6 +992,7 @@ protected
 
       while (((abs(RES_p/p) + abs(RES_s/s)) > tolerance) and (iter<iter_max)) loop
         iter := iter+1;
+        // gamma := iter/(iter+1);
 
         // calculate gradients with respect to density and temperature
         dpdT := EoS.dpdT(f);
@@ -1040,8 +1039,6 @@ protected
     end if;
 
   end setState_psX;
-
-
 
 
   redeclare function extends temperature
@@ -1258,8 +1255,6 @@ protected
   end isentropicExponent;
 
 
-
-
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
     // inherits input state and output eta
@@ -1445,8 +1440,6 @@ The extended version has up to three terms with two parameters each.
   end density_pT;
 
 
-
-
   redeclare function temperature_ps "returns temperature for given p and d"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1461,9 +1454,6 @@ The extended version has up to three terms with two parameters each.
     inverse(p=pressure_Ts(T=T, s=s, phase=phase),
             s=specificEntropy_pT(p=p, T=T, phase=phase)));
   end temperature_ps;
-
-
-
 
 
   redeclare function specificEnthalpy_pT
@@ -1511,8 +1501,6 @@ The extended version has up to three terms with two parameters each.
   annotation (
     inverse(s=specificEntropy_ph(p=p, h=h, phase=phase)));
   end specificEnthalpy_ps;
-
-
 
 
   redeclare function density_ph "returns density for given p and h"
@@ -1602,7 +1590,6 @@ protected
   end density_derh_p;
 
 
-
   redeclare function extends density_derp_T
   "returns density derivative (dd/dp)@T=const"
   //input state and output ddpT are inherited
@@ -1671,7 +1658,6 @@ protected
   end saturationPressure;
 
 
-
   redeclare function extends dBubbleDensity_dPressure
   "Return bubble point density derivative"
   // inherited from: PartialTwoPhaseMedium
@@ -1734,12 +1720,6 @@ protected
   algorithm
     dhvdp := dhpT + dhTp*dTp;
   end dDewEnthalpy_dPressure;
-
-
-
-
-
-
 
 
   redeclare function extends specificEnthalpy_dT
