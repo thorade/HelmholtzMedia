@@ -15,6 +15,7 @@ model Derivatives_TwoPhase
   Real dxTv_analytical2;
   Real dxTv_analytical3;
   Real dxTv_analytical4;
+  Real dxTv_analytical5;
   Real dxph_numerical;
   Real dxph_analytical1;
   Real dxph_analytical2;
@@ -113,12 +114,14 @@ equation
   dxTv_analytical1 = (-dvT_liq*(1/sat.vap.d - 1/sat.liq.d) - (1/state.d - 1/sat.liq.d)*(dvT_vap - dvT_liq))/(1/sat.vap.d - 1/sat.liq.d)^2;
   dxTv_analytical2 = (+1/sat.liq.d^2*ddT_liq*(1/sat.vap.d - 1/sat.liq.d) - (1/state.d - 1/sat.liq.d)*(-1/sat.vap.d^2*ddT_vap + 1/sat.liq.d^2*ddT_liq))/(1/sat.vap.d - 1/sat.liq.d)^2;
   dxTv_analytical3 = (x*dvT_vap + (1 - x)*dvT_liq)/(1/sat.liq.d - 1/sat.vap.d);
-  dxTv_analytical4 = (x*(-1)/sat.vap.d^2*ddT_vap + (1 - x)*(-1)/sat.liq.d^2*ddT_liq)/(1/sat.liq.d - 1/sat.vap.d);
+  dxTv_analytical4 = (dvT_liq + x*(dvT_vap-dvT_liq))/(1/sat.liq.d - 1/sat.vap.d);
+  dxTv_analytical5 = (x*(-1)/sat.vap.d^2*ddT_vap + (1 - x)*(-1)/sat.liq.d^2*ddT_liq)/(1/sat.liq.d - 1/sat.vap.d);
   Modelica.Utilities.Streams.print("  (dx/dT)@v=const   numerical= " + String(dxTv_numerical));
   Modelica.Utilities.Streams.print("  (dx/dT)@v=const analytical1= " + String(dxTv_analytical1));
   Modelica.Utilities.Streams.print("  (dx/dT)@v=const analytical2= " + String(dxTv_analytical2));
   Modelica.Utilities.Streams.print("  (dx/dT)@v=const analytical3= " + String(dxTv_analytical3));
   Modelica.Utilities.Streams.print("  (dx/dT)@v=const analytical4= " + String(dxTv_analytical4));
+  Modelica.Utilities.Streams.print("  (dx/dT)@v=const analytical5= " + String(dxTv_analytical5));
 
   Modelica.Utilities.Streams.print(" ");
   dxph_numerical = (Medium.vapourQuality(p_plus) - Medium.vapourQuality(p_minus))/(p_plus.p - p_minus.p);
