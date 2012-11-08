@@ -130,7 +130,7 @@ algorithm
       // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
       // Modelica.Utilities.Streams.print("T_iter=" + String(T_iter) + " and dpdT=" + String(dpdT), "printlog.txt");
 
-      // calculate better d_iter and T_iter
+      // calculate better T_iter
       T_iter := T_iter - gamma/dpTd*RES_p;
 
       // check bounds
