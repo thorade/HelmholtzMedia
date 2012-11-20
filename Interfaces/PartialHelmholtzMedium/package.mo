@@ -502,18 +502,15 @@ protected
 
     Density d_min;
     Density d_max;
-    Density d_med;
     Density d_iter;
     AbsolutePressure RES_p;
     AbsolutePressure RES_min;
     AbsolutePressure RES_max;
-    AbsolutePressure RES_med;
     DerPressureByDensity dpdT "(dp/dd)@T=const";
     Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
     constant Real tolerance=1e-9 "relativ tolerance for RES_p";
     Integer iter = 0;
     constant Integer iter_max=200;
-    Boolean RiddersIsInitialized=false;
 
   algorithm
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");
@@ -563,12 +560,34 @@ protected
     d_iter := max(d_iter, d_min);
     d_iter := min(d_iter, d_max);
 
-    // Modelica.Utilities.Streams.print("start Newton with d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
-    // set necessary parts of f, then calculate RES_p
+    // Modelica.Utilities.Streams.print("phase and region determined, d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
+    // Modelica.Utilities.Streams.print("initialize bisection once", "printlog.txt");
+    // min
+    f.d := d_min;
+    f.delta := f.d/d_crit;
+    f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+    RES_min := EoS.p(f) - p;
+    // max
+    f.d := d_max;
+    f.delta := f.d/d_crit;
+    f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+    RES_max := EoS.p(f) - p;
+    // iter
     f.d := d_iter;
     f.delta := f.d/d_crit;
     f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
     RES_p := EoS.p(f) - p;
+
+    assert((RES_min*RES_max<0), "setState_pTX: d_min and d_max did not bracket the root");
+    // thighten the bounds
+    // opposite sign brackets the root
+    if (RES_p*RES_min<0) then
+      d_max := d_iter;
+      RES_max := RES_p;
+    elseif (RES_p*RES_max<0) then
+      d_min := d_iter;
+      RES_min := RES_p;
+    end if;
 
     while ((abs(RES_p/p) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
@@ -585,73 +604,28 @@ protected
       // calculate better d_iter from Newton
       d_iter := d_iter - gamma/dpdT*RES_p;
 
-      // check bounds, if out of bounds use Ridders
-        if (d_iter<d_min) or (d_iter>d_max) then
-          // Modelica.Utilities.Streams.print("d_iter out of bounds, fallback to Ridders' method, step=" + String(iter) + ", d_iter=" + String(d_iter), "printlog.txt");
-          if not RiddersIsInitialized then
-            // calculate RES_p for d_min
-            f.d := d_min;
-            f.delta := f.d/d_crit;
-            f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
-            RES_min := EoS.p(f) - p;
-            // calculate RES_p for d_max
-            f.d := d_max;
-            f.delta := f.d/d_crit;
-            f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
-            RES_max := EoS.p(f) - p;
-            // Modelica.Utilities.Streams.print("initialize Ridders, RES_min=" + String(RES_min) + " and RES_max=" + String( RES_max), "printlog.txt");
-            RiddersIsInitialized := true;
-          end if;
-          if (RES_min*RES_max<0) then
-            // calculate RES_p for d_med
-            d_med := (d_max+1*d_min)/2;
-            f.d := d_med;
-            f.delta := f.d/d_crit;
-            f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
-            RES_med := EoS.p(f) - p;
-            // find better d_iter by Ridders' method
-            d_iter := d_med + (d_med-d_min)*sign(RES_min-RES_max)*RES_med/sqrt(RES_med^2-RES_min*RES_max);
-            // calculate new RES_p
-            f.d := d_iter;
-            f.delta := f.d/d_crit;
-            f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
-            RES_p := EoS.p(f) - p;
-            // thighten the bounds
-            if (RES_p*RES_med<=0) then
-              // opposite sign, d_med and d_iter bracket the root
-              d_min := d_iter;
-              RES_min := RES_p;
-              d_max := d_med;
-              RES_max := RES_med;
-            else
-              if (RES_p*RES_min<0) then
-                d_max := d_iter;
-                RES_max := RES_p;
-              elseif (RES_p*RES_max<0) then
-                d_min := d_iter;
-                RES_min := RES_p;
-              else
-                assert(false,"setState_pTX: this should never happen");
-              end if;
-            end if;
-          // Modelica.Utilities.Streams.print("Ridders' method: new brackets d_min=" + String(d_min) + ", d_max=" + String(d_max), "printlog.txt");
-          else
-            if (abs(RES_min/p)<tolerance) then
-              d_iter:= d_min;
-            elseif (abs(RES_max/p)<tolerance) then
-              d_iter:=d_max;
-            else
-              assert(false, "setState_pTX: d_min=" +String(d_min) + " and d_max =" + String(d_max) + " did not bracket the root, input was p=" + String(p) + " and T=" + String(T));
-            end if;
-          end if;
-        else
-          // d_iter from Newton is within bounds
-          // set necessary parts of f, then calculate new RES_p
-          f.d := d_iter;
-          f.delta := f.d/d_crit;
-          f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
-          RES_p := EoS.p(f) - p;
-        end if;
+      // check bounds, if out of bounds use bisection
+      if (d_iter<d_min) or (d_iter>d_max) then
+        // Modelica.Utilities.Streams.print("d_iter out of bounds, fallback to bisection method, step=" + String(iter) + ", d_iter=" + String(d_iter), "printlog.txt");
+        d_iter := (d_min+d_max)/2;
+      end if;
+
+      // set necessary parts of f, then calculate new RES_p
+      f.d := d_iter;
+      f.delta := f.d/d_crit;
+      f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+      RES_p := EoS.p(f) - p;
+
+      // thighten the bounds
+      // opposite sign brackets the root
+      if (RES_p*RES_min<0) then
+        d_max := d_iter;
+        RES_max := RES_p;
+      elseif (RES_p*RES_max<0) then
+        d_min := d_iter;
+        RES_min := RES_p;
+      end if;
+      // Modelica.Utilities.Streams.print("d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
     end while;
     // Modelica.Utilities.Streams.print("setState_pT required " + String(iter) + " iterations to find d=" + String(d_iter) + " for input T=" + String(T) + " and p=" + String(p), "printlog.txt");
     assert(iter<iter_max, "setState_pTX did not converge, input was p=" + String(p) + " and T=" + String(T));
