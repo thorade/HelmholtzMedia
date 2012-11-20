@@ -19,18 +19,15 @@ protected
 
   Density d_min=fluidLimits.DMIN;
   Density d_max=1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
-  Density d_med;
   Density d_iter=d_crit;
   SpecificEntropy RES_s;
   SpecificEntropy RES_min;
   SpecificEntropy RES_max;
-  SpecificEntropy RES_med;
   DerEntropyByDensity dsdT "(ds/dd)@T=const";
   Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
   constant Real tolerance=1e-9 "relative tolerance for RES_s (in J/kgK)";
   Integer iter = 0;
   constant Integer iter_max = 200;
-  Boolean RiddersIsInitialized=false;
 
 algorithm
   state.phase := phase;
@@ -79,7 +76,7 @@ algorithm
     end if;
   end if;
 
-  // Modelica.Utilities.Streams.print("phase and region determination finished, start Newton with d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
+  // Modelica.Utilities.Streams.print("phase and region determination finished, d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
 
   if (state.phase == 2) then
     // force two-phase, SaturationProperties are already known
@@ -93,9 +90,27 @@ algorithm
   else
     // force single-phase
 
-    // calculate RES_s
+    // Modelica.Utilities.Streams.print("initialize bisection", "printlog.txt");
+    // min
+    f := EoS.setHelmholtzDerivsFirst(T=T, d=d_min);
+    RES_min := EoS.s(f) - s;
+    // max
+    f := EoS.setHelmholtzDerivsFirst(T=T, d=d_max);
+    RES_max := EoS.s(f) - s;
+    // iter
     f := EoS.setHelmholtzDerivsFirst(T=T, d=d_iter);
     RES_s := EoS.s(f) - s;
+
+    assert((RES_min*RES_max<0), "setState_Ts: d_min and d_max did not bracket the root");
+    // thighten the bounds
+    // opposite sign brackets the root
+    if (RES_s*RES_min<0) then
+      d_max := d_iter;
+      RES_max := RES_s;
+    elseif (RES_s*RES_max<0) then
+      d_min := d_iter;
+      RES_min := RES_s;
+    end if;
 
     while ((abs(RES_s/s) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
@@ -112,66 +127,26 @@ algorithm
       // calculate better d_iter
       d_iter := d_iter - gamma/dsdT*RES_s;
 
-      // check bounds
+      // check bounds, if out of bounds use bisection
       if (d_iter<d_min) or (d_iter>d_max) then
-        // Modelica.Utilities.Streams.print("d_iter out of bounds, fallback to Ridders' method, step=" + String(iter) + ", d_iter=" + String(d_iter), "printlog.txt");
-        if not RiddersIsInitialized then
-          // calculate RES_s for d_min
-          f := EoS.setHelmholtzDerivsFirst(T=T, d=d_min);
-          RES_min := EoS.s(f) - s;
-          // calculate RES_s for d_max
-          f := EoS.setHelmholtzDerivsFirst(T=T, d=d_max);
-          RES_max := EoS.s(f) - s;
-          // Modelica.Utilities.Streams.print("initialize Ridders, RES_min=" + String(RES_min) + " and RES_max=" + String( RES_max), "printlog.txt");
-          RiddersIsInitialized := true;
-        end if;
-
-        if (RES_min*RES_max<0) then
-          // calculate RES_s for d_med
-          d_med := (d_max+1*d_min)/2;
-          f := EoS.setHelmholtzDerivsFirst(T=T, d=d_med);
-          RES_med := EoS.s(f) - s;
-          // find better d_iter by Ridders' method
-          d_iter := d_med + (d_med-d_min)*sign(RES_min-RES_max)*RES_med/sqrt(RES_med^2-RES_min*RES_max);
-          // calculate new RES_s
-          f := EoS.setHelmholtzDerivsFirst(T=T, d=d_iter);
-          RES_s := EoS.s(f) - s;
-          // thighten the bounds
-          if (RES_s*RES_med<=0) then
-            // opposite sign, d_med and d_iter bracket the root
-            // best case, both boundaries tightened
-            d_min := d_iter;
-            RES_min := RES_s;
-            d_max := d_med;
-            RES_max := RES_med;
-          else
-            if (RES_s*RES_min<0) then
-              d_max := d_iter;
-              RES_max := RES_s;
-            elseif (RES_s*RES_max<0) then
-              d_min := d_iter;
-              RES_min := RES_s;
-            else
-              assert(false,"setState_Ts: this should never happen");
-            end if;
-          end if;
-        // Modelica.Utilities.Streams.print("Ridders' method: new brackets d_min=" + String(d_min) + ", d_max=" + String(d_max), "printlog.txt");
-        else
-          if (abs(RES_min/s)<tolerance) then
-            d_iter:= d_min;
-          elseif (abs(RES_max/s)<tolerance) then
-            d_iter:=d_max;
-          else
-            assert(false, "setState_Ts: d_min and d_max did not bracket the root, input was T=" + String(T) + " and s=" + String(s));
-          end if;
-        end if;
-
-      else
-        // use d_iter from Newton
-        // calculate new RES_s
-        f := EoS.setHelmholtzDerivsFirst(T=T, d=d_iter);
-        RES_s := EoS.s(f) - s;
+        // Modelica.Utilities.Streams.print("d_iter out of bounds, fallback to bisection method, step=" + String(iter) + ", d_iter=" + String(d_iter), "printlog.txt");
+        d_iter := (d_min+d_max)/2;
       end if;
+
+      // calculate new RES_s
+      f := EoS.setHelmholtzDerivsFirst(T=T, d=d_iter);
+      RES_s := EoS.s(f) - s;
+
+      // thighten the bounds
+      // opposite sign brackets the root
+      if (RES_s*RES_min<0) then
+        d_max := d_iter;
+        RES_max := RES_s;
+      elseif (RES_s*RES_max<0) then
+        d_min := d_iter;
+        RES_min := RES_s;
+      end if;
+
     end while;
     // Modelica.Utilities.Streams.print("setState_Ts total iteration steps " + String(iter), "printlog.txt");
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");
