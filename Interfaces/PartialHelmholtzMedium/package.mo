@@ -556,12 +556,13 @@ protected
       d_iter := Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
     end if;
 
+    // Modelica.Utilities.Streams.print("phase and region determined, d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
+
     // check bounds, ideal gas and Soave are not very accurate
     d_iter := max(d_iter, d_min);
     d_iter := min(d_iter, d_max);
 
-    // Modelica.Utilities.Streams.print("phase and region determined, d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
-    // Modelica.Utilities.Streams.print("initialize bisection once", "printlog.txt");
+    // Modelica.Utilities.Streams.print("initialize bisection", "printlog.txt");
     // min
     f.d := d_min;
     f.delta := f.d/d_crit;
@@ -601,7 +602,7 @@ protected
       // Modelica.Utilities.Streams.print("Iteration step " +String(iter) + ", current d_iter=" + String(d_iter), "printlog.txt");
       // Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and dpdT=" + String(dpdT), "printlog.txt");
 
-      // calculate better d_iter from Newton
+      // calculate better d_iter using Newton
       d_iter := d_iter - gamma/dpdT*RES_p;
 
       // check bounds, if out of bounds use bisection
