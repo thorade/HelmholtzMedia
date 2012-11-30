@@ -26,8 +26,10 @@ status
 *.xlsx
 *.xlsm
 
+# ignore Matlab auto-save files
+*.asv
 
-# ignore RefProp files
+# ignore Refprop files
 *.rfp
 *.fld
 
