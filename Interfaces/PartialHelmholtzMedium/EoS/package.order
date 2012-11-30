@@ -2,6 +2,7 @@ HelmholtzDerivs
 HelmholtzCoefficients
 setHelmholtzDerivsFirst
 setHelmholtzDerivsSecond
+setHelmholtzDerivsThird
 f_i
 f_it
 f_itt
@@ -13,6 +14,7 @@ f_rtt
 f_rtd
 f_rd
 f_rdd
+f_rddd
 p
 s
 h
@@ -28,3 +30,4 @@ dudT
 duTd
 dgdT
 dgTd
+d2pd2T

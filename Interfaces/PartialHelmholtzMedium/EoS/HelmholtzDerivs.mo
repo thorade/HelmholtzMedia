@@ -26,4 +26,5 @@ record HelmholtzDerivs "dimensionless Helmholtz energy and its derivatives"
 //Real rttd(unit="1") "(df_r/dtautaudelta)";
   Real rd(unit="1") "(df_r/ddelta)@tau=const";
   Real rdd(unit="1") "(ddf_r/ddeltadelta)@tau=const";
+  Real rddd(unit="1") "(dddf_r/ddeltadeltadelta)@tau=const";
 end HelmholtzDerivs;
