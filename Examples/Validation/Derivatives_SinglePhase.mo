@@ -2,9 +2,9 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_SinglePhase
   "compare analytical derivatives to numerical derivatives"
 
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.Propane;
   // choose d and T which will result in single-phase
-  parameter Medium.Density d=1e-3;
+  parameter Medium.Density d=1;
   parameter Medium.Temperature T=298.15;
 
 // Pressure derivatives
@@ -14,6 +14,10 @@ model Derivatives_SinglePhase
   Medium.Types.DerPressureByTemperature dpTd_numerical;
   Medium.Types.Der2PressureByDensity2 d2pd2T_analytical;
   Medium.Types.Der2PressureByDensity2 d2pd2T_numerical;
+  Medium.Types.Der2PressureByTemperature2 d2pT2d_analytical;
+  Medium.Types.Der2PressureByTemperature2 d2pT2d_numerical;
+  Medium.Types.Der2PressureByTemperatureDensity d2pTd_analytical;
+  Medium.Types.Der2PressureByTemperatureDensity d2pTd_numerical;
 // Enthalpy derivatives
   Medium.Types.DerEnthalpyByDensity dhdT_analytical;
   Medium.Types.DerEnthalpyByDensity dhdT_numerical;
@@ -74,6 +78,17 @@ equation
   d2pd2T_numerical = (Medium.EoS.dpdT(f_d_plus)-Medium.EoS.dpdT(f_d_minus))/(d_plus.d-d_minus.d);
   Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const analytical= " + String(d2pd2T_analytical));
   Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const  numerical= " + String(d2pd2T_numerical));
+  // check (d2p/dT2)@d=const
+  d2pT2d_analytical = Medium.EoS.d2pT2d(f);
+  // d2pT2d_numerical = (Medium.EoS.dpTd(f_T_plus)-Medium.EoS.dpTd(f_T_minus))/(d_plus.d-d_minus.d); // returns the same value as RefProp ??
+  d2pT2d_numerical = (Medium.EoS.dpTd(f_T_plus)-Medium.EoS.dpTd(f_T_minus))/(T_plus.T-T_minus.T);
+  Modelica.Utilities.Streams.print("  (d2p/dT2)@d=const analytical= " + String(d2pT2d_analytical));
+  Modelica.Utilities.Streams.print("  (d2p/dT2)@d=const  numerical= " + String(d2pT2d_numerical));
+  // check (d2p/dT dd)
+  d2pTd_analytical = Medium.EoS.d2pTd(f);
+  d2pTd_numerical = (Medium.EoS.dpTd(f_d_plus)-Medium.EoS.dpTd(f_d_minus))/(d_plus.d-d_minus.d);
+  Modelica.Utilities.Streams.print("  (d2p/dTdd) analytical= " + String(d2pTd_analytical));
+  Modelica.Utilities.Streams.print("  (d2p/dTdd)  numerical= " + String(d2pTd_numerical));
 
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Enthalpy");

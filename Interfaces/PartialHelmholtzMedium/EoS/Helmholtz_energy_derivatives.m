@@ -38,7 +38,7 @@ BWRTerms = bi1*tau^bi2*delta^bi3*exp(-delta^bi4);
 GaussTerms = gi1*tau^gi2*delta^gi3*exp(gi6*(delta-gi9)^2 + gi7*(tau-gi8)^2);
 nonAnalyticalTerms = 0;
 %fr = +residualPolyTerms +BWRTerms +GaussTerms +nonAnalyticalTerms;
-fr = +GaussTerms 
+fr = +residualPolyTerms; 
 
 % First derivatives
 fit = diff(fi,tau);
@@ -53,9 +53,15 @@ frd = simplify(frd);
 % Second derivatives
 fitt = diff(fit,tau);
 fitt = simplify(fitt);
+frtd = diff(frt,delta);
+frtd = simplify(frtd);
 frdd = diff(frd,delta);
 frdd = simplify(frdd);
 
 % Third derivatives
-frddd = diff(frdd,delta)
-frddd = simplify(frddd)
+frttd = diff(frtd,tau)
+frttd = simplify(frttd)
+frtdd = diff(frtd,delta);
+frtdd = simplify(frtdd);
+frddd = diff(frdd,delta);
+frddd = simplify(frddd);
