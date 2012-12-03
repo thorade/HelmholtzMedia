@@ -2,9 +2,9 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_SinglePhase
   "compare analytical derivatives to numerical derivatives"
 
-  package Medium = HelmholtzFluids.Propane;
+  package Medium = HelmholtzFluids.Butane;
   // choose d and T which will result in single-phase
-  parameter Medium.Density d=1;
+  parameter Medium.Density d=600;
   parameter Medium.Temperature T=298.15;
 
 // Pressure derivatives
@@ -28,8 +28,12 @@ model Derivatives_SinglePhase
   Medium.Types.DerEnergyByDensity dudT_numerical;
   Medium.Types.DerEnergyByTemperature duTd_analytical;
   Medium.Types.DerEnergyByTemperature duTd_numerical;
+  Medium.Types.Der2EnergyByDensity2 d2ud2T_analytical;
+  Medium.Types.Der2EnergyByDensity2 d2ud2T_numerical;
   Medium.Types.Der2EnergyByTemperature2 d2uT2d_analytical;
   Medium.Types.Der2EnergyByTemperature2 d2uT2d_numerical;
+  Medium.Types.Der2EnergyByTemperatureDensity d2uTd_analytical;
+  Medium.Types.Der2EnergyByTemperatureDensity d2uTd_numerical;
 // Entropy derivatives
   Medium.Types.DerEntropyByDensity dsdT_analytical;
   Medium.Types.DerEntropyByDensity dsdT_numerical;
@@ -117,11 +121,21 @@ equation
   duTd_numerical = (T_plus.u-T_minus.u)/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("  (du/dT)@d=const analytical= " + String(duTd_analytical));
   Modelica.Utilities.Streams.print("  (du/dT)@d=const  numerical= " + String(duTd_numerical));
+  // check (d2u/dd2)@T=const
+  d2ud2T_analytical = Medium.EoS.d2ud2T(f);
+  d2ud2T_numerical = (Medium.EoS.dudT(f_d_plus)-Medium.EoS.dudT(f_d_minus))/(d_plus.d-d_minus.d);
+  Modelica.Utilities.Streams.print("  (d2u/dd2)@T=const analytical= " + String(d2ud2T_analytical));
+  Modelica.Utilities.Streams.print("  (d2u/dd2)@T=const  numerical= " + String(d2ud2T_numerical));
   // check (d2u/dT2)@d=const
   d2uT2d_analytical = Medium.EoS.d2uT2d(f);
   d2uT2d_numerical = (Medium.EoS.duTd(f_T_plus)-Medium.EoS.duTd(f_T_minus))/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("  (d2u/dT2)@d=const analytical= " + String(d2uT2d_analytical));
   Modelica.Utilities.Streams.print("  (d2u/dT2)@d=const  numerical= " + String(d2uT2d_numerical));
+  // check (d2u/dT dd)
+  d2uTd_analytical = Medium.EoS.d2uTd(f);
+  d2uTd_numerical = (Medium.EoS.duTd(f_d_plus)-Medium.EoS.duTd(f_d_minus))/(d_plus.d-d_minus.d);
+  Modelica.Utilities.Streams.print("  (d2u/dT dd) analytical= " + String(d2uTd_analytical));
+  Modelica.Utilities.Streams.print("  (d2u/dT dd)  numerical= " + String(d2uTd_numerical));
 
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Entropy");

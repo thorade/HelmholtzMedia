@@ -4,5 +4,5 @@ function dudT "returns internal energy derivative (du/dd)@T=const"
   output DerEnergyByDensity dudT;
 
 algorithm
-  dudT := f.R*f.T/f.d*f.tau*f.delta*f.rtd;
+  dudT := f.R*f.T/f.d*(f.tau*f.delta*f.rtd);
 end dudT;

@@ -4,7 +4,6 @@ CollisionIntegralModel
 PressureSaturationModel
 DensityLiquidModel
 DensityVaporModel
-DerTemperatureByPressure
 DerPressureByDensity
 Der2PressureByDensity2
 DerPressureByTemperature
@@ -14,13 +13,16 @@ DerEnthalpyByDensity
 DerEnthalpyByTemperature
 DerEnthalpyByPressure
 DerEnergyByDensity
+Der2EnergyByDensity2
 DerEnergyByTemperature
 Der2EnergyByTemperature2
+Der2EnergyByTemperatureDensity
 DerEnergyByPressure
 DerEntropyByDensity
 DerEntropyByTemperature
 DerEntropyByPressure
 DerVolumeByTemperature
 DerVolumeByPressure
+DerTemperatureByPressure
 DerFractionByTemperature
 DerFractionByPressure
