@@ -30,8 +30,30 @@ protected
   medium.EoS.HelmholtzDerivs f_ASHRAE = medium.EoS.setHelmholtzDerivsThird(T=sat_ASHRAE.liq.T, d=sat_ASHRAE.liq.d, phase=1);
   medium.EoS.HelmholtzDerivs f_NBP = medium.EoS.setHelmholtzDerivsThird(T=sat_NBP.liq.T, d=sat_NBP.liq.d, phase=1);
   medium.EoS.HelmholtzDerivs f = medium.EoS.setHelmholtzDerivsThird(T=T, d=d, phase=1);
+  medium.EoS.HelmholtzDerivs fn(T=T, d=d);
+
+  Real delta(unit="1")=d/d_crit "reduced density";
+  Real tau(unit="1")=T_crit/T "inverse reduced temperature";
+  Real eps= 1e-6;
 
 algorithm
+  // numerical derivative, for comparison
+  fn.i    := medium.EoS.f_i(tau=tau, delta=delta);
+  fn.it   := (medium.EoS.f_i(tau=tau+eps, delta=delta)-medium.EoS.f_i(tau=tau-eps, delta=delta))/(2*eps);
+  fn.itt  := (medium.EoS.f_it(tau=tau+eps, delta=delta)-medium.EoS.f_it(tau=tau-eps, delta=delta))/(2*eps);
+  fn.ittt  := (medium.EoS.f_itt(tau=tau+eps, delta=delta)-medium.EoS.f_itt(tau=tau-eps, delta=delta))/(2*eps);
+
+  fn.r    := medium.EoS.f_r(tau=tau, delta=delta);
+  fn.rt   := (medium.EoS.f_r(tau=tau+eps, delta=delta)-medium.EoS.f_r(tau=tau-eps, delta=delta))/(2*eps);
+  fn.rtt  := (medium.EoS.f_rt(tau=tau+eps, delta=delta)-medium.EoS.f_rt(tau=tau-eps, delta=delta))/(2*eps);
+  fn.rttt  := (medium.EoS.f_rtt(tau=tau+eps, delta=delta)-medium.EoS.f_rtt(tau=tau-eps, delta=delta))/(2*eps);
+  fn.rtd  := (medium.EoS.f_rt(tau=tau, delta=delta+eps)-medium.EoS.f_rt(tau=tau, delta=delta-eps))/(2*eps);
+  fn.rttd := (medium.EoS.f_rtt(tau=tau, delta=delta+eps)-medium.EoS.f_rtt(tau=tau, delta=delta-eps))/(2*eps);
+  fn.rtdd :=(medium.EoS.f_rtd(tau=tau, delta=delta+eps)-medium.EoS.f_rtd(tau=tau, delta=delta-eps))/(2*eps);
+  fn.rd   := (medium.EoS.f_r(tau=tau, delta=delta+eps)-medium.EoS.f_r(tau=tau, delta=delta-eps))/(2*eps);
+  fn.rdd  := (medium.EoS.f_rd(tau=tau, delta=delta+eps)-medium.EoS.f_rd(tau=tau, delta=delta-eps))/(2*eps);
+  fn.rddd := (medium.EoS.f_rdd(tau=tau, delta=delta+eps)-medium.EoS.f_rdd(tau=tau, delta=delta-eps))/(2*eps);
+
   // While csv originally stood for comma-seperated-values, MS Excel uses semicolons to seperate the values
   // remove old file
   Modelica.Utilities.Files.remove(fileName);
@@ -173,6 +195,25 @@ algorithm
                                  + String(f.rtdd)+";"
                                  + String(f.rttd)+";"
                                  + String(f.rttt)+";",
+                                   fileName);
+  Modelica.Utilities.Streams.print(String(fn.T) + ";"
+                                 + String(fn.d) + ";"
+                                 + String(fn.tau) + ";"
+                                 + String(fn.delta) + ";"
+                                 + String(fn.i) + ";"
+                                 + String(fn.it)+";"
+                                 + String(fn.itt)+";"
+                                 + String(fn.ittt)+";"
+                                 + String(fn.r)+";"
+                                 + String(fn.rd)+";"
+                                 + String(fn.rdd)+";"
+                                 + String(fn.rt)+";"
+                                 + String(fn.rtt)+";"
+                                 + String(fn.rtd)+";"
+                                 + String(fn.rddd)+";"
+                                 + String(fn.rtdd)+";"
+                                 + String(fn.rttd)+";"
+                                 + String(fn.rttt)+";",
                                    fileName);
 
 annotation (experiment(NumberOfIntervals=1));
