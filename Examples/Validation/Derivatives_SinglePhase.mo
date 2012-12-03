@@ -28,6 +28,8 @@ model Derivatives_SinglePhase
   Medium.Types.DerEnergyByDensity dudT_numerical;
   Medium.Types.DerEnergyByTemperature duTd_analytical;
   Medium.Types.DerEnergyByTemperature duTd_numerical;
+  Medium.Types.Der2EnergyByTemperature2 d2uT2d_analytical;
+  Medium.Types.Der2EnergyByTemperature2 d2uT2d_numerical;
 // Entropy derivatives
   Medium.Types.DerEntropyByDensity dsdT_analytical;
   Medium.Types.DerEntropyByDensity dsdT_numerical;
@@ -115,6 +117,11 @@ equation
   duTd_numerical = (T_plus.u-T_minus.u)/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("  (du/dT)@d=const analytical= " + String(duTd_analytical));
   Modelica.Utilities.Streams.print("  (du/dT)@d=const  numerical= " + String(duTd_numerical));
+  // check (d2u/dT2)@d=const
+  d2uT2d_analytical = Medium.EoS.d2uT2d(f);
+  d2uT2d_numerical = (Medium.EoS.duTd(f_T_plus)-Medium.EoS.duTd(f_T_minus))/(T_plus.T-T_minus.T);
+  Modelica.Utilities.Streams.print("  (d2u/dT2)@d=const analytical= " + String(d2uT2d_analytical));
+  Modelica.Utilities.Streams.print("  (d2u/dT2)@d=const  numerical= " + String(d2uT2d_numerical));
 
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Entropy");

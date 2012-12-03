@@ -1,8 +1,8 @@
 printCoefficients
 printHelmholtzDerivatives
-ReferenceState
 Derivatives_SinglePhase
 Derivatives_SaturationBoundary
 Derivatives_TwoPhase
-acentricFactor
+ReferenceState
 CriticalState
+acentricFactor

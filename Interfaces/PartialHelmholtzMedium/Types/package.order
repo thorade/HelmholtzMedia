@@ -15,6 +15,7 @@ DerEnthalpyByTemperature
 DerEnthalpyByPressure
 DerEnergyByDensity
 DerEnergyByTemperature
+Der2EnergyByTemperature2
 DerEnergyByPressure
 DerEntropyByDensity
 DerEntropyByTemperature
