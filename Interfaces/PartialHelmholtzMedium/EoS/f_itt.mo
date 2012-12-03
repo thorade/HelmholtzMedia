@@ -20,7 +20,7 @@ protected
 
 algorithm
   f_ideal_tau_tau :=
-      sum(l[i,1]*tau^(l[i,2]-2)*l[i,2]*(l[i,2]-1)/(tau^l[i,2]) - l[i,1]*tau^(l[i,2]-1)*l[i,2]^2/(tau^(l[i,2]+1)) for i in 1:nLog)
+      sum(-(l[i,1]*l[i,2])/tau^2 for i in 1:nLog)
     + sum(p[i,1]*tau^(p[i,2]-2)*p[i,2]*(p[i,2]-1) for i in 1:nPower)
     - sum(e[i,1]*(-e[i,2])^2*exp(e[i,2]*tau)*(1 - exp(e[i,2]*tau))^(-2) for i in 1:nEinstein)
     - sum(c[i,1]*c[i,2]^2/(cosh(c[i,2]*tau))^2 for i in 1:nCosh)
