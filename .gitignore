@@ -25,6 +25,7 @@ status
 *.xls
 *.xlsx
 *.xlsm
+*.csv
 
 # ignore Matlab auto-save files
 *.asv
