@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model ReferenceState
-  package Medium = HelmholtzMedia.HelmholtzFluids.R134a_NBP;
+  package Medium = HelmholtzMedia.HelmholtzFluids.R134a;
   Medium.SpecificEnthalpy h_ref;
   Medium.SpecificEntropy s_ref;
 
@@ -11,9 +11,9 @@ protected
   final constant Medium.AbsolutePressure p_NBP = 101325; // 1.01325 bar = 1 atm
 
 algorithm
-  // sat := Medium.setSat_T(T=T_IIR);
+  sat := Medium.setSat_T(T=T_IIR);
   // sat := Medium.setSat_T(T=T_ASHRAE);
-   sat := Medium.setSat_p(p=p_NBP);
+  // sat := Medium.setSat_p(p=p_NBP);
 
   s_ref := sat.liq.s;
   h_ref := sat.liq.h;
