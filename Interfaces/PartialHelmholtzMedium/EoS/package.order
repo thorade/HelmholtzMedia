@@ -6,6 +6,7 @@ setHelmholtzDerivsThird
 f_i
 f_it
 f_itt
+f_ittt
 f_id
 f_idd
 f_r
@@ -13,6 +14,7 @@ f_rt
 f_rtt
 f_rtd
 f_rttd
+f_rttt
 f_rtdd
 f_rd
 f_rdd

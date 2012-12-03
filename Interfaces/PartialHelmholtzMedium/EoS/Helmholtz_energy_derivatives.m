@@ -29,38 +29,51 @@ syms pi1 pi2 pi3 bi1 bi2 bi3 bi4 gi1 gi2 gi3 gi4 gi5 gi6 gi7 gi8 gi9;
 logTerms = + li1*log(tau^li2);
 idealPolyTerms = + pi1*tau^pi2;
 EinsteinTerms = + ei1*log(1 - exp(ei2*tau));
-coshTerms = - ci1*log(abs(cosh(ci2*tau)));
-sinhTerms = + si1*log(abs(sinh(si2*tau)));
-fi = +log(delta) +logTerms +idealPolyTerms +EinsteinTerms +coshTerms +sinhTerms;
+coshTerms = - ci1*log((cosh(ci2*tau)));
+sinhTerms = + si1*log((sinh(si2*tau)));
+% fi = +log(delta) +logTerms +idealPolyTerms +EinsteinTerms +coshTerms +sinhTerms;
+fi = +sinhTerms;
 
 residualPolyTerms = pi1*tau^pi2*delta^pi3;
 BWRTerms = bi1*tau^bi2*delta^bi3*exp(-delta^bi4);
 GaussTerms = gi1*tau^gi2*delta^gi3*exp(gi6*(delta-gi9)^2 + gi7*(tau-gi8)^2);
 nonAnalyticalTerms = 0;
-%fr = +residualPolyTerms +BWRTerms +GaussTerms +nonAnalyticalTerms;
-fr = +residualPolyTerms; 
+% fr = +residualPolyTerms +BWRTerms +GaussTerms +nonAnalyticalTerms;
+fr = +GaussTerms; 
+
 
 % First derivatives
 fit = diff(fi,tau);
-fit = simplify(fit);
+fit = simplify(fit)
 fid = diff(fi,delta);
 fid = simplify(fid);
+
 frt = diff(fr,tau);
 frt = simplify(frt);
 frd = diff(fr,delta);
 frd = simplify(frd);
 
+
 % Second derivatives
 fitt = diff(fit,tau);
-fitt = simplify(fitt);
+fitt = simplify(fitt)
+
+frtt = diff(frt,tau);
+frtt = simplify(frtt);
 frtd = diff(frt,delta);
 frtd = simplify(frtd);
 frdd = diff(frd,delta);
 frdd = simplify(frdd);
 
+
 % Third derivatives
-frttd = diff(frtd,tau)
-frttd = simplify(frttd)
+fittt = diff(fitt,tau);
+fittt = simplify(fittt)
+
+frttt = diff(frtt,tau);
+frttt = simplify(frttt)
+frttd = diff(frtd,tau);
+frttd = simplify(frttd);
 frtdd = diff(frtd,delta);
 frtdd = simplify(frtdd);
 frddd = diff(frdd,delta);
