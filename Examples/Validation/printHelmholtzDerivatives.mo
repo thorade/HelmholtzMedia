@@ -38,8 +38,8 @@ algorithm
   // fluid name or CAS number
   Modelica.Utilities.Streams.print("CAS registry number;" + medium.fluidConstants[1].casRegistryNumber,fileName);
   // print headers
-  Modelica.Utilities.Streams.print(";;;;ideal;;;residual;", fileName);
-  Modelica.Utilities.Streams.print("T;d;tau;delta;alpha_i;alpha_it;alpha_itt;alpha_r;alpha_rd;alpha_rdd;alpha_rt;alpha_rtt;alpha_rtd;alpha_rddd;alpha_rtdd;alpha_rttd;", fileName);
+  Modelica.Utilities.Streams.print(";;;;ideal;;;;residual;", fileName);
+  Modelica.Utilities.Streams.print("T;d;tau;delta;alpha_i;alpha_it;alpha_itt;alpha_ittt;alpha_r;alpha_rd;alpha_rdd;alpha_rt;alpha_rtt;alpha_rtd;alpha_rddd;alpha_rtdd;alpha_rttd;alpha_rttt", fileName);
   // the actual values
   Modelica.Utilities.Streams.print(String(f_crit.T) + ";"
                                  + String(f_crit.d) + ";"
@@ -48,6 +48,7 @@ algorithm
                                  + String(f_crit.i) + ";"
                                  + String(f_crit.it)+";"
                                  + String(f_crit.itt)+";"
+                                 + String(f_crit.ittt)+";"
                                  + String(f_crit.r)+";"
                                  + String(f_crit.rd)+";"
                                  + String(f_crit.rdd)+";"
@@ -56,7 +57,8 @@ algorithm
                                  + String(f_crit.rtd)+";"
                                  + String(f_crit.rddd)+";"
                                  + String(f_crit.rtdd)+";"
-                                 + String(f_crit.rttd)+";",
+                                 + String(f_crit.rttd)+";"
+                                 + String(f_crit.rttt)+";",
                                    fileName);
   Modelica.Utilities.Streams.print(String(f_tl.T) + ";"
                                  + String(f_tl.d) + ";"
@@ -65,6 +67,7 @@ algorithm
                                  + String(f_tl.i) + ";"
                                  + String(f_tl.it)+";"
                                  + String(f_tl.itt)+";"
+                                 + String(f_tl.ittt)+";"
                                  + String(f_tl.r)+";"
                                  + String(f_tl.rd)+";"
                                  + String(f_tl.rdd)+";"
@@ -73,7 +76,8 @@ algorithm
                                  + String(f_tl.rtd)+";"
                                  + String(f_tl.rddd)+";"
                                  + String(f_tl.rtdd)+";"
-                                 + String(f_tl.rttd)+";",
+                                 + String(f_tl.rttd)+";"
+                                 + String(f_tl.rttt)+";",
                                    fileName);
   Modelica.Utilities.Streams.print(String(f_tv.T) + ";"
                                  + String(f_tv.d) + ";"
@@ -82,6 +86,7 @@ algorithm
                                  + String(f_tv.i) + ";"
                                  + String(f_tv.it)+";"
                                  + String(f_tv.itt)+";"
+                                 + String(f_tv.ittt)+";"
                                  + String(f_tv.r)+";"
                                  + String(f_tv.rd)+";"
                                  + String(f_tv.rdd)+";"
@@ -90,7 +95,8 @@ algorithm
                                  + String(f_tv.rtd)+";"
                                  + String(f_tv.rddd)+";"
                                  + String(f_tv.rtdd)+";"
-                                 + String(f_tv.rttd)+";",
+                                 + String(f_tv.rttd)+";"
+                                 + String(f_tv.rttt)+";",
                                    fileName);
   Modelica.Utilities.Streams.print(String(f_IIR.T) + ";"
                                  + String(f_IIR.d) + ";"
@@ -99,6 +105,7 @@ algorithm
                                  + String(f_IIR.i) + ";"
                                  + String(f_IIR.it)+";"
                                  + String(f_IIR.itt)+";"
+                                 + String(f_IIR.ittt)+";"
                                  + String(f_IIR.r)+";"
                                  + String(f_IIR.rd)+";"
                                  + String(f_IIR.rdd)+";"
@@ -107,7 +114,8 @@ algorithm
                                  + String(f_IIR.rtd)+";"
                                  + String(f_IIR.rddd)+";"
                                  + String(f_IIR.rtdd)+";"
-                                 + String(f_IIR.rttd)+";",
+                                 + String(f_IIR.rttd)+";"
+                                 + String(f_IIR.rttt)+";",
                                    fileName);
   Modelica.Utilities.Streams.print(String(f_ASHRAE.T) + ";"
                                  + String(f_ASHRAE.d) + ";"
@@ -116,6 +124,7 @@ algorithm
                                  + String(f_ASHRAE.i) + ";"
                                  + String(f_ASHRAE.it)+";"
                                  + String(f_ASHRAE.itt)+";"
+                                 + String(f_ASHRAE.ittt)+";"
                                  + String(f_ASHRAE.r)+";"
                                  + String(f_ASHRAE.rd)+";"
                                  + String(f_ASHRAE.rdd)+";"
@@ -124,7 +133,8 @@ algorithm
                                  + String(f_ASHRAE.rtd)+";"
                                  + String(f_ASHRAE.rddd)+";"
                                  + String(f_ASHRAE.rtdd)+";"
-                                 + String(f_ASHRAE.rttd)+";",
+                                 + String(f_ASHRAE.rttd)+";"
+                                 + String(f_ASHRAE.rttt)+";",
                                    fileName);
   Modelica.Utilities.Streams.print(String(f_NBP.T) + ";"
                                  + String(f_NBP.d) + ";"
@@ -133,6 +143,7 @@ algorithm
                                  + String(f_NBP.i) + ";"
                                  + String(f_NBP.it)+";"
                                  + String(f_NBP.itt)+";"
+                                 + String(f_NBP.ittt)+";"
                                  + String(f_NBP.r)+";"
                                  + String(f_NBP.rd)+";"
                                  + String(f_NBP.rdd)+";"
@@ -141,7 +152,8 @@ algorithm
                                  + String(f_NBP.rtd)+";"
                                  + String(f_NBP.rddd)+";"
                                  + String(f_NBP.rtdd)+";"
-                                 + String(f_NBP.rttd)+";",
+                                 + String(f_NBP.rttd)+";"
+                                 + String(f_NBP.rttt)+";",
                                    fileName);
   Modelica.Utilities.Streams.print(String(f.T) + ";"
                                  + String(f.d) + ";"
@@ -150,6 +162,7 @@ algorithm
                                  + String(f.i) + ";"
                                  + String(f.it)+";"
                                  + String(f.itt)+";"
+                                 + String(f.ittt)+";"
                                  + String(f.r)+";"
                                  + String(f.rd)+";"
                                  + String(f.rdd)+";"
@@ -158,7 +171,8 @@ algorithm
                                  + String(f.rtd)+";"
                                  + String(f.rddd)+";"
                                  + String(f.rtdd)+";"
-                                 + String(f.rttd)+";",
+                                 + String(f.rttd)+";"
+                                 + String(f.rttt)+";",
                                    fileName);
 
 annotation (experiment(NumberOfIntervals=1));

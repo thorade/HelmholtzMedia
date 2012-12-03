@@ -23,10 +23,12 @@ algorithm
     f.i    := f_i(tau=tau, delta=delta);
     f.it   := f_it(tau=tau, delta=delta);
     f.itt  := f_itt(tau=tau, delta=delta);
+    f.ittt  := f_ittt(tau=tau, delta=delta);
 
     f.r    := f_r(tau=tau, delta=delta);
     f.rt   := f_rt(tau=tau, delta=delta);
     f.rtt  := f_rtt(tau=tau, delta=delta);
+    f.rttt  := f_rttt(tau=tau, delta=delta);
     f.rtd  := f_rtd(tau=tau, delta=delta);
     f.rttd := f_rttd(tau=tau, delta=delta);
     f.rtdd := f_rtdd(tau=tau, delta=delta);
