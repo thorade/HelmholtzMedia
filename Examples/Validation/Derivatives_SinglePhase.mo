@@ -4,8 +4,8 @@ model Derivatives_SinglePhase
 
   package Medium = HelmholtzFluids.Butane;
   // choose d and T which will result in single-phase
-  parameter Medium.Density d=600;
-  parameter Medium.Temperature T=298.15;
+  parameter Medium.Density d=1;
+  parameter Medium.Temperature T=498.15;
 
 // Pressure derivatives
   Medium.Types.DerPressureByDensity dpdT_analytical;
@@ -39,6 +39,12 @@ model Derivatives_SinglePhase
   Medium.Types.DerEntropyByDensity dsdT_numerical;
   Medium.Types.DerEntropyByTemperature dsTd_analytical;
   Medium.Types.DerEntropyByTemperature dsTd_numerical;
+  Medium.Types.Der2EntropyByDensity2 d2sd2T_analytical;
+  Medium.Types.Der2EntropyByDensity2 d2sd2T_numerical;
+  Medium.Types.Der2EntropyByTemperature2 d2sT2d_analytical;
+  Medium.Types.Der2EntropyByTemperature2 d2sT2d_numerical;
+  Medium.Types.Der2EntropyByTemperatureDensity d2sTd_analytical;
+  Medium.Types.Der2EntropyByTemperatureDensity d2sTd_numerical;
 // Gibbs derivatives
   Medium.Types.DerEnergyByDensity dgdT_analytical;
   Medium.Types.DerEnergyByDensity dgdT_numerical;
@@ -51,7 +57,7 @@ model Derivatives_SinglePhase
   Medium.DerDensityByTemperature ddTp_analytical2;
 
 protected
-  Real eps= 1e-3;
+  Real eps= 1e-5;
   Medium.ThermodynamicState    state=Medium.setState_dTX(d=d, T=T);
   Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsThird(T=T, d=d, phase=state.phase);
   Medium.ThermodynamicState    d_plus=Medium.setState_dTX(d=d+eps*d, T=T);
@@ -149,6 +155,21 @@ equation
   dsTd_numerical = (T_plus.s-T_minus.s)/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("  (ds/dT)@d=const analytical= " + String(dsTd_analytical));
   Modelica.Utilities.Streams.print("  (ds/dT)@d=const  numerical= " + String(dsTd_numerical));
+  // check (d2u/dd2)@T=const
+  d2sd2T_analytical = Medium.EoS.d2sd2T(f);
+  d2sd2T_numerical = (Medium.EoS.dsdT(f_d_plus)-Medium.EoS.dsdT(f_d_minus))/(d_plus.d-d_minus.d);
+  Modelica.Utilities.Streams.print("  (d2s/dd2)@T=const analytical= " + String(d2sd2T_analytical));
+  Modelica.Utilities.Streams.print("  (d2s/dd2)@T=const  numerical= " + String(d2sd2T_numerical));
+  // check (d2s/dT2)@d=const
+  d2sT2d_analytical = Medium.EoS.d2sT2d(f);
+  d2sT2d_numerical = (Medium.EoS.dsTd(f_T_plus)-Medium.EoS.dsTd(f_T_minus))/(T_plus.T-T_minus.T);
+  Modelica.Utilities.Streams.print("  (d2s/dT2)@d=const analytical= " + String(d2sT2d_analytical));
+  Modelica.Utilities.Streams.print("  (d2s/dT2)@d=const  numerical= " + String(d2sT2d_numerical));
+  // check (d2s/dT dd)
+  d2sTd_analytical = Medium.EoS.d2sTd(f);
+  d2sTd_numerical = (Medium.EoS.dsTd(f_d_plus)-Medium.EoS.dsTd(f_d_minus))/(d_plus.d-d_minus.d);
+  Modelica.Utilities.Streams.print("  (d2s/dT dd) analytical= " + String(d2sTd_analytical));
+  Modelica.Utilities.Streams.print("  (d2s/dT dd)  numerical= " + String(d2sTd_numerical));
 
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Gibbs energy");
