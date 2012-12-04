@@ -4,7 +4,7 @@ model Derivatives_SinglePhase
 
   package Medium = HelmholtzFluids.Butane;
   // choose d and T which will result in single-phase
-  parameter Medium.Density d=1;
+  parameter Medium.Density d=800;
   parameter Medium.Temperature T=498.15;
 
 // Pressure derivatives
@@ -56,6 +56,12 @@ model Derivatives_SinglePhase
   Medium.Types.DerEnergyByDensity dgdT_numerical;
   Medium.Types.DerEnergyByTemperature dgTd_analytical;
   Medium.Types.DerEnergyByTemperature dgTd_numerical;
+  Medium.Types.Der2EnergyByDensity2 d2gd2T_analytical;
+  Medium.Types.Der2EnergyByDensity2 d2gd2T_numerical;
+  Medium.Types.Der2EnergyByTemperature2 d2gT2d_analytical;
+  Medium.Types.Der2EnergyByTemperature2 d2gT2d_numerical;
+  Medium.Types.Der2EnergyByTemperatureDensity d2gTd_analytical;
+  Medium.Types.Der2EnergyByTemperatureDensity d2gTd_numerical;
 // Further derivatives
   Medium.VelocityOfSound a_analytical1;
   Medium.VelocityOfSound a_analytical2;
@@ -204,6 +210,21 @@ equation
   dgTd_numerical = ((T_plus.h-T_plus.T*T_plus.s)-(T_minus.h-T_minus.T*T_minus.s))/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("  (dg/dT)@d=const analytical= " + String(dgTd_analytical));
   Modelica.Utilities.Streams.print("  (dg/dT)@d=const  numerical= " + String(dgTd_numerical));
+  // check (d2g/dd2)@T=const
+  d2gd2T_analytical = Medium.EoS.d2gd2T(f);
+  d2gd2T_numerical = (Medium.EoS.dgdT(f_d_plus)-Medium.EoS.dgdT(f_d_minus))/(d_plus.d-d_minus.d);
+  Modelica.Utilities.Streams.print("  (d2g/dd2)@T=const analytical= " + String(d2gd2T_analytical));
+  Modelica.Utilities.Streams.print("  (d2g/dd2)@T=const  numerical= " + String(d2gd2T_numerical));
+  // check (d2g/dT2)@d=const
+  d2gT2d_analytical = Medium.EoS.d2gT2d(f);
+  d2gT2d_numerical = (Medium.EoS.dgTd(f_T_plus)-Medium.EoS.dgTd(f_T_minus))/(T_plus.T-T_minus.T);
+  Modelica.Utilities.Streams.print("  (d2g/dT2)@d=const analytical= " + String(d2gT2d_analytical));
+  Modelica.Utilities.Streams.print("  (d2g/dT2)@d=const  numerical= " + String(d2gT2d_numerical));
+  // check (d2g/dT dd)
+  d2gTd_analytical = Medium.EoS.d2gTd(f);
+  d2gTd_numerical = (Medium.EoS.dgTd(f_d_plus)-Medium.EoS.dgTd(f_d_minus))/(d_plus.d-d_minus.d);
+  Modelica.Utilities.Streams.print("  (d2g/dT dd) analytical= " + String(d2gTd_analytical));
+  Modelica.Utilities.Streams.print("  (d2g/dT dd)  numerical= " + String(d2gTd_numerical));
 
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Further derivatives");
