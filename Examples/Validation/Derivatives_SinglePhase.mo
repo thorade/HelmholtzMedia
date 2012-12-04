@@ -4,7 +4,7 @@ model Derivatives_SinglePhase
 
   package Medium = HelmholtzFluids.Butane;
   // choose d and T which will result in single-phase
-  parameter Medium.Density d=800;
+  parameter Medium.Density d=300;
   parameter Medium.Temperature T=498.15;
 
 // Pressure derivatives
@@ -104,7 +104,6 @@ equation
   Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const  numerical= " + String(d2pd2T_numerical));
   // check (d2p/dT2)@d=const
   d2pT2d_analytical = Medium.EoS.d2pT2d(f);
-  // d2pT2d_numerical = (Medium.EoS.dpTd(f_T_plus)-Medium.EoS.dpTd(f_T_minus))/(d_plus.d-d_minus.d); // returns the same value as RefProp ??
   d2pT2d_numerical = (Medium.EoS.dpTd(f_T_plus)-Medium.EoS.dpTd(f_T_minus))/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("  (d2p/dT2)@d=const analytical= " + String(d2pT2d_analytical));
   Modelica.Utilities.Streams.print("  (d2p/dT2)@d=const  numerical= " + String(d2pT2d_numerical));
