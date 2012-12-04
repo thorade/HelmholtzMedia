@@ -10,7 +10,10 @@ DerPressureByTemperature
 Der2PressureByTemperature2
 Der2PressureByTemperatureDensity
 DerEnthalpyByDensity
+Der2EnthalpyByDensity2
 DerEnthalpyByTemperature
+Der2EnthalpyByTemperature2
+Der2EnthalpyByTemperatureDensity
 DerEnthalpyByPressure
 DerEnergyByDensity
 Der2EnergyByDensity2
