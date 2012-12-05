@@ -60,13 +60,11 @@ algorithm
       // Modelica.Utilities.Streams.print("d(Y1)=" + String(p/(R*T*(Y1+1/3))) + ", d(Y2)=" + String(p/(R*T*(Y2+1/3))) + ", d(p/(R*T*(Y3+1/3)))=" + String(Y3), "printlog.txt");
       if (p > psat) then
         // liquid, use smallest Y
-        Y1 := min(Y1,Y2);
-        Y1 := min(Y1,Y3);
+        Y1 := min({Y1,Y2,Y3});
         d := p/(R*T*(Y1+1/3));
       elseif (p < psat) then
         // vapor, use largest Y
-        Y1 := max(Y1,Y2);
-        Y1 := max(Y1,Y3);
+        Y1 := max({Y1,Y2,Y3});
         d := p/(R*T*(Y1+1/3));
       else
         // this is very unlikely, but not impossible
