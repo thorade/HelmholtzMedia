@@ -62,11 +62,6 @@ model Derivatives_SinglePhase_dT
   Medium.Types.Der2EnergyByTemperature2 d2gT2d_numerical;
   Medium.Types.Der2EnergyByTemperatureDensity d2gTd_analytical;
   Medium.Types.Der2EnergyByTemperatureDensity d2gTd_numerical;
-// Further derivatives
-  Medium.VelocityOfSound a_analytical1;
-  Medium.VelocityOfSound a_analytical2;
-  Medium.DerDensityByTemperature ddTp_analytical1;
-  Medium.DerDensityByTemperature ddTp_analytical2;
 
 protected
   Real eps= 1e-5;
