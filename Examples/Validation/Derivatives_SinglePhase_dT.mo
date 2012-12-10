@@ -1,11 +1,11 @@
 within HelmholtzMedia.Examples.Validation;
-model Derivatives_SinglePhase
+model Derivatives_SinglePhase_dT
   "compare analytical derivatives to numerical derivatives"
 
   package Medium = HelmholtzFluids.Butane;
-  // choose d and T which will result in single-phase
-  parameter Medium.Density d=300;
-  parameter Medium.Temperature T=498.15;
+  // choose d and T that result in single-phase
+  parameter Medium.Density d=1;
+  parameter Medium.Temperature T=298.15;
 
 // Pressure derivatives
   Medium.Types.DerPressureByDensity dpdT_analytical;
@@ -72,10 +72,12 @@ protected
   Real eps= 1e-5;
   Medium.ThermodynamicState    state=Medium.setState_dTX(d=d, T=T);
   Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsThird(T=T, d=d, phase=state.phase);
+
   Medium.ThermodynamicState    d_plus=Medium.setState_dTX(d=d+eps*d, T=T);
   Medium.EoS.HelmholtzDerivs f_d_plus=Medium.EoS.setHelmholtzDerivsThird(T=T, d=d_plus.d, phase=state.phase);
   Medium.ThermodynamicState    d_minus=Medium.setState_dTX(d=d-eps*d, T=T);
   Medium.EoS.HelmholtzDerivs f_d_minus=Medium.EoS.setHelmholtzDerivsThird(T=T, d=d_minus.d, phase=state.phase);
+
   Medium.ThermodynamicState    T_plus=Medium.setState_dTX(d=d, T=T+eps*T);
   Medium.EoS.HelmholtzDerivs f_T_plus=Medium.EoS.setHelmholtzDerivsThird(T=T_plus.T, d=d, phase=state.phase);
   Medium.ThermodynamicState    T_minus=Medium.setState_dTX(d=d, T=T-eps*T);
@@ -225,18 +227,5 @@ equation
   Modelica.Utilities.Streams.print("  (d2g/dT dd) analytical= " + String(d2gTd_analytical));
   Modelica.Utilities.Streams.print("  (d2g/dT dd)  numerical= " + String(d2gTd_numerical));
 
-  Modelica.Utilities.Streams.print(" ");
-  Modelica.Utilities.Streams.print("Further derivatives");
-  // check (dp/dd)@s=const
-  a_analytical1 = Medium.velocityOfSound(state=state);
-  a_analytical2 = sqrt(dpdT_analytical-dpTd_analytical*dsdT_analytical/dsTd_analytical);
-  Modelica.Utilities.Streams.print("  (dp/dd)@s=const analytical1= " + String(a_analytical1));
-  Modelica.Utilities.Streams.print("  (dp/dd)@s=const analytical2= " + String(a_analytical2));
-  // check (dd/dT)@p=const
-  ddTp_analytical1 = Medium.density_derT_p(state=state);
-  ddTp_analytical2 = -Medium.EoS.dpTd(f)/Medium.EoS.dpdT(f);
-  Modelica.Utilities.Streams.print("  (dd/dT)@p=const analytical1= " + String(ddTp_analytical1));
-  Modelica.Utilities.Streams.print("  (dd/dT)@p=const analytical2= " + String(ddTp_analytical2));
-
 annotation (experiment(NumberOfIntervals=1));
-end Derivatives_SinglePhase;
+end Derivatives_SinglePhase_dT;
