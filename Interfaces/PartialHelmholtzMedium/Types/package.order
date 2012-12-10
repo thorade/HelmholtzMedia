@@ -32,6 +32,10 @@ Der2DensityByTemperature2
 Der2DensityByTemperaturePressure
 DerVolumeByTemperature
 DerVolumeByPressure
+DerTemperatureByDensity
+Der2TemperatureByDensity2
 DerTemperatureByPressure
+Der2TemperatureByPressure2
+Der2TemperatureByPressureDensity
 DerFractionByTemperature
 DerFractionByPressure
