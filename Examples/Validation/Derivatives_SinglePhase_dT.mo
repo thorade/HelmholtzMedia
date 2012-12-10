@@ -65,7 +65,7 @@ model Derivatives_SinglePhase_dT
 
 protected
   Real eps= 1e-5;
-  Medium.ThermodynamicState    state=Medium.setState_dTX(d=d, T=T);
+  Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
   Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsThird(T=T, d=d, phase=state.phase);
 
   Medium.ThermodynamicState    d_plus=Medium.setState_dTX(d=d+eps*d, T=T);

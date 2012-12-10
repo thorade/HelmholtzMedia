@@ -28,7 +28,7 @@ model Derivatives_SinglePhase_pT
 
 protected
   Real eps= 1e-5;
-  Medium.ThermodynamicState    state=Medium.setState_pTX(p=p, T=T);
+  Medium.ThermodynamicState state=Medium.setState_pTX(p=p, T=T);
   Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsThird(T=T, d=state.d, phase=state.phase);
 
   Medium.ThermodynamicState    p_plus=Medium.setState_pTX(p=p+eps*p, T=T);
@@ -62,18 +62,18 @@ equation
   d2dT2p_numerical = (Medium.density_derT_p(T_plus)-Medium.density_derT_p(T_minus))/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("  (d2d/dT2)@p=const analytical= " + String(d2dT2p_analytical));
   Modelica.Utilities.Streams.print("  (d2d/dT2)@p=const  numerical= " + String(d2dT2p_numerical));
-  // check (d2d/dT2)@p=const
+  // check (d2d/dp2)@T=const
   d2dp2T_analytical = -Medium.EoS.d2pd2T(f)/Medium.EoS.dpdT(f)^3;
   d2dp2T_numerical = (Medium.density_derp_T(p_plus)-Medium.density_derp_T(p_minus))/(p_plus.p-p_minus.p);
   Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const analytical= " + String(d2dp2T_analytical));
   Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const  numerical= " + String(d2dp2T_numerical));
-  // check (d2d/dT dp)@p=const
+  // check (d2d/dT dp)
   d2dTp_analytical = -(Medium.EoS.d2pTd(f)*Medium.EoS.dpdT(f) - Medium.EoS.dpTd(f)*Medium.EoS.d2pd2T(f))/(Medium.EoS.dpdT(f)^3);
   d2dTp_numerical1 = (Medium.density_derp_T(T_plus)-Medium.density_derp_T(T_minus))/(T_plus.T-T_minus.T);
   d2dTp_numerical2 = (Medium.density_derT_p(p_plus)-Medium.density_derT_p(p_minus))/(p_plus.p-p_minus.p);
-  Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const analytical= " + String(d2dTp_analytical));
-  Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const numerical1= " + String(d2dTp_numerical1));
-  Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const numerical2= " + String(d2dTp_numerical2));
+  Modelica.Utilities.Streams.print("  (d2d/dT dp) analytical= " + String(d2dTp_analytical));
+  Modelica.Utilities.Streams.print("  (d2d/dp dT) numerical1= " + String(d2dTp_numerical1));
+  Modelica.Utilities.Streams.print("  (d2d/dT dp) numerical2= " + String(d2dTp_numerical2));
 
 Modelica.Utilities.Streams.print("Enthalpy");
   // check (dh/dT)@p=const
