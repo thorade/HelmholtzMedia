@@ -27,6 +27,9 @@ DerEntropyByTemperature
 Der2EntropyByTemperature2
 Der2EntropyByTemperatureDensity
 DerEntropyByPressure
+Der2DensityByPressure2
+Der2DensityByTemperature2
+Der2DensityByTemperaturePressure
 DerVolumeByTemperature
 DerVolumeByPressure
 DerTemperatureByPressure

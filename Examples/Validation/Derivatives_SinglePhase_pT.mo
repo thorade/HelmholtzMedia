@@ -12,6 +12,13 @@ model Derivatives_SinglePhase_pT
   Medium.DerDensityByTemperature ddTp_numerical;
   Medium.DerDensityByPressure ddpT_analytical;
   Medium.DerDensityByPressure ddpT_numerical;
+  Medium.Types.Der2DensityByTemperature2 d2dT2p_analytical;
+  Medium.Types.Der2DensityByTemperature2 d2dT2p_numerical;
+  Medium.Types.Der2DensityByPressure2 d2dp2T_analytical;
+  Medium.Types.Der2DensityByPressure2 d2dp2T_numerical;
+  Medium.Types.Der2DensityByTemperaturePressure d2dTp_analytical;
+  Medium.Types.Der2DensityByTemperaturePressure d2dTp_numerical1;
+  Medium.Types.Der2DensityByTemperaturePressure d2dTp_numerical2;
 
 // Enthalpy derivatives
   Medium.SpecificHeatCapacity dhTp_analytical;
@@ -50,6 +57,23 @@ equation
   ddpT_numerical = (p_plus.d-p_minus.d)/(p_plus.p-p_minus.p);
   Modelica.Utilities.Streams.print("  (dd/dp)@T=const analytical= " + String(ddpT_analytical));
   Modelica.Utilities.Streams.print("  (dd/dp)@T=const  numerical= " + String(ddpT_numerical));
+  // check (d2d/dT2)@p=const
+  d2dT2p_analytical = -(Medium.EoS.d2pT2d(f)*Medium.EoS.dpdT(f) - Medium.EoS.dpTd(f)*Medium.EoS.d2pTd(f))/(Medium.EoS.dpdT(f)^2) +Medium.EoS.dpTd(f)/Medium.EoS.dpdT(f) * (Medium.EoS.d2pTd(f)*Medium.EoS.dpdT(f) - Medium.EoS.dpTd(f)*Medium.EoS.d2pd2T(f))/(Medium.EoS.dpdT(f)^2);
+  d2dT2p_numerical = (Medium.density_derT_p(T_plus)-Medium.density_derT_p(T_minus))/(T_plus.T-T_minus.T);
+  Modelica.Utilities.Streams.print("  (d2d/dT2)@p=const analytical= " + String(d2dT2p_analytical));
+  Modelica.Utilities.Streams.print("  (d2d/dT2)@p=const  numerical= " + String(d2dT2p_numerical));
+  // check (d2d/dT2)@p=const
+  d2dp2T_analytical = -Medium.EoS.d2pd2T(f)/Medium.EoS.dpdT(f)^3;
+  d2dp2T_numerical = (Medium.density_derp_T(p_plus)-Medium.density_derp_T(p_minus))/(p_plus.p-p_minus.p);
+  Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const analytical= " + String(d2dp2T_analytical));
+  Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const  numerical= " + String(d2dp2T_numerical));
+  // check (d2d/dT dp)@p=const
+  d2dTp_analytical = -(Medium.EoS.d2pTd(f)*Medium.EoS.dpdT(f) - Medium.EoS.dpTd(f)*Medium.EoS.d2pd2T(f))/(Medium.EoS.dpdT(f)^3);
+  d2dTp_numerical1 = (Medium.density_derp_T(T_plus)-Medium.density_derp_T(T_minus))/(T_plus.T-T_minus.T);
+  d2dTp_numerical2 = (Medium.density_derT_p(p_plus)-Medium.density_derT_p(p_minus))/(p_plus.p-p_minus.p);
+  Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const analytical= " + String(d2dTp_analytical));
+  Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const numerical1= " + String(d2dTp_numerical1));
+  Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const numerical2= " + String(d2dTp_numerical2));
 
 Modelica.Utilities.Streams.print("Enthalpy");
   // check (dh/dT)@p=const
