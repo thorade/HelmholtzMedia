@@ -30,29 +30,29 @@ protected
   medium.EoS.HelmholtzDerivs f_ASHRAE = medium.EoS.setHelmholtzDerivsThird(T=sat_ASHRAE.liq.T, d=sat_ASHRAE.liq.d, phase=1);
   medium.EoS.HelmholtzDerivs f_NBP = medium.EoS.setHelmholtzDerivsThird(T=sat_NBP.liq.T, d=sat_NBP.liq.d, phase=1);
   medium.EoS.HelmholtzDerivs f = medium.EoS.setHelmholtzDerivsThird(T=T, d=d, phase=1);
-  medium.EoS.HelmholtzDerivs fn(T=T, d=d);
+  medium.EoS.HelmholtzDerivs f_num(T=T, d=d);
 
   Real delta(unit="1")=d/d_crit "reduced density";
   Real tau(unit="1")=T_crit/T "inverse reduced temperature";
   Real eps= 1e-6;
 
 algorithm
-  // numerical derivative, for comparison
-  fn.i    := medium.EoS.f_i(tau=tau, delta=delta);
-  fn.it   := (medium.EoS.f_i(tau=tau+eps, delta=delta)-medium.EoS.f_i(tau=tau-eps, delta=delta))/(2*eps);
-  fn.itt  := (medium.EoS.f_it(tau=tau+eps, delta=delta)-medium.EoS.f_it(tau=tau-eps, delta=delta))/(2*eps);
-  fn.ittt  := (medium.EoS.f_itt(tau=tau+eps, delta=delta)-medium.EoS.f_itt(tau=tau-eps, delta=delta))/(2*eps);
+  // numerical derivative, for comparison, last two line of csv file should be identical
+  f_num.i    := medium.EoS.f_i(tau=tau, delta=delta);
+  f_num.it   := (medium.EoS.f_i(tau=tau+eps, delta=delta)-medium.EoS.f_i(tau=tau-eps, delta=delta))/(2*eps);
+  f_num.itt  := (medium.EoS.f_it(tau=tau+eps, delta=delta)-medium.EoS.f_it(tau=tau-eps, delta=delta))/(2*eps);
+  f_num.ittt  := (medium.EoS.f_itt(tau=tau+eps, delta=delta)-medium.EoS.f_itt(tau=tau-eps, delta=delta))/(2*eps);
 
-  fn.r    := medium.EoS.f_r(tau=tau, delta=delta);
-  fn.rt   := (medium.EoS.f_r(tau=tau+eps, delta=delta)-medium.EoS.f_r(tau=tau-eps, delta=delta))/(2*eps);
-  fn.rtt  := (medium.EoS.f_rt(tau=tau+eps, delta=delta)-medium.EoS.f_rt(tau=tau-eps, delta=delta))/(2*eps);
-  fn.rttt  := (medium.EoS.f_rtt(tau=tau+eps, delta=delta)-medium.EoS.f_rtt(tau=tau-eps, delta=delta))/(2*eps);
-  fn.rtd  := (medium.EoS.f_rt(tau=tau, delta=delta+eps)-medium.EoS.f_rt(tau=tau, delta=delta-eps))/(2*eps);
-  fn.rttd := (medium.EoS.f_rtt(tau=tau, delta=delta+eps)-medium.EoS.f_rtt(tau=tau, delta=delta-eps))/(2*eps);
-  fn.rtdd :=(medium.EoS.f_rtd(tau=tau, delta=delta+eps)-medium.EoS.f_rtd(tau=tau, delta=delta-eps))/(2*eps);
-  fn.rd   := (medium.EoS.f_r(tau=tau, delta=delta+eps)-medium.EoS.f_r(tau=tau, delta=delta-eps))/(2*eps);
-  fn.rdd  := (medium.EoS.f_rd(tau=tau, delta=delta+eps)-medium.EoS.f_rd(tau=tau, delta=delta-eps))/(2*eps);
-  fn.rddd := (medium.EoS.f_rdd(tau=tau, delta=delta+eps)-medium.EoS.f_rdd(tau=tau, delta=delta-eps))/(2*eps);
+  f_num.r    := medium.EoS.f_r(tau=tau, delta=delta);
+  f_num.rt   := (medium.EoS.f_r(tau=tau+eps, delta=delta)-medium.EoS.f_r(tau=tau-eps, delta=delta))/(2*eps);
+  f_num.rtt  := (medium.EoS.f_rt(tau=tau+eps, delta=delta)-medium.EoS.f_rt(tau=tau-eps, delta=delta))/(2*eps);
+  f_num.rttt  := (medium.EoS.f_rtt(tau=tau+eps, delta=delta)-medium.EoS.f_rtt(tau=tau-eps, delta=delta))/(2*eps);
+  f_num.rtd  := (medium.EoS.f_rt(tau=tau, delta=delta+eps)-medium.EoS.f_rt(tau=tau, delta=delta-eps))/(2*eps);
+  f_num.rttd := (medium.EoS.f_rtt(tau=tau, delta=delta+eps)-medium.EoS.f_rtt(tau=tau, delta=delta-eps))/(2*eps);
+  f_num.rtdd :=(medium.EoS.f_rtd(tau=tau, delta=delta+eps)-medium.EoS.f_rtd(tau=tau, delta=delta-eps))/(2*eps);
+  f_num.rd   := (medium.EoS.f_r(tau=tau, delta=delta+eps)-medium.EoS.f_r(tau=tau, delta=delta-eps))/(2*eps);
+  f_num.rdd  := (medium.EoS.f_rd(tau=tau, delta=delta+eps)-medium.EoS.f_rd(tau=tau, delta=delta-eps))/(2*eps);
+  f_num.rddd := (medium.EoS.f_rdd(tau=tau, delta=delta+eps)-medium.EoS.f_rdd(tau=tau, delta=delta-eps))/(2*eps);
 
   // While csv originally stood for comma-seperated-values, MS Excel uses semicolons to seperate the values
   // remove old file
@@ -196,24 +196,24 @@ algorithm
                                  + String(f.rttd)+";"
                                  + String(f.rttt)+";",
                                    fileName);
-  Modelica.Utilities.Streams.print(String(fn.T) + ";"
-                                 + String(fn.d) + ";"
-                                 + String(fn.tau) + ";"
-                                 + String(fn.delta) + ";"
-                                 + String(fn.i) + ";"
-                                 + String(fn.it)+";"
-                                 + String(fn.itt)+";"
-                                 + String(fn.ittt)+";"
-                                 + String(fn.r)+";"
-                                 + String(fn.rd)+";"
-                                 + String(fn.rdd)+";"
-                                 + String(fn.rt)+";"
-                                 + String(fn.rtt)+";"
-                                 + String(fn.rtd)+";"
-                                 + String(fn.rddd)+";"
-                                 + String(fn.rtdd)+";"
-                                 + String(fn.rttd)+";"
-                                 + String(fn.rttt)+";",
+  Modelica.Utilities.Streams.print(String(f_num.T) + ";"
+                                 + String(f_num.d) + ";"
+                                 + String(f_num.tau) + ";"
+                                 + String(f_num.delta) + ";"
+                                 + String(f_num.i) + ";"
+                                 + String(f_num.it)+";"
+                                 + String(f_num.itt)+";"
+                                 + String(f_num.ittt)+";"
+                                 + String(f_num.r)+";"
+                                 + String(f_num.rd)+";"
+                                 + String(f_num.rdd)+";"
+                                 + String(f_num.rt)+";"
+                                 + String(f_num.rtt)+";"
+                                 + String(f_num.rtd)+";"
+                                 + String(f_num.rddd)+";"
+                                 + String(f_num.rtdd)+";"
+                                 + String(f_num.rttd)+";"
+                                 + String(f_num.rttt)+";",
                                    fileName);
 
 annotation (experiment(NumberOfIntervals=1));
