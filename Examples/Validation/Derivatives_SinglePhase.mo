@@ -112,6 +112,8 @@ model Derivatives_SinglePhase
   Medium.Types.Der2EnthalpyByTemperature2 dcpTd_numerical;
   Medium.Types.Der2EnthalpyByTemperatureDensity dcpdT_analytical;
   Medium.Types.Der2EnthalpyByTemperatureDensity dcpdT_numerical;
+  Medium.Types.Der2EnthalpyByTemperaturePressure dcpph_analytical;
+  Medium.Types.Der2EnthalpyByTemperaturePressure dcpph_numerical;
 
 protected
   Real eps= 1e-5;
@@ -401,6 +403,11 @@ equation
   dcpdT_numerical = (Medium.specificHeatCapacityCp(dplus_Tconst)-Medium.specificHeatCapacityCp(dminus_Tconst))/(dplus_Tconst.d-dminus_Tconst.d);
   Modelica.Utilities.Streams.print("  (d cp/dd)@T=const analytical= " + String(dcpdT_analytical));
   Modelica.Utilities.Streams.print("  (d cp/dd)@T=const  numerical= " + String(dcpdT_numerical));
+  // check (d cp/dp)@h=const
+  dcpph_analytical =  (dcpTd_analytical*Medium.EoS.dhdT(f) - dcpdT_analytical*Medium.EoS.dhTd(f))/(Medium.EoS.dpTd(f)*Medium.EoS.dhdT(f) - Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f));
+  dcpph_numerical = (Medium.specificHeatCapacityCp(pplus_hconst)-Medium.specificHeatCapacityCp(pminus_hconst))/(pplus_hconst.p-pminus_hconst.p);
+  Modelica.Utilities.Streams.print("  (d cp/dp)@h=const analytical= " + String(dcpph_analytical));
+  Modelica.Utilities.Streams.print("  (d cp/dp)@h=const  numerical= " + String(dcpph_numerical));
 
 annotation (experiment(NumberOfIntervals=1));
 end Derivatives_SinglePhase;
