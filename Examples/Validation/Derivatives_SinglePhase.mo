@@ -324,7 +324,7 @@ equation
   Modelica.Utilities.Streams.print("  (dd/dp)@T=const  numerical= " + String(ddpT_numerical));
   // check (d2d/dT2)@p=const
   d2dT2p_analytical = -(Medium.EoS.d2pT2d(f)*Medium.EoS.dpdT(f) - Medium.EoS.dpTd(f)*Medium.EoS.d2pTd(f))/(Medium.EoS.dpdT(f)^2)
-                      +(Medium.EoS.d2pTd(f)*Medium.EoS.dpdT(f) - Medium.EoS.dpTd(f)*Medium.EoS.d2pd2T(f))/(Medium.EoS.dpdT(f)^2) * Medium.EoS.dpTd(f)/Medium.EoS.dpdT(f);
+                      +(Medium.EoS.d2pTd(f)*Medium.EoS.dpdT(f) - Medium.EoS.dpTd(f)*Medium.EoS.d2pd2T(f))/(Medium.EoS.dpdT(f)^3) * Medium.EoS.dpTd(f);
   d2dT2p_numerical = (Medium.density_derT_p(Tplus_pconst)-Medium.density_derT_p(Tminus_pconst))/(Tplus_pconst.T-Tminus_pconst.T);
   Modelica.Utilities.Streams.print("  (d2d/dT2)@p=const analytical= " + String(d2dT2p_analytical));
   Modelica.Utilities.Streams.print("  (d2d/dT2)@p=const  numerical= " + String(d2dT2p_numerical));
@@ -366,7 +366,7 @@ equation
   Modelica.Utilities.Streams.print("  (dT/dp)@d=const  numerical= " + String(dTpd_numerical));
   // check (d2T/dd2)@p=const
   d2Td2p_analytical = -(Medium.EoS.d2pd2T(f)*Medium.EoS.dpTd(f) - Medium.EoS.dpdT(f)*Medium.EoS.d2pTd(f))/(Medium.EoS.dpTd(f)^2)
-                      +(Medium.EoS.d2pTd(f)*Medium.EoS.dpTd(f) - Medium.EoS.dpdT(f)*Medium.EoS.d2pT2d(f))/(Medium.EoS.dpTd(f)^2) * Medium.EoS.dpdT(f)/Medium.EoS.dpTd(f);
+                      +(Medium.EoS.d2pTd(f)*Medium.EoS.dpTd(f) - Medium.EoS.dpdT(f)*Medium.EoS.d2pT2d(f))/(Medium.EoS.dpTd(f)^3) * Medium.EoS.dpdT(f);
   d2Td2p_numerical = (-Medium.EoS.dpdT(f_dplus_pconst)/Medium.EoS.dpTd(f_dplus_pconst)+Medium.EoS.dpdT(f_dminus_pconst)/Medium.EoS.dpTd(f_dminus_pconst))/(dplus_pconst.d-dminus_pconst.d);
   Modelica.Utilities.Streams.print("  (d2T/dd2)@p=const analytical= " + String(d2Td2p_analytical));
   Modelica.Utilities.Streams.print("  (d2T/dd2)@p=const  numerical= " + String(d2Td2p_numerical));
