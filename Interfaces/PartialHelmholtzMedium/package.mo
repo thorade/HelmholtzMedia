@@ -1209,7 +1209,7 @@ protected
   end isothermalCompressibility;
 
 
-  redeclare function extends isentropicExponent "returns -1/v*(dv/dp)@T=const"
+  redeclare function extends isentropicExponent "returns cp/cv"
   //input state and
   //output gamma are inherited from PartialMedium
 
