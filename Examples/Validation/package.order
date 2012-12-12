@@ -1,8 +1,6 @@
 printCoefficients
 printHelmholtzDerivatives
-Derivatives_SinglePhase_dT
-Derivatives_SinglePhase_pT
-Derivatives_SinglePhase_pd
+Derivatives_SinglePhase
 Derivatives_SaturationBoundary
 Derivatives_TwoPhase
 ReferenceState
