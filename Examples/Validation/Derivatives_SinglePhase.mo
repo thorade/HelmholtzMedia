@@ -96,6 +96,9 @@ model Derivatives_SinglePhase
   Medium.Types.DerTemperatureByDensity dTdp_numerical;
   Medium.Types.DerTemperatureByPressure dTpd_analytical;
   Medium.Types.DerTemperatureByPressure dTpd_numerical;
+// Temperature wrt. ph
+  Medium.Types.DerTemperatureByPressure dTph_analytical;
+  Medium.Types.DerTemperatureByPressure dTph_numerical;
 // Temperature wrt. pd 2nd order
   Medium.Types.Der2TemperatureByDensity2 d2Td2p_analytical;
   Medium.Types.Der2TemperatureByDensity2 d2Td2p_numerical;
@@ -348,28 +351,28 @@ equation
   Modelica.Utilities.Streams.print("  (dd/dh)@p=const  numerical= " + String(ddhp_numerical));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
-  Modelica.Utilities.Streams.print("Temperature");
+  Modelica.Utilities.Streams.print("Temperature wrt. pd");
   // check (dT/dd)@p=const
   dTdp_analytical = -Medium.EoS.dpdT(f)/Medium.EoS.dpTd(f);
   dTdp_numerical = (dplus_pconst.T-dminus_pconst.T)/(dplus_pconst.d-dminus_pconst.d);
-  Modelica.Utilities.Streams.print("  (dd/dT)@p=const analytical= " + String(dTdp_analytical));
-  Modelica.Utilities.Streams.print("  (dd/dT)@p=const  numerical= " + String(dTdp_numerical));
+  Modelica.Utilities.Streams.print("  (dT/dd)@p=const analytical= " + String(dTdp_analytical));
+  Modelica.Utilities.Streams.print("  (dT/dd)@p=const  numerical= " + String(dTdp_numerical));
   // check (dT/dp)@d=const
   dTpd_analytical = 1/Medium.EoS.dpTd(f);
   dTpd_numerical = (pplus_dconst.T-pminus_dconst.T)/(pplus_dconst.p-pminus_dconst.p);
-  Modelica.Utilities.Streams.print("  (dd/dp)@T=const analytical= " + String(dTpd_analytical));
-  Modelica.Utilities.Streams.print("  (dd/dp)@T=const  numerical= " + String(dTpd_numerical));
+  Modelica.Utilities.Streams.print("  (dT/dp)@d=const analytical= " + String(dTpd_analytical));
+  Modelica.Utilities.Streams.print("  (dT/dp)@d=const  numerical= " + String(dTpd_numerical));
   // check (d2T/dd2)@p=const
   d2Td2p_analytical = -(Medium.EoS.d2pd2T(f)*Medium.EoS.dpTd(f) - Medium.EoS.dpdT(f)*Medium.EoS.d2pTd(f))/(Medium.EoS.dpTd(f)^2)
                       +(Medium.EoS.d2pTd(f)*Medium.EoS.dpTd(f) - Medium.EoS.dpdT(f)*Medium.EoS.d2pT2d(f))/(Medium.EoS.dpTd(f)^2) * Medium.EoS.dpdT(f)/Medium.EoS.dpTd(f);
   d2Td2p_numerical = (-Medium.EoS.dpdT(f_dplus_pconst)/Medium.EoS.dpTd(f_dplus_pconst)+Medium.EoS.dpdT(f_dminus_pconst)/Medium.EoS.dpTd(f_dminus_pconst))/(dplus_pconst.d-dminus_pconst.d);
-  Modelica.Utilities.Streams.print("  (d2d/dT2)@p=const analytical= " + String(d2Td2p_analytical));
-  Modelica.Utilities.Streams.print("  (d2d/dT2)@p=const  numerical= " + String(d2Td2p_numerical));
+  Modelica.Utilities.Streams.print("  (d2T/dd2)@p=const analytical= " + String(d2Td2p_analytical));
+  Modelica.Utilities.Streams.print("  (d2T/dd2)@p=const  numerical= " + String(d2Td2p_numerical));
   // check (d2T/dp2)@d=const
   d2Tp2d_analytical = -Medium.EoS.d2pT2d(f)/Medium.EoS.dpTd(f)^3;
   d2Tp2d_numerical = (1/Medium.EoS.dpTd(f_pplus_dconst)-1/Medium.EoS.dpTd(f_pminus_dconst))/(pplus_dconst.p-pminus_dconst.p);
-  Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const analytical= " + String(d2Tp2d_analytical));
-  Modelica.Utilities.Streams.print("  (d2d/dp2)@T=const  numerical= " + String(d2Tp2d_numerical));
+  Modelica.Utilities.Streams.print("  (d2T/dp2)@d=const analytical= " + String(d2Tp2d_analytical));
+  Modelica.Utilities.Streams.print("  (d2T/dp2)@d=const  numerical= " + String(d2Tp2d_numerical));
   // check (d2T/dp dd)
   d2Tpd_analytical = -(Medium.EoS.d2pTd(f)*Medium.EoS.dpTd(f) - Medium.EoS.dpdT(f)*Medium.EoS.d2pT2d(f))/(Medium.EoS.dpTd(f)^3);
   d2Tpd_numerical1 = (1/Medium.EoS.dpTd(f_dplus_pconst)-1/Medium.EoS.dpTd(f_dminus_pconst))/(dplus_pconst.d-dminus_pconst.d);
@@ -377,6 +380,12 @@ equation
   Modelica.Utilities.Streams.print("  (d2T/dp dd) analytical= " + String(d2Tpd_analytical));
   Modelica.Utilities.Streams.print("  (d2T/dp dd) numerical1= " + String(d2Tpd_numerical1));
   Modelica.Utilities.Streams.print("  (d2T/dd dp) numerical2= " + String(d2Tpd_numerical2));
+  Modelica.Utilities.Streams.print("Temperature wrt. ph");
+  // check (dT/dp)@h=const
+  dTph_analytical = Medium.jouleThomsonCoefficient(state=state);
+  dTph_numerical = (pplus_hconst.T-pminus_hconst.T)/(pplus_hconst.p-pminus_hconst.p);
+  Modelica.Utilities.Streams.print("  (dT/dp)@h=const analytical= " + String(dTph_analytical));
+  Modelica.Utilities.Streams.print("  (dT/dp)@h=const  numerical= " + String(dTph_numerical));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
   Modelica.Utilities.Streams.print("Second order derivatives wrt. mixed properties");
