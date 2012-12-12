@@ -158,7 +158,7 @@ protected
 
 equation
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
-  Modelica.Utilities.Streams.print("Pressure");
+  Modelica.Utilities.Streams.print("Pressure wrt. dT");
   // check (dp/dd)@T=const
   dpdT_analytical = Medium.EoS.dpdT(f);
   dpdT_numerical = (dplus_Tconst.p-dminus_Tconst.p)/(dplus_Tconst.d-dminus_Tconst.d);
@@ -186,7 +186,7 @@ equation
   Modelica.Utilities.Streams.print("  (d2p/dTdd)  numerical= " + String(d2pTd_numerical));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
-  Modelica.Utilities.Streams.print("Entropy");
+  Modelica.Utilities.Streams.print("Entropy wrt. dT");
   // check (ds/dd)@T=const
   dsdT_analytical = Medium.EoS.dsdT(f);
   dsdT_numerical = (dplus_Tconst.s-dminus_Tconst.s)/(dplus_Tconst.d-dminus_Tconst.d);
@@ -214,7 +214,7 @@ equation
   Modelica.Utilities.Streams.print("  (d2s/dT dd)  numerical= " + String(d2sTd_numerical));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
-  Modelica.Utilities.Streams.print("internal Energy");
+  Modelica.Utilities.Streams.print("internal Energy wrt. dT");
   // check (du/dd)@T=const
   dudT_analytical = Medium.EoS.dudT(f);
   dudT_numerical = (dplus_Tconst.u-dminus_Tconst.u)/(dplus_Tconst.d-dminus_Tconst.d);
@@ -281,7 +281,7 @@ equation
   Modelica.Utilities.Streams.print("  (dh/dp)@T=const  numerical= " + String(dhpT_numerical));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
-  Modelica.Utilities.Streams.print("Gibbs energy");
+  Modelica.Utilities.Streams.print("Gibbs energy wrt. dT");
   // check (dg/dd)@T=const
   dgdT_analytical = Medium.EoS.dgdT(f);
   dgdT_numerical = ((dplus_Tconst.h-dplus_Tconst.T*dplus_Tconst.s)-(dminus_Tconst.h-dminus_Tconst.T*dminus_Tconst.s))/(dplus_Tconst.d-dminus_Tconst.d);
