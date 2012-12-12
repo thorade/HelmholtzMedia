@@ -51,6 +51,10 @@ model Derivatives_SinglePhase_dT
   Medium.Types.Der2EnthalpyByTemperature2 d2hT2d_numerical;
   Medium.Types.Der2EnthalpyByTemperatureDensity d2hTd_analytical;
   Medium.Types.Der2EnthalpyByTemperatureDensity d2hTd_numerical;
+  Medium.Types.Der2EnthalpyByTemperature2 dcpTd_analytical;
+  Medium.Types.Der2EnthalpyByTemperature2 dcpTd_numerical;
+  Medium.Types.Der2EnthalpyByTemperatureDensity dcpdT_analytical;
+  Medium.Types.Der2EnthalpyByTemperatureDensity dcpdT_numerical;
 // Gibbs derivatives
   Medium.Types.DerEnergyByDensity dgdT_analytical;
   Medium.Types.DerEnergyByDensity dgdT_numerical;
@@ -221,6 +225,21 @@ equation
   d2gTd_numerical = (Medium.EoS.dgTd(f_d_plus)-Medium.EoS.dgTd(f_d_minus))/(d_plus.d-d_minus.d);
   Modelica.Utilities.Streams.print("  (d2g/dT dd) analytical= " + String(d2gTd_analytical));
   Modelica.Utilities.Streams.print("  (d2g/dT dd)  numerical= " + String(d2gTd_numerical));
+
+  Modelica.Utilities.Streams.print(" ");
+  Modelica.Utilities.Streams.print("Further second derivatives");
+  // check (d cp/dT)@d=const
+  dcpTd_analytical =  Medium.EoS.d2hT2d(f) + Medium.EoS.dhdT(f)*Medium.EoS.dpTd(f)*Medium.EoS.d2pTd(f)/Medium.EoS.dpdT(f)^2
+                   - (Medium.EoS.d2hTd(f)*Medium.EoS.dpTd(f) + Medium.EoS.dhdT(f)*Medium.EoS.d2pT2d(f))/Medium.EoS.dpdT(f);
+  dcpTd_numerical = (Medium.specificHeatCapacityCp(T_plus)-Medium.specificHeatCapacityCp(T_minus))/(T_plus.T-T_minus.T);
+  Modelica.Utilities.Streams.print("  (dh/dT)@p=const analytical= " + String(dcpTd_analytical));
+  Modelica.Utilities.Streams.print("  (dh/dT)@p=const  numerical= " + String(dcpTd_numerical));
+  // check (d cp/dd)@T=const
+  dcpdT_analytical =  Medium.EoS.d2hTd(f) + Medium.EoS.dhdT(f)*Medium.EoS.dpTd(f)*Medium.EoS.d2pd2T(f)/Medium.EoS.dpdT(f)^2
+                   - (Medium.EoS.d2hd2T(f)*Medium.EoS.dpTd(f) + Medium.EoS.dhdT(f)*Medium.EoS.d2pTd(f))/Medium.EoS.dpdT(f);
+  dcpdT_numerical = (Medium.specificHeatCapacityCp(d_plus)-Medium.specificHeatCapacityCp(d_minus))/(d_plus.d-d_minus.d);
+  Modelica.Utilities.Streams.print("  (dh/dT)@p=const analytical= " + String(dcpdT_analytical));
+  Modelica.Utilities.Streams.print("  (dh/dT)@p=const  numerical= " + String(dcpdT_numerical));
 
 annotation (experiment(NumberOfIntervals=1));
 end Derivatives_SinglePhase_dT;

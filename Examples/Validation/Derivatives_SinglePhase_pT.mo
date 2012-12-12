@@ -22,8 +22,8 @@ model Derivatives_SinglePhase_pT
   Medium.Types.Der2DensityByTemperaturePressure d2dTp_numerical2;
 
 // Enthalpy derivatives
-  Medium.SpecificHeatCapacity dhTp_analytical;
-  Medium.SpecificHeatCapacity dhTp_numerical;
+  Medium.Types.DerEnthalpyByTemperature dhTp_analytical;
+  Medium.Types.DerEnthalpyByTemperature dhTp_numerical;
   Medium.DerEnthalpyByPressure dhpT_analytical;
   Medium.DerEnthalpyByPressure dhpT_numerical;
 
