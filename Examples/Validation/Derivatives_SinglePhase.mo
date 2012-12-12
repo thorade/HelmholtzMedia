@@ -78,6 +78,11 @@ model Derivatives_SinglePhase
   Medium.DerDensityByTemperature ddTp_numerical;
   Medium.DerDensityByPressure ddpT_analytical;
   Medium.DerDensityByPressure ddpT_numerical;
+// Density wrt. ph
+  Medium.DerDensityByPressure ddph_analytical;
+  Medium.DerDensityByPressure ddph_numerical;
+  Medium.DerDensityByEnthalpy ddhp_analytical;
+  Medium.DerDensityByEnthalpy ddhp_numerical;
 // Density wrt. pT 2nd order
   Medium.Types.Der2DensityByTemperature2 d2dT2p_analytical;
   Medium.Types.Der2DensityByTemperature2 d2dT2p_numerical;
@@ -99,8 +104,7 @@ model Derivatives_SinglePhase
   Medium.Types.Der2TemperatureByPressureDensity d2Tpd_analytical;
   Medium.Types.Der2TemperatureByPressureDensity d2Tpd_numerical1;
   Medium.Types.Der2TemperatureByPressureDensity d2Tpd_numerical2;
-// Furter derivatives, 1st order
-// Further derivatives, 2nd order
+// Second order derivatives wrt. mixed properties
   Medium.Types.Der2EnthalpyByTemperature2 dcpTd_analytical;
   Medium.Types.Der2EnthalpyByTemperature2 dcpTd_numerical;
   Medium.Types.Der2EnthalpyByTemperatureDensity dcpdT_analytical;
@@ -138,6 +142,16 @@ protected
   Medium.EoS.HelmholtzDerivs f_pplus_dconst=Medium.EoS.setHelmholtzDerivsThird(T=pplus_dconst.T, d=pplus_dconst.d, phase=state.phase);
   Medium.ThermodynamicState    pminus_dconst=Medium.setState_pd(p=state.p-eps*state.p, d=state.d);
   Medium.EoS.HelmholtzDerivs f_pminus_dconst=Medium.EoS.setHelmholtzDerivsThird(T=pminus_dconst.T, d=pminus_dconst.d, phase=state.phase);
+
+  Medium.ThermodynamicState    hplus_pconst=Medium.setState_ph(p=state.p, h=state.h+abs(eps*state.h));
+  Medium.EoS.HelmholtzDerivs f_hplus_pconst=Medium.EoS.setHelmholtzDerivsThird(T=dplus_pconst.T, d=dplus_pconst.d, phase=state.phase);
+  Medium.ThermodynamicState    hminus_pconst=Medium.setState_ph(p=state.p, h=state.h-abs(eps*state.h));
+  Medium.EoS.HelmholtzDerivs f_hminus_pconst=Medium.EoS.setHelmholtzDerivsThird(T=dminus_pconst.T, d=dminus_pconst.d, phase=state.phase);
+
+  Medium.ThermodynamicState    pplus_hconst=Medium.setState_ph(p=state.p+eps*state.p, h=state.h);
+  Medium.EoS.HelmholtzDerivs f_pplus_hconst=Medium.EoS.setHelmholtzDerivsThird(T=pplus_dconst.T, d=pplus_dconst.d, phase=state.phase);
+  Medium.ThermodynamicState    pminus_hconst=Medium.setState_ph(p=state.p-eps*state.p, h=state.h);
+  Medium.EoS.HelmholtzDerivs f_pminus_hconst=Medium.EoS.setHelmholtzDerivsThird(T=pminus_dconst.T, d=pminus_dconst.d, phase=state.phase);
 
 equation
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
@@ -225,7 +239,7 @@ equation
   Modelica.Utilities.Streams.print("  (d2u/dT dd)  numerical= " + String(d2uTd_numerical));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
-  Modelica.Utilities.Streams.print("Enthalpy");
+  Modelica.Utilities.Streams.print("Enthalpy wrt. dT");
   // check (dh/dd)@T=const
   dhdT_analytical = Medium.EoS.dhdT(f);
   dhdT_numerical = (dplus_Tconst.h-dminus_Tconst.h)/(dplus_Tconst.d-dminus_Tconst.d);
@@ -251,6 +265,17 @@ equation
   d2hTd_numerical = (Medium.EoS.dhTd(f_dplus_Tconst)-Medium.EoS.dhTd(f_dminus_Tconst))/(dplus_Tconst.d-dminus_Tconst.d);
   Modelica.Utilities.Streams.print("  (d2h/dT dd) analytical= " + String(d2hTd_analytical));
   Modelica.Utilities.Streams.print("  (d2h/dT dd)  numerical= " + String(d2hTd_numerical));
+  Modelica.Utilities.Streams.print("Enthalpy wrt. pT");
+  // check (dh/dT)@p=const
+  dhTp_analytical = Medium.specificHeatCapacityCp(state=state);
+  dhTp_numerical = (Tplus_pconst.h-Tminus_pconst.h)/(Tplus_pconst.T-Tminus_pconst.T);
+  Modelica.Utilities.Streams.print("  (dh/dT)@p=const analytical= " + String(dhTp_analytical));
+  Modelica.Utilities.Streams.print("  (dh/dT)@p=const  numerical= " + String(dhTp_numerical));
+  // check (dh/dp)@T=const
+  dhpT_analytical = Medium.isothermalThrottlingCoefficient(state=state);
+  dhpT_numerical = (pplus_Tconst.h-pminus_Tconst.h)/(pplus_Tconst.p-pminus_Tconst.p);
+  Modelica.Utilities.Streams.print("  (dh/dp)@T=const analytical= " + String(dhpT_analytical));
+  Modelica.Utilities.Streams.print("  (dh/dp)@T=const  numerical= " + String(dhpT_numerical));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
   Modelica.Utilities.Streams.print("Gibbs energy");
@@ -281,7 +306,7 @@ equation
   Modelica.Utilities.Streams.print("  (d2g/dT dd)  numerical= " + String(d2gTd_numerical));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
-  Modelica.Utilities.Streams.print("Density");
+  Modelica.Utilities.Streams.print("Density wrt. pT");
   // check (dd/dT)@p=const
   ddTp_analytical = Medium.density_derT_p(state=state);
   ddTp_numerical = (Tplus_pconst.d-Tminus_pconst.d)/(Tplus_pconst.T-Tminus_pconst.T);
@@ -310,6 +335,17 @@ equation
   Modelica.Utilities.Streams.print("  (d2d/dT dp) analytical= " + String(d2dTp_analytical));
   Modelica.Utilities.Streams.print("  (d2d/dp dT) numerical1= " + String(d2dTp_numerical1));
   Modelica.Utilities.Streams.print("  (d2d/dT dp) numerical2= " + String(d2dTp_numerical2));
+  Modelica.Utilities.Streams.print("Density wrt. ph");
+  // check (dd/dp)@h=const
+  ddph_analytical = Medium.density_derp_h(state=state);
+  ddph_numerical = (pplus_hconst.d-pminus_hconst.d)/(pplus_hconst.p-pminus_hconst.p);
+  Modelica.Utilities.Streams.print("  (dd/dp)@h=const analytical= " + String(ddph_analytical));
+  Modelica.Utilities.Streams.print("  (dd/dp)@h=const  numerical= " + String(ddph_numerical));
+  // check (dd/dh)@p=const
+  ddhp_analytical = Medium.density_derh_p(state=state);
+  ddhp_numerical = (hplus_pconst.d-hminus_pconst.d)/(hplus_pconst.h-hminus_pconst.h);
+  Modelica.Utilities.Streams.print("  (dd/dh)@p=const analytical= " + String(ddhp_analytical));
+  Modelica.Utilities.Streams.print("  (dd/dh)@p=const  numerical= " + String(ddhp_numerical));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
   Modelica.Utilities.Streams.print("Temperature");
@@ -343,20 +379,7 @@ equation
   Modelica.Utilities.Streams.print("  (d2T/dd dp) numerical2= " + String(d2Tpd_numerical2));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
-  Modelica.Utilities.Streams.print("Further first derivatives");
-  // check (dh/dT)@p=const
-  dhTp_analytical = Medium.specificHeatCapacityCp(state=state);
-  dhTp_numerical = (Tplus_pconst.h-Tminus_pconst.h)/(Tplus_pconst.T-Tminus_pconst.T);
-  Modelica.Utilities.Streams.print("  (dh/dT)@p=const analytical= " + String(dhTp_analytical));
-  Modelica.Utilities.Streams.print("  (dh/dT)@p=const  numerical= " + String(dhTp_numerical));
-  // check (dh/dp)@T=const
-  dhpT_analytical = Medium.isothermalThrottlingCoefficient(state=state);
-  dhpT_numerical = (pplus_Tconst.h-pminus_Tconst.h)/(pplus_Tconst.p-pminus_Tconst.p);
-  Modelica.Utilities.Streams.print("  (dh/dp)@T=const analytical= " + String(dhpT_analytical));
-  Modelica.Utilities.Streams.print("  (dh/dp)@T=const  numerical= " + String(dhpT_numerical));
-
-  Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
-  Modelica.Utilities.Streams.print("Further second derivatives");
+  Modelica.Utilities.Streams.print("Second order derivatives wrt. mixed properties");
   // check (d cp/dT)@d=const
   dcpTd_analytical =  Medium.EoS.d2hT2d(f) + Medium.EoS.dhdT(f)*Medium.EoS.dpTd(f)*Medium.EoS.d2pTd(f)/Medium.EoS.dpdT(f)^2
                    - (Medium.EoS.d2hTd(f)*Medium.EoS.dpTd(f) + Medium.EoS.dhdT(f)*Medium.EoS.d2pT2d(f))/Medium.EoS.dpdT(f);
