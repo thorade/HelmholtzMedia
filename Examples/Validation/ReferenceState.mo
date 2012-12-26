@@ -1,25 +1,32 @@
 within HelmholtzMedia.Examples.Validation;
 model ReferenceState
-  package Medium = HelmholtzMedia.HelmholtzFluids.R134a;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
   Medium.SpecificEnthalpy h_ref;
   Medium.SpecificEntropy s_ref;
 
+  // remember to delete file manually before starting!
 protected
+  String fileName = "ReferenceState.csv";
   Medium.SaturationProperties sat;
   final constant Medium.Temperature T_IIR = 273.15; // 0°C;
   final constant Medium.Temperature T_ASHRAE = 233.15; // -40°C;
   final constant Medium.AbsolutePressure p_NBP = 101325; // 1.01325 bar = 1 atm
 
 algorithm
-  sat := Medium.setSat_T(T=T_IIR);
+  // sat := Medium.setSat_T(T=T_IIR);
   // sat := Medium.setSat_T(T=T_ASHRAE);
-  // sat := Medium.setSat_p(p=p_NBP);
+   sat := Medium.setSat_p(p=p_NBP);
 
   s_ref := sat.liq.s;
   h_ref := sat.liq.h;
 
-  Modelica.Utilities.Streams.print("s_ref=" + String(s_ref));
-  Modelica.Utilities.Streams.print("h_ref=" + String(h_ref));
+  // While csv originally stood for comma-seperated-values, MS Excel uses semicolons to seperate the values
+  // Modelica.Utilities.Streams.print("idealPower[1,1];" + "s_ref;" + "idealPower[2,1];" + "h_ref;", fileName);
+  Modelica.Utilities.Streams.print( String(Medium.helmholtzCoefficients.idealPower[1,1],significantDigits=15)+";"
+                                   +String(s_ref,significantDigits=15)+";"
+                                   +String(Medium.helmholtzCoefficients.idealPower[2,1],significantDigits=15)+";"
+                                   +String(h_ref,significantDigits=15)+";",
+                                    fileName);
 
 annotation (
 Documentation(info="<html>
