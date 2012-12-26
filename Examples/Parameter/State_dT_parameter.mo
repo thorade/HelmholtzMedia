@@ -1,7 +1,7 @@
 within HelmholtzMedia.Examples.Parameter;
 model State_dT_parameter "calculate state record from dT input"
 
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.Helium;
 
   parameter Medium.Density d=1;
   parameter Medium.Temperature T=298.15;
@@ -9,24 +9,24 @@ model State_dT_parameter "calculate state record from dT input"
   Medium.ThermodynamicState state;
 
   // Medium.MassFraction x;
-   Medium.SurfaceTension sigma;
+  // Medium.SurfaceTension sigma;
   // Medium.DynamicViscosity eta;
   // Medium.ThermalConductivity lambda;
-  Medium.Types.DerTemperatureByPressure dTp;
-  Medium.Types.DerPressureByTemperature dpT;
+  // Medium.Types.DerTemperatureByPressure dTp;
+  // Medium.Types.DerPressureByTemperature dpT;
   Medium.SpecificHeatCapacity cv;
-  // Medium.VelocityOfSound a;
+  Medium.VelocityOfSound a;
 
 equation
   state=Medium.setState_dTX(d=d, T=T, phase=0);
 
   // x=Medium.vapourQuality(state);
-   sigma=Medium.surfaceTension(Medium.setSat_T(T=T));
+  // sigma=Medium.surfaceTension(Medium.setSat_T(T=T));
   // eta=Medium.dynamicViscosity(state);
   // lambda=Medium.thermalConductivity(state);
-  dpT=Medium.saturationPressure_derT(T=state.T);
-  dTp=Medium.saturationTemperature_derp(p=state.p);
+  // dpT=Medium.saturationPressure_derT(T=state.T);
+  // dTp=Medium.saturationTemperature_derp(p=state.p);
   cv=Medium.specificHeatCapacityCv(state=state);
-  // a=Medium.velocityOfSound(state=state);
+  a=Medium.velocityOfSound(state=state);
 
 end State_dT_parameter;
