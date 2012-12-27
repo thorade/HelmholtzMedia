@@ -698,20 +698,14 @@ protected
         else
           // do a simple check first, quite often this is sufficient
           sat.Tsat := Ancillary.saturationTemperature_p(p=p);
-          tau := T_crit/sat.Tsat;
+
           sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
-          delta := sat.liq.d/d_crit;
-          f.it  := EoS.f_it(delta=delta, tau=tau);
-          f.rt  := EoS.f_rt(delta=delta, tau=tau);
-          f.rd  := EoS.f_rd(delta=delta, tau=tau);
-          sat.liq.h := sat.Tsat*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
+          f := EoS.setHelmholtzDerivsFirst(d=sat.liq.d, T=sat.Tsat, phase=1);
+          sat.liq.h := EoS.h(f);
 
           sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
-          delta := sat.vap.d/d_crit;
-          f.it  := EoS.f_it(delta=delta, tau=tau);
-          f.rt  := EoS.f_rt(delta=delta, tau=tau);
-          f.rd  := EoS.f_rd(delta=delta, tau=tau);
-          sat.vap.h := sat.Tsat*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
+          f := EoS.setHelmholtzDerivsFirst(d=sat.vap.d, T=sat.Tsat, phase=1);
+          sat.vap.h := EoS.h(f);
 
           if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02*sat.vap.h))) then
             // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
@@ -892,22 +886,14 @@ protected
         else
           // do a simple check first, quite often this is sufficient
           sat.Tsat := Ancillary.saturationTemperature_p(p=p);
-          tau := T_crit/sat.Tsat;
+
           sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
-          delta := sat.liq.d/d_crit;
-          f.i   := EoS.f_i(tau=tau, delta=delta);
-          f.it  := EoS.f_it(tau=tau, delta=delta);
-          f.r   := EoS.f_r(tau=tau, delta=delta);
-          f.rt  := EoS.f_rt(tau=tau, delta=delta);
-          sat.liq.s := R*(tau*(f.it + f.rt) - f.i - f.r);
+          f := EoS.setHelmholtzDerivsFirst(d=sat.liq.d, T=sat.Tsat, phase=1);
+          sat.liq.s := EoS.s(f);
 
           sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
-          delta := sat.vap.d/d_crit;
-          f.i   := EoS.f_i(tau=tau, delta=delta);
-          f.it  := EoS.f_it(tau=tau, delta=delta);
-          f.r   := EoS.f_r(tau=tau, delta=delta);
-          f.rt  := EoS.f_rt(tau=tau, delta=delta);
-          sat.vap.s := R*(tau*(f.it + f.rt) - f.i - f.r);
+          f := EoS.setHelmholtzDerivsFirst(d=sat.vap.d, T=sat.Tsat, phase=1);
+          sat.vap.s := EoS.s(f);
 
           if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
             // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
