@@ -680,8 +680,6 @@ protected
     constant Integer iter_max = 200;
 
   algorithm
-    // Modelica.Utilities.Streams.print(" ", "printlog.txt");
-    // Modelica.Utilities.Streams.print("setState_phX: p=" + String(p) + " and h=" + String(h), "printlog.txt");
     state.phase := phase;
 
     if (state.phase == 2) then
@@ -718,8 +716,8 @@ protected
           // Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
           state.phase := 1;
           d_min := sat.liq.d;
-          d_max  := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
-          d_iter := sat.liq.d;
+          d_max := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
+          d_iter:= sat.liq.d;
           T_min := fluidLimits.TMIN;
           T_max := sat.Tsat;
           T_iter:= sat.Tsat;
@@ -728,7 +726,7 @@ protected
           state.phase := 1;
           d_min := fluidLimits.DMIN;
           d_max := sat.vap.d;
-          d_iter := sat.vap.d/10;
+          d_iter:= sat.vap.d/10;
           T_min := sat.Tsat;
           T_max := fluidLimits.TMAX;
           T_iter:= sat.Tsat;
@@ -748,7 +746,6 @@ protected
           T_min := fluidLimits.TMIN;
           T_iter:= Ancillary.saturationTemperature_h_liq(h=h);
           T_max := 1.2*T_iter;
-          // gamma:= 0.8;
         else
           // Modelica.Utilities.Streams.print("h>h_crit, single-phase super-critical vapour-like region", "printlog.txt");
           d_min := fluidLimits.DMIN;
@@ -757,7 +754,6 @@ protected
           T_min := fluidLimits.TMIN;
           T_max := fluidLimits.TMAX;
           T_iter:= 1.3*T_crit;
-          // gamma:= 0.8;
         end if;
       end if;
     end if;
@@ -796,7 +792,6 @@ protected
       Modelica.Utilities.Streams.print(" ", "printlog.txt");
       Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
       Modelica.Utilities.Streams.print("d_iter=" + String(d_iter) + " and T_iter=" + String(T_iter), "printlog.txt");
-      Modelica.Utilities.Streams.print("f.delta=" + String(f.delta) + " and f.tau=" + String(f.tau), "printlog.txt");
       Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and RES_h=" + String(RES_h), "printlog.txt");
       Modelica.Utilities.Streams.print("dpdT=" + String(dpdT) + " and dpTd=" + String(dpTd), "printlog.txt");
       Modelica.Utilities.Streams.print("dhdT=" + String(dhdT) + " and dhTd=" + String(dhTd), "printlog.txt");
@@ -841,12 +836,12 @@ protected
     Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta "reduced density";
     Real tau "inverse reduced temperature";
-    EoS.HelmholtzDerivs f;
 
     AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     SpecificEntropy s_crit=fluidConstants[1].SCRIT0;
 
+    EoS.HelmholtzDerivs f;
     SaturationProperties sat;
     MassFraction x "vapour quality";
 
@@ -925,19 +920,19 @@ protected
           state.phase := 2;
         end if;
 
-      elseif (p>=p_crit) then
+      else
         state.phase := 1;
-        // Modelica.Utilities.Streams.print("p>=p_crit, liquid region or supercritical region possible", "printlog.txt");
+        // Modelica.Utilities.Streams.print("p>=p_crit, only single-phase possible", "printlog.txt");
         if (s<=s_crit) then
-          // Modelica.Utilities.Streams.print("s<=s_crit, liquid region", "printlog.txt");
+          // Modelica.Utilities.Streams.print("s<=s_crit, single-phase super-critical liquid-like region", "printlog.txt");
           d_min := d_crit;
           d_max := 1.1*fluidLimits.DMAX;
           d_iter:= 0.9*fluidLimits.DMAX;
-          T_min := 0.98*fluidLimits.TMIN;
+          T_min := fluidLimits.TMIN;
           T_iter:= Ancillary.saturationTemperature_s_liq(s=s);
           T_max := 2*T_iter;
         else
-          // Modelica.Utilities.Streams.print("s>s_crit, supercritical region", "printlog.txt");
+          // Modelica.Utilities.Streams.print("s>s_crit, single-phase super-critical vapour-like region", "printlog.txt");
           d_min := fluidLimits.DMIN;
           d_max := fluidLimits.DMAX;
           d_iter:= d_crit;
@@ -951,14 +946,14 @@ protected
     // phase and region determination finished !
 
     if (state.phase == 2) then
-      // force two-phase
+      // force two-phase, SaturationProperties are already known
       state.p := p;
       state.s := s;
       state.T := sat.Tsat;
       x := (s - sat.liq.s)/(sat.vap.s - sat.liq.s);
       state.d := 1/(1/sat.liq.d + x*(1/sat.vap.d - 1/sat.liq.d));
-      state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
       state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
+      state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
     else
       // force single-phase
       f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
@@ -1000,7 +995,7 @@ protected
         // calculate new RES_p and RES_s
         f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
         RES_p := EoS.p(f) - p;
-        RES_s := EoS.s(f)- s;
+        RES_s := EoS.s(f) - s;
       end while;
       // Modelica.Utilities.Streams.print("setState_ps total iteration steps " + String(iter), "printlog.txt");
       assert(iter<iter_max, "setState_psX did not converge, input was p=" + String(p) + " and s=" + String(s));
@@ -1009,8 +1004,8 @@ protected
       state.s := s;
       state.d := d_iter;
       state.T := T_iter;
-      state.h := state.T*R*(f.tau*(f.it+f.rt) + (1+f.delta*f.rd));
-      state.u := state.T*R*(f.tau*(f.it+f.rt));
+      state.u := EoS.u(f);
+      state.h := EoS.h(f);
     end if;
 
   end setState_psX;
