@@ -507,7 +507,7 @@ protected
     AbsolutePressure RES_min;
     AbsolutePressure RES_max;
     DerPressureByDensity dpdT "(dp/dd)@T=const";
-    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+    Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
     constant Real tolerance=1e-9 "relativ tolerance for RES_p";
     Integer iter = 0;
     constant Integer iter_max=200;
@@ -673,7 +673,7 @@ protected
     DerEnthalpyByDensity dhdT "(dh/dd)@T=const";
     DerEnthalpyByTemperature dhTd "(dh/dT)@d=const";
     Real det "determinant of Jacobi matrix";
-    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+    Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
     constant Real tolerance=1e-9
     "tolerance for sum of relative RES_p and relative RES_h";
     Integer iter = 0;
@@ -691,26 +691,32 @@ protected
       assert(h <= sat.vap.h, "setState_phX_error: enthalpy is higher than saturated vapor enthalpy: this is single phase vapor");
     else
       if (p < p_crit) then
-        // two-phase possible, do simple check first
-        sat.Tsat := Ancillary.saturationTemperature_p(p=p);
-        tau := T_crit/sat.Tsat;
-        sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
-        delta := sat.liq.d/d_crit;
-        f.it  := EoS.f_it(delta=delta, tau=tau);
-        f.rt  := EoS.f_rt(delta=delta, tau=tau);
-        f.rd  := EoS.f_rd(delta=delta, tau=tau);
-        sat.liq.h := sat.Tsat*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
-
-        sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
-        delta := sat.vap.d/d_crit;
-        f.it  := EoS.f_it(delta=delta, tau=tau);
-        f.rt  := EoS.f_rt(delta=delta, tau=tau);
-        f.rd  := EoS.f_rd(delta=delta, tau=tau);
-        sat.vap.h := sat.Tsat*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
-
-        if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02*sat.vap.h))) or (p<300*p_trip) or (p>0.98*p_crit) then
-          // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
+        // two-phase possible, check region
+        if (p>0.98*p_crit) or (p<300*p_trip) then
+          // Modelica.Utilities.Streams.print("close to critical or triple point, get saturation properties from EoS", "printlog.txt");
           sat := setSat_p(p=p);
+        else
+          // do a simple check first, quite often this is sufficient
+          sat.Tsat := Ancillary.saturationTemperature_p(p=p);
+          tau := T_crit/sat.Tsat;
+          sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
+          delta := sat.liq.d/d_crit;
+          f.it  := EoS.f_it(delta=delta, tau=tau);
+          f.rt  := EoS.f_rt(delta=delta, tau=tau);
+          f.rd  := EoS.f_rd(delta=delta, tau=tau);
+          sat.liq.h := sat.Tsat*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
+
+          sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
+          delta := sat.vap.d/d_crit;
+          f.it  := EoS.f_it(delta=delta, tau=tau);
+          f.rt  := EoS.f_rt(delta=delta, tau=tau);
+          f.rd  := EoS.f_rd(delta=delta, tau=tau);
+          sat.vap.h := sat.Tsat*R*(1 + tau*(f.it + f.rt) + delta*f.rd);
+
+          if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02*sat.vap.h))) then
+            // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
+            sat := setSat_p(p=p);
+          end if;
         end if;
 
         // Modelica.Utilities.Streams.print("phase boundary determined; sat.liq.h=" + String(sat.liq.h) + " and sat.vap.h=" + String(sat.vap.h), "printlog.txt");
@@ -739,23 +745,25 @@ protected
 
       else
         state.phase := 1;
-        // Modelica.Utilities.Streams.print("p>=p_crit, liquid region or supercritical region possible", "printlog.txt");
+        // Modelica.Utilities.Streams.print("p>=p_crit, only single-phase possible", "printlog.txt");
         if (h<=h_crit) then
-          // Modelica.Utilities.Streams.print("h<=h_crit, liquid region", "printlog.txt");
+          // Modelica.Utilities.Streams.print("h<=h_crit, single-phase super-critical liquid-like region", "printlog.txt");
           d_min := d_crit;
           d_max := 1.1*fluidLimits.DMAX;
           d_iter:= 0.9*fluidLimits.DMAX;
-          T_min := 0.98*fluidLimits.TMIN;
+          T_min := fluidLimits.TMIN;
           T_iter:= Ancillary.saturationTemperature_h_liq(h=h);
           T_max := 1.2*T_iter;
+          // gamma:= 0.8;
         else
-          // Modelica.Utilities.Streams.print("h>h_crit, supercritical region", "printlog.txt");
+          // Modelica.Utilities.Streams.print("h>h_crit, single-phase super-critical vapour-like region", "printlog.txt");
           d_min := fluidLimits.DMIN;
           d_max := fluidLimits.DMAX;
           d_iter:= d_crit;
           T_min := fluidLimits.TMIN;
           T_max := fluidLimits.TMAX;
           T_iter:= 1.3*T_crit;
+          // gamma:= 0.8;
         end if;
       end if;
     end if;
@@ -861,7 +869,7 @@ protected
     DerEntropyByDensity dsdT "(ds/dd)@T=const";
     DerEntropyByTemperature dsTd "(ds/dT)@d=const";
     Real det "determinant of Jacobi matrix";
-    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+    Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
     constant Real tolerance=1e-9
     "tolerance for sum of relative RES_p and relative RES_s ";
     Integer iter = 0;
@@ -877,28 +885,34 @@ protected
       assert(s <= sat.vap.s, "setState_psX_error: entropy is higher than saturated vapor entropy: this is single phase vapor");
     else
       if (p <= p_crit) then
-        // two-phase possible, do simple check first
-        sat.Tsat := Ancillary.saturationTemperature_p(p=p);
-        tau := T_crit/sat.Tsat;
-        sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
-        delta := sat.liq.d/d_crit;
-        f.i   := EoS.f_i(tau=tau, delta=delta);
-        f.it  := EoS.f_it(tau=tau, delta=delta);
-        f.r   := EoS.f_r(tau=tau, delta=delta);
-        f.rt  := EoS.f_rt(tau=tau, delta=delta);
-        sat.liq.s := R*(tau*(f.it + f.rt) - f.i - f.r);
-
-        sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
-        delta := sat.vap.d/d_crit;
-        f.i   := EoS.f_i(tau=tau, delta=delta);
-        f.it  := EoS.f_it(tau=tau, delta=delta);
-        f.r   := EoS.f_r(tau=tau, delta=delta);
-        f.rt  := EoS.f_rt(tau=tau, delta=delta);
-        sat.vap.s := R*(tau*(f.it + f.rt) - f.i - f.r);
-
-        if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) or (p<300*p_trip) or (p>0.98*p_crit) then
-          // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
+        // two-phase possible, check region
+        if (p>0.98*p_crit) or (p<300*p_trip) then
+          // Modelica.Utilities.Streams.print("close to critical or triple point, get saturation properties from EoS", "printlog.txt");
           sat := setSat_p(p=p);
+        else
+          // do a simple check first, quite often this is sufficient
+          sat.Tsat := Ancillary.saturationTemperature_p(p=p);
+          tau := T_crit/sat.Tsat;
+          sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
+          delta := sat.liq.d/d_crit;
+          f.i   := EoS.f_i(tau=tau, delta=delta);
+          f.it  := EoS.f_it(tau=tau, delta=delta);
+          f.r   := EoS.f_r(tau=tau, delta=delta);
+          f.rt  := EoS.f_rt(tau=tau, delta=delta);
+          sat.liq.s := R*(tau*(f.it + f.rt) - f.i - f.r);
+
+          sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
+          delta := sat.vap.d/d_crit;
+          f.i   := EoS.f_i(tau=tau, delta=delta);
+          f.it  := EoS.f_it(tau=tau, delta=delta);
+          f.r   := EoS.f_r(tau=tau, delta=delta);
+          f.rt  := EoS.f_rt(tau=tau, delta=delta);
+          sat.vap.s := R*(tau*(f.it + f.rt) - f.i - f.r);
+
+          if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
+            // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
+            sat := setSat_p(p=p);
+          end if;
         end if;
 
         // Modelica.Utilities.Streams.print("phase boundary determined; sat.liq.s=" + String(sat.liq.s) + " and sat.vap.s=" + String(sat.vap.s), "printlog.txt");

@@ -24,7 +24,7 @@ protected
   SpecificEntropy RES_min;
   SpecificEntropy RES_max;
   DerEntropyByDensity dsdT "(ds/dd)@T=const";
-  Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+  Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
   constant Real tolerance=1e-9 "relative tolerance for RES_s (in J/kgK)";
   Integer iter = 0;
   constant Integer iter_max = 200;

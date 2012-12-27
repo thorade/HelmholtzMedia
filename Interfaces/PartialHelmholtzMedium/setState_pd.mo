@@ -29,7 +29,7 @@ protected
   AbsolutePressure RES_max;
   AbsolutePressure RES_p;
   DerPressureByTemperature dpTd "(dp/dT)@d=const";
-  Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
+  Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
   constant Real tolerance=1e-9 "relative tolerance for RES_p";
   Integer iter = 0;
   constant Integer iter_max = 200;
