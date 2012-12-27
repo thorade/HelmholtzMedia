@@ -18,7 +18,7 @@ protected
   MassFraction x "vapour quality";
 
   Density d_min=fluidLimits.DMIN;
-  Density d_max=1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
+  Density d_max=2*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
   Density d_iter=d_crit;
   SpecificEntropy RES_s;
   SpecificEntropy RES_min;
@@ -57,8 +57,8 @@ algorithm
       if (s < sat.liq.s) then
         // Modelica.Utilities.Streams.print("single phase liquid: d is between dliq and rho_max", "printlog.txt");
         state.phase := 1;
-        d_min := sat.liq.d;
-        d_iter := sat.liq.d;
+        d_min := 0.98*sat.liq.d;
+        d_iter := 1.02*sat.liq.d;
       elseif (s > sat.vap.s) then
         // Modelica.Utilities.Streams.print("single phase vapor: d is between 0 and sat.vap.d=" + String(sat.vap.d), "printlog.txt");
         state.phase := 1;
@@ -101,7 +101,7 @@ algorithm
     f := EoS.setHelmholtzDerivsFirst(T=T, d=d_iter);
     RES_s := EoS.s(f) - s;
 
-    assert((RES_min*RES_max<0), "setState_Ts: d_min and d_max did not bracket the root");
+    //assert((RES_min*RES_max<0), "setState_Ts: d_min and d_max did not bracket the root, input was T=" + String(T) + " and s=" + String(s));
     // thighten the bounds
     // opposite sign brackets the root
     if (RES_s*RES_min<0) then
