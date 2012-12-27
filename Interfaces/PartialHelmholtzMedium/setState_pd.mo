@@ -22,8 +22,8 @@ protected
   SaturationProperties sat;
   MassFraction x "vapour quality";
 
-  Temperature T_min;
-  Temperature T_max;
+  Temperature T_min=fluidLimits.TMIN;
+  Temperature T_max=fluidLimits.TMAX;
   Temperature T_iter;
   AbsolutePressure RES_min;
   AbsolutePressure RES_max;
@@ -46,24 +46,29 @@ algorithm
     assert(d >= sat.vap.d, "setState_pdX_error: density is lower than saturated vapor density: this is single phase vapor");
   else
     if (p < p_crit) then
-
-      // two-phase possible, do simple check first
-      sat.Tsat := Ancillary.saturationTemperature_p(p=p);
-      sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
-      sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
-      // Modelica.Utilities.Streams.print("setState_pd: sat.Tsat=" + String(sat.Tsat) + " and sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d) + ", simple check only", "printlog.txt");
-      if ((d < sat.liq.d + abs(0.05*sat.liq.d)) and (d > sat.vap.d - abs(0.05*sat.vap.d))) or (p<300*p_trip) or (p>0.98*p_crit) then
-        // Modelica.Utilities.Streams.print("setState_pd: p = " + String(p) + "d = " + String(d) + ", two-phase state or close to it", "printlog.txt");
+      // two-phase possible, do a region check
+      if (p>0.98*p_crit) or (p<300*p_trip) then
+        // Modelica.Utilities.Streams.print("close to critical or triple point", "printlog.txt");
         // get saturation properties from EoS
         sat := setSat_p(p=p);
+      else
+        // do a simple check first, quite often this is sufficient
+        sat.Tsat := Ancillary.saturationTemperature_p(p=p);
+        sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
+        sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
+        // Modelica.Utilities.Streams.print("setState_pd: sat.Tsat=" + String(sat.Tsat) + " and sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d) + ", simple check only", "printlog.txt");
+        if ((d < sat.liq.d + abs(0.05*sat.liq.d)) and (d > sat.vap.d - abs(0.05*sat.vap.d))) then
+          // Modelica.Utilities.Streams.print("setState_pd: p = " + String(p) + "d = " + String(d) + ", two-phase state or close to it", "printlog.txt");
+          // get saturation properties from EoS
+          sat := setSat_p(p=p);
+        end if;
       end if;
 
       // Modelica.Utilities.Streams.print("setState_pd: phase boundary from EoS: sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d), "printlog.txt");
       if (d > sat.liq.d) then
         // Modelica.Utilities.Streams.print("single-phase liquid region", "printlog.txt");
         state.phase := 1;
-        T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
-        T_min := max(T_min, fluidLimits.TMIN);
+        T_min := Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
         T_max := sat.Tsat;
         T_iter := 1.1*T_min;
         // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
@@ -71,7 +76,6 @@ algorithm
         // Modelica.Utilities.Streams.print("single-phase vapour region", "printlog.txt");
         state.phase := 1;
         T_min := sat.Tsat;
-        T_max := 3*fluidLimits.TMAX;
         T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       else
         // Modelica.Utilities.Streams.print("two-phase region, all properties can be calculated from sat record", "printlog.txt");
@@ -82,15 +86,12 @@ algorithm
       state.phase := 1;
       if (d>d_crit) then
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical liquid-like region", "printlog.txt");
-        T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
-        T_min := 0.98*max(T_min, fluidLimits.TMIN);
-        T_max := 3*fluidLimits.TMAX;
+        T_min := Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
         T_iter := 1.5*T_min;
         // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       else
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical vapour-like region", "printlog.txt");
         T_min := 0.98*T_crit;
-        T_max := 3*fluidLimits.TMAX;
         T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       end if;
     else
@@ -100,8 +101,8 @@ algorithm
   // Modelica.Utilities.Streams.print("phase and region determination finshed, phase=" + String(state.phase) + ", T_min=" + String(T_min) + ", T_max=" + String(T_max) + ", T_iter=" + String(T_iter), "printlog.txt");
 
   // check bounds, van der Waals is not very accurate
-  T_iter := max(T_iter, T_min);
-  T_iter := min(T_iter, T_max);
+  T_iter := max({T_iter, T_min, fluidLimits.TMIN});
+  T_iter := min({T_iter, T_max, fluidLimits.TMAX});
 
   if (state.phase == 2) then
     // force two-phase, SaturationProperties are already known
@@ -159,7 +160,7 @@ algorithm
       T_iter := T_iter - gamma/dpTd*RES_p;
 
       // check bounds, if out of bounds use bisection
-      if (T_iter<T_min) or (T_iter>T_max) then
+      if (T_iter<0.95*T_min) or (T_iter>1.05*T_max) then
         // Modelica.Utilities.Streams.print("T_iter out of bounds, fallback to bisection method, step=" + String(iter) + ", T_iter=" + String(T_iter), "printlog.txt");
         T_iter := (T_min+T_max)/2;
       end if;

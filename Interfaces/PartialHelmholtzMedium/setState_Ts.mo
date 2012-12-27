@@ -40,18 +40,24 @@ algorithm
     assert(s <= sat.vap.s, "setState_TsX_error: entropy is higher than saturated vapor entropy: this is single phase vapor");
   else
     if ((T < T_crit) and (T >= T_trip)) then
-      // two-phase possible, do simple check first
-      sat.liq.d := Ancillary.bubbleDensity_T(T=T);
-      f := EoS.setHelmholtzDerivsFirst(T=T, d=sat.liq.d);
-      sat.liq.s := EoS.s(f);
-
-      sat.vap.d := Ancillary.dewDensity_T(T=T);
-      f := EoS.setHelmholtzDerivsFirst(T=T, d=sat.vap.d);
-      sat.vap.s := EoS.s(f);
-
-      if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) or (T<1.05*T_trip) or (T>0.95*T_crit) then
-        // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
+      // two-phase possible, check region
+      if (T>0.95*T_crit) or (T<1.05*T_trip) then
+        // Modelica.Utilities.Streams.print("close to critical or triple point, get saturation properties from EoS", "printlog.txt");
         sat := setSat_T(T=T);
+      else
+        // do a simple check first, quite often this is sufficient
+        sat.liq.d := Ancillary.bubbleDensity_T(T=T);
+        f := EoS.setHelmholtzDerivsFirst(T=T, d=sat.liq.d);
+        sat.liq.s := EoS.s(f);
+
+        sat.vap.d := Ancillary.dewDensity_T(T=T);
+        f := EoS.setHelmholtzDerivsFirst(T=T, d=sat.vap.d);
+        sat.vap.s := EoS.s(f);
+
+        if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
+          // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
+          sat := setSat_T(T=T);
+        end if;
       end if;
 
       if (s < sat.liq.s) then
