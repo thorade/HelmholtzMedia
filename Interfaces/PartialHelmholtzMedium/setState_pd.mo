@@ -25,6 +25,8 @@ protected
   Temperature T_min;
   Temperature T_max;
   Temperature T_iter;
+  AbsolutePressure RES_min;
+  AbsolutePressure RES_max;
   AbsolutePressure RES_p;
   DerPressureByTemperature dpTd "(dp/dT)@d=const";
   Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
@@ -63,13 +65,13 @@ algorithm
         T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
         T_min := max(T_min, fluidLimits.TMIN);
         T_max := sat.Tsat;
-        T_iter := 1.05*T_min;
+        T_iter := 1.1*T_min;
         // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       elseif (d < sat.vap.d) then
         // Modelica.Utilities.Streams.print("single-phase vapour region", "printlog.txt");
         state.phase := 1;
         T_min := sat.Tsat;
-        T_max := fluidLimits.TMAX;
+        T_max := 3*fluidLimits.TMAX;
         T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       else
         // Modelica.Utilities.Streams.print("two-phase region, all properties can be calculated from sat record", "printlog.txt");
@@ -81,14 +83,14 @@ algorithm
       if (d>d_crit) then
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical liquid-like region", "printlog.txt");
         T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
-        T_min := max(T_min, fluidLimits.TMIN);
-        T_max := fluidLimits.TMAX;
-        T_iter := 1.05*T_min;
+        T_min := 0.98*max(T_min, fluidLimits.TMIN);
+        T_max := 3*fluidLimits.TMAX;
+        T_iter := 1.5*T_min;
         // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       else
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical vapour-like region", "printlog.txt");
-        T_min := T_crit;
-        T_max := 2*fluidLimits.TMAX;
+        T_min := 0.98*T_crit;
+        T_max := 3*fluidLimits.TMAX;
         T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       end if;
     else
@@ -96,6 +98,7 @@ algorithm
     end if;
   end if;
   // Modelica.Utilities.Streams.print("phase and region determination finshed, phase=" + String(state.phase) + ", T_min=" + String(T_min) + ", T_max=" + String(T_max) + ", T_iter=" + String(T_iter), "printlog.txt");
+
   // check bounds, van der Waals is not very accurate
   T_iter := max(T_iter, T_min);
   T_iter := min(T_iter, T_max);
@@ -112,11 +115,33 @@ algorithm
   else
     // force single-phase
 
-    // calculate RES_p
+    // Modelica.Utilities.Streams.print("initialize bisection", "printlog.txt");
+    // min
+    f.T := T_min;
+    f.tau := T_crit/f.T;
+    f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+    RES_min := EoS.p(f) - p;
+    // max
+    f.T := T_max;
+    f.tau := T_crit/f.T;
+    f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+    RES_max := EoS.p(f) - p;
+    // iter
     f.T := T_iter;
     f.tau := T_crit/f.T;
     f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
     RES_p := EoS.p(f) - p;
+
+    // assert((RES_min*RES_max<0), "setState_pd: T_min and T_max did not bracket the root, input was p=" + String(p) + " and d=" + String(d));
+    // thighten the bounds
+    // opposite sign brackets the root
+    if (RES_p*RES_min<0) then
+      T_max := T_iter;
+      RES_max := RES_p;
+    elseif (RES_p*RES_max<0) then
+      T_min := T_iter;
+      RES_min := RES_p;
+    end if;
 
     while ((abs(RES_p/p) > tolerance) and (iter<iter_max)) loop
       iter := iter+1;
@@ -133,18 +158,31 @@ algorithm
       // calculate better T_iter
       T_iter := T_iter - gamma/dpTd*RES_p;
 
-      // check bounds
-      T_iter := max(T_iter,0.98*T_min);
-      T_iter := min(T_iter,1.02*T_max);
+      // check bounds, if out of bounds use bisection
+      if (T_iter<T_min) or (T_iter>T_max) then
+        // Modelica.Utilities.Streams.print("T_iter out of bounds, fallback to bisection method, step=" + String(iter) + ", T_iter=" + String(T_iter), "printlog.txt");
+        T_iter := (T_min+T_max)/2;
+      end if;
 
       // calculate new RES_p
       f.T := T_iter;
       f.tau := T_crit/f.T;
       f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
       RES_p := EoS.p(f) - p;
+
+      // thighten the bounds
+      // opposite sign brackets the root
+      if (RES_p*RES_min<0) then
+        T_max := T_iter;
+        RES_max := RES_p;
+      elseif (RES_p*RES_max<0) then
+        T_min := T_iter;
+        RES_min := RES_p;
+      end if;
+
     end while;
     // Modelica.Utilities.Streams.print("setState_pd required " + String(iter) + " iterations to find T=" + String(T_iter,significantDigits=6) + " for input p=" + String(p) + " and d=" + String(d), "printlog.txt");
-    assert(iter<iter_max, "setState_pdX did not converge, input was p=" + String(p) + " and d=" + String(d));
+    assert(iter<iter_max, "setState_pdX did not converge (RES_p=" + String(RES_p) + "), input was p=" + String(p) + " and d=" + String(d));
 
     state.p := p;
     state.d := d;
