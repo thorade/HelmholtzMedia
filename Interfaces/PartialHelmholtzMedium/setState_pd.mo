@@ -87,7 +87,7 @@ algorithm
       if (d>d_crit) then
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical liquid-like region", "printlog.txt");
         T_min := Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
-        T_iter := 1.5*T_min;
+        T_iter := 1.05*T_min;
         // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       else
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical vapour-like region", "printlog.txt");
