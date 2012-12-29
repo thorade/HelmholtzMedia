@@ -19,15 +19,13 @@ protected
   EoS.HelmholtzDerivs fl;
   EoS.HelmholtzDerivs fv;
 
-  AbsolutePressure RES_p;
-  SpecificEnergy RES_g;
-  DerPressureByDensity dpdT "(dp/dd)@T=const";
-  DerPressureByTemperature dpTd "(dp/dT)@d=const";
-  DerEnergyByDensity dgdT "(dg/dd)@T=const";
-  DerEnergyByTemperature dgTd "(dg/dT)@d=const";
-  Real det "determinant of Jacobi matrix";
-  constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-  constant Real tolerance=1e-6 "tolerance for relative RES_p or RES_g";
+  Real RES[2] "residual function vector";
+  Real RSS "residual sum of squares";
+  Real Jacobian[2,2] "Jacobian matrix";
+  Real NS[2] "Newton step vector";
+
+  constant Real lambda(min=0,max=1) = 1 "convergence speed, default=1";
+  constant Real tolerance=1e-6 "tolerance for RSS";
   Integer iter = 0;
   constant Integer iter_max = 200;
 
@@ -44,32 +42,20 @@ algorithm
     // calculate residuals: liq-vap (=var-const)
     fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
     fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
-    RES_p  := EoS.p(fl) - EoS.p(fv);
-    RES_g  := EoS.g(fl) - EoS.g(fv);
+    RES := {EoS.p(fl)-EoS.p(fv), EoS.g(fl)-EoS.g(fv)};
+    RSS := RES*RES/2;
 
-    while (min(abs(RES_p), abs(RES_p/(fv.d*fv.T*fv.R)))>tolerance or abs(RES_g/(fv.T*fv.R))>tolerance) and (iter<iter_max) loop
+    while (RSS>tolerance) and (iter<iter_max) loop
       iter := iter+1;
-      // gamma := (iter_max-iter)/iter_max;
 
-      // calculate gradients of residual functions regarding d_liq and T
-      dpdT := EoS.dpdT(fl);
-      dpTd := EoS.dpTd(fl) - EoS.dpTd(fv);
-      dgdT := EoS.dgdT(fl);
-      dgTd := EoS.dgTd(fl) - EoS.dgTd(fv);
-
-      // calculate determinant of Jacobi matrix det=ad-bc
-      det := dpdT*dgTd-dpTd*dgdT;
-
-      // print for Newton debugging
-      // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-      // Modelica.Utilities.Streams.print("sat.liq.d=" + String(sat.liq.d) + " and sat.Tsat=" + String(sat.Tsat), "printlog.txt");
-      // Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and dpdT=" + String(dpdT) + " and dpTd=" + String(dpTd), "printlog.txt");
-      // Modelica.Utilities.Streams.print("RES_g=" + String(RES_g) + " and dgdT=" + String(dgdT) + " and dgTd=" + String(dgTd), "printlog.txt");
-      // Modelica.Utilities.Streams.print("Jacobi determinant det=" +String(det), "printlog.txt");
+      // calculate Jacobian matrix and Newton Step vector
+      Jacobian := [EoS.dpdT(fl), EoS.dpTd(fl)-EoS.dpTd(fv);
+                   EoS.dgdT(fl), EoS.dgTd(fl)-EoS.dgTd(fv)];
+      NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
 
       // calculate better values for sat.liq.d and sat.Tsat
-      sat.liq.d := sat.liq.d -gamma/det*(+dgTd*RES_p -dpTd*RES_g);
-      sat.Tsat  := sat.Tsat  -gamma/det*(-dgdT*RES_p +dpdT*RES_g);
+      sat.liq.d := sat.liq.d +lambda*NS[1];
+      sat.Tsat  := sat.Tsat  +lambda*NS[2];
 
       // check bounds
       sat.liq.d := max(sat.liq.d, 0.98*d_crit);
@@ -80,8 +66,8 @@ algorithm
       // calculate new residuals: liq-vap
       fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
       fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
-      RES_p  := EoS.p(fl) - EoS.p(fv);
-      RES_g  := EoS.g(fl) - EoS.g(fv);
+      RES := {EoS.p(fl)-EoS.p(fv), EoS.g(fl)-EoS.g(fv)};
+      RSS := RES*RES/2;
     end while;
     sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
     sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
@@ -95,31 +81,20 @@ algorithm
     // calculate residuals: vap-liq (=var-const)
     fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
     fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
-    RES_p  := EoS.p(fv) - EoS.p(fl);
-    RES_g  := EoS.g(fv) - EoS.g(fl);
+    RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
+    RSS := RES*RES/2;
 
-    while (abs(RES_p/(fl.d*fl.T*fl.R))>tolerance or abs(RES_g/(fl.T*fl.R))>tolerance) and (iter<iter_max) loop
+    while (RSS>tolerance) and (iter<iter_max) loop
       iter := iter+1;
 
-      // calculate gradients of residual functions regarding d_vap and T
-      dpdT := EoS.dpdT(fv);
-      dpTd := EoS.dpTd(fv) - EoS.dpTd(fl);
-      dgdT := EoS.dgdT(fv);
-      dgTd := EoS.dgTd(fv) - EoS.dgTd(fl);
-
-      // calculate determinant of Jacobi matrix det=ad-bc
-      det := dpdT*dgTd-dpTd*dgdT;
-
-      // print for Newton debugging
-      // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-      // Modelica.Utilities.Streams.print("sat.vap.d=" + String(sat.vap.d) + " and sat.Tsat=" + String(sat.Tsat), "printlog.txt");
-      // Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and dpdT=" + String(dpdT) + " and dpTd=" + String(dpTd), "printlog.txt");
-      // Modelica.Utilities.Streams.print("RES_g=" + String(RES_g) + " and dgdT=" + String(dgdT) + " and dgTd=" + String(dgTd), "printlog.txt");
-      // Modelica.Utilities.Streams.print("Jacobi determinant det=" +String(det), "printlog.txt");
+      // calculate Jacobian matrix and Newton Step vector
+      Jacobian := [EoS.dpdT(fv), EoS.dpTd(fv)-EoS.dpTd(fl);
+                   EoS.dgdT(fv), EoS.dgTd(fv)-EoS.dgTd(fl)];
+      NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
 
       // calculate better values for sat.vap.d and sat.Tsat
-      sat.vap.d := sat.vap.d -gamma/det*(+dgTd*RES_p -dpTd*RES_g);
-      sat.Tsat  := sat.Tsat  -gamma/det*(-dgdT*RES_p +dpdT*RES_g);
+      sat.vap.d := sat.vap.d +lambda*NS[1];
+      sat.Tsat  := sat.Tsat  +lambda*NS[2];
 
       // check bounds
       sat.vap.d := max(sat.vap.d, 0.98*dv_trip);
@@ -130,8 +105,8 @@ algorithm
       // calculate new residuals: vap-liq
       fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
       fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
-      RES_p  := EoS.p(fv) - EoS.p(fl);
-      RES_g  := EoS.g(fv) - EoS.g(fl);
+    RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
+    RSS := RES*RES/2;
     end while;
     sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
     sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
