@@ -1,6 +1,7 @@
 setSat
 SinglePhase_setState_a
 SinglePhase_setState_b
+SinglePhase_setState_b_Water
 TwoPhase_setState
 SinglePhase_Transport
 Ancillary_Saturation
