@@ -24,7 +24,7 @@ protected
   Real Jacobian[2,2] "Jacobian matrix";
   Real NS[2] "Newton step vector";
 
-  constant Real lambda(min=0,max=1) = 1 "convergence speed, default=1";
+  constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
   constant Real tolerance=1e-6 "tolerance for RSS";
   Integer iter = 0;
   constant Integer iter_max = 200;
@@ -105,8 +105,8 @@ algorithm
       // calculate new residuals: vap-liq
       fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
       fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
-    RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
-    RSS := RES*RES/2;
+      RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
+      RSS := RES*RES/2;
     end while;
     sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
     sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
