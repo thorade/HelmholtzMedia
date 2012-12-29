@@ -234,26 +234,13 @@ protected
     EoS.HelmholtzDerivs fl;
     EoS.HelmholtzDerivs fv;
 
-    AbsolutePressure RES_pl;
-    DerPressureByDensity f1dx;
-    //DerPressureByDensity f1dy;
-    DerPressureByTemperature f1dz;
+    Real RES[3] "residual function vector";
+    Real RSS "residual sum of squares";
+    Real Jacobian[3,3] "Jacobian matrix";
+    Real NS[3] "Newton step vector";
 
-    AbsolutePressure RES_pv;
-    //DerPressureByDensity f2dx;
-    DerPressureByDensity f2dy;
-    DerPressureByTemperature f2dz;
-
-    SpecificEnergy g;
-    SpecificEnergy RES_g;
-    DerEnergyByDensity f3dx;
-    DerEnergyByDensity f3dy;
-    DerEnergyByTemperature f3dz;
-
-    Real det "determinant of Jacobi matrix";
-    constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-5
-    "tolerance for sum of relative RES_pl, RES_pv and RES_g";
+    constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
+    constant Real tolerance=1e-5 "tolerance for RSS";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -272,40 +259,22 @@ protected
     // calculate residuals: RES=calc-input
     fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
     fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
-    RES_pl := EoS.p(fl) - p;   // f1
-    RES_pv := EoS.p(fv) - p;   // f2
-    RES_g  := EoS.g(fl) - EoS.g(fv);  // f3
+    RES := {EoS.p(fl)-p, EoS.p(fv)-p, EoS.g(fl)-EoS.g(fv)};
+    RSS := RES*RES/2;
 
-    while ((abs(RES_pl/p)>tolerance) or (abs(RES_pv/p)>tolerance) or (abs(RES_g/(fl.R*fl.T))>tolerance)) and (iter<iter_max) loop
+    while (RSS>tolerance) and (iter<iter_max) loop
       iter := iter+1;
 
-      // calculate gradients of f1,f2,f3 with respect to x,y,z
-      f1dx := EoS.dpdT(fl);
-      //f1dy := 0;
-      f1dz := EoS.dpTd(fl);
-      //f2dx := 0;
-      f2dy := EoS.dpdT(fv);
-      f2dz := EoS.dpTd(fv);
-      f3dx := +EoS.dgdT(fl);
-      f3dy := -EoS.dgdT(fv);
-      f3dz := EoS.dgTd(fl) - EoS.dgTd(fv);
-
-      // calculate determinant of Jacobi matrix
-      det := f1dx*f2dy*f3dz -f3dx*f2dy*f1dz - f3dy*f2dz*f1dx;
-
-      /* // print for debugging
-    Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-    Modelica.Utilities.Streams.print("sat.liq.d=" + String(sat.liq.d) + " and sat.vap.d=" + String(sat.vap.d) + " and sat.Tsat=" + String(sat.Tsat), "printlog.txt");
-    Modelica.Utilities.Streams.print("RES_pl=" + String(RES_pl) + " and RES_pv=" + String(RES_pv) + " and RES_g=" + String(RES_g), "printlog.txt");
-    Modelica.Utilities.Streams.print("f1dx=" + String(f1dx) + " and f1dz=" + String(f1dz), "printlog.txt");
-    Modelica.Utilities.Streams.print("f2dy=" + String(f2dy) + " and f2dz=" + String(f2dz), "printlog.txt");
-    Modelica.Utilities.Streams.print("f3dx=" + String(f3dx) + " and f3dy=" + String(f3dy), "printlog.txt");
-    Modelica.Utilities.Streams.print("det(J)=" + String(det), "printlog.txt");  */
+      // calculate Jacobian matrix and Newton Step vector
+      Jacobian := [+EoS.dpdT(fl), +0,            +EoS.dpTd(fl);
+                   +0,            +EoS.dpdT(fv), +EoS.dpTd(fv);
+                   +EoS.dgdT(fl), -EoS.dgdT(fv), EoS.dgTd(fl)-EoS.dgTd(fv)];
+      NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
 
       // calculate better sat.liq.d, sat.vap.d and sat.Tsat
-      sat.liq.d := sat.liq.d - gamma/det*(RES_pl*(f2dy*f3dz-f2dz*f3dy) +RES_pv*(f1dz*f3dy-0)         +RES_g*(0-f1dz*f2dy));
-      sat.vap.d := sat.vap.d - gamma/det*(RES_pl*(f2dz*f3dx-0)         +RES_pv*(f1dx*f3dz-f1dz*f3dx) +RES_g*(0-f1dx*f2dz));
-      sat.Tsat  := sat.Tsat  - gamma/det*(RES_pl*(0-f2dy*f3dx)         +RES_pv*(0-f1dx*f3dy)         +RES_g*(f1dx*f2dy-0));
+      sat.liq.d := sat.liq.d + lambda*NS[1];
+      sat.vap.d := sat.vap.d + lambda*NS[2];
+      sat.Tsat  := sat.Tsat  + lambda*NS[3];
 
       // check bounds
       sat.liq.d := max(sat.liq.d, 0.98*d_crit);
@@ -318,13 +287,12 @@ protected
       // calculate new residuals: RES=calc-input
       fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
       fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
-      RES_pl := EoS.p(fl) - p;   // f1
-      RES_pv := EoS.p(fv) - p;   // f2
-      RES_g  := EoS.g(fl) - EoS.g(fv);  // f3
+      RES := {EoS.p(fl)-p, EoS.p(fv)-p, EoS.g(fl)-EoS.g(fv)};
+      RSS := RES*RES/2;
     end while;
     // if verbose then Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt"); end if;
     // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
-    assert(iter<iter_max, "setSat_p did not converge, input was p=" + String(p) + "; the remaining residuals are RES_pl=" + String(RES_pl) + " and RES_pv=" + String(RES_pv) + " and RES_g=" + String(RES_g));
+    assert(iter<iter_max, "setSat_p did not converge, input was p=" + String(p) + "; the remaining residuals are RES_pl=" + String(RES[1]) + " and RES_pv=" + String(RES[2]) + " and RES_g=" + String(RES[3]));
     // check bounds, more strict
     sat.liq.d := max(sat.liq.d, d_crit);
     sat.liq.d := min(sat.liq.d, dl_trip);
@@ -663,21 +631,26 @@ protected
     Density d_min;
     Density d_max;
     Density d_iter;
+    Density d_iter_old;
     Temperature T_min;
     Temperature T_max;
     Temperature T_iter;
-    AbsolutePressure RES_p;
-    SpecificEnthalpy RES_h;
-    DerPressureByDensity dpdT "(dp/dd)@T=const";
-    DerPressureByTemperature dpTd "(dp/dT)@d=const";
-    DerEnthalpyByDensity dhdT "(dh/dd)@T=const";
-    DerEnthalpyByTemperature dhTd "(dh/dT)@d=const";
-    Real det "determinant of Jacobi matrix";
-    Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-9
-    "tolerance for sum of relative RES_p and relative RES_h";
+    Temperature T_iter_old;
+
+    Real RES[2] "residual function vector";
+    Real RSS "residual sum of squares";
+    Real RSS_old "residual sum of squares";
+    Real Jacobian[2,2] "Jacobian matrix";
+    Real NS[2] "Newton step vector";
+    Real grad[2] "gradient vector";
+    Real grad_old[2] "gradient vector";
+
+    constant Real tolerance=1e-9 "tolerance for RSS";
     Integer iter = 0;
     constant Integer iter_max = 200;
+    constant Real alpha(min=0,max=1)=1e-4;
+    Integer backtrack = 0;
+    Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
 
   algorithm
     state.phase := phase;
@@ -750,10 +723,10 @@ protected
           // Modelica.Utilities.Streams.print("h>h_crit, single-phase super-critical vapour-like region", "printlog.txt");
           d_min := fluidLimits.DMIN;
           d_max := fluidLimits.DMAX;
-          d_iter:= d_crit;
+          d_iter:= p/(R*T_crit);//d_crit;
           T_min := fluidLimits.TMIN;
           T_max := fluidLimits.TMAX;
-          T_iter:= 1.3*T_crit;
+          T_iter:= p/(R*d_crit);//1.3*T_crit;
         end if;
       end if;
     end if;
@@ -761,7 +734,7 @@ protected
     // phase and region determination finished !
 
     if (state.phase == 2) then
-      // force two-phase, SaturationProperties are already known
+      // two-phase, SaturationProperties are already known
       state.p := p;
       state.h := h;
       state.T := sat.Tsat;
@@ -770,36 +743,29 @@ protected
       state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
       state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
     else
-      // force single-phase
+      // single-phase, use 2D Newton-Raphson with linesearch and backtrack
       f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
-      RES_p := EoS.p(f) - p;
-      RES_h := EoS.h(f) - h;
+      RES := {EoS.p(f)-p, EoS.h(f)-h};
+      RSS := RES*RES/2;
 
-      while (((abs(RES_p/p) + abs(RES_h/h)) > tolerance) and (iter<iter_max)) loop
+      while ((RSS>tolerance) and (iter<iter_max)) loop
         iter := iter+1;
-        // gamma := iter/(iter+1);
 
-        // calculate gradients with respect to density and temperature
-        dpdT := EoS.dpdT(f);
-        dpTd := EoS.dpTd(f);
-        dhdT := EoS.dhdT(f);
-        dhTd := EoS.dhTd(f);
+        // calculate Jacobian matrix, gradient vector and Newton Step vector
+        Jacobian := [EoS.dpdT(f), EoS.dpTd(f);
+                     EoS.dhdT(f), EoS.dhTd(f)];
+        grad := RES*Jacobian;
+        NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
 
-        // calculate determinant of Jacobi matrix
-        det := dpdT*dhTd-dpTd*dhdT;
+        // store old d_iter, T_iter and RSS
+        d_iter_old := d_iter;
+        T_iter_old := T_iter;
+        RSS_old := RSS;
+        grad_old := grad;
 
-        /* // print for debugging
-      Modelica.Utilities.Streams.print(" ", "printlog.txt");
-      Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-      Modelica.Utilities.Streams.print("d_iter=" + String(d_iter) + " and T_iter=" + String(T_iter), "printlog.txt");
-      Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and RES_h=" + String(RES_h), "printlog.txt");
-      Modelica.Utilities.Streams.print("dpdT=" + String(dpdT) + " and dpTd=" + String(dpTd), "printlog.txt");
-      Modelica.Utilities.Streams.print("dhdT=" + String(dhdT) + " and dhTd=" + String(dhTd), "printlog.txt");
-      Modelica.Utilities.Streams.print("det(J)=" + String(det), "printlog.txt"); */
-
-        // calculate better d_iter and T_iter
-        d_iter := d_iter - gamma/det*(+dhTd*RES_p -dpTd*RES_h);
-        T_iter := T_iter - gamma/det*(-dhdT*RES_p +dpdT*RES_h);
+        // calculate new d_iter and T_iter using full Newton step
+        d_iter := d_iter_old + NS[1];
+        T_iter := T_iter_old + NS[2];
 
         // check bounds
         d_iter := max(d_iter, 0.98*d_min);
@@ -807,10 +773,44 @@ protected
         T_iter := max(T_iter, 0.98*T_min);
         T_iter := min(T_iter, 1.02*T_max);
 
-        // calculate new RES_p and RES_h
+        // calculate new residual vector and residual sum of squares
         f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
-        RES_p := EoS.p(f) - p;
-        RES_h := EoS.h(f) - h;
+        RES := {EoS.p(f)-p, EoS.h(f)-h};
+        RSS := RES*RES/2;
+        grad := RES*Jacobian;
+
+        // backtracking loop
+        while (backtrack<0*iter_max) and not (RSS<=(RSS_old+alpha*lambda*grad*NS)) loop
+          backtrack := backtrack+1;
+
+          // decrease lambda
+          if (lambda==1) then
+            // first backtrack attempt
+            lambda := 1 - backtrack/(backtrack+1);
+          else
+            // subsequent backtracks
+            lambda := 3;
+          end if;
+
+          // try again
+          // calculate new d_iter and T_iter using partial Newton step
+          d_iter := d_iter_old +lambda*NS[1];
+          T_iter := T_iter_old +lambda*NS[2];
+          // check bounds
+          d_iter := max(d_iter, 0.98*d_min);
+          d_iter := min(d_iter, 1.02*d_max);
+          T_iter := max(T_iter, 0.98*T_min);
+          T_iter := min(T_iter, 1.02*T_max);
+
+          // calculate new residual vector and residual sum of squares
+          f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
+          RES := {EoS.p(f)-p, EoS.h(f)-h};
+          RSS := RES*RES/2;
+        end while;
+        // reset backtrack and lambda
+        backtrack := 0;
+        lambda := 1;
+
       end while;
       // Modelica.Utilities.Streams.print("setState_ph total iteration steps " + String(iter), "printlog.txt");
       assert(iter<iter_max, "setState_phX did not converge, input was p=" + String(p) + " and h=" + String(h));
@@ -848,19 +848,21 @@ protected
     Density d_min;
     Density d_max;
     Density d_iter;
+    Density d_iter_old;
     Temperature T_min;
     Temperature T_max;
     Temperature T_iter;
-    AbsolutePressure RES_p;
-    SpecificEntropy RES_s;
-    DerPressureByDensity dpdT "(dp/dd)@T=const";
-    DerPressureByTemperature dpTd "(dp/dT)@d=const";
-    DerEntropyByDensity dsdT "(ds/dd)@T=const";
-    DerEntropyByTemperature dsTd "(ds/dT)@d=const";
-    Real det "determinant of Jacobi matrix";
-    Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-9
-    "tolerance for sum of relative RES_p and relative RES_s ";
+    Temperature T_iter_old;
+
+    Real RES[2] "residual function vector";
+    Real RSS "residual sum of squares";
+    Real RSS_old "residual sum of squares";
+    Real Jacobian[2,2] "Jacobian matrix";
+    Real NS[2] "Newton step vector";
+    Real grad[2] "gradient vector";
+
+    Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
+    constant Real tolerance=1e-9 "tolerance for RSS";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -935,10 +937,10 @@ protected
           // Modelica.Utilities.Streams.print("s>s_crit, single-phase super-critical vapour-like region", "printlog.txt");
           d_min := fluidLimits.DMIN;
           d_max := fluidLimits.DMAX;
-          d_iter:= d_crit;
+          d_iter:= p/(R*T_crit);
           T_min := T_crit;
           T_max := fluidLimits.TMAX;
-          T_iter:= 1.3*T_crit;
+          T_iter:= p/(R*d_crit);
         end if;
       end if;
     end if;
@@ -955,36 +957,29 @@ protected
       state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
       state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
     else
-      // force single-phase
+      // single-phase, use 2D Newton-Raphson with linesearch and backtrack
       f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
-      RES_p := EoS.p(f) - p;
-      RES_s := EoS.s(f)- s;
+      RES := {EoS.p(f)-p, EoS.s(f)-s};
+      RSS := RES*RES/2;
 
-      while (((abs(RES_p/p) + abs(RES_s/s)) > tolerance) and (iter<iter_max)) loop
+      while ((RSS>tolerance) and (iter<iter_max)) loop
         iter := iter+1;
-        // gamma := iter/(iter+1);
 
-        // calculate gradients with respect to density and temperature
-        dpdT := EoS.dpdT(f);
-        dpTd := EoS.dpTd(f);
-        dsdT := EoS.dsdT(f);
-        dsTd := EoS.dsTd(f);
+        // set up Jacobian matrix
+        Jacobian := [EoS.dpdT(f), EoS.dpTd(f);
+                     EoS.dsdT(f), EoS.dsTd(f)];
 
-        // calculate determinant of Jacobi matrix
-        det := dpdT*dsTd-dpTd*dsdT;
+        // calculate vector of full Newton steps
+        NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
 
-        /* // print for debugging
-      Modelica.Utilities.Streams.print(" ", "printlog.txt");
-      Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-      Modelica.Utilities.Streams.print("d_iter=" + String(d_iter) + " and T_iter=" + String(T_iter), "printlog.txt");
-      Modelica.Utilities.Streams.print("RES_p=" + String(RES_p) + " and RES_s=" + String(RES_s), "printlog.txt");
-      Modelica.Utilities.Streams.print("dpdT=" + String(dpdT) + " and dpTd=" + String(dpTd), "printlog.txt");
-      Modelica.Utilities.Streams.print("dsdT=" + String(dsdT) + " and dsTd=" + String(dsTd), "printlog.txt");
-      Modelica.Utilities.Streams.print("det(J)=" + String(det), "printlog.txt"); */
+        // store old d_iter, T_iter and RSS
+        d_iter_old := d_iter;
+        T_iter_old := T_iter;
+        RSS_old := RSS;
 
-        // calculate better d_iter and T_iter
-        d_iter := d_iter - gamma/det*(+dsTd*RES_p -dpTd*RES_s);
-        T_iter := T_iter - gamma/det*(-dsdT*RES_p +dpdT*RES_s);
+        // calculate new d_iter and T_iter using full Newton step
+        d_iter := d_iter_old + NS[1];
+        T_iter := T_iter_old + NS[2];
 
         // check bounds
         d_iter := max(d_iter, 0.98*d_min);
@@ -992,10 +987,10 @@ protected
         T_iter := max(T_iter, 0.98*T_min);
         T_iter := min(T_iter, 1.02*T_max);
 
-        // calculate new RES_p and RES_s
+        // calculate new residual vector and residual sum of squares
         f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
-        RES_p := EoS.p(f) - p;
-        RES_s := EoS.s(f) - s;
+        RES := {EoS.p(f)-p, EoS.s(f)-s};
+        RSS := RES*RES/2;
       end while;
       // Modelica.Utilities.Streams.print("setState_ps total iteration steps " + String(iter), "printlog.txt");
       assert(iter<iter_max, "setState_psX did not converge, input was p=" + String(p) + " and s=" + String(s));
