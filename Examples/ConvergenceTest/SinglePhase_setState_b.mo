@@ -1,8 +1,9 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model SinglePhase_setState_b
-  package Medium = HelmholtzFluids.Pentane;
-  Medium.AbsolutePressure p;
-  Medium.Temperature T;
+  package Medium = HelmholtzFluids.Butane;
+  Medium.AbsolutePressure p(start=101325);
+  Medium.Temperature T(start=298.15);
+
   Medium.ThermodynamicState state;
   Medium.ThermodynamicState state_dT;
   Medium.ThermodynamicState state_pd;
@@ -32,12 +33,12 @@ Modelica.Blocks.Sources.Sine T_sine(
     annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
 
 protected
-  constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
-  constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
-  constant Medium.Temperature Tmax=Medium.fluidLimits.TMAX;
-  constant Medium.AbsolutePressure pmin=1e-6;//Medium.fluidLimits.PMIN;
-  constant Medium.AbsolutePressure pcrit=Medium.fluidConstants[1].criticalPressure;
-  constant Medium.AbsolutePressure pmax=Medium.fluidLimits.PMAX;
+  final constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
+  final constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
+  final constant Medium.Temperature Tmax=Medium.fluidLimits.TMAX;
+  final constant Medium.AbsolutePressure pmin=1e-6;//Medium.fluidLimits.PMIN;
+  final constant Medium.AbsolutePressure pcrit=Medium.fluidConstants[1].criticalPressure;
+  final constant Medium.AbsolutePressure pmax=Medium.fluidLimits.PMAX;
 
 equation
   p = p_sub.y + p_super.y;
@@ -47,11 +48,11 @@ equation
   state=Medium.setState_pT(p=p, T=T, phase=0);
 
   // call other setState functions
-  state_dT=Medium.setState_dT(d=state.d, T=state.T, phase=0);
-  state_pd=Medium.setState_pd(p=state.p, d=state.d, phase=0);
-  state_ph=Medium.setState_ph(p=state.p, h=state.h, phase=0);
-  state_ps=Medium.setState_ps(p=state.p, s=state.s, phase=0);
-  state_Ts=Medium.setState_Ts(T=state.T, s=state.s, phase=0);
+  state_dT=Medium.setState_dT(d=Medium.density(state), T=Medium.temperature(state), phase=0);
+  state_pd=Medium.setState_pd(p=Medium.pressure(state), d=Medium.density(state), phase=0);
+  state_ph=Medium.setState_ph(p=Medium.pressure(state), h=Medium.specificEnthalpy(state), phase=0);
+  state_ps=Medium.setState_ps(p=Medium.pressure(state), s=Medium.specificEntropy(state), phase=0);
+  state_Ts=Medium.setState_Ts(T=Medium.temperature(state), s=Medium.specificEntropy(state), phase=0);
 
   annotation (experiment(StopTime=12, NumberOfIntervals=10000));
 end SinglePhase_setState_b;
