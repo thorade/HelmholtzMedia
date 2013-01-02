@@ -240,7 +240,7 @@ protected
     Real NS[3] "Newton step vector";
 
     constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-5 "tolerance for RSS";
+    constant Real tolerance=1e-3 "tolerance for RSS";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
