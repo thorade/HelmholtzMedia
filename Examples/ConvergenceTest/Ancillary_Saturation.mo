@@ -3,6 +3,7 @@ model Ancillary_Saturation
   package medium = HelmholtzFluids.Helium;
   medium.Temperature Tsat;
   medium.AbsolutePressure psat;
+  medium.AbsolutePressure pmelt;
   medium.Density dliq;
   medium.Density dvap;
   medium.SpecificEnthalpy hliq;
@@ -30,6 +31,7 @@ equation
   // forward
   Tsat = T_ramp.y;
   psat = medium.Ancillary.saturationPressure_T(T=Tsat);
+  pmelt = medium.Ancillary.meltingPressure_T(T=Tsat);
   dliq = medium.Ancillary.bubbleDensity_T(T=Tsat);
   dvap = medium.Ancillary.dewDensity_T(T=Tsat);
   hliq =  medium.EoS.h(f=fliq);
