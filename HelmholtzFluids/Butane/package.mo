@@ -203,8 +203,16 @@ extends Interfaces.PartialHelmholtzMedium(
       -0.57347E+01,   1.14;
       -0.16408E+02,   3.0;
       -0.46986E+02,   6.5;
-      -0.10090E+03,  14.0])
-  "Coefficients for the ancillary equations (PS5, DL1, DV3)";
+      -0.10090E+03,  14.0],
+    pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
+    T_reducing=134.895,
+    p_reducing=0.00066566e3,
+    pressureMelting1=[
+      -558558235.4,    0;
+       558558236.4,    2.206],
+    pressureMelting2=fill(0.0, 0, 2),
+    pressureMelting3=fill(0.0, 0, 2))
+  "Coefficients for the ancillary equations (PS5, DL1, DV3, ML1)";
 
 
   annotation (Documentation(info="<html>
