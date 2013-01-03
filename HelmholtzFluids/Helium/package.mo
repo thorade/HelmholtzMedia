@@ -206,7 +206,7 @@ extends Interfaces.PartialHelmholtzMedium(
        1.6979793, 1.555414],
     pressureMelting2=fill(0.0, 0, 2),
     pressureMelting3=fill(0.0, 0, 2))
-  "Coefficients for the ancillary equations (PS5, DL1, DV3)";
+  "Coefficients for the ancillary equations (PS5, DL1, DV3, ML1)";
 
 
   annotation (Documentation(info="<html>
@@ -217,6 +217,11 @@ Warning: The transport properties are those of n-Butane!
 <dt> Ortiz-Vega, D.O., Hall, K.R., Arp, V.D., and Lemmon, E.W.</dt>
 <dd> <b>Interim equation for the properties of helium</b><br>
      to be published in Int. J. Thermophys.<br>
+     DOI: <a href=\"http://dx.doi.org/\"></a>
+</dd>
+<dt> McCarty, R.D. and Arp, V.D.</dt>
+<dd> <b>A new wide rand equation of state for helium</b><br>
+     Adv. Cryo. Eng. 35:1465-1475 (1990)<br>
      DOI: <a href=\"http://dx.doi.org/\"></a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
