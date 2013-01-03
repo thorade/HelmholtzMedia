@@ -64,6 +64,8 @@ extends Interfaces.PartialHelmholtzMedium(
         0.187171646656055,  0;
         0.484851136045604,  1],
     idealEinstein=fill(0.0, 0, 2),
+    idealCosh=fill(0.0, 0, 2),
+    idealSinh=fill(0.0, 0, 2),
     residualPoly=[
         0.9288766E-02,   1.0,    4,  0;
         0.9258069E+00,   0.28,   1,  0;
@@ -194,7 +196,15 @@ extends Interfaces.PartialHelmholtzMedium(
       -0.126074E+01, 0.263;
       -0.363425E+01, 1.04;
       -0.487998E+01, 3.25;
-      -0.130581E+02, 8.5])
+      -0.130581E+02, 8.5],
+    pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
+    T_reducing=1,
+    p_reducing=1000e3,
+    pressureMelting1=[
+      -1.7455837, 0.000000;
+       1.6979793, 1.555414],
+    pressureMelting2=fill(0.0, 0, 2),
+    pressureMelting3=fill(0.0, 0, 2))
   "Coefficients for the ancillary equations (PS5, DL1, DV3)";
 
 
