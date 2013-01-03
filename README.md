@@ -27,12 +27,4 @@ Also see this [overview over the implementation][1].
 * helium
 * working fluids for Organic-Rankine-Cycles.
 
-### Known issues & ToDo
-* Index reduction doesn't work (there are some numerical Jacobians). Does this have to be fixed in `BaseProperties`, or in `density_ph`?
-* Non-analytic critical terms for residual Helmholtz energy not yet implemented (needed for water and CO2)
-* Reference state is fixed. Not sure how important choosing a differend reference state is.
-* Add `setState_hs` (needed for turbine calculation, when power is given and p_out is to be determined)
-* More testing would be nice (beta users welcome)
-* Documentation could be extended
-
 [1]: http://goo.gl/HeUzM "HelmholtzMedia CheatSheet"
