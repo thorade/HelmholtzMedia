@@ -650,8 +650,8 @@ protected
     Integer iter_max = 200;
     Real lambda(min=1e-3,max=1) = 1 "convergence speed, default=1";
 
-    Boolean useBacktrack=true;
-    Integer backtrack = 0;
+    Boolean useLineSearch=helmholtzCoefficients.useLineSearch;
+    Integer iterLineSearch = 0;
     Real RSS_bt;
     Real lambda_bt;
     constant Real lambda_min = 0.01 "minimum for convergence speed";
@@ -769,7 +769,7 @@ protected
       while ((RSS>tolerance) and (iter<iter_max)) loop
         iter := iter+1;
 
-        // calculate Jacobian matrix, Newton Step vector, gradient vector and slope
+        // calculate Jacobian matrix, Newton Step vector, gradient and slope
         Jacobian := [EoS.dpdT(f), EoS.dpTd(f);
                      EoS.dhdT(f), EoS.dhTd(f)];
         NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
@@ -799,9 +799,9 @@ protected
         // Modelica.Utilities.Streams.print("iter=" + String(iter) + " d_iter=" + String(d_iter) + " T_iter=" + String(T_iter) + " RES_p=" + String(RES[1]) + " RES_h=" + String(RES[2]) + " RSS=" + String(RSS), "printlog.txt");
 
         // if RSS is not decreasing fast enough, the full Newton step is not used
-        // instead, the backtracking / linesearching loop tries to find lambda such that RSS decreases
-        while useBacktrack and (lambda>=lambda_min) and not (RSS<=(RSS_old+alpha*lambda*slope)) loop
-          backtrack := backtrack+1;
+        // instead, the linesearching / backtracking loop tries to find lambda such that RSS decreases
+        while useLineSearch and (lambda>=lambda_min) and not (RSS<=(RSS_old+alpha*lambda*slope)) loop
+          iterLineSearch := iterLineSearch+1;
           iter_max := iter_max+1;
 
           // decrease lambda
@@ -827,7 +827,7 @@ protected
             // new lambda should be less or equal 0.5*previous lambda
             lambda_temp := if (lambda_temp>0.5*lambda) then 0.5*lambda else lambda_temp;
           end if;
-          // store values for subsequent backtrack attempt
+          // store values for subsequent linesearch attempt
           lambda_bt := lambda;
           RSS_bt := RSS;
 
@@ -846,11 +846,11 @@ protected
           f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
           RES := {EoS.p(f)-p, EoS.h(f)-h};
           RSS := RES*RES/2;
-          // Modelica.Utilities.Streams.print("    backtrack attempt " + String(backtrack) + ": lambda= " + String(lambda) + " d_iter=" + String(d_iter) + " T_iter= " + String(T_iter) + " RSS= " + String(RSS), "printlog.txt");
+          // Modelica.Utilities.Streams.print("    linesearch attempt " + String(iterLineSearch) + ": lambda= " + String(lambda) + " d_iter=" + String(d_iter) + " T_iter= " + String(T_iter) + " RSS= " + String(RSS), "printlog.txt");
 
         end while;
-        // reset backtrack and lambda
-        backtrack := 0;
+        // reset iterLineSearch and lambda
+        iterLineSearch := 0;
         lambda_temp := 1;
         lambda := 1;
 

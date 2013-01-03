@@ -58,6 +58,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
   helmholtzCoefficientsHelium(
+    useLineSearch=true,
     idealLog=[
           1.5,          1],
     idealPower=[

@@ -14,4 +14,6 @@ record HelmholtzCoefficients
   constant Real[:,4] residualBwr = fill(0.0, 0, 4);
   constant Real[:,9] residualGauss = fill(0.0, 0, 9);
   constant Real[:,12] residualNonAnalytical = fill(0.0, 0, 12);
+
+  Boolean useLineSearch=false;
 end HelmholtzCoefficients;
