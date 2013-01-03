@@ -162,8 +162,16 @@ package Isopentane "Isopentane"
       -0.48791E+02,       0.77;
       -0.21603E+02,       3.25;
       -0.57218E+02,       7.3;
-      -0.15164E+03,      16.6])
-  "Coefficients for the ancillary equations (PS5, DL2, DV6)";
+      -0.15164E+03,      16.6],
+    pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
+    T_reducing=112.65,
+    p_reducing=0.84e-4,
+    pressureMelting1=[
+      -7127700000000.0,       0;
+       7127700000001.0,       1.563],
+    pressureMelting2=fill(0.0, 0, 2),
+    pressureMelting3=fill(0.0, 0, 2))
+  "Coefficients for the ancillary equations (PS5, DL2, DV6, ML1)";
 
 
   annotation (Documentation(info="<html>
@@ -174,6 +182,11 @@ These are the coefficients for Isopentane.
 <dd> <b>Short Fundamental Equations of State for 20 Industrial Fluids</b><br>
      Journal of Chemical & Engineering Data 51 (3) , 785-850 (2006)<br>
      DOI: <a href=\"http://dx.doi.org/10.1021/je050186n\">10.1021/je050186n</a>
+</dd>
+<dt> Reeves, L.E. and Scott, G.J. and Babb, S.E.Jr.</dt>
+<dd> <b>Melting curves of pressure-transmitting fluids</b><br>
+     Journal of Chemical Physics 40 (12) , 3662-3666 (1964)<br>
+     DOI: <a href=\"http://dx.doi.org/10.1063/1.1725068\">10.1063/1.1725068</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
