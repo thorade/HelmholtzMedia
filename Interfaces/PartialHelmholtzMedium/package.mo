@@ -652,8 +652,8 @@ protected
 
     Boolean useLineSearch=helmholtzCoefficients.useLineSearch;
     Integer iterLineSearch = 0;
-    Real RSS_bt;
-    Real lambda_bt;
+    Real RSS_ls;
+    Real lambda_ls;
     constant Real lambda_min = 0.01 "minimum for convergence speed";
     Real lambda_temp = 1 "temporary variable for convergence speed";
     constant Real alpha(min=0,max=1)=1e-4;
@@ -809,10 +809,10 @@ protected
             lambda_temp := -slope/(2*(RSS-RSS_old-slope));
           else
             rhs1 := RSS   -RSS_old-lambda   *slope;
-            rhs2 := RSS_bt-RSS_old-lambda_bt*slope;
-            a := (           rhs1/lambda^2 -        rhs2/lambda_bt^2) / (lambda-lambda_bt);
-            b := (-lambda_bt*rhs1/lambda^2 + lambda*rhs2/lambda_bt^2) / (lambda-lambda_bt);
-            if (a <=0) then
+            rhs2 := RSS_ls-RSS_old-lambda_ls*slope;
+            a := (           rhs1/lambda^2 -        rhs2/lambda_ls^2) / (lambda-lambda_ls);
+            b := (-lambda_ls*rhs1/lambda^2 + lambda*rhs2/lambda_ls^2) / (lambda-lambda_ls);
+            if (a==0) then
               lambda_temp := -slope/(2*b);
             else
               Discriminant := b*b-3*a*slope;
@@ -823,17 +823,18 @@ protected
               else
                 lambda_temp := -slope/(b+sqrt(Discriminant));
               end if;
+              // new lambda should be less or equal 0.5*previous lambda
+              lambda_temp := if (lambda_temp>0.5*lambda) then 0.5*lambda else lambda_temp;
             end if;
-            // new lambda should be less or equal 0.5*previous lambda
-            lambda_temp := if (lambda_temp>0.5*lambda) then 0.5*lambda else lambda_temp;
           end if;
           // store values for subsequent linesearch attempt
-          lambda_bt := lambda;
-          RSS_bt := RSS;
+          lambda_ls := lambda;
+          RSS_ls := RSS;
 
           // new lambda should be greater or equal 0.1*previous lambda
           lambda := max({lambda_temp, 0.1*lambda});
 
+          // calculate new d_iter and T_iter using partial Newton step (lambda<1)
           d_iter := d_iter_old +lambda*NS[1];
           T_iter := T_iter_old +lambda*NS[2];
           // check bounds
