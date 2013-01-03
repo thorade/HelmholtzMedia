@@ -165,8 +165,16 @@ package Pentane "Pentane"
      -0.19941E+02,   3.2;
      -0.16709E+02,   6.6;
      -0.36543E+02,   7.0;
-     -0.12799E+03,  15.0])
-  "Coefficients for the ancillary equations (PS5, DL1, DV3)";
+     -0.12799E+03,  15.0],
+    pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
+    T_reducing=143.47,
+    p_reducing=0.076322,
+    pressureMelting1=[
+      -8647500000.0, 0;
+       8647500001.0, 1.649],
+    pressureMelting2=fill(0.0, 0, 2),
+    pressureMelting3=fill(0.0, 0, 2))
+  "Coefficients for the ancillary equations (PS5, DL1, DV3, ML1)";
 
 
   annotation (Documentation(info="<html>
@@ -182,6 +190,11 @@ These are the coefficients for Pentane.
 <dd> <b>Ideal-gas thermodynamic properties for natural-gas applications</b><br>
      International Journal of Thermophysics, Vol. 16, No. 6 (1995), pp. 1381-1392<br>
      DOI: <a href=\"http://dx.doi.org/10.1007/BF02083547\">10.1007/BF02083547</a>
+</dd>
+<dt> Reeves, L.E. and Scott, G.J. and Babb, S.E.Jr.</dt>
+<dd> <b>Melting curves of pressure-transmitting fluids</b><br>
+     Journal of Chemical Physics 40 (12) , 3662-3666 (1964)<br>
+     DOI: <a href=\"http://dx.doi.org/10.1063/1.1725068\">10.1063/1.1725068</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
