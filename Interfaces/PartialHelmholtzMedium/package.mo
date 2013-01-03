@@ -645,16 +645,16 @@ protected
     Real grad[2] "gradient vector";
     Real slope;
 
-    constant Real tolerance=1e-9 "tolerance for RSS";
+    constant Real tolerance=1e-7 "tolerance for RSS";
     Integer iter = 0;
-    constant Integer iter_max = 200;
+    Integer iter_max = 200;
     Real lambda(min=1e-3,max=1) = 1 "convergence speed, default=1";
 
-    Boolean useBacktrack=false;
+    Boolean useBacktrack=true;
     Integer backtrack = 0;
     Real RSS_bt;
     Real lambda_bt;
-    constant Real lambda_min = 0.1 "minimum for convergence speed";
+    constant Real lambda_min = 0.01 "minimum for convergence speed";
     Real lambda_temp = 1 "temporary variable for convergence speed";
     constant Real alpha(min=0,max=1)=1e-4;
     Real rhs1;
@@ -705,8 +705,8 @@ protected
           d_max := fluidLimits.DMAX*1.10;
 
           T_min := fluidLimits.TMIN*0.99;
-          T_max := sat.Tsat*1.02;
           T_iter:= sat.Tsat*0.98;
+          T_max := sat.Tsat*1.02;
         elseif (h > sat.vap.h) then
           // Modelica.Utilities.Streams.print("single phase vapor", "printlog.txt");
           state.phase := 1;
@@ -716,8 +716,8 @@ protected
           d_max := sat.vap.d*1.02;
 
           T_min := sat.Tsat*0.98;
-          T_max := fluidLimits.TMAX*1.10;
           T_iter:= sat.Tsat*1.02;
+          T_max := fluidLimits.TMAX*1.10;
         else
           // Modelica.Utilities.Streams.print("two-phase, all properties can be calculated from sat record", "printlog.txt");
           state.phase := 2;
@@ -800,8 +800,9 @@ protected
 
         // if RSS is not decreasing fast enough, the full Newton step is not used
         // instead, the backtracking / linesearching loop tries to find lambda such that RSS decreases
-        while useBacktrack and (backtrack<iter_max) and (lambda>=lambda_min) and not (RSS<=(RSS_old+alpha*lambda*slope)) loop
+        while useBacktrack and (lambda>=lambda_min) and not (RSS<=(RSS_old+alpha*lambda*slope)) loop
           backtrack := backtrack+1;
+          iter_max := iter_max+1;
 
           // decrease lambda
           if (lambda==1) then

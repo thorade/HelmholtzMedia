@@ -8,7 +8,7 @@ model SinglePhase_setState_a
   Medium.ThermodynamicState state_dT;
   Medium.ThermodynamicState state_pd;
   Medium.ThermodynamicState state_ph;
-  Medium.ThermodynamicState state_ps;
+  //Medium.ThermodynamicState state_ps;
   Medium.ThermodynamicState state_Ts;
 
 Modelica.Blocks.Sources.Ramp T_sub(
@@ -33,16 +33,18 @@ Modelica.Blocks.Sources.Sine p_sine(
     annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
 
 protected
+  Medium.AbsolutePressure p_melt;
   final constant Medium.Temperature Tmin=4;//Medium.fluidLimits.TMIN;
   final constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
   final constant Medium.Temperature Tmax=10;//Medium.fluidLimits.TMAX;
   final constant Medium.AbsolutePressure pmin=1e-6;//Medium.fluidLimits.PMIN;
   final constant Medium.AbsolutePressure pcrit=Medium.fluidConstants[1].criticalPressure;
-  final constant Medium.AbsolutePressure pmax=10e5;//Medium.fluidLimits.PMAX;
+  final constant Medium.AbsolutePressure pmax=Medium.fluidLimits.PMAX;
 
 equation
   T = T_sub.y + T_super.y;
-  p = p_sine.y;
+  p_melt = Medium.Ancillary.meltingPressure_T(T);
+  p = min(p_melt, p_sine.y);
 
   // set state to valid single-phase values
   state=Medium.setState_pT(p=p, T=T, phase=0);
@@ -51,7 +53,7 @@ equation
   state_dT=Medium.setState_dT(d=Medium.density(state), T=Medium.temperature(state), phase=0);
   state_pd=Medium.setState_pd(p=Medium.pressure(state), d=Medium.density(state), phase=0);
   state_ph=Medium.setState_ph(p=Medium.pressure(state), h=Medium.specificEnthalpy(state), phase=0);
-  state_ps=Medium.setState_ps(p=Medium.pressure(state), s=Medium.specificEntropy(state), phase=0);
+  //state_ps=Medium.setState_ps(p=Medium.pressure(state), s=Medium.specificEntropy(state), phase=0);
   state_Ts=Medium.setState_Ts(T=Medium.temperature(state), s=Medium.specificEntropy(state), phase=0);
 
   annotation (experiment(StopTime=12, NumberOfIntervals=10000));
