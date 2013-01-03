@@ -203,8 +203,16 @@ package Isobutane "Isobutane"
       -2.12933323,          1.065;
       -2.93790085,          2.5;
       -0.89441086,          9.5;
-      -3.46343707,         13.0])
-  "Coefficients for the ancillary equations (PS5, DL2, DV6)";
+      -3.46343707,         13.0],
+    pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
+    T_reducing=113.73,
+    p_reducing=0.022891,
+    pressureMelting1=[
+      -1953637129.,    0;
+       1953637130.,    6.12],
+    pressureMelting2=fill(0.0, 0, 2),
+    pressureMelting3=fill(0.0, 0, 2))
+  "Coefficients for the ancillary equations (PS5, DL2, DV6, ML1)";
 
 
   annotation (Documentation(info="<html>
