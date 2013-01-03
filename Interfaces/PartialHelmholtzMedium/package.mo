@@ -775,7 +775,7 @@ protected
         NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
         grad := RES*Jacobian;
         slope := grad*NS;
-        assert(slope<0,"roudoff problem");
+        assert(slope<0,"roundoff problem");
 
         // store old d_iter, T_iter and RSS
         d_iter_old := d_iter;
