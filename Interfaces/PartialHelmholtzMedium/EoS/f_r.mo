@@ -1,8 +1,8 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS;
 function f_r "residual part of dimensionless Helmholtz energy"
 
-  input Real delta;
-  input Real tau;
+  input Real delta(min=0);
+  input Real tau(min=0);
   output Real f_residual "residual part of dimensionless Helmholtz energy";
 
 protected
