@@ -1,8 +1,8 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Ancillary;
 function meltingPressure_T
   "ancillary function: calculate melting pressure for a given Temperature"
-  input Modelica.SIunits.Temperature T;
-  output Modelica.SIunits.AbsolutePressure p_melt;
+  input Temperature T;
+  output AbsolutePressure p_melt;
 
 protected
   PressureMeltingModel pressureMeltingModel=ancillaryCoefficients.pressureMeltingModel;
@@ -24,9 +24,9 @@ protected
 
 algorithm
   pr := 0;
-  pr := sum(n1[i,1]*Tr^n1[i,2] for i in 1:nPressureMelting1)
-      + sum(n2[i,1]*(Tr-1)^n2[i,2] for i in 1:nPressureMelting2)
-      + sum(n3[i,1]*log(Tr)^n3[i,2] for i in 1:nPressureMelting3);
+  pr := sum(n1[i,1]*   (Tr)  ^n1[i,2] for i in 1:nPressureMelting1)
+      + sum(n2[i,1]*   (Tr-1)^n2[i,2] for i in 1:nPressureMelting2)
+      + sum(n3[i,1]*log(Tr)  ^n3[i,2] for i in 1:nPressureMelting3);
 
   if (pressureMeltingModel == PressureMeltingModel.ML1) then
     p_melt := p_reducing*pr;
@@ -34,7 +34,7 @@ algorithm
     p_melt := p_reducing*exp(pr);
   end if;
 
-  if (pr<1e-6) then
+  if (pr<1e-9) then
     p_melt := fluidLimits.PMAX;
   end if;
 

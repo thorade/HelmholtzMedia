@@ -9,7 +9,8 @@ model Ancillary_Saturation
   medium.SpecificEnthalpy hliq;
   medium.SpecificEntropy sliq;
 
-  medium.Temperature T_p;
+  medium.Temperature T_ps;
+  medium.Temperature T_pm;
   medium.Temperature T_dl;
   medium.Temperature T_dv;
   medium.Temperature T_hl;
@@ -38,7 +39,8 @@ equation
   sliq =  medium.EoS.s(f=fliq);
 
   // inverse
-  T_p  = medium.Ancillary.saturationTemperature_p(p=psat);
+  T_ps = medium.Ancillary.saturationTemperature_p(p=psat);
+  T_pm = medium.Ancillary.meltingTemperature_p(p=pmelt);
   T_dl = medium.Ancillary.saturationTemperature_d(d=dliq);
   T_dv = medium.Ancillary.saturationTemperature_d(d=dvap);
   T_hl =  medium.Ancillary.saturationTemperature_h_liq(h=hliq);

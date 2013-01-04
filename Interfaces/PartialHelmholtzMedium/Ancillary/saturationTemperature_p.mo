@@ -71,7 +71,9 @@ elseif (p>=p_crit) then
 else
   assert(false, "Ancillary.saturationTemperature_p: this should not happen, check p");
 end if;
+
   // this is an iterative backward function
   // the corresponding ancillary forward function is saturationPressure(T)
+
   annotation (inverse(p=saturationPressure_T(T=T)));
 end saturationTemperature_p;
