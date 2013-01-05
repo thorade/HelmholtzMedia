@@ -775,7 +775,8 @@ protected
         NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
         grad := RES*Jacobian;
         slope := grad*NS;
-        assert(slope<0,"roundoff problem");
+        // Modelica.Utilities.Streams.print("  Jacobian=" + Modelica.Math.Matrices.toString(Jacobian) + "  NS=" + Modelica.Math.Vectors.toString(NS) + "  grad=" + Modelica.Math.Vectors.toString(grad) + "  slope=" + String(slope), "printlog.txt");
+        assert(slope<0,"roundoff problem, input was p=" + String(p) + " and h=" + String(h));
 
         // store old d_iter, T_iter and RSS
         d_iter_old := d_iter;
@@ -805,9 +806,11 @@ protected
           iter_max := iter_max+1;
 
           // decrease lambda
-          if (lambda==1) then
+          if (iterLineSearch<2) then
+            // first attempt
             lambda_temp := -slope/(2*(RSS-RSS_old-slope));
           else
+            // subsequent attempts
             rhs1 := RSS   -RSS_old-lambda   *slope;
             rhs2 := RSS_ls-RSS_old-lambda_ls*slope;
             a := (           rhs1/lambda^2 -        rhs2/lambda_ls^2) / (lambda-lambda_ls);
@@ -899,16 +902,30 @@ protected
     Temperature T_iter_old;
 
     Real RES[2] "residual function vector";
-    Real RSS "residual sum of squares";
-    Real RSS_old "residual sum of squares";
+    Real RSS "residual sum of squares (divided by 2)";
+    Real RSS_old "residual sum of squares (divided by 2)";
     Real Jacobian[2,2] "Jacobian matrix";
     Real NS[2] "Newton step vector";
     Real grad[2] "gradient vector";
+    Real slope;
 
-    Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-9 "tolerance for RSS";
+    constant Real tolerance=1e-7 "tolerance for RSS";
     Integer iter = 0;
-    constant Integer iter_max = 200;
+    Integer iter_max = 200;
+    Real lambda(min=1e-3,max=1) = 1 "convergence speed, default=1";
+
+    Boolean useLineSearch=helmholtzCoefficients.useLineSearch;
+    Integer iterLineSearch = 0;
+    Real RSS_ls;
+    Real lambda_ls;
+    constant Real lambda_min = 0.01 "minimum for convergence speed";
+    Real lambda_temp = 1 "temporary variable for convergence speed";
+    constant Real alpha(min=0,max=1)=1e-4;
+    Real rhs1;
+    Real rhs2;
+    Real a;
+    Real b;
+    Real Discriminant;
 
   algorithm
     state.phase := phase;
@@ -946,21 +963,25 @@ protected
         if (s < sat.liq.s) then
           // Modelica.Utilities.Streams.print("single phase liquid", "printlog.txt");
           state.phase := 1;
-          d_min := sat.liq.d;
-          d_max := 1.1*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
-          d_iter:= sat.liq.d;
-          T_min := fluidLimits.TMIN;
-          T_max := sat.Tsat;
-          T_iter:= sat.Tsat;
+
+          d_min := sat.liq.d*0.98;
+          d_max := fluidLimits.DMAX*1.10;
+          d_iter := sat.liq.d*1.10;
+
+          T_min := fluidLimits.TMIN*0.99;
+          T_max := sat.Tsat*1.02;
+          T_iter:= sat.Tsat*0.95;
         elseif (s > sat.vap.s) then
           // Modelica.Utilities.Streams.print("single phase vapor", "printlog.txt");
           state.phase := 1;
+
           d_min := fluidLimits.DMIN;
-          d_max := sat.vap.d;
+          d_max := sat.vap.d*1.02;
           d_iter:= sat.vap.d/10;
-          T_min := sat.Tsat;
-          T_max := fluidLimits.TMAX;
-          T_iter:= sat.Tsat;
+
+          T_min := sat.Tsat*0.98;
+          T_max := fluidLimits.TMAX*1.10;
+          T_iter:= sat.Tsat*1.02;
         else
           // Modelica.Utilities.Streams.print("two-phase, all properties can be calculated from sat record", "printlog.txt");
           state.phase := 2;
@@ -971,20 +992,30 @@ protected
         // Modelica.Utilities.Streams.print("p>=p_crit, only single-phase possible", "printlog.txt");
         if (s<=s_crit) then
           // Modelica.Utilities.Streams.print("s<=s_crit, single-phase super-critical liquid-like region", "printlog.txt");
-          d_min := d_crit;
-          d_max := 1.1*fluidLimits.DMAX;
-          d_iter:= 0.9*fluidLimits.DMAX;
-          T_min := fluidLimits.TMIN;
-          T_iter:= Ancillary.saturationTemperature_s_liq(s=s);
-          T_max := 2*T_iter;
+          d_min := d_crit*0.99;
+          d_max := fluidLimits.DMAX*1.1;
+          d_iter := fluidLimits.DMAX*0.9;
+          //d_iter:= d_crit*1.02;
+
+          T_min := max(fluidLimits.TMIN*0.99, Ancillary.saturationTemperature_s_liq(s=s)*0.95);
+          T_max := fluidLimits.TMAX*1.1;
+          T_iter := min(T_min*1.5, T_crit);
+          // T_iter:= (T_min+T_crit)/2;
+          // T_iter := T_crit;
+          // T_iter := (T_min+T_max)/2;
         else
           // Modelica.Utilities.Streams.print("s>s_crit, single-phase super-critical vapour-like region", "printlog.txt");
+          // due to the curvature, Newton will converge better when starting from the ideal gas region (low d, high T)
           d_min := fluidLimits.DMIN;
-          d_max := fluidLimits.DMAX;
-          d_iter:= p/(R*T_crit);
-          T_min := T_crit;
-          T_max := fluidLimits.TMAX;
-          T_iter:= p/(R*d_crit);
+          d_max := fluidLimits.DMAX*1.1;
+          d_iter:= d_crit;
+          // d_iter:= (d_min+d_max)/2;
+
+          T_min := T_crit*0.98;
+          T_max := fluidLimits.TMAX*1.1;
+          // T_iter := min(T_crit*2, T_max);
+          T_iter:= T_crit*1.3;
+          // T_iter := (T_min+T_max)/2;
         end if;
       end if;
     end if;
@@ -992,7 +1023,7 @@ protected
     // phase and region determination finished !
 
     if (state.phase == 2) then
-      // force two-phase, SaturationProperties are already known
+      // Modelica.Utilities.Streams.print("two-phase, SaturationProperties are already known", "printlog.txt");
       state.p := p;
       state.s := s;
       state.T := sat.Tsat;
@@ -1001,7 +1032,7 @@ protected
       state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
       state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
     else
-      // single-phase, use 2D Newton-Raphson with linesearch and backtrack
+      // Modelica.Utilities.Streams.print("single-phase, use 2D Newton-Raphson, start with d_iter=" + String(d_iter) + " (d_min=" + String(d_min) + " and d_max=" + String(d_max) + ") and T_iter=" + String(T_iter)+ " (T_min=" + String(T_min) + " and T_max=" + String(T_max) + ")", "printlog.txt");
       f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
       RES := {EoS.p(f)-p, EoS.s(f)-s};
       RSS := RES*RES/2;
@@ -1009,12 +1040,14 @@ protected
       while ((RSS>tolerance) and (iter<iter_max)) loop
         iter := iter+1;
 
-        // set up Jacobian matrix
+        // calculate Jacobian matrix, Newton Step vector, gradient and slope
         Jacobian := [EoS.dpdT(f), EoS.dpTd(f);
                      EoS.dsdT(f), EoS.dsTd(f)];
-
-        // calculate vector of full Newton steps
         NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
+        grad := Jacobian*RES;
+        slope := grad*NS;
+        // Modelica.Utilities.Streams.print("  Jacobian=" + Modelica.Math.Matrices.toString(Jacobian) + "  NS=" + Modelica.Math.Vectors.toString(NS) + "  grad=" + Modelica.Math.Vectors.toString(grad) + "  slope=" + String(slope), "printlog.txt");
+        // assert(slope<0,"roundoff problem, input was p=" + String(p) + " and s=" + String(s));
 
         // store old d_iter, T_iter and RSS
         d_iter_old := d_iter;
@@ -1026,15 +1059,97 @@ protected
         T_iter := T_iter_old + NS[2];
 
         // check bounds
-        d_iter := max(d_iter, 0.98*d_min);
-        d_iter := min(d_iter, 1.02*d_max);
-        T_iter := max(T_iter, 0.98*T_min);
-        T_iter := min(T_iter, 1.02*T_max);
+        d_iter := max(d_iter, d_min);
+        d_iter := min(d_iter, d_max);
+        T_iter := max(T_iter, T_min);
+        T_iter := min(T_iter, T_max);
+        /*if (d_iter>d_max) then
+        NS := NS*(d_iter-d_iter_old)/(d_max-d_iter_old);
+        d_iter := d_iter_old + NS[1];
+        T_iter := T_iter_old + NS[2];
+      end if;
+      if (d_iter<d_min) then
+        NS := NS*(d_min-d_iter_old)/(d_iter-d_iter_old);
+        d_iter := d_iter_old + NS[1];
+        T_iter := T_iter_old + NS[2];
+      end if;
+      if (T_iter>T_max) then
+        NS := NS*(T_iter-T_iter_old)/(T_max-T_iter_old);
+        d_iter := d_iter_old + NS[1];
+        T_iter := T_iter_old + NS[2];
+      end if;
+      if (T_iter<T_min) then
+        NS := NS*(T_min-T_iter_old)/(T_iter-T_iter_old);
+        d_iter := d_iter_old + NS[1];
+        T_iter := T_iter_old + NS[2];
+      end if;*/
 
         // calculate new residual vector and residual sum of squares
         f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
         RES := {EoS.p(f)-p, EoS.s(f)-s};
         RSS := RES*RES/2;
+        // Modelica.Utilities.Streams.print("iter=" + String(iter) + " d_iter=" + String(d_iter) + " T_iter=" + String(T_iter) + " RES_p=" + String(RES[1]) + " RES_s=" + String(RES[2]) + " RSS=" + String(RSS), "printlog.txt");
+
+        // if RSS is not decreasing fast enough, the full Newton step is not used
+        // instead, the linesearching / backtracking loop tries to find lambda such that RSS decreases
+        while useLineSearch and (lambda>=lambda_min) and not (RSS<=(RSS_old+alpha*lambda*slope)) loop
+          iterLineSearch := iterLineSearch+1;
+          iter_max := iter_max+1;
+
+          // decrease lambda
+          if (iterLineSearch<2) then
+            // first attempt
+            lambda_temp := -slope/(2*(RSS-RSS_old-slope));
+          else
+            // subsequent attempts
+            rhs1 := RSS   -RSS_old-lambda   *slope;
+            rhs2 := RSS_ls-RSS_old-lambda_ls*slope;
+            a := (           rhs1/lambda^2 -        rhs2/lambda_ls^2) / (lambda-lambda_ls);
+            b := (-lambda_ls*rhs1/lambda^2 + lambda*rhs2/lambda_ls^2) / (lambda-lambda_ls);
+            if (a==0) then
+              lambda_temp := -slope/(2*b);
+            else
+              Discriminant := b*b-3*a*slope;
+              if (Discriminant<0) then
+                lambda_temp := 0.5*lambda;
+              elseif (b<=0) then
+                lambda_temp := (-b+sqrt(Discriminant))/(3*a);
+              else
+                lambda_temp := -slope/(b+sqrt(Discriminant));
+              end if;
+              // new lambda should be less or equal 0.5*previous lambda
+              lambda_temp := if (lambda_temp>0.5*lambda) then 0.5*lambda else lambda_temp;
+            end if;
+          end if;
+          // store values for subsequent linesearch attempt
+          lambda_ls := lambda;
+          RSS_ls := RSS;
+
+          // new lambda should be greater or equal 0.1*previous lambda
+          lambda := max({lambda_temp, 0.1*lambda});
+
+          // calculate new d_iter and T_iter using partial Newton step (lambda<1)
+          d_iter := d_iter_old +lambda*NS[1];
+          T_iter := T_iter_old +lambda*NS[2];
+
+          // check bounds
+          d_iter := max(d_iter, d_min);
+          d_iter := min(d_iter, d_max);
+          T_iter := max(T_iter, T_min);
+          T_iter := min(T_iter, T_max);
+
+          // calculate new residual vector and residual sum of squares
+          f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
+          RES := {EoS.p(f)-p, EoS.s(f)-s};
+          RSS := RES*RES/2;
+          // Modelica.Utilities.Streams.print("    linesearch attempt " + String(iterLineSearch) + ": lambda= " + String(lambda) + " d_iter=" + String(d_iter) + " T_iter= " + String(T_iter) + " RSS= " + String(RSS), "printlog.txt");
+
+        end while;
+        // reset iterLineSearch and lambda
+        iterLineSearch := 0;
+        lambda_temp := 1;
+        lambda := 1;
+
       end while;
       // Modelica.Utilities.Streams.print("setState_ps total iteration steps " + String(iter), "printlog.txt");
       assert(iter<iter_max, "setState_psX did not converge, input was p=" + String(p) + " and s=" + String(s));

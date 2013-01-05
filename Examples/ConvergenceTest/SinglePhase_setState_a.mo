@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model SinglePhase_setState_a
-  package Medium = HelmholtzFluids.Helium;
+  package Medium = HelmholtzFluids.Butane;
   Medium.AbsolutePressure p;
   Medium.Temperature T;
 
@@ -8,7 +8,7 @@ model SinglePhase_setState_a
   Medium.ThermodynamicState state_dT;
   Medium.ThermodynamicState state_pd;
   Medium.ThermodynamicState state_ph;
-  //Medium.ThermodynamicState state_ps;
+  Medium.ThermodynamicState state_ps;
   Medium.ThermodynamicState state_Ts;
 
 Modelica.Blocks.Sources.Ramp T_sub(
@@ -53,7 +53,7 @@ equation
   state_dT=Medium.setState_dT(d=Medium.density(state), T=Medium.temperature(state), phase=0);
   state_pd=Medium.setState_pd(p=Medium.pressure(state), d=Medium.density(state), phase=0);
   state_ph=Medium.setState_ph(p=Medium.pressure(state), h=Medium.specificEnthalpy(state), phase=0);
-  //state_ps=Medium.setState_ps(p=Medium.pressure(state), s=Medium.specificEntropy(state), phase=0);
+  state_ps=Medium.setState_ps(p=Medium.pressure(state), s=Medium.specificEntropy(state), phase=0);
   state_Ts=Medium.setState_Ts(T=Medium.temperature(state), s=Medium.specificEntropy(state), phase=0);
 
   annotation (experiment(StopTime=12, NumberOfIntervals=10000));
