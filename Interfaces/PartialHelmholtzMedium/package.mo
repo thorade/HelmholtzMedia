@@ -901,20 +901,27 @@ protected
     Temperature T_iter;
     Temperature T_iter_old;
 
-    Real RES[2] "residual function vector";
+    Real[2] RES "residual function vector";
     Real RSS "residual sum of squares (divided by 2)";
     Real RSS_old "residual sum of squares (divided by 2)";
-    Real Jacobian[2,2] "Jacobian matrix";
-    Real NS[2] "Newton step vector";
+    Real[2,2] Jacobian "Jacobian matrix";
+    Real[2] NS "Newton step vector";
     Real grad[2] "gradient vector";
     Real slope;
+
+    EoS.HelmholtzDerivs f_med;
+    Real[2] RES_med "residual function vector";
+    Real[2] xy;
+    Real[2] xy_old;
+    Real[2] xy_med;
+    Real[2,2] Jacobian_med "Jacobian matrix";
 
     constant Real tolerance=1e-7 "tolerance for RSS";
     Integer iter = 0;
     Integer iter_max = 200;
     Real lambda(min=1e-3,max=1) = 1 "convergence speed, default=1";
 
-    Boolean useLineSearch=helmholtzCoefficients.useLineSearch;
+    Boolean useLineSearch=false;//helmholtzCoefficients.useLineSearch;
     Integer iterLineSearch = 0;
     Real RSS_ls;
     Real lambda_ls;
@@ -1054,9 +1061,24 @@ protected
         T_iter_old := T_iter;
         RSS_old := RSS;
 
-        // calculate new d_iter and T_iter using full Newton step
-        d_iter := d_iter_old + NS[1];
-        T_iter := T_iter_old + NS[2];
+        /* // calculate new d_iter and T_iter using full Newton step
+      d_iter := d_iter_old + NS[1];
+      T_iter := T_iter_old + NS[2];*/
+
+        // Homeier
+        xy_old := {d_iter,T_iter};
+        xy_med := xy_old + 0.5*NS;
+        xy_med[1] := max(d_iter, d_min);
+        xy_med[1] := min(d_iter, d_max);
+        xy_med[2] := max(T_iter, T_min);
+        xy_med[2] := min(T_iter, T_max);
+        f_med := EoS.setHelmholtzDerivsSecond(d=xy_med[1], T=xy_med[2], phase=1);
+        RES_med := {EoS.p(f_med)-p, EoS.s(f_med)-s};
+        Jacobian_med := [EoS.dpdT(f_med), EoS.dpTd(f_med);
+                         EoS.dsdT(f_med), EoS.dsTd(f_med)];
+        xy := xy_old - Modelica.Math.Matrices.inv(Jacobian_med)*RES;
+        d_iter:=xy[1];
+        T_iter:=xy[2];
 
         // check bounds
         d_iter := max(d_iter, d_min);
