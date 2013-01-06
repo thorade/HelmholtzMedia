@@ -1065,9 +1065,9 @@ protected
       d_iter := d_iter_old + NS[1];
       T_iter := T_iter_old + NS[2];*/
 
-        // Homeier
+        // Darvishi
         xy_old := {d_iter,T_iter};
-        xy_med := xy_old + 0.5*NS;
+        xy_med := xy_old + NS;
         xy_med[1] := max(d_iter, d_min);
         xy_med[1] := min(d_iter, d_max);
         xy_med[2] := max(T_iter, T_min);
@@ -1076,7 +1076,7 @@ protected
         RES_med := {EoS.p(f_med)-p, EoS.s(f_med)-s};
         Jacobian_med := [EoS.dpdT(f_med), EoS.dpTd(f_med);
                          EoS.dsdT(f_med), EoS.dsTd(f_med)];
-        xy := xy_old - Modelica.Math.Matrices.inv(Jacobian_med)*RES;
+        xy := xy_med - Modelica.Math.Matrices.inv(Jacobian_med)*RES_med;
         d_iter:=xy[1];
         T_iter:=xy[2];
 
