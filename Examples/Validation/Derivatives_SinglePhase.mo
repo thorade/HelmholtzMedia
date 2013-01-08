@@ -409,5 +409,18 @@ equation
   Modelica.Utilities.Streams.print("  (d cp/dp)@h=const analytical= " + String(dcpph_analytical));
   Modelica.Utilities.Streams.print("  (d cp/dp)@h=const  numerical= " + String(dcpph_numerical));
 
+  // assertions for stability
+  assert(dpdT_analytical>0, "mechanical stability violated");
+  assert(dsTd_analytical>0, "heat capacity violated");
+  assert(duTd_analytical>0, "isochoric heat capacity violated");
+  assert(dhTp_analytical>0, "isochoric heat capacity violated");
+
+  // assertions for Maxwell relations
+  assert((-state.d^2*dsdT_analytical - dpTd_analytical)<eps, "Maxwell svT relation violated");
+
+  // assertions for additional relations
+  assert((dhpT_analytical - (1/state.d+state.T/state.d^2*ddTp_analytical))<eps, "additional hpT relation violated");
+  assert((-state.d^2*dudT_analytical - (state.T*dpTd_analytical-p))<eps, "additional uvT relation violated");
+
 annotation (experiment(NumberOfIntervals=1));
 end Derivatives_SinglePhase;
