@@ -464,6 +464,7 @@ protected
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+    // constant Real Z_crit=1/(d_crit*R*T_crit/p_crit);
 
     EoS.HelmholtzDerivs f(T=T);
     SaturationProperties sat;
@@ -503,9 +504,10 @@ protected
       if (p > sat.psat) then
         // Modelica.Utilities.Streams.print("single-phase liquid region", "printlog.txt");
         d_min  := 0.98*sat.liq.d;
-        d_max  := 1.1*fluidLimits.DMAX;
-        // d_iter := 1.02*sat.liq.d;
-        d_iter := Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
+        d_max  := 1.10*fluidLimits.DMAX;
+        d_iter := 1.10*sat.liq.d;
+        // d_iter := Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
+        // d_iter := 1/(R*T_crit/p_crit*Z_crit^(1+min(0,1-T/T_crit)^(2/7))) "Rackett";
       elseif (p < sat.psat) then
         // Modelica.Utilities.Streams.print("single-phase vapor region", "printlog.txt");
         d_min  := fluidLimits.DMIN;
@@ -613,16 +615,17 @@ protected
   "Return thermodynamic state as function of (p, h)"
 
 protected
-    MolarMass MM = fluidConstants[1].molarMass;
-    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
-    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    constant MolarMass MM = fluidConstants[1].molarMass;
+    constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+    "specific gas constant";
+    constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+    constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta "reduced density";
     Real tau "inverse reduced temperature";
 
-    AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
-    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
-    SpecificEnthalpy h_crit=fluidConstants[1].HCRIT0;
+    constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
+    constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+    constant SpecificEnthalpy h_crit=fluidConstants[1].HCRIT0;
 
     EoS.HelmholtzDerivs f;
     SaturationProperties sat;
@@ -772,8 +775,8 @@ protected
         // calculate Jacobian matrix, Newton Step vector, gradient and slope
         Jacobian := [EoS.dpdT(f), EoS.dpTd(f);
                      EoS.dhdT(f), EoS.dhTd(f)];
-        NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
-        grad := RES*Jacobian;
+        NS := -Modelica.Math.Matrices.solve(Jacobian,RES) "-J^(-1)·F";
+        grad := RES*Jacobian "F·J";
         slope := grad*NS;
         // Modelica.Utilities.Streams.print("  Jacobian=" + Modelica.Math.Matrices.toString(Jacobian) + "  NS=" + Modelica.Math.Vectors.toString(NS) + "  grad=" + Modelica.Math.Vectors.toString(grad) + "  slope=" + String(slope), "printlog.txt");
         assert(slope<0,"roundoff problem, input was p=" + String(p) + " and h=" + String(h));
@@ -877,16 +880,17 @@ protected
   "Return thermodynamic state as function of (p, s)"
 
 protected
-    MolarMass MM = fluidConstants[1].molarMass;
-    SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
-    Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    constant MolarMass MM = fluidConstants[1].molarMass;
+    constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+    "specific gas constant";
+    constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+    constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real delta "reduced density";
     Real tau "inverse reduced temperature";
 
-    AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
-    AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
-    SpecificEntropy s_crit=fluidConstants[1].SCRIT0;
+    constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
+    constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+    constant SpecificEntropy s_crit=fluidConstants[1].SCRIT0;
 
     EoS.HelmholtzDerivs f;
     SaturationProperties sat;
@@ -921,7 +925,7 @@ protected
     Integer iter_max = 200;
     Real lambda(min=1e-3,max=1) = 1 "convergence speed, default=1";
 
-    Boolean useLineSearch=false;//helmholtzCoefficients.useLineSearch;
+    Boolean useLineSearch=helmholtzCoefficients.useLineSearch;
     Integer iterLineSearch = 0;
     Real RSS_ls;
     Real lambda_ls;
@@ -999,23 +1003,24 @@ protected
         // Modelica.Utilities.Streams.print("p>=p_crit, only single-phase possible", "printlog.txt");
         if (s<=s_crit) then
           // Modelica.Utilities.Streams.print("s<=s_crit, single-phase super-critical liquid-like region", "printlog.txt");
-          d_min := d_crit*0.99;
-          d_max := fluidLimits.DMAX*1.1;
-          d_iter := fluidLimits.DMAX*0.9;
-          //d_iter:= d_crit*1.02;
-
           T_min := max(fluidLimits.TMIN*0.99, Ancillary.saturationTemperature_s_liq(s=s)*0.95);
           T_max := fluidLimits.TMAX*1.1;
           T_iter := min(T_min*1.5, T_crit);
           // T_iter:= (T_min+T_crit)/2;
           // T_iter := T_crit;
           // T_iter := (T_min+T_max)/2;
+
+          d_min := d_crit*0.99;
+          d_max := fluidLimits.DMAX*1.1;
+          d_iter := fluidLimits.DMAX*0.9;
+          // d_iter := d_crit*1.02;
         else
           // Modelica.Utilities.Streams.print("s>s_crit, single-phase super-critical vapour-like region", "printlog.txt");
           // due to the curvature, Newton will converge better when starting from the ideal gas region (low d, high T)
           d_min := fluidLimits.DMIN;
           d_max := fluidLimits.DMAX*1.1;
           d_iter:= d_crit;
+          // d_iter := p/(R*T_crit);
           // d_iter:= (d_min+d_max)/2;
 
           T_min := T_crit*0.98;
@@ -1050,35 +1055,35 @@ protected
         // calculate Jacobian matrix, Newton Step vector, gradient and slope
         Jacobian := [EoS.dpdT(f), EoS.dpTd(f);
                      EoS.dsdT(f), EoS.dsTd(f)];
-        NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
-        grad := Jacobian*RES;
+        NS := -Modelica.Math.Matrices.solve(Jacobian,RES) "-J^(-1)·F";
+        grad := RES*Jacobian "F·J";
         slope := grad*NS;
         // Modelica.Utilities.Streams.print("  Jacobian=" + Modelica.Math.Matrices.toString(Jacobian) + "  NS=" + Modelica.Math.Vectors.toString(NS) + "  grad=" + Modelica.Math.Vectors.toString(grad) + "  slope=" + String(slope), "printlog.txt");
-        // assert(slope<0,"roundoff problem, input was p=" + String(p) + " and s=" + String(s));
+        assert(slope<0,"roundoff problem, input was p=" + String(p) + " and s=" + String(s));
 
         // store old d_iter, T_iter and RSS
         d_iter_old := d_iter;
         T_iter_old := T_iter;
         RSS_old := RSS;
 
-        /* // calculate new d_iter and T_iter using full Newton step
-      d_iter := d_iter_old + NS[1];
-      T_iter := T_iter_old + NS[2];*/
+        // calculate new d_iter and T_iter using full Newton step
+        d_iter := d_iter_old + NS[1];
+        T_iter := T_iter_old + NS[2];
 
-        // Babajee
-        xy_old := {d_iter,T_iter};
-        xy_med := xy_old + NS;
-        xy_med[1] := max(d_iter, d_min);
-        xy_med[1] := min(d_iter, d_max);
-        xy_med[2] := max(T_iter, T_min);
-        xy_med[2] := min(T_iter, T_max);
-        f_med := EoS.setHelmholtzDerivsSecond(d=xy_med[1], T=xy_med[2], phase=1);
-        RES_med := {EoS.p(f_med)-p, EoS.s(f_med)-s};
-        Jacobian_med := [EoS.dpdT(f_med), EoS.dpTd(f_med);
-                         EoS.dsdT(f_med), EoS.dsTd(f_med)];
-        xy := xy_med - Modelica.Math.Matrices.inv(Jacobian)*RES_med;
-        d_iter:=xy[1];
-        T_iter:=xy[2];
+        /* // Babajee
+      xy_old := {d_iter,T_iter};
+      xy_med := xy_old + NS;
+      xy_med[1] := max(d_iter, d_min);
+      xy_med[1] := min(d_iter, d_max);
+      xy_med[2] := max(T_iter, T_min);
+      xy_med[2] := min(T_iter, T_max);
+      f_med := EoS.setHelmholtzDerivsSecond(d=xy_med[1], T=xy_med[2], phase=1);
+      RES_med := {EoS.p(f_med)-p, EoS.s(f_med)-s};
+      Jacobian_med := [EoS.dpdT(f_med), EoS.dpTd(f_med);
+                       EoS.dsdT(f_med), EoS.dsTd(f_med)];
+      xy := xy_med - Modelica.Math.Matrices.inv(Jacobian)*RES_med;
+      d_iter:=xy[1];
+      T_iter:=xy[2]; */
 
         // check bounds
         d_iter := max(d_iter, d_min);
@@ -1174,7 +1179,7 @@ protected
 
       end while;
       // Modelica.Utilities.Streams.print("setState_ps total iteration steps " + String(iter), "printlog.txt");
-      assert(iter<iter_max, "setState_psX did not converge, input was p=" + String(p) + " and s=" + String(s));
+      assert(iter<iter_max, "setState_psX did not converge, input was p=" + String(p) + " and s=" + String(s) + ", remaining residual is RES_p=" +String(RES[1]) + " and RES_s=" + String(RES[2]));
 
       state.p := p;
       state.s := s;
