@@ -12,6 +12,7 @@ algorithm
     f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
     delta_T := EoS.dhdT(f)/EoS.dpdT(f);
   elseif (state.phase == 2) then
-    delta_T := Modelica.Constants.inf; // divide by zero
+    assert(false, "isothermalThrottlingCoefficient warning: in the two-phase region delta_T is infinite", level=AssertionLevel.warning);
+    delta_T := Modelica.Constants.inf;
   end if;
 end isothermalThrottlingCoefficient;

@@ -1251,8 +1251,8 @@ protected
     Temperature T_crit=fluidConstants[1].criticalTemperature;
 
   algorithm
-    // assert(state.T >= T_trip, "vapourQuality error: Temperature is lower than triple-point temperature");
-    // assert(state.T <= T_crit, "vapourQuality error: Temperature is higher than critical temperature");
+    assert(state.T >= T_trip, "vapourQuality error: Temperature is lower than triple-point temperature", level=AssertionLevel.warning);
+    assert(state.T <= T_crit, "vapourQuality error: Temperature is higher than critical temperature", level=AssertionLevel.warning);
 
     if state.d <= sat.vap.d then
       x := 1;
@@ -1278,8 +1278,8 @@ protected
       f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
       cp := EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
     elseif (state.phase == 2) then
-      // assert(false, "specificHeatCapacityCp warning: property not defined in two-phase region");
-      cp := Modelica.Constants.inf; // division by zero
+      assert(false, "specificHeatCapacityCp warning: in the two-phase region cp is infinite", level=AssertionLevel.warning);
+      cp := Modelica.Constants.inf;
     end if;
 
   end specificHeatCapacityCp;
@@ -1362,7 +1362,8 @@ protected
       f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
       beta := 1.0/state.d*EoS.dpTd(f)/EoS.dpdT(f);
     elseif (state.phase == 2) then
-      beta := Modelica.Constants.small; // zero
+      assert(false, "isobaricExpansionCoefficient warning: in the two-phase region beta is zero", level=AssertionLevel.warning);
+      beta := Modelica.Constants.small;
     end if;
   end isobaricExpansionCoefficient;
 
@@ -1380,7 +1381,8 @@ protected
       f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
       kappa := 1.0/state.d/EoS.dpdT(f);
     elseif (state.phase == 2) then
-      kappa := Modelica.Constants.inf; // divide by zero
+      assert(false, "isothermalCompressibility warning: in the two-phase region kappa is infinite", level=AssertionLevel.warning);
+      kappa := Modelica.Constants.inf;
     end if;
   end isothermalCompressibility;
 
@@ -1401,6 +1403,7 @@ protected
       cv := EoS.duTd(f);
       gamma := cp/cv;
     elseif (state.phase == 2) then
+      assert(false, "isentropicExponent warning: in the two-phase region gamma is infinite", level=AssertionLevel.warning);
       gamma := Modelica.Constants.inf;
     end if;
   end isentropicExponent;
@@ -1414,7 +1417,7 @@ protected
     constant Real micro=1e-6;
 
   algorithm
-    // assert(state.phase <> 2, "dynamicViscosity error: property not defined in two-phase region");
+    assert(state.phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
 
     // RefProp results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
     eta := micro*(Transport.dynamicViscosity_dilute(state)
@@ -1465,7 +1468,7 @@ protected
     constant Real milli=1e-3;
 
   algorithm
-    // assert(state.phase <> 2, "thermalConductivity error: property not defined in two-phase region");
+    assert(state.phase <> 2, "thermalConductivity warning: property not defined in two-phase region", level=AssertionLevel.warning);
 
     // RefProp results are in mW/m·K but SI default is W/m·K
     lambda := milli*(Transport.thermalConductivity_dilute(state)
