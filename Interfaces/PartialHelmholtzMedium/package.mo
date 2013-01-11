@@ -1251,8 +1251,8 @@ protected
     Temperature T_crit=fluidConstants[1].criticalTemperature;
 
   algorithm
-    assert(state.T >= T_trip, "vapourQuality error: Temperature is lower than triple-point temperature", level=AssertionLevel.warning);
-    assert(state.T <= T_crit, "vapourQuality error: Temperature is higher than critical temperature", level=AssertionLevel.warning);
+    assert(state.T >= T_trip, "vapourQuality warning: Temperature is lower than triple-point temperature", level=AssertionLevel.warning);
+    assert(state.T <= T_crit, "vapourQuality warning: Temperature is higher than critical temperature", level=AssertionLevel.warning);
 
     if state.d <= sat.vap.d then
       x := 1;
