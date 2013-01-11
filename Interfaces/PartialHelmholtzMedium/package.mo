@@ -174,7 +174,7 @@ protected
     sat.psat := sat.liq.p;
 
   elseif (T>=T_crit) then
-    // assert(T <= T_crit, "setSat_T error: Temperature is higher than critical temperature");
+    // assert(T <= T_crit, "setSat_T error: Temperature is higher than critical temperature", level=AssertionLevel.warning);
     // above critical temperature, no stable two-phase state exists
     // anyway, it is possible to extend the vapour-pressure curve into this region
     // this can happen when called from BaseProperties
@@ -185,7 +185,7 @@ protected
     sat.vap := setState_dTX(d=d_crit, T=T, phase=1);
     sat.psat := sat.liq.p;
   else
-    // assert(T >= T_trip, "setSat_T error: Temperature is lower than triple-point temperature");
+    // assert(T >= T_trip, "setSat_T error: Temperature is lower than triple-point temperature", level=AssertionLevel.warning);
     // T<T_trip: this does not make sense: if T is below the triple temperature, the medium is solid, not fluid
     // anyway, during initialization (at time=0) T=0 may happen
     // density values are extrapolated linearly, fantasy values are returned
@@ -302,7 +302,7 @@ protected
     sat.Tsat  := min(sat.Tsat,  T_crit);
 
   elseif (p>=p_crit) then
-    // assert(p <= p_crit, "setSat_p error: pressure is higher than critical pressure");
+    // assert(p <= p_crit, "setSat_p error: pressure is higher than critical pressure", level=AssertionLevel.warning);
     // above critical pressure, no stable two-phase state exists
     // anyway, it is possible to extend the vapour-pressure curve into this region
     // this can happen when called from BaseProperties
