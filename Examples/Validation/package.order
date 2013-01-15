@@ -1,8 +1,10 @@
 printCoefficients
-printHelmholtzDerivatives
+Derivatives_Helmholtz
 Derivatives_SinglePhase
 Derivatives_SaturationBoundary
 Derivatives_TwoPhase
 ReferenceState
 CriticalState
 acentricFactor
+ThermoSurface
+MaxwellLoop

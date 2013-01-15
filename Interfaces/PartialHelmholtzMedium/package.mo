@@ -549,7 +549,7 @@ protected
     f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
     RES_p := EoS.p(f) - p;
 
-    assert((RES_min*RES_max<0), "setState_pTX: d_min and d_max did not bracket the root");
+    assert((RES_min*RES_max<0), "setState_pTX: d_min and d_max did not bracket the root", level=AssertionLevel.warning);
     // thighten the bounds
     // opposite sign brackets the root
     if (RES_p*RES_min<0) then
