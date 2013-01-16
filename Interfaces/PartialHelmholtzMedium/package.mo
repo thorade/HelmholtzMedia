@@ -198,7 +198,9 @@ protected
     sat.psat := sat.liq.p;
   end if;
 
-    annotation (Documentation(info="<html>
+  annotation (Documentation(info="
+<html>
+<body>
 This function iteratively determines the saturation state  for a given temperature 
 by varying the density of saturated liquid and saturated vapor 
 with a Newton-Raphson approach for simultaneous equations.
@@ -210,7 +212,9 @@ with a Newton-Raphson approach for simultaneous equations.
      DOI: <a href=\"http://dx.doi.org/10.1299/jtst.3.442\">10.1299/jtst.3.442</a>
 </dd>
 </dl>
+</body>
 </html>"));
+
   end setSat_T;
 
 
