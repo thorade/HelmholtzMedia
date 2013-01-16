@@ -1,7 +1,7 @@
 within HelmholtzMedia.Examples.Validation;
 model MaxwellLoop "show Maxwell Loops"
   package Medium = HelmholtzFluids.Butane;
-  parameter Medium.Temperature T = 0.7*Tcrit;
+  parameter Medium.Temperature T = 298.15;
 
   Medium.Density d;
   Medium.ThermodynamicState state = Medium.setState_dTX(d=d, T=T);
@@ -38,6 +38,20 @@ Modelica.Blocks.Sources.Ramp Ramp_dliq(
 equation
   d = max({Ramp_dvap.y, 0.9*Medium.Ancillary.dewDensity_T(T=T)}) + min({Ramp_dliq.y, 1.05*Medium.Ancillary.bubbleDensity_T(T=T)});
 
-  annotation (experiment(StopTime=12, __Dymola_NumberOfIntervals=1000),
-                                      __Dymola_experimentSetupOutput);
+annotation (Documentation(info="
+<html>
+This model is used to compare the curvatures of two sub-critical isotherms in the two-phase region of a p,d-plot.<br />
+One isotherm is calcualted directly from the EoS (showing some loops in the two-phase region), <br />
+one isotherm is calculated taking into account the VLE conditions (straight line in the two-phase region).<br />
+How to use:
+<ol>
+  <li>Simulate </li>
+  <li>Plot p and state.p </li>
+  <li>Make d the independent variable of the plot </li>
+  <li>Look at the loops </li>
+</ol>
+</html>"));
+annotation (experiment(StopTime=12, __Dymola_NumberOfIntervals=1000),
+                                    __Dymola_experimentSetupOutput);
+
 end MaxwellLoop;
