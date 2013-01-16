@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model MaxwellLoop "show Maxwell Loops"
-  package Medium = HelmholtzFluids.Propane;
+  package Medium = HelmholtzFluids.Butane;
   parameter Medium.Temperature T = 298.15;
 
   Medium.Density d;
@@ -50,7 +50,7 @@ one isotherm is calculated taking into account the VLE conditions (straight line
 
 How to use:
 <ol>
-  <li>Simulate </li>
+  <li>Simulate with <code>T&lt;T_crit</code></li>
   <li>Plot <code>p</code> and <code>state.p</code> </li>
   <li>Make <code>d</code> the independent variable of the plot </li>
   <li>Rescale the range for <code>p</code> to something like -100 to +100 </li>
