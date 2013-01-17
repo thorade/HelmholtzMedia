@@ -190,6 +190,7 @@ package R134a "R134a with IIR reference state"
 
   annotation (Documentation(info="<html>
 These are the coefficients for R134a. 
+The reference state is set to IIR.
 
 <dl>
 <dt> Tillner-Roth, R. and Baehr, H.D.,</dt>
@@ -205,7 +206,13 @@ These are the coefficients for R134a.
 <dt> Perkins, R.A., Laesecke, A., Howley, J., Ramires, M.L.V., Gurova, A.N., and Cusco, L.</dt>
 <dd> <b>Experimental thermal conductivity values for the IUPAC round-robin sample of 1,1,1,2-tetrafluoroethane (R134a)</b><br>
      NISTIR, 2000.
-</dd><dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
+</dd>
+<dt> Span, R. and Krauss, R.</dt>
+<dd> <b>Properties of R134a</b><br>
+     VDI Heat Atlas, Section D2.7, 2010.<br>
+     DOI: <a href=\"http://dx.doi.org/10.1007/978-3-540-77877-6_11\">10.1007/978-3-540-77877-6_11</a>
+</dd>
+<dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
      National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
