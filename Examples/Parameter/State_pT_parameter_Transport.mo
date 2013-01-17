@@ -1,9 +1,9 @@
 within HelmholtzMedia.Examples.Parameter;
 model State_pT_parameter_Transport "calculate state record from pT input"
 
-  package Medium = HelmholtzFluids.Helium;
+  package Medium = HelmholtzFluids.R134a;
 
-  parameter Medium.AbsolutePressure p=101325;
+  parameter Medium.AbsolutePressure p=1e5;//101325;
   parameter Medium.Temperature T=298.15;
   Medium.ThermodynamicState state;
   // pT always results in single phase states

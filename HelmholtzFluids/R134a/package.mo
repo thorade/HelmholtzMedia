@@ -94,8 +94,8 @@ package R134a "R134a with IIR reference state"
   final constant
   Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsR134a(
-    reducingTemperature_0=1,
-    reducingThermalConductivity_0=1,
+    reducingTemperature_0=1.0,
+    reducingThermalConductivity_0=1.0,
     lambda_0_num_coeffs=[
     -1.05248E-2,    0;
      8.00982E-5,    1],

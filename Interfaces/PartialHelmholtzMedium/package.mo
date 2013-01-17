@@ -214,7 +214,6 @@ with a Newton-Raphson approach for simultaneous equations.
 </dl>
 </body>
 </html>"));
-
   end setSat_T;
 
 
@@ -1468,16 +1467,12 @@ and programming a special version of RefProp that outputs also intermediate valu
   "Return thermal conductivity"
     // inherits input state and output lambda
 
-protected
-    constant Real milli=1e-3;
-
   algorithm
     assert(state.phase <> 2, "thermalConductivity warning: property not defined in two-phase region", level=AssertionLevel.warning);
 
-    // RefProp results are in mW/m·K but SI default is W/m·K
-    lambda := milli*(Transport.thermalConductivity_dilute(state)
-                   + Transport.thermalConductivity_residual(state)
-                   + Transport.thermalConductivity_critical(state));
+    lambda := ( Transport.thermalConductivity_dilute(state)
+              + Transport.thermalConductivity_residual(state)
+              + Transport.thermalConductivity_critical(state));
 
     annotation (Documentation(info="<html>
   <p>

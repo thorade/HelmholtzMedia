@@ -1,9 +1,9 @@
 within HelmholtzMedia.Examples.Parameter;
 model State_dT_parameter "calculate state record from dT input"
 
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.R134a;
 
-  parameter Medium.Density d=228;
+  parameter Medium.Density d=1e-3;
   parameter Medium.Temperature T=298.15;
 
   Medium.ThermodynamicState state;
@@ -11,7 +11,7 @@ model State_dT_parameter "calculate state record from dT input"
   // Medium.MassFraction x;
   // Medium.SurfaceTension sigma;
   // Medium.DynamicViscosity eta;
-  // Medium.ThermalConductivity lambda;
+  Medium.ThermalConductivity lambda;
   // Medium.Types.DerTemperatureByPressure dTp;
   // Medium.Types.DerPressureByTemperature dpT;
   Medium.SpecificHeatCapacity cv;
@@ -24,7 +24,7 @@ equation
   // x=Medium.vapourQuality(state);
   // sigma=Medium.surfaceTension(Medium.setSat_T(T=T));
   // eta=Medium.dynamicViscosity(state);
-  // lambda=Medium.thermalConductivity(state);
+  lambda=Medium.thermalConductivity(state);
   // dpT=Medium.saturationPressure_derT(T=state.T);
   // dTp=Medium.saturationTemperature_derp(p=state.p);
   cv=Medium.specificHeatCapacityCv(state=state);
