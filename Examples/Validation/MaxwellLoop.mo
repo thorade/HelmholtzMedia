@@ -38,6 +38,7 @@ Modelica.Blocks.Sources.Ramp Ramp_dliq(
 equation
   d = Ramp_dvap.y + Ramp_dliq.y;
 
+
 annotation (Documentation(info="
 <html>
 <style type=\"text/css\">
@@ -66,8 +67,6 @@ How to use:
 </dd>
 </dl>
 </body>
-</html>"));
-annotation (experiment(StopTime=12, __Dymola_NumberOfIntervals=1000),
+</html>"),  experiment(StopTime=12, __Dymola_NumberOfIntervals=1000),
                                     __Dymola_experimentSetupOutput);
-
 end MaxwellLoop;
