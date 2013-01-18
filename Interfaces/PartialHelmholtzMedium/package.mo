@@ -941,6 +941,8 @@ protected
     Real b;
     Real Discriminant;
 
+    ThermodynamicState state_ref;
+
   algorithm
     state.phase := phase;
 
@@ -1006,28 +1008,54 @@ protected
         // Modelica.Utilities.Streams.print("p>=p_crit, only single-phase possible", "printlog.txt");
         if (s<=s_crit) then
           // Modelica.Utilities.Streams.print("s<=s_crit, single-phase super-critical liquid-like region", "printlog.txt");
-          T_min := max(fluidLimits.TMIN*0.99, Ancillary.saturationTemperature_s_liq(s=s)*0.95);
-          T_max := fluidLimits.TMAX*1.1;
-          T_iter := min(T_min*1.5, T_crit);
+          state_ref := setState_pT(p=p, T=T_crit);
+          if (s<state_ref.s) then
+            T_min := max(fluidLimits.TMIN*0.99, Ancillary.saturationTemperature_s_liq(s=s)*0.95);
+            T_max := T_crit;
+            T_iter := 0.95*T_crit;
+          elseif (s>state_ref.s) then
+            T_min := T_crit;
+            T_max := fluidLimits.TMAX*1.1;
+            T_iter := 1.05*T_crit;
+          else
+            T_min := 0.95*T_crit;
+            T_max := 1.05*T_crit;
+            T_iter := T_crit;
+          end if;
+          // T_iter := min(T_min*1.5, T_max);
+          // T_iter := (T_min+T_max)/2;
+          // T_iter := min(T_min*1.5, T_crit);
           // T_iter:= (T_min+T_crit)/2;
           // T_iter := T_crit;
-          // T_iter := (T_min+T_max)/2;
 
           d_min := d_crit*0.99;
           d_max := fluidLimits.DMAX*1.1;
-          d_iter := fluidLimits.DMAX*0.9;
+          // d_iter := fluidLimits.DMAX*0.9;
+          d_iter := state_ref.d;
           // d_iter := d_crit*1.02;
         else
           // Modelica.Utilities.Streams.print("s>s_crit, single-phase super-critical vapour-like region", "printlog.txt");
-          // due to the curvature, Newton will converge better when starting from the ideal gas region (low d, high T)
-          d_min := fluidLimits.DMIN;
-          d_max := fluidLimits.DMAX*1.1;
-          d_iter:= d_crit;
+          state_ref := setState_pd(p=p, d=d_crit);
+          if (s>state_ref.s) then
+            d_min := fluidLimits.DMIN*0.99;
+            d_max := d_crit;
+            d_iter := 0.95*d_crit;
+          elseif (s<state_ref.s) then
+            d_min := d_crit;
+            d_max := fluidLimits.DMAX*1.1;
+            d_iter := 1.05*d_crit;
+          else
+            d_min := 0.95*d_crit;
+            d_max := 1.05*d_crit;
+            d_iter := d_crit;
+          end if;
+          // d_iter:= d_crit;
           // d_iter := p/(R*T_crit);
           // d_iter:= (d_min+d_max)/2;
 
           T_min := T_crit*0.98;
           T_max := fluidLimits.TMAX*1.1;
+          // T_iter := state_ref.T;
           // T_iter := min(T_crit*2, T_max);
           T_iter:= T_crit*1.3;
           // T_iter := (T_min+T_max)/2;
