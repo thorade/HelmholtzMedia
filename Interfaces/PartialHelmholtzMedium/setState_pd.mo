@@ -22,9 +22,9 @@ protected
   SaturationProperties sat;
   MassFraction x "vapour quality";
 
-  Temperature T_min=fluidLimits.TMIN;
-  Temperature T_max=fluidLimits.TMAX;
-  Temperature T_iter;
+  Temperature T_min=0.98*fluidLimits.TMIN;
+  Temperature T_max=1.5*fluidLimits.TMAX;
+  Temperature T_iter=T_crit;
   AbsolutePressure RES_min;
   AbsolutePressure RES_max;
   AbsolutePressure RES_p;
@@ -45,7 +45,7 @@ algorithm
     assert(d <= sat.liq.d, "setState_pdX_error: density is higher than saturated liquid density: this is single phase liquid");
     assert(d >= sat.vap.d, "setState_pdX_error: density is lower than saturated vapor density: this is single phase vapor");
   else
-    if (p < p_crit) then
+    if (p < p_crit) and (p>p_trip) then
       // two-phase possible, do a region check
       if (p>0.98*p_crit) or (p<300*p_trip) then
         // Modelica.Utilities.Streams.print("close to critical or triple point", "printlog.txt");
@@ -68,31 +68,41 @@ algorithm
       if (d > sat.liq.d) then
         // Modelica.Utilities.Streams.print("single-phase liquid region", "printlog.txt");
         state.phase := 1;
-        T_min := Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
-        T_max := sat.Tsat;
+        T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
+        T_max := 1.02*sat.Tsat;
         T_iter := 1.1*T_min;
         // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       elseif (d < sat.vap.d) then
         // Modelica.Utilities.Streams.print("single-phase vapour region", "printlog.txt");
         state.phase := 1;
-        T_min := sat.Tsat;
+        T_min := 0.99*sat.Tsat;
+        T_max := 2*fluidLimits.TMAX;
         T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       else
         // Modelica.Utilities.Streams.print("two-phase region, all properties can be calculated from sat record", "printlog.txt");
         state.phase := 2;
       end if;
 
+    elseif (p <= p_trip) then
+      state.phase := 1;
+      // very low pressure, behaves like an ideal gas
+      T_min := 0.95*fluidLimits.TMIN;
+      T_max := 10*fluidLimits.TMAX;
+      T_iter := p/(d*R);
+      // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
+
     elseif (p >= p_crit) then
       state.phase := 1;
       if (d>d_crit) then
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical liquid-like region", "printlog.txt");
-        T_min := Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
+        T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
         T_iter := 1.05*T_min;
         // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       else
-        // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical vapour-like region", "printlog.txt");
+        // Modelica.Utilities.Streams.print("p>p_crit and d<d_crit, single-phase super-critical vapour-like region", "printlog.txt");
         T_min := 0.98*T_crit;
         T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
+        T_max := 10*fluidLimits.TMAX;
       end if;
     else
       assert(false, "setState_pd: this should not happen, check p");
@@ -133,7 +143,7 @@ algorithm
     f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
     RES_p := EoS.p(f) - p;
 
-    // assert((RES_min*RES_max<0), "setState_pd: T_min and T_max did not bracket the root, input was p=" + String(p) + " and d=" + String(d));
+    assert((RES_min*RES_max<0), "setState_pd: T_min=" + String(T_min) + " and T_max=" + String(T_max) + " did not bracket the root, input was p=" + String(p) + " and d=" + String(d), level=AssertionLevel.warning);
     // thighten the bounds
     // opposite sign brackets the root
     if (RES_p*RES_min<0) then
