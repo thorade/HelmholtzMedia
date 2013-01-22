@@ -99,10 +99,10 @@ algorithm
         T_iter := 1.05*T_min;
         // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       else
-        // Modelica.Utilities.Streams.print("p>p_crit and d<d_crit, single-phase super-critical vapour-like region", "printlog.txt");
+        // Modelica.Utilities.Streams.print("p>p_crit and d<=d_crit, single-phase super-critical vapour-like region", "printlog.txt");
         T_min := 0.98*T_crit;
         T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
-        T_max := 10*fluidLimits.TMAX;
+        T_max := 25*fluidLimits.TMAX;
       end if;
     else
       assert(false, "setState_pd: this should not happen, check p");
