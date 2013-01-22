@@ -1030,8 +1030,8 @@ protected
 
           d_min := d_crit*0.99;
           d_max := fluidLimits.DMAX*1.1;
-          // d_iter := fluidLimits.DMAX*0.9;
-          d_iter := state_ref.d;
+          d_iter := fluidLimits.DMAX*0.9;
+          // d_iter := min({state_ref.d, fluidLimits.DMAX*0.7});
           // d_iter := d_crit*1.02;
         else
           // Modelica.Utilities.Streams.print("s>s_crit, single-phase super-critical vapour-like region", "printlog.txt");
@@ -1090,7 +1090,7 @@ protected
         grad := RES*Jacobian "F·J";
         slope := grad*NS;
         // Modelica.Utilities.Streams.print("  Jacobian=" + Modelica.Math.Matrices.toString(Jacobian) + "  NS=" + Modelica.Math.Vectors.toString(NS) + "  grad=" + Modelica.Math.Vectors.toString(grad) + "  slope=" + String(slope), "printlog.txt");
-        assert(slope<0,"roundoff problem, input was p=" + String(p) + " and s=" + String(s));
+        assert(slope<0,"roundoff problem, input was p=" + String(p) + " and s=" + String(s), level=AssertionLevel.warning);
 
         // store old d_iter, T_iter and RSS
         d_iter_old := d_iter;
