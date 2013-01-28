@@ -1,12 +1,16 @@
 within HelmholtzMedia.Examples.Validation;
 model idealGasLimit
-  package Medium = HelmholtzFluids.Helium;
+  package Medium = HelmholtzFluids.Propane;
 
   parameter Medium.Temperature T=298.15;
   Medium.Density d;
 
   Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(d=d, T=T, phase=1);
   Medium.ThermodynamicState state = Medium.setState_dT(d=d, T=T, phase=1);
+
+  Real B=f.rd*f.delta/d;
+  Real C=f.rdd*f.delta^2/d^2;
+  Real D=f.rddd*f.delta^3/d^3;
 
 equation
   d = 100/exp(time);
