@@ -5,13 +5,13 @@ model Derivatives_Helmholtz_Multiplied
   // go to Options, Preferences, check "Show options used for analyzing EoS"
 
   package medium = HelmholtzMedia.HelmholtzFluids.Propane;
-  parameter medium.Density d=1e-5;
+  parameter medium.Density d=1e-3;
   parameter medium.Temperature T=500;
 
 protected
-  String fileName = "HelmholtzDerivs_multiplied.csv";
-  // While csv originally stood for comma-seperated-values, MS Excel uses semicolons to seperate the values
-  String Separator = ";";
+  final constant Boolean appendToFile = false;
+  final constant String fileName = "HelmholtzDerivs_multiplied.csv";
+  final constant String Separator = ";";
 
   constant medium.MolarMass MM = medium.fluidConstants[1].molarMass;
   constant medium.SpecificHeatCapacity R=Modelica.Constants.R/MM
@@ -56,31 +56,51 @@ algorithm
   f_num.rdd  := (medium.EoS.f_rd(tau=tau, delta=delta+eps)-medium.EoS.f_rd(tau=tau, delta=delta-eps))/(2*eps);
   f_num.rddd := (medium.EoS.f_rdd(tau=tau, delta=delta+eps)-medium.EoS.f_rdd(tau=tau, delta=delta-eps))/(2*eps);
 
-  // remove old file
-  Modelica.Utilities.Files.remove(fileName);
-
-  // print headers
-  Modelica.Utilities.Streams.print("T" +Separator
-                                 + "d" +Separator
-                                 + "tau" +Separator
-                                 + "delta" +Separator
-                                 + "alpha_i" +Separator
-                                 + "tau*alpha_it" +Separator
-                                 + "tau*tau*alpha_itt" +Separator
-                                 + "tau*tau*tau*alpha_ittt" +Separator
-                                 + "alpha_r" +Separator
-                                 + "tau*alpha_rt" +Separator
-                                 + "tau*tau*alpha_rtt" +Separator
-                                 + "tau*tau*tau*alpha_rttt" +Separator
-                                 + "delta*alpha_rd" +Separator
-                                 + "delta*delta*alpha_rdd" +Separator
-                                 + "delta*delta*delta*alpha_rddd" +Separator
-                                 + "tau*delta*alpha_rtd" +Separator
-                                 + "tau*delta*delta*alpha_rtdd" +Separator
-                                 + "tau*tau*delta*alpha_rttd" +Separator,
-                                   fileName);
-
-  // print the actual values
+  if (time<=0) then
+    if not appendToFile then
+      // remove old file
+      Modelica.Utilities.Files.remove(fileName);
+    end if;
+    // print headers
+    Modelica.Utilities.Streams.print("" +Separator
+                                   + "" +Separator
+                                   + "" +Separator
+                                   + "" +Separator
+                                   + "" +Separator
+                                   + "" +Separator
+                                   + "" +Separator
+                                   + "" +Separator
+                                   + "phi(residual)" +Separator
+                                   + "phi10" +Separator
+                                   + "phi20" +Separator
+                                   + "phi30" +Separator
+                                   + "phi01" +Separator
+                                   + "phi02" +Separator
+                                   + "phi03" +Separator
+                                   + "phi11" +Separator
+                                   + "phi12" +Separator
+                                   + "phi21" +Separator,
+                                     fileName);
+    Modelica.Utilities.Streams.print("T" +Separator
+                                   + "d" +Separator
+                                   + "tau" +Separator
+                                   + "delta" +Separator
+                                   + "alpha_i" +Separator
+                                   + "tau*alpha_it" +Separator
+                                   + "tau*tau*alpha_itt" +Separator
+                                   + "tau*tau*tau*alpha_ittt" +Separator
+                                   + "alpha_r" +Separator
+                                   + "tau*alpha_rt" +Separator
+                                   + "tau*tau*alpha_rtt" +Separator
+                                   + "tau*tau*tau*alpha_rttt" +Separator
+                                   + "delta*alpha_rd" +Separator
+                                   + "delta*delta*alpha_rdd" +Separator
+                                   + "delta*delta*delta*alpha_rddd" +Separator
+                                   + "tau*delta*alpha_rtd" +Separator
+                                   + "tau*delta*delta*alpha_rtdd" +Separator
+                                   + "tau*tau*delta*alpha_rttd" +Separator,
+                                     fileName);
+  // print fixed values
   Modelica.Utilities.Streams.print(String(f_crit.T) + Separator
                                  + String(f_crit.d) + Separator
                                  + String(f_crit.tau) + Separator
@@ -195,6 +215,9 @@ algorithm
                                  + String(f_NBP.rtdd*f_NBP.tau*f_NBP.delta*f_NBP.delta)+Separator
                                  + String(f_NBP.rttd*f_NBP.tau*f_NBP.tau*f_NBP.delta)+Separator,
                                    fileName);
+  end if;
+
+  // print non-fixed values
   Modelica.Utilities.Streams.print(String(f.T) + Separator
                                  + String(f.d) + Separator
                                  + String(f.tau) + Separator
