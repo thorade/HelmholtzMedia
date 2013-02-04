@@ -1,20 +1,20 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model Ancillary_Saturation
-  package medium = HelmholtzFluids.Helium;
-  medium.Temperature Tsat;
-  medium.AbsolutePressure psat;
-  medium.AbsolutePressure pmelt;
-  medium.Density dliq;
-  medium.Density dvap;
-  medium.SpecificEnthalpy hliq;
-  medium.SpecificEntropy sliq;
+  package Medium = HelmholtzFluids.Helium;
+  Medium.Temperature Tsat;
+  Medium.AbsolutePressure psat;
+  Medium.AbsolutePressure pmelt;
+  Medium.Density dliq;
+  Medium.Density dvap;
+  Medium.SpecificEnthalpy hliq;
+  Medium.SpecificEntropy sliq;
 
-  medium.Temperature T_ps;
-  medium.Temperature T_pm;
-  medium.Temperature T_dl;
-  medium.Temperature T_dv;
-  medium.Temperature T_hl;
-  medium.Temperature T_sl;
+  Medium.Temperature T_ps;
+  Medium.Temperature T_pm;
+  Medium.Temperature T_dl;
+  Medium.Temperature T_dv;
+  Medium.Temperature T_hl;
+  Medium.Temperature T_sl;
 
   Modelica.Blocks.Sources.Ramp T_ramp(
     duration=5,
@@ -24,27 +24,27 @@ model Ancillary_Saturation
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
 
 protected
-  constant medium.Temperature T_trip=medium.fluidConstants[1].triplePointTemperature;
-  constant medium.Temperature T_crit=medium.fluidConstants[1].criticalTemperature;
-  medium.EoS.HelmholtzDerivs fliq=medium.EoS.setHelmholtzDerivsFirst(d=dliq, T=Tsat);
+  constant Medium.Temperature T_trip=Medium.fluidConstants[1].triplePointTemperature;
+  constant Medium.Temperature T_crit=Medium.fluidConstants[1].criticalTemperature;
+  Medium.EoS.HelmholtzDerivs fliq=Medium.EoS.setHelmholtzDerivsFirst(d=dliq, T=Tsat);
 
 equation
   // forward
   Tsat = T_ramp.y;
-  psat = medium.Ancillary.saturationPressure_T(T=Tsat);
-  pmelt = medium.Ancillary.meltingPressure_T(T=Tsat);
-  dliq = medium.Ancillary.bubbleDensity_T(T=Tsat);
-  dvap = medium.Ancillary.dewDensity_T(T=Tsat);
-  hliq =  medium.EoS.h(f=fliq);
-  sliq =  medium.EoS.s(f=fliq);
+  psat = Medium.Ancillary.saturationPressure_T(T=Tsat);
+  pmelt = Medium.Ancillary.meltingPressure_T(T=Tsat);
+  dliq = Medium.Ancillary.bubbleDensity_T(T=Tsat);
+  dvap = Medium.Ancillary.dewDensity_T(T=Tsat);
+  hliq =  Medium.EoS.h(f=fliq);
+  sliq =  Medium.EoS.s(f=fliq);
 
   // inverse
-  T_ps = medium.Ancillary.saturationTemperature_p(p=psat);
-  T_pm = medium.Ancillary.meltingTemperature_p(p=pmelt);
-  T_dl = medium.Ancillary.saturationTemperature_d(d=dliq);
-  T_dv = medium.Ancillary.saturationTemperature_d(d=dvap);
-  T_hl =  medium.Ancillary.saturationTemperature_h_liq(h=hliq);
-  T_sl =  medium.Ancillary.saturationTemperature_s_liq(s=sliq);
+  T_ps = Medium.Ancillary.saturationTemperature_p(p=psat);
+  T_pm = Medium.Ancillary.meltingTemperature_p(p=pmelt);
+  T_dl = Medium.Ancillary.saturationTemperature_d(d=dliq);
+  T_dv = Medium.Ancillary.saturationTemperature_d(d=dvap);
+  T_hl =  Medium.Ancillary.saturationTemperature_h_liq(h=hliq);
+  T_sl =  Medium.Ancillary.saturationTemperature_s_liq(s=sliq);
 
 annotation (experiment(
       StopTime=7,

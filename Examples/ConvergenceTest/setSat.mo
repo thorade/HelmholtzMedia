@@ -1,10 +1,10 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model setSat
-  package medium = HelmholtzFluids.Pentane;
-  medium.SaturationProperties sat;
-  medium.SaturationProperties sat_p;
-  medium.SaturationProperties sat_dl;
-  medium.SaturationProperties sat_dv;
+  package Medium = HelmholtzFluids.Pentane;
+  Medium.SaturationProperties sat;
+  Medium.SaturationProperties sat_p;
+  Medium.SaturationProperties sat_dl;
+  Medium.SaturationProperties sat_dv;
 
   Modelica.Blocks.Sources.Ramp T_ramp(
     duration=8,
@@ -14,17 +14,17 @@ model setSat
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
 
 protected
-  constant medium.Temperature Tmin=medium.fluidLimits.TMIN;
-  constant medium.Temperature Tcrit=medium.fluidConstants[1].criticalTemperature;
+  constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
+  constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
 
 equation
   // forward
-  sat = medium.setSat_T(T=T_ramp.y);
+  sat = Medium.setSat_T(T=T_ramp.y);
 
   // backward
-  sat_p = medium.setSat_p(p=sat.psat);
-  sat_dl = medium.setSat_d(d=sat.liq.d);
-  sat_dv = medium.setSat_d(d=sat.vap.d);
+  sat_p = Medium.setSat_p(p=sat.psat);
+  sat_dl = Medium.setSat_d(d=sat.liq.d);
+  sat_dv = Medium.setSat_d(d=sat.vap.d);
 
   annotation (experiment(
       StopTime=10,

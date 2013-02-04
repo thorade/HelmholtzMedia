@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model printCoefficients "pretty printing of EoS coefficients"
-  package medium = HelmholtzFluids.Helium;
+  package Medium = HelmholtzFluids.Helium;
 
 protected
   String fileName = "printlog.txt";
@@ -13,21 +13,21 @@ algorithm
   Modelica.Utilities.Files.remove(fileName);
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|", fileName); // 80 characters
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealLog), fileName);
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealPower), fileName);
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealEinstein), fileName);
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealCosh), fileName);
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.idealSinh), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.idealLog), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.idealPower), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.idealEinstein), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.idealCosh), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.idealSinh), fileName);
 
   Modelica.Utilities.Streams.print("===============================================================================", fileName);
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.residualPoly), fileName);
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.residualBwr), fileName);
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.helmholtzCoefficients.residualGauss), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.residualPoly), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.residualBwr), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.residualGauss), fileName);
 
   Modelica.Utilities.Streams.print("===============================================================================", fileName);
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.ancillaryCoefficients.pressureSaturation), fileName);
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.ancillaryCoefficients.densityLiquid), fileName);
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(medium.ancillaryCoefficients.densityVapor), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.ancillaryCoefficients.pressureSaturation), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.ancillaryCoefficients.densityLiquid), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.ancillaryCoefficients.densityVapor), fileName);
 
 annotation (experiment(NumberOfIntervals=1));
 end printCoefficients;

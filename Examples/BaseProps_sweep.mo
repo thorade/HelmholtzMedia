@@ -1,12 +1,12 @@
 within HelmholtzMedia.Examples;
 model BaseProps_sweep
   "calculate BaseProperties from any two given input properties"
-  //package Medium = HelmholtzFluids.Butane;
-  package Medium = HelmholtzMedia.HelmholtzFluids.Butane;
-  //package Medium = HelmholtzFluids.R134a(dT_explicit=true);
-  //package Medium = HelmholtzFluids.Butane(independentVariables=IndependentVariables.ph);
-  //package Medium = HelmholtzFluids.R134a(independentVariables=IndependentVariables.ph);
-  Medium.BaseProperties props;
+
+  replaceable package Medium = HelmholtzMedia.HelmholtzFluids.Butane;
+  // replaceable package Medium = HelmholtzFluids.R134a(dT_explicit=true);
+  // replaceable package Medium = HelmholtzFluids.Butane(independentVariables=IndependentVariables.ph);
+  // replaceable package Medium = HelmholtzFluids.R134a(independentVariables=IndependentVariables.ph);
+  Medium.BaseProperties medium;
 
   Modelica.Blocks.Sources.ExpSine d_generator(
     amplitude=50,
@@ -47,10 +47,10 @@ model BaseProps_sweep
     annotation (Placement(transformation(extent={{-80,-100},{-60,-80}})));
 
 equation
-  // props.d = d_generator.y;
-  // props.T = T_generator.y;
-  // props.s = s_generator.y;
-   props.p = p_generator.y;
-   props.h = h_generator.y;
+  // medium.d = d_generator.y;
+  // medium.T = T_generator.y;
+  // medium.s = s_generator.y;
+  medium.p = p_generator.y;
+  medium.h = h_generator.y;
 
 end BaseProps_sweep;
