@@ -1,15 +1,15 @@
 within HelmholtzMedia.Examples.Validation;
 model MaxwellLoop "show Maxwell Loops"
   package Medium = HelmholtzFluids.Butane;
-  parameter Medium.Temperature T = 298.15;
+  parameter Medium.Temperature T=298.15;
 
   Medium.Density d;
-  Medium.ThermodynamicState state = Medium.setState_dTX(d=d, T=T);
-  Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(d=d, T=T, phase=1);
-  Medium.AbsolutePressure p = Medium.EoS.p(f);
+  Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
+  Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsThird(d=d, T=T, phase=1);
+  Medium.AbsolutePressure p=Medium.EoS.p(f);
 
 protected
-  constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
+  constant Medium.MolarMass MM=Medium.fluidConstants[1].molarMass;
   constant Medium.SpecificHeatCapacity R=Modelica.Constants.R/MM
     "specific gas constant";
 
@@ -22,13 +22,13 @@ protected
   constant Medium.Temperature Tmax=Medium.fluidLimits.TMAX;
 
 public
-Modelica.Blocks.Sources.Ramp Ramp_dvap(
+  Modelica.Blocks.Sources.Ramp Ramp_dvap(
     duration=4,
     startTime=0.1,
     height=dcrit - dmin,
     offset=dmin)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
-Modelica.Blocks.Sources.Ramp Ramp_dliq(
+  Modelica.Blocks.Sources.Ramp Ramp_dliq(
     duration=5,
     startTime=6,
     height=dmax - dcrit,
@@ -38,8 +38,8 @@ Modelica.Blocks.Sources.Ramp Ramp_dliq(
 equation
   d = Ramp_dvap.y + Ramp_dliq.y;
 
-
-annotation (Documentation(info="
+  annotation (
+    Documentation(info="
 <html>
 <style type=\"text/css\">
   code{background-color:#EEEEEE; padding:2px; margin:2px;}
@@ -67,6 +67,7 @@ How to use:
 </dd>
 </dl>
 </body>
-</html>"),  experiment(StopTime=12, __Dymola_NumberOfIntervals=1000),
-                                    __Dymola_experimentSetupOutput);
+</html>"),
+    experiment(StopTime=12, __Dymola_NumberOfIntervals=1000),
+    __Dymola_experimentSetupOutput);
 end MaxwellLoop;
