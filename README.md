@@ -6,13 +6,13 @@ In addition to all state properties, this library calculates viscosity, thermal 
 
 ### Related publications
 * Thorade, M. and Saadat, A. (2012). "[HelmholtzMedia - A fluid properties library][1]"  
-In: _Proceedings of the 9th International Modelica Conference_  
-DOI: 10.3384/ecp1207663
+_Proceedings of the 9th International Modelica Conference_  
+doi: 10.3384/ecp1207663
 * Thorade, M. "[Poster HelmholtzMedia][2]"  
-VDI Thermodynamik-Kolloquium 2012  
+_VDI Thermodynamik-Kolloquium 2012_  
 * Thorade, M. and Saadat, A. (2013). "[Partial derivatives of thermodynamic state properties for dynamic simulation][3]"  
-In: _Environmental Earth Sciences_  
-DOI: 10.1007/s12665-013-2394-z
+_Environmental Earth Sciences_  
+doi: 10.1007/s12665-013-2394-z
 
 
 
