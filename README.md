@@ -5,9 +5,9 @@ It supports EoS of the form f=f(T,d) meaning Helmholtz energy as a funtion of te
 In addition to all state properties, this library calculates viscosity, thermal conductivity and surface tension.  
 
 ### Related publications
-* Thorade, M. and Saadat, A. (2012). "HelmholtzMedia - A fluid properties library"
-Proceedings of the 9th International Modelica Conference
-DOI[10.3384/ecp1207663][1]
+* Thorade, M. and Saadat, A. (2012). "HelmholtzMedia - A fluid properties library" 
+Proceedings of the 9th International Modelica Conference  
+DOI: [10.3384/ecp1207663][1]
 
 
 
