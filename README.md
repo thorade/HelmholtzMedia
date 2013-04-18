@@ -16,7 +16,7 @@ _VDI Thermodynamik-Kolloquium 2012_
 _Environmental Earth Sciences_, 
 doi:10.1007/s12665-013-2394-z
 
-The fluids that have been implemted so far are:
+So far, mainly working fluids for power or refrigeration cycles have been implemented:
 * Butane
 * Ethanol
 * Isobutane
