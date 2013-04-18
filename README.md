@@ -26,9 +26,9 @@ In the future, there might be a release branch and official releases.
 ## License
 Copyright &copy; 2009-2013 Helmholtz Centre Potsdam, GFZ German Research Centre for Geosciences
 
-This Modelica package is free software and the use is completely at your own risk;
-it can be redistributed and/or modified under the terms of the [Modelica License 2](http://www.modelica.org/licenses/ModelicaLicense2) or newer.
-For license conditions (including the disclaimer of warranty) visit [http://www.modelica.org/licenses/ModelicaLicense2](http://www.modelica.org/
+This Modelica package is free software and the use is completely at your own risk;  
+it can be redistributed and/or modified under the terms of the [Modelica License 2](http://www.modelica.org/licenses/ModelicaLicense2) or newer.  
+For license conditions (including the disclaimer of warranty) visit [http://www.modelica.org/licenses/](http://www.modelica.org/licenses/).
 
 ## Development and contribution
 Any feedback regarding the library is highly appreciated (beta-testers welcome!).  
