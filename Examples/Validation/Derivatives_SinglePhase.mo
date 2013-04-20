@@ -115,11 +115,14 @@ model Derivatives_SinglePhase
   Medium.Types.Der2EnthalpyByTemperaturePressure dcpph_analytical;
   Medium.Types.Der2EnthalpyByTemperaturePressure dcpph_numerical;
 
-  Medium.Types.DerFractionByPressure dmuTd_analytical;
+  Medium.Types.DerFractionByPressure dmuTd_analytical1;
+  Medium.Types.DerFractionByPressure dmuTd_analytical2;
   Medium.Types.DerFractionByPressure dmuTd_numerical;
-  Medium.Types.Der2TemperatureByPressureDensity dmudT_analytical;
+  Medium.Types.Der2TemperatureByPressureDensity dmudT_analytical1;
+  Medium.Types.Der2TemperatureByPressureDensity dmudT_analytical2;
   Medium.Types.Der2TemperatureByPressureDensity dmudT_numerical;
-  Medium.Types.Der2TemperatureByPressure2 dmuph_analytical;
+  Medium.Types.Der2TemperatureByPressure2 dmuph_analytical1;
+  Medium.Types.Der2TemperatureByPressure2 dmuph_analytical2;
   Medium.Types.Der2TemperatureByPressure2 dmuph_numerical;
 
 protected
@@ -417,24 +420,34 @@ equation
   Modelica.Utilities.Streams.print("  (d cp/dp)@h=const  numerical= " + String(dcpph_numerical));
 
   // check (d mu/dT)@d=const
-  dmuTd_analytical = (- Medium.EoS.d2pT2d(f) + (Medium.EoS.d2pTd(f)*Medium.EoS.dhTd(f) + Medium.EoS.dpdT(f)*Medium.EoS.d2hT2d(f))/Medium.EoS.dhdT(f)
-                      - Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f)*Medium.EoS.d2hTd(f)/Medium.EoS.dhdT(f)^2)
-                     /(Medium.EoS.dpTd(f)-Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f)/Medium.EoS.dhdT(f))^2;
+  dmuTd_analytical1 = (- Medium.EoS.d2pT2d(f) + (Medium.EoS.d2pTd(f)*Medium.EoS.dhTd(f) + Medium.EoS.dpdT(f)*Medium.EoS.d2hT2d(f))/Medium.EoS.dhdT(f)
+                       - Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f)*Medium.EoS.d2hTd(f)/Medium.EoS.dhdT(f)^2)
+                       /(Medium.EoS.dpTd(f)-Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f)/Medium.EoS.dhdT(f))^2;
+  dmuTd_analytical2 = (- Medium.EoS.d2pT2d(f) + (Medium.EoS.d2pTd(f)*Medium.EoS.dhTd(f) + Medium.EoS.dpdT(f)*Medium.EoS.d2hT2d(f))/Medium.EoS.dhdT(f)
+                       - Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f)*Medium.EoS.d2hTd(f)/Medium.EoS.dhdT(f)^2)
+                       * Medium.jouleThomsonCoefficient(state)^2;
   dmuTd_numerical = (Medium.jouleThomsonCoefficient(Tplus_dconst)-Medium.jouleThomsonCoefficient(Tminus_dconst))/(Tplus_dconst.T-Tminus_dconst.T);
-  Modelica.Utilities.Streams.print("  (d mu/dT)@d=const analytical= " + String(dmuTd_analytical));
-  Modelica.Utilities.Streams.print("  (d mu/dT)@d=const  numerical= " + String(dmuTd_numerical));
+  Modelica.Utilities.Streams.print("  (d mu/dT)@d=const analytical1= " + String(dmuTd_analytical1));
+  Modelica.Utilities.Streams.print("  (d mu/dT)@d=const analytical2= " + String(dmuTd_analytical2));
+  Modelica.Utilities.Streams.print("  (d mu/dT)@d=const   numerical= " + String(dmuTd_numerical));
   // check (d mu/dd)@T=const
-  dmudT_analytical = (- Medium.EoS.d2pTd(f) + (Medium.EoS.d2pd2T(f)*Medium.EoS.dhTd(f) + Medium.EoS.dpdT(f)*Medium.EoS.d2hTd(f))/Medium.EoS.dhdT(f)
-                      - Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f)*Medium.EoS.d2hd2T(f)/Medium.EoS.dhdT(f)^2)
-                     /(Medium.EoS.dpTd(f)-Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f)/Medium.EoS.dhdT(f))^2;
+  dmudT_analytical1 = (- Medium.EoS.d2pTd(f) + (Medium.EoS.d2pd2T(f)*Medium.EoS.dhTd(f) + Medium.EoS.dpdT(f)*Medium.EoS.d2hTd(f))/Medium.EoS.dhdT(f)
+                       - Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f)*Medium.EoS.d2hd2T(f)/Medium.EoS.dhdT(f)^2)
+                       /(Medium.EoS.dpTd(f)-Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f)/Medium.EoS.dhdT(f))^2;
+  dmudT_analytical2 = (- Medium.EoS.d2pTd(f) + (Medium.EoS.d2pd2T(f)*Medium.EoS.dhTd(f) + Medium.EoS.dpdT(f)*Medium.EoS.d2hTd(f))/Medium.EoS.dhdT(f)
+                       - Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f)*Medium.EoS.d2hd2T(f)/Medium.EoS.dhdT(f)^2)
+                       * Medium.jouleThomsonCoefficient(state)^2;
   dmudT_numerical = (Medium.jouleThomsonCoefficient(dplus_Tconst)-Medium.jouleThomsonCoefficient(dminus_Tconst))/(dplus_Tconst.d-dminus_Tconst.d);
-  Modelica.Utilities.Streams.print("  (d mu/dd)@T=const analytical= " + String(dmudT_analytical));
-  Modelica.Utilities.Streams.print("  (d mu/dd)@T=const  numerical= " + String(dmudT_numerical));
+  Modelica.Utilities.Streams.print("  (d mu/dd)@T=const analytical1= " + String(dmudT_analytical1));
+  Modelica.Utilities.Streams.print("  (d mu/dd)@T=const analytical2= " + String(dmudT_analytical2));
+  Modelica.Utilities.Streams.print("  (d mu/dd)@T=const   numerical= " + String(dmudT_numerical));
   // check (d mu/dp)@h=const
-  dmuph_analytical =  (dmuTd_analytical*Medium.EoS.dhdT(f) - dmudT_analytical*Medium.EoS.dhTd(f))/(Medium.EoS.dpTd(f)*Medium.EoS.dhdT(f) - Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f));
+  dmuph_analytical1 = (dmuTd_analytical1*Medium.EoS.dhdT(f) - dmudT_analytical1*Medium.EoS.dhTd(f))/(Medium.EoS.dpTd(f)*Medium.EoS.dhdT(f) - Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f));
+  dmuph_analytical2 = (dmuTd_analytical2*Medium.EoS.dhdT(f) - dmudT_analytical2*Medium.EoS.dhTd(f))/(Medium.EoS.dpTd(f)*Medium.EoS.dhdT(f) - Medium.EoS.dpdT(f)*Medium.EoS.dhTd(f));
   dmuph_numerical = (Medium.jouleThomsonCoefficient(pplus_hconst)-Medium.jouleThomsonCoefficient(pminus_hconst))/(pplus_hconst.p-pminus_hconst.p);
-  Modelica.Utilities.Streams.print("  (d mu/dp)@h=const analytical= " + String(dmuph_analytical));
-  Modelica.Utilities.Streams.print("  (d mu/dp)@h=const  numerical= " + String(dmuph_numerical));
+  Modelica.Utilities.Streams.print("  (d mu/dp)@h=const analytical1= " + String(dmuph_analytical1));
+  Modelica.Utilities.Streams.print("  (d mu/dp)@h=const analytical2= " + String(dmuph_analytical2));
+  Modelica.Utilities.Streams.print("  (d mu/dp)@h=const   numerical= " + String(dmuph_numerical));
 
   // assertions for stability
   assert(dpdT_analytical>0, "mechanical stability violated");
