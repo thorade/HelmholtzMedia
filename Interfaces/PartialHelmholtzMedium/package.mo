@@ -1861,6 +1861,17 @@ protected
   end saturationTemperature_derp;
 
 
+  redeclare function saturationTemperature_derp_sat "returns (dT/dp)@sat"
+  // does not extend, because base class output has wrong units
+  input SaturationProperties sat;
+  output DerTemperatureByPressure dTp;
+
+  algorithm
+    // Clausius-Clapeyron equation
+    dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+  annotation(Inline = true);
+  end saturationTemperature_derp_sat;
+
   redeclare function extends saturationPressure
 
 protected
@@ -1870,6 +1881,7 @@ protected
     p := sat.psat;
   annotation(Inline = true);
   end saturationPressure;
+
 
 
   redeclare function extends dBubbleDensity_dPressure

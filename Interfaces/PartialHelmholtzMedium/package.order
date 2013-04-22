@@ -68,6 +68,7 @@ density_derp_T
 density_derT_p
 saturationTemperature
 saturationTemperature_derp
+saturationTemperature_derp_sat
 saturationPressure
 saturationPressure_derT
 dBubbleDensity_dPressure
