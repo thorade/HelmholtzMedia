@@ -11,9 +11,6 @@ partial package PartialHelmholtzMedium
 
 import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
-
-
-
   constant FluidLimits fluidLimits;
 
   constant EoS.HelmholtzCoefficients helmholtzCoefficients;
@@ -333,7 +330,6 @@ protected
     sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
 
   end setSat_p;
-
 
 
   redeclare function extends setBubbleState
@@ -1228,14 +1224,13 @@ protected
   end setState_psX;
 
 
-
-
   redeclare function extends temperature
   "returns temperature from given ThermodynamicState"
   // inherited from: PartialMedium
   // inherits input state and output T
   algorithm
     T := state.T;
+  annotation(Inline = true);
   end temperature;
 
 
@@ -1245,6 +1240,7 @@ protected
   // inherits input state and output d
   algorithm
     d := state.d;
+  annotation(Inline = true);
   end density;
 
 
@@ -1254,6 +1250,7 @@ protected
   // inherits input state and output p
   algorithm
     p := state.p;
+  annotation(Inline = true);
   end pressure;
 
 
@@ -1263,6 +1260,7 @@ protected
   // inherits input state and output h
   algorithm
     s := state.s;
+  annotation(Inline = true);
   end specificEntropy;
 
 
@@ -1272,6 +1270,7 @@ protected
   // inherits input state and output h
   algorithm
     h := state.h;
+  annotation(Inline = true);
   end specificEnthalpy;
 
 
@@ -1447,8 +1446,6 @@ protected
   end isentropicExponent;
 
 
-
-
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
     // inherits input state and output eta
@@ -1582,6 +1579,7 @@ The extended version has up to three terms with two parameters each.
   // inherits input sat and output hl
   algorithm
     hl := sat.liq.h;
+  annotation(Inline = true);
   end bubbleEnthalpy;
 
 
@@ -1591,7 +1589,28 @@ The extended version has up to three terms with two parameters each.
   // inherits input sat and output hl
   algorithm
     hv := sat.vap.h;
+  annotation(Inline = true);
   end dewEnthalpy;
+
+
+  redeclare function extends dewEntropy
+  "returns specificEntropy from given SaturationProperties"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output hl
+  algorithm
+    sv := sat.vap.s;
+  annotation(Inline = true);
+  end dewEntropy;
+
+
+  redeclare function extends bubbleEntropy
+  "returns specificEntropy from given SaturationProperties"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output hl
+  algorithm
+    sl := sat.liq.s;
+  annotation(Inline = true);
+  end bubbleEntropy;
 
 
   redeclare function extends dewDensity
@@ -1600,6 +1619,7 @@ The extended version has up to three terms with two parameters each.
   // inherits input sat and output hl
   algorithm
     dv := sat.vap.d;
+  annotation(Inline = true);
   end dewDensity;
 
 
@@ -1609,6 +1629,7 @@ The extended version has up to three terms with two parameters each.
   // inherits input sat and output hl
   algorithm
     dl := sat.liq.d;
+  annotation(Inline = true);
   end bubbleDensity;
 
 
@@ -1630,8 +1651,6 @@ The extended version has up to three terms with two parameters each.
   end density_pT;
 
 
-
-
   redeclare function temperature_ps "returns temperature for given p and d"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1646,9 +1665,6 @@ The extended version has up to three terms with two parameters each.
     inverse(p=pressure_Ts(T=T, s=s, phase=phase),
             s=specificEntropy_pT(p=p, T=T, phase=phase)));
   end temperature_ps;
-
-
-
 
 
   redeclare function specificEnthalpy_pT
@@ -1696,8 +1712,6 @@ The extended version has up to three terms with two parameters each.
   annotation (
     inverse(s=specificEntropy_ph(p=p, h=h, phase=phase)));
   end specificEnthalpy_ps;
-
-
 
 
   redeclare function density_ph "returns density for given p and h"
@@ -1787,7 +1801,6 @@ protected
   end density_derh_p;
 
 
-
   redeclare function extends density_derp_T
   "returns density derivative (dd/dp)@T=const"
   //input state and output ddpT are inherited
@@ -1829,6 +1842,7 @@ protected
 
   algorithm
     T := sat.Tsat;
+  annotation(Inline = true);
   end saturationTemperature;
 
 
@@ -1843,6 +1857,7 @@ protected
   algorithm
     // Clausius-Clapeyron equation
     dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+  annotation(Inline = true);
   end saturationTemperature_derp;
 
 
@@ -1853,8 +1868,8 @@ protected
 
   algorithm
     p := sat.psat;
+  annotation(Inline = true);
   end saturationPressure;
-
 
 
   redeclare function extends dBubbleDensity_dPressure
@@ -1919,12 +1934,6 @@ protected
   algorithm
     dhvdp := dhpT + dhTp*dTp;
   end dDewEnthalpy_dPressure;
-
-
-
-
-
-
 
 
   redeclare function extends specificEnthalpy_dT

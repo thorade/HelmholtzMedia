@@ -43,6 +43,8 @@ thermalConductivity
 surfaceTension
 bubbleEnthalpy
 dewEnthalpy
+dewEntropy
+bubbleEntropy
 dewDensity
 bubbleDensity
 pressure_dT

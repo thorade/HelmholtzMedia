@@ -10,4 +10,5 @@ protected
 algorithm
   // Clausius-Clapeyron equation
   dpT := (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);
+annotation(Inline = true);
 end saturationPressure_derT;
