@@ -244,7 +244,7 @@ protected
     Real NS[3] "Newton step vector";
 
     constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-3 "tolerance for RSS";
+    constant Real tolerance=1e-4 "tolerance for RSS";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -1872,6 +1872,7 @@ protected
   annotation(Inline = true);
   end saturationTemperature_derp_sat;
 
+
   redeclare function extends saturationPressure
 
 protected
@@ -1881,7 +1882,6 @@ protected
     p := sat.psat;
   annotation(Inline = true);
   end saturationPressure;
-
 
 
   redeclare function extends dBubbleDensity_dPressure
