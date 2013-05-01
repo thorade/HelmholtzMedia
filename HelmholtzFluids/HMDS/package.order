@@ -2,6 +2,6 @@ fluidConstantsHMDS
 fluidLimitsHMDS
 helmholtzCoefficientsHMDS
 thermalConductivityCoefficientsHMDS
-dynamicViscosityCoefficientsEthanol
-surfaceTensionCoefficientsEthanol
+dynamicViscosityCoefficientsHMDS
+surfaceTensionCoefficientsHMDS
 ancillaryCoefficientsHMDS

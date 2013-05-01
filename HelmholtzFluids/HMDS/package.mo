@@ -93,11 +93,11 @@ extends Interfaces.PartialHelmholtzMedium(
     xi_0=0.194E-9,
     Gamma_0=0.0496,
     qd_inverse=0.875350E-9,
-    T_ref=1) "Coefficients for the thermal conductivity";
+    T_ref=637.68) "Coefficients for the thermal conductivity";
 
   final constant
   Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
-  dynamicViscosityCoefficientsEthanol(
+  dynamicViscosityCoefficientsHMDS(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
     collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
     sigma=1,
@@ -124,7 +124,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant
   Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
-  surfaceTensionCoefficientsEthanol(
+  surfaceTensionCoefficientsHMDS(
     coeffs=fill(0.0, 0, 2)) "Coefficients for the surface tension";
 
   final constant
