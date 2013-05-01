@@ -132,32 +132,26 @@ extends Interfaces.PartialHelmholtzMedium(
   ancillaryCoefficientsHMDS(
     pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
     pressureSaturation=[
-      -0.71897E+01,   1.0;
-       0.26122E+01,   1.5;
-      -0.21729E+01,   2.0;
-      -0.27230E+01,   4.5],
+      -0.86671E+01,   1.0;
+       0.11649E+02,   1.5;
+      -0.11484E+02,   1.65;
+      -0.53256E+01,   4.5],
     densityLiquidModel=Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel.DL1,
     densityLiquid=[
-       0.52341E+01,   0.44;
-      -0.62011E+01,   0.60;
-       0.36063E+01,   0.76;
-       0.22137E+00,   5.00],
+       0.14533E+02,   0.584;
+      -0.49804E+02,   0.80;
+       0.83748E+02,   1.02;
+      -0.70321E+02,   1.26;
+       0.24283E+02,   1.50],
     densityVaporModel=Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel.DV3,
     densityVapor=[
-      -0.27390E+01,   0.391;
-      -0.57347E+01,   1.14;
-      -0.16408E+02,   3.0;
-      -0.46986E+02,   6.5;
-      -0.10090E+03,  14.0],
-    pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
-    T_reducing=134.895,
-    p_reducing=0.00066566e3,
-    pressureMelting1=[
-      -558558235.4,    0;
-       558558236.4,    2.206],
-    pressureMelting2=fill(0.0, 0, 2),
-    pressureMelting3=fill(0.0, 0, 2))
-  "Coefficients for the ancillary equations (PS5, DL1, DV3, ML1)";
+      -0.35719E+01,   0.373;
+      -0.14740E+03,   2.15;
+       0.40699E+03,   2.6;
+      -0.69676E+03,   3.3;
+       0.12541E+04,   4.2;
+      -0.91199E+03,   4.6])
+  "Coefficients for the ancillary equations (PS5, DL1, DV3)";
 
 
   annotation (Documentation(info="<html>
