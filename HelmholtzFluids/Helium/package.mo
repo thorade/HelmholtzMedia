@@ -96,26 +96,13 @@ extends Interfaces.PartialHelmholtzMedium(
   final constant
   Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsHelium(
-    reducingTemperature_0=425.16,
+    reducingTemperature_0=1,
     reducingThermalConductivity_0=1,
-    lambda_0_num_coeffs=[
-     1.62676E-03,    0;
-     9.75703E-04,    1;
-     2.89887E-02,    2],
-    reducingTemperature_residual=425.16,
-    reducingMolarVolume_residual=1/3920,
+    lambda_0_num_coeffs=fill(0.0, 0, 2),
+    reducingTemperature_residual=1,
+    reducingMolarVolume_residual=1,
     reducingThermalConductivity_residual=1,
-    lambda_r_coeffs=[
-    -3.04337E-2,    0,   1,   0;
-     4.18357E-2,    1,   1,   0;
-     1.65820E-1,    0,   2,   0;
-    -1.47163E-1,    1,   2,   0;
-    -1.48144E-1,    0,   3,   0;
-     1.33542E-1,    1,   3,   0;
-     5.25500E-2,    0,   4,   0;
-    -4.85489E-2,    1,   4,   0;
-    -6.29367E-3,    0,   5,   0;
-     6.44307E-3,    1,   5,   0],
+    lambda_r_coeffs=fill(0.0, 0, 4),
     xi_0=0.194E-9,
     Gamma_0=0.0496,
     qd_inverse=0.875350E-9,
@@ -126,14 +113,10 @@ extends Interfaces.PartialHelmholtzMedium(
   dynamicViscosityCoefficientsHelium(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
     collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
-    sigma=0.57335,
-    epsilon_kappa=280.51,
-    CET=[
-     0.1628213, 0.5],
-    a=[
-     0.17067154,    0;
-    -0.48879666,    1;
-     0.039038856,   2],
+    sigma=1,
+    epsilon_kappa=1,
+    CET=fill(0.0, 0, 2),
+    a=fill(0.0, 0, 2),
     b=[
     -19.572881,       0.00;
      219.73999,      -0.25;
@@ -144,38 +127,21 @@ extends Interfaces.PartialHelmholtzMedium(
     -787.26086,      -1.50;
      14.085455,      -2.50;
     -0.34664158,     -5.50],
-    reducingTemperature_residual=425.125,
-    reducingMolarVolume_residual=1/3920,
+    reducingTemperature_residual=1,
+    reducingMolarVolume_residual=1,
     reducingViscosity_residual=1,
-    g=[
-     2.30873963359,      0.0;
-     2.03404037254,      0.5],
-    e=[
-    -54.7737770846,      0.0,    2,  0,  0;
-     58.0898623034,     -1.0,    2,  0,  0;
-     0,                 -2.0,    2,  0,  0;
-     35.2658446259,      0.0,    3,  0,  0;
-    -39.6682203832,     -1.0,    3,  0,  0;
-     0,                 -2.0,    3,  0,  0;
-    -1.83729542151,      0.0,    4,  0,  0;
-     0,                 -1.0,    4,  0,  0;
-     0,                 -2.0,    4,  0,  0;
-    -0.833262985358,     0.0,    5,  0,  0;
-     1.93837020663,     -1.0,    5,  0,  0;
-     0,                 -2.0,    5,  0,  0;
-    -188.075903903,      0.0,    1, -1,  0],
-    nu_po=[
-     188.075903903,      0.0,    1,  0,  0],
-    de_po=[
-     1.,                 0.0,    0,  1,  0;
-    -1.,                 0.0,    1,  0,  0])
-  "Coefficients for the dynamic viscosity";
+    g=fill(0.0, 0, 2),
+    e=fill(0.0, 0, 5),
+    nu_po=fill(0.0, 0, 5),
+    de_po=fill(0.0, 0, 5)) "Coefficients for the dynamic viscosity";
 
   final constant
   Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsHelium(
     coeffs=[
-      0.05418,    1.26]) "Coefficients for the surface tension";
+       389.057E-6,  1.00;
+       521.410E-6,  2.00;
+      -579.737E-6,  3.00]) "Coefficients for the surface tension";
 
   final constant
   Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
