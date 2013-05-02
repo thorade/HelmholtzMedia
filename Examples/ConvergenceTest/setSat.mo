@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model setSat
-  package Medium = HelmholtzFluids.Pentane;
+  package Medium = HelmholtzFluids.HMDS;
   Medium.SaturationProperties sat;
   Medium.SaturationProperties sat_p;
   Medium.SaturationProperties sat_dl;
