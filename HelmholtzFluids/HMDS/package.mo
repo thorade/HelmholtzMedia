@@ -11,8 +11,8 @@ extends Interfaces.PartialHelmholtzMedium(
   Density(min=fluidLimitsHMDS.DMIN, max=fluidLimitsHMDS.DMAX, start=fluidConstantsHMDS.molarMass/fluidConstantsHMDS.criticalMolarVolume),
   Temperature(min=fluidLimitsHMDS.TMIN, max=fluidLimitsHMDS.TMAX, start=298.15),
   AbsolutePressure(min=0, max=200e6, start=101325),
-  SpecificEnthalpy(min=fluidLimitsHMDS.HMIN, max=fluidLimitsHMDS.HMAX, start=(fluidLimitsHMDS.HMIN+fluidLimitsHMDS.HMAX)/2),
-  SpecificEntropy(min=fluidLimitsHMDS.SMIN, max=fluidLimitsHMDS.SMAX, start=(fluidLimitsHMDS.SMIN+fluidLimitsHMDS.SMAX)/2));
+  SpecificEnthalpy(min=fluidLimitsHMDS.HMIN, max=fluidLimitsHMDS.HMAX, start=0),
+  SpecificEntropy(min=fluidLimitsHMDS.SMIN, max=fluidLimitsHMDS.SMAX, start=0));
 
   final constant Interfaces.PartialHelmholtzMedium.FluidConstants
   fluidConstantsHMDS(

@@ -11,8 +11,8 @@ extends Interfaces.PartialHelmholtzMedium(
   Density(min=fluidLimitsHelium.DMIN, max=fluidLimitsHelium.DMAX, start=fluidConstantsHelium.molarMass/fluidConstantsHelium.criticalMolarVolume),
   Temperature(min=fluidLimitsHelium.TMIN, max=fluidLimitsHelium.TMAX, start=298.15),
   AbsolutePressure(min=0, max=1000e6, start=101325),
-  SpecificEnthalpy(min=fluidLimitsHelium.HMIN, max=fluidLimitsHelium.HMAX, start=(fluidLimitsHelium.HMIN+fluidLimitsHelium.HMAX)/2),
-  SpecificEntropy(min=fluidLimitsHelium.SMIN, max=fluidLimitsHelium.SMAX, start=(fluidLimitsHelium.SMIN+fluidLimitsHelium.SMAX)/2));
+  SpecificEnthalpy(min=fluidLimitsHelium.HMIN, max=fluidLimitsHelium.HMAX, start=0),
+  SpecificEntropy(min=fluidLimitsHelium.SMIN, max=fluidLimitsHelium.SMAX, start=0));
 
   final constant Interfaces.PartialHelmholtzMedium.FluidConstants
   fluidConstantsHelium(
