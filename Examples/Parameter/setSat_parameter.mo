@@ -1,13 +1,13 @@
 within HelmholtzMedia.Examples.Parameter;
 model setSat_parameter
-  package Medium = HelmholtzFluids.Propane;
+  package Medium = HelmholtzFluids.HMDS;
 
   Medium.SaturationProperties sat;
   Medium.SaturationProperties sat_p;
   Medium.SaturationProperties sat_dl;
   Medium.SaturationProperties sat_dv;
 
-  parameter Medium.Temperature T_input= Tcrit - 1e-6;
+  parameter Medium.Temperature T_input= Tcrit - 0.1;
 
 protected
   constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
