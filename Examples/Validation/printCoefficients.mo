@@ -3,7 +3,7 @@ model printCoefficients "pretty printing of EoS coefficients"
   package Medium = HelmholtzFluids.HMDS;
 
 protected
-  String fileName = "printlog.txt";
+  String fileName = "printCoefficients.txt";
 
 algorithm
   // if printing fails with error "Room to allocate string"
