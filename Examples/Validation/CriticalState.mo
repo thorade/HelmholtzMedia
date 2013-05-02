@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model CriticalState
-  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
+  package Medium = HelmholtzMedia.HelmholtzFluids.HMDS;
   Medium.ThermodynamicState criticalState;
 
 protected
