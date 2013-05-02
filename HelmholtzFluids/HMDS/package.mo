@@ -22,9 +22,9 @@ extends Interfaces.PartialHelmholtzMedium(
     iupacName="",
     molarMass=0.16237752,
     hasCriticalData=true,
-       criticalTemperature=518.75,
-       criticalPressure=1939000,
-       criticalMolarVolume=1/1589.825,
+       criticalTemperature=518.69997204,
+       criticalPressure=1939390,
+       criticalMolarVolume=1/1874.67076,
        HCRIT0=-1,
        SCRIT0=-1,
     hasIdealGasHeatCapacity=false,
@@ -59,25 +59,28 @@ extends Interfaces.PartialHelmholtzMedium(
   final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
   helmholtzCoefficientsHMDS(
     idealLog=[
-      +3.24680487,         1.],
+      +51.894/8.314472-1,           1],
     idealPower=[
-      -5.42495597,        0.;
-      4.919495781,         1.],
+      +27.190399518670100,                         0;
+      -7.398239887622509,                         1;
+      -741.34e-3/8.314472 /2 *518.69997204^1,   -1;
+      +416.10e-6/8.314472 /6 *518.69997204^2,   -2;
+      -70.000e-9/8.314472 /12*518.69997204^3,   -3],
     idealEinstein=fill(0.0, 0, 2),
     residualPoly=[
-       1.01686012,       0.25,    1.0,   0;
-      -2.19713029,       1.125,   1.0,   0;
-       0.75443188,       1.5,     1.0,   0;
-      -0.68003426,       1.375,   2.0,   0;
-       0.19082162,       0.25,    3.0,   0;
-       0.10530133E-2,    0.875,   7.0,   0],
+       1.01686012,       0.25,    1,   0;
+      -2.19713029,       1.125,   1,   0;
+       0.75443188,       1.5,     1,   0;
+      -0.68003426,       1.375,   2,   0;
+       0.19082162,       0.25,    3,   0;
+       0.10530133E-2,    0.875,   7,   0],
     residualBwr=[
-       0.62845950,       0.625,   2.0,   1;
-       0.30903042E-1,    1.75,    5.0,   1;
-      -0.83948727,       3.625,   1.0,   2;
-      -0.20262381,       3.625,   4.0,   2;
-      -0.35131597E-1,   14.5,     3.0,   3;
-       0.25902341E-1,   12.0,     4.0,   3],
+       0.62845950,       0.625,   2,   1;
+       0.30903042E-1,    1.75,    5,   1;
+      -0.83948727,       3.625,   1,   2;
+      -0.20262381,       3.625,   4,   2;
+      -0.35131597E-1,   14.5,     3,   3;
+       0.25902341E-1,   12.0,     4,   3],
      residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
   final constant

@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model ReferenceState
-  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
+  package Medium = HelmholtzMedia.HelmholtzFluids.HMDS;
   Medium.SpecificEnthalpy h_ref;
   Medium.SpecificEntropy s_ref;
 
@@ -22,10 +22,11 @@ algorithm
 
   // While csv originally stood for comma-seperated-values, MS Excel uses semicolons to seperate the values
   // Modelica.Utilities.Streams.print("idealPower[1,1];" + "s_ref;" + "idealPower[2,1];" + "h_ref;", fileName);
-  Modelica.Utilities.Streams.print( String(Medium.helmholtzCoefficients.idealPower[1,1],significantDigits=15)+";"
-                                   +String(s_ref,significantDigits=15)+";"
-                                   +String(Medium.helmholtzCoefficients.idealPower[2,1],significantDigits=15)+";"
-                                   +String(h_ref,significantDigits=15)+";",
+  // Modelica.Utilities.Streams.print("idealPower1;" + "sref;" + "idealPower2;" + "href;", fileName);
+  Modelica.Utilities.Streams.print( String(Medium.helmholtzCoefficients.idealPower[1,1],significantDigits=30)+";"
+                                   +String(s_ref,significantDigits=30)+";"
+                                   +String(Medium.helmholtzCoefficients.idealPower[2,1],significantDigits=30)+";"
+                                   +String(h_ref,significantDigits=30)+";",
                                     fileName);
 
 annotation (
