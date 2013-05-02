@@ -107,16 +107,7 @@ extends Interfaces.PartialHelmholtzMedium(
     epsilon_kappa=1,
     CET=fill(0.0, 0, 2),
     a=fill(0.0, 0, 2),
-    b=[
-    -19.572881,       0.00;
-     219.73999,      -0.25;
-    -1015.3226,      -0.50;
-     2471.01251,     -0.75;
-    -3375.1717,      -1.00;
-     2491.6597,      -1.25;
-    -787.26086,      -1.50;
-     14.085455,      -2.50;
-    -0.34664158,     -5.50],
+    b=fill(0.0, 0, 2),
     reducingTemperature_residual=1,
     reducingMolarVolume_residual=1,
     reducingViscosity_residual=1,
