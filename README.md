@@ -16,7 +16,7 @@ _VDI Thermodynamik-Kolloquium 2012_
 _Environmental Earth Sciences_, 
 doi:10.1007/s12665-013-2394-z
 
-The following fluids have been implemented with EoS and transport properties: 
+The following fluids have been implemented with EoS and transport properties:  
 [Butane](HelmholtzFluids/Butane/package.mo), 
 [Ethanol](HelmholtzFluids/Ethanol/package.mo), 
 [Isobutane](HelmholtzFluids/Isobutane/package.mo), 
@@ -25,7 +25,7 @@ The following fluids have been implemented with EoS and transport properties:
 [Propane](HelmholtzFluids/Propane/package.mo), 
 [R134a](HelmholtzFluids/R134a/package.mo) (with three reference states). 
 
-The following fluids have been implemented with EoS only: 
+The following fluids have been implemented with EoS only:  
 [Helium](HelmholtzFluids/Helium/package.mo) (has convergence problems in the far super-critical region),  [Hexamethyldisiloxane (HMDS)](HelmholtzFluids/HMDS/package.mo) (has convergence problems close to critical point). 
 
 ## Current release
