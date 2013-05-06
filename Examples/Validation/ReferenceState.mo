@@ -47,5 +47,5 @@ there are at least three standard reference states:
 
 </dl>
 </html>"),
-experiment(NumberOfIntervals=1));
+experiment(NumberOfIntervals=1, Tolerance=1e-012));
 end ReferenceState;
