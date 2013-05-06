@@ -6,9 +6,6 @@ This library calculates fluid properties from an equation of state (EoS) directl
 It supports EoS of the form f=f(T,d) meaning Helmholtz energy as a funtion of temperature and density.
 In addition to all state properties, this library calculates viscosity, thermal conductivity and surface tension.  
 
-The following fluids have been implemented so far:
-Butane, Ethanol, Isobutane, Isopentane, Pentane, Propane, R134a
-
 A general description of the library can be found in the related publications:
 * Thorade, M. and Saadat, A. (2012). "[HelmholtzMedia - A fluid properties library][1]", 
 _Proceedings of the 9th International Modelica Conference_, 
@@ -19,8 +16,21 @@ _VDI Thermodynamik-Kolloquium 2012_
 _Environmental Earth Sciences_, 
 doi:10.1007/s12665-013-2394-z
 
+The following fluids have been implemented with EoS and transport properties:
+* [Butane](HelmholtzFluids/Butane/package.mo)
+* [Ethanol](HelmholtzFluids/Ethanol/package.mo)
+* [Isobutane](HelmholtzFluids/Isobutane/package.mo)
+* [Isopentane](HelmholtzFluids/Isopentane/package.mo)
+* [Pentane](HelmholtzFluids/Pentane/package.mo)
+* [Propane](HelmholtzFluids/Propane/package.mo)
+* [R134a](HelmholtzFluids/R134a/package.mo) (with three reference states)
+
+The following fluids have been implemented with EoS only:
+* [Helium](HelmholtzFluids/Helium/package.mo) (has convergence problems in the far super-critical region)
+* [Hexamethyldisiloxane (HMDS)](HelmholtzFluids/HMDS/package.mo) (has convergence problems close to critical point)
+
 ## Current release
-Download the newest [tagged version](https://github.com/thorade/HelmholtzMedia/tags).  
+Download the newest [tagged version](../../tags).  
 In the future, there might be a release branch and official releases.
 
 ## License
