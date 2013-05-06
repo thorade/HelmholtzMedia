@@ -168,7 +168,6 @@ extends Interfaces.PartialHelmholtzMedium(
 
   annotation (Documentation(info="<html>
 These are the coefficients for Helium. 
-Warning: The transport properties are those of n-Butane!
 
 <dl>
 <dt> Ortiz-Vega, D.O., Hall, K.R., Arp, V.D., and Lemmon, E.W.</dt>
