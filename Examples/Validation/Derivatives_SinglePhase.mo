@@ -453,7 +453,7 @@ equation
   assert(dpdT_analytical>0, "mechanical stability violated");
   assert(dsTd_analytical>0, "heat capacity violated");
   assert(duTd_analytical>0, "isochoric heat capacity violated");
-  assert(dhTp_analytical>0, "isochoric heat capacity violated");
+  assert(dhTp_analytical>0, "isobaric heat capacity violated");
 
   // assertions for Maxwell relations
   assert((-state.d^2*dsdT_analytical - dpTd_analytical)<eps, "Maxwell svT relation violated");
