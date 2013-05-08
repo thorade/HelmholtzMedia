@@ -33,7 +33,7 @@ Download the newest [tagged version](../../tags).
 In the future, there might be a release branch and official releases.
 
 ## License
-Copyright &copy; 2009-2013 Helmholtz Centre Potsdam, GFZ German Research Centre for Geosciences
+Copyright © 2009-2013 Helmholtz Centre Potsdam, GFZ German Research Centre for Geosciences
 
 This Modelica package is free software and the use is completely at your own risk;  
 it can be redistributed and/or modified under the terms of the [Modelica License 2](https://www.modelica.org/licenses/ModelicaLicense2) or newer.  
