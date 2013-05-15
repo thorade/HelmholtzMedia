@@ -7,13 +7,13 @@ function f_rddd "residual part of dimensionless Helmholtz energy"
     "residual part of dimensionless Helmholtz energy";
 
 protected
-  Integer nPoly = size(helmholtzCoefficients.residualPoly,1);
-  Integer nBwr = size(helmholtzCoefficients.residualBwr,1);
-  Integer nGauss = size(helmholtzCoefficients.residualGauss,1);
+  final constant Integer nPoly = size(helmholtzCoefficients.residualPoly,1);
+  final constant Integer nBwr = size(helmholtzCoefficients.residualBwr,1);
+  final constant Integer nGauss = size(helmholtzCoefficients.residualGauss,1);
 
-  Real[nPoly,4] p = helmholtzCoefficients.residualPoly;
-  Real[nBwr,4] b = helmholtzCoefficients.residualBwr;
-  Real[nGauss,9] g = helmholtzCoefficients.residualGauss;
+  final constant Real[nPoly,4] p = helmholtzCoefficients.residualPoly;
+  final constant Real[nBwr,4] b = helmholtzCoefficients.residualBwr;
+  final constant Real[nGauss,9] g = helmholtzCoefficients.residualGauss;
 
 algorithm
   f_residual_delta_delta_delta :=
