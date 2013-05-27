@@ -128,11 +128,9 @@ protected
 
     // set necessary parts of fl and fv
     fl.r   := EoS.f_r(tau=tau, delta=delta_liq);
-    fl.rd  := EoS.f_rd(tau=tau, delta=delta_liq);
-    fl.rdd := EoS.f_rdd(tau=tau, delta=delta_liq);
     fv.r   := EoS.f_r(tau=tau, delta=delta_vap);
+    fl.rd  := EoS.f_rd(tau=tau, delta=delta_liq);
     fv.rd  := EoS.f_rd(tau=tau, delta=delta_vap);
-    fv.rdd := EoS.f_rdd(tau=tau, delta=delta_vap);
 
     // dimensionless pressure difference liquid-vapor
     J_liq := delta_liq*(1 + delta_liq*fl.rd);
@@ -151,7 +149,9 @@ protected
       // Modelica.Utilities.Streams.print("Delta_J=" + String(Delta_J) + " and Delta_K=" + String(Delta_K), "printlog.txt");
       iter := iter+1;
 
-      // calculate gradients
+      // set additional parts of fl and fv, then calculate gradients
+      fl.rdd := EoS.f_rdd(tau=tau, delta=delta_liq);
+      fv.rdd := EoS.f_rdd(tau=tau, delta=delta_vap);
       J_liq_delta := 1 + 2*delta_liq*fl.rd + delta_liq*delta_liq*fl.rdd;
       J_vap_delta := 1 + 2*delta_vap*fv.rd + delta_vap*delta_vap*fv.rdd;
       K_liq_delta := 2*fl.rd+ delta_liq*fl.rdd + 1/delta_liq;
@@ -168,13 +168,11 @@ protected
       delta_liq := max(Modelica.Constants.small, delta_liq);
       delta_vap := max(Modelica.Constants.small, delta_vap);
 
-      // set necessary parts of fl and fv using new values
+      // update fl and fv
       fl.r   := EoS.f_r(tau=tau, delta=delta_liq);
-      fl.rd  := EoS.f_rd(tau=tau, delta=delta_liq);
-      fl.rdd := EoS.f_rdd(tau=tau, delta=delta_liq);
       fv.r   := EoS.f_r(tau=tau, delta=delta_vap);
+      fl.rd  := EoS.f_rd(tau=tau, delta=delta_liq);
       fv.rd  := EoS.f_rd(tau=tau, delta=delta_vap);
-      fv.rdd := EoS.f_rdd(tau=tau, delta=delta_vap);
 
       // dimensionless pressure difference liquid-vapor
       J_liq := delta_liq*(1 + delta_liq*fl.rd);
