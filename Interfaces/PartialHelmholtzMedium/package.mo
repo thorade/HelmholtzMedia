@@ -253,12 +253,10 @@ protected
     // Modelica.Utilities.Streams.print("setSat_p: p=" + String(p), "printlog.txt");
 
   if ((p>p_trip) and (p<p_crit)) then
-    // calculate start values
-    // sat.Tsat  := 1/(1/T_crit - (1/T_trip-1/T_crit)/log(p_crit/p_trip)*log(p/p_crit));
-    // at lower p the difference between dl and dv is bigger
-    sat.Tsat := 0.99*Ancillary.saturationTemperature_p(p=p);
-    sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
-    sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
+    // calculate start values, density should be outside of two-phase dome
+    sat.Tsat := Ancillary.saturationTemperature_p(p=p);
+    sat.liq.d := 1.02*Ancillary.bubbleDensity_T(T=sat.Tsat);
+    sat.vap.d := 0.98*Ancillary.dewDensity_T(T=sat.Tsat);
 
     // calculate residuals: RES=calc-input
     fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
