@@ -96,6 +96,9 @@ protected
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real tau(unit="1") "inverse reduced temperature";
 
+    EoS.HelmholtzDerivs fl(T=T);
+    EoS.HelmholtzDerivs fv(T=T);
+
     Real delta_liq(unit="1", min=0);
     Real delta_vap(unit="1", min=0);
     Real J_liq;
@@ -123,15 +126,22 @@ protected
     delta_liq := Ancillary.bubbleDensity_T(T=T)/d_crit;
     delta_vap := Ancillary.dewDensity_T(T=T)/d_crit;
 
-    // pressure difference liquid-vapor
-    J_liq := delta_liq*(1 + delta_liq*EoS.f_rd(tau=tau, delta=delta_liq));
-    J_vap := delta_vap*(1 + delta_vap*EoS.f_rd(tau=tau, delta=delta_vap));
+    // set necessary parts of fl and fv
+    fl.r   := EoS.f_r(tau=tau, delta=delta_liq);
+    fl.rd  := EoS.f_rd(tau=tau, delta=delta_liq);
+    fl.rdd := EoS.f_rdd(tau=tau, delta=delta_liq);
+    fv.r   := EoS.f_r(tau=tau, delta=delta_vap);
+    fv.rd  := EoS.f_rd(tau=tau, delta=delta_vap);
+    fv.rdd := EoS.f_rdd(tau=tau, delta=delta_vap);
+
+    // dimensionless pressure difference liquid-vapor
+    J_liq := delta_liq*(1 + delta_liq*fl.rd);
+    J_vap := delta_vap*(1 + delta_vap*fv.rd);
     Delta_J := (J_vap-J_liq);
 
-    // Gibbs energy difference liquid-vapor
-    K_liq := delta_liq*EoS.f_rd(tau=tau, delta=delta_liq) + EoS.f_r(tau=tau, delta=delta_liq) + log(delta_liq);
-    K_vap := delta_vap*EoS.f_rd(
-                            tau=tau, delta=delta_vap) + EoS.f_r(tau=tau, delta=delta_vap) + log(delta_vap);
+    // dimensionless Gibbs energy difference liquid-vapor
+    K_liq := delta_liq*fl.rd + fl.r + log(delta_liq);
+    K_vap := delta_vap*fv.rd + fv.r + log(delta_vap);
     Delta_K := (K_vap-K_liq);
 
     while (abs(Delta_J) + abs(Delta_K) > tolerance) loop
@@ -142,10 +152,10 @@ protected
       iter := iter+1;
 
       // calculate gradients
-      J_liq_delta := 1 + 2*delta_liq*EoS.f_rd(tau=tau, delta=delta_liq) + delta_liq^2*EoS.f_rdd(tau=tau, delta=delta_liq);
-      J_vap_delta := 1 + 2*delta_vap*EoS.f_rd(tau=tau, delta=delta_vap) + delta_vap^2*EoS.f_rdd(tau=tau, delta=delta_vap);
-      K_liq_delta := 2*EoS.f_rd(tau=tau, delta=delta_liq) + delta_liq*EoS.f_rdd(tau=tau, delta=delta_liq) + 1/delta_liq;
-      K_vap_delta := 2*EoS.f_rd(tau=tau, delta=delta_vap) + delta_vap*EoS.f_rdd(tau=tau, delta=delta_vap) + 1/delta_vap;
+      J_liq_delta := 1 + 2*delta_liq*fl.rd + delta_liq*delta_liq*fl.rdd;
+      J_vap_delta := 1 + 2*delta_vap*fv.rd + delta_vap*delta_vap*fv.rdd;
+      K_liq_delta := 2*fl.rd+ delta_liq*fl.rdd + 1/delta_liq;
+      K_vap_delta := 2*fv.rd + delta_vap*fv.rdd + 1/delta_vap;
 
       // calculate determinant of Jacobi matrix
       det := J_vap_delta*K_liq_delta - J_liq_delta*K_vap_delta;
@@ -158,13 +168,22 @@ protected
       delta_liq := max(Modelica.Constants.small, delta_liq);
       delta_vap := max(Modelica.Constants.small, delta_vap);
 
-      // calculate new Delta_J and Delta_K
-      J_liq := delta_liq*(1 + delta_liq*EoS.f_rd(tau=tau, delta=delta_liq));
-      J_vap := delta_vap*(1 + delta_vap*EoS.f_rd(tau=tau, delta=delta_vap));
+      // set necessary parts of fl and fv using new values
+      fl.r   := EoS.f_r(tau=tau, delta=delta_liq);
+      fl.rd  := EoS.f_rd(tau=tau, delta=delta_liq);
+      fl.rdd := EoS.f_rdd(tau=tau, delta=delta_liq);
+      fv.r   := EoS.f_r(tau=tau, delta=delta_vap);
+      fv.rd  := EoS.f_rd(tau=tau, delta=delta_vap);
+      fv.rdd := EoS.f_rdd(tau=tau, delta=delta_vap);
+
+      // dimensionless pressure difference liquid-vapor
+      J_liq := delta_liq*(1 + delta_liq*fl.rd);
+      J_vap := delta_vap*(1 + delta_vap*fv.rd);
       Delta_J := (J_vap-J_liq);
 
-      K_liq := delta_liq*EoS.f_rd(tau=tau, delta=delta_liq) + EoS.f_r(tau=tau, delta=delta_liq) + log(delta_liq);
-      K_vap := delta_vap*EoS.f_rd(tau=tau, delta=delta_vap) + EoS.f_r(tau=tau, delta=delta_vap) + log(delta_vap);
+      // dimensionless Gibbs energy difference liquid-vapor
+      K_liq := delta_liq*fl.rd + fl.r + log(delta_liq);
+      K_vap := delta_vap*fv.rd + fv.r + log(delta_vap);
       Delta_K := (K_vap-K_liq);
     end while;
     // Modelica.Utilities.Streams.print("setSat_T total iteration steps " + String(iter), "printlog.txt");
