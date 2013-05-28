@@ -94,7 +94,7 @@ protected
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real tau(unit="1") "inverse reduced temperature";
+    constant Real tau(unit="1")=T_crit/T "inverse reduced temperature";
 
     EoS.HelmholtzDerivs fl(T=T);
     EoS.HelmholtzDerivs fv(T=T);
@@ -114,14 +114,13 @@ protected
     Real det "determinant of Jacobi matrix";
     Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
     Integer iter=0;
+    constant Integer iter_max = 200;
     Real tolerance=1e-9 "Tolerance for sum of Delta_J and Delta_K";
 
   algorithm
     // Modelica.Utilities.Streams.print("setSat_T: T="+String(T),"printlog.txt");
 
   if ((T>=T_trip) and (T<T_crit)) then
-    tau := T_crit/T;
-
     // calculate guess values for reduced density delta
     delta_liq := Ancillary.bubbleDensity_T(T=T)/d_crit;
     delta_vap := Ancillary.dewDensity_T(T=T)/d_crit;
@@ -142,7 +141,7 @@ protected
     K_vap := delta_vap*fv.rd + fv.r + log(delta_vap);
     Delta_K := (K_vap-K_liq);
 
-    while (abs(Delta_J) + abs(Delta_K) > tolerance) loop
+    while (abs(Delta_J) + abs(Delta_K) > tolerance) and (iter<iter_max) loop
       // Modelica.Utilities.Streams.print(" ", "printlog.txt");
       // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
       // Modelica.Utilities.Streams.print("delta_liq=" + String(delta_liq) + " and delta_vap=" + String(delta_vap), "printlog.txt");
@@ -165,8 +164,10 @@ protected
       delta_vap := delta_vap + gamma/det*((K_vap - K_liq)*J_liq_delta - (J_vap - J_liq)*K_liq_delta);
 
       // check bounds
-      delta_liq := max(Modelica.Constants.small, delta_liq);
-      delta_vap := max(Modelica.Constants.small, delta_vap);
+      //delta_liq := max(delta_liq, 1);
+      delta_liq := min(delta_liq, Modelica.Constants.inf);
+      delta_vap := max(delta_vap, Modelica.Constants.small);
+      delta_vap := min(delta_vap, 1);
 
       // update fl and fv
       fl.r   := EoS.f_r(tau=tau, delta=delta_liq);
@@ -185,6 +186,12 @@ protected
       Delta_K := (K_vap-K_liq);
     end while;
     // Modelica.Utilities.Streams.print("setSat_T total iteration steps " + String(iter), "printlog.txt");
+
+    // check all bounds again
+    delta_liq := max(delta_liq, 1);
+    delta_liq := min(delta_liq, Modelica.Constants.inf);
+    delta_vap := max(delta_vap, Modelica.Constants.small);
+    delta_vap := min(delta_vap, 1);
 
     sat.Tsat := T;
     sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
