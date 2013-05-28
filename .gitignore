@@ -16,6 +16,7 @@ dymosim.lib
 *.mof
 request
 status
+stop
 
 # ignore pdf files
 *.pdf
