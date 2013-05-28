@@ -105,17 +105,20 @@ protected
     Real J_liq_delta;
     Real J_vap;
     Real J_vap_delta;
-    Real Delta_J;
     Real K_liq;
     Real K_liq_delta;
     Real K_vap;
     Real K_vap_delta;
-    Real Delta_K;
-    Real det "determinant of Jacobi matrix";
-    Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
-    Integer iter=0;
+
+    Real RES[2] "residual function vector";
+    Real RSS "residual sum of squares";
+    Real Jacobian[2,2] "Jacobian matrix";
+    Real NS[2] "Newton step vector";
+
+    constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
+    constant Real tolerance=1e-6 "tolerance for RSS";
+    Integer iter = 0;
     constant Integer iter_max = 200;
-    Real tolerance=1e-9 "Tolerance for sum of Delta_J and Delta_K";
 
   algorithm
     // Modelica.Utilities.Streams.print("setSat_T: T="+String(T),"printlog.txt");
@@ -131,40 +134,36 @@ protected
     fl.rd  := EoS.f_rd(tau=tau, delta=delta_liq);
     fv.rd  := EoS.f_rd(tau=tau, delta=delta_vap);
 
-    // dimensionless pressure difference liquid-vapor
+    // dimensionless pressure
     J_liq := delta_liq*(1 + delta_liq*fl.rd);
     J_vap := delta_vap*(1 + delta_vap*fv.rd);
-    Delta_J := (J_vap-J_liq);
-
-    // dimensionless Gibbs energy difference liquid-vapor
+    // dimensionless Gibbs energy
     K_liq := delta_liq*fl.rd + fl.r + log(delta_liq);
     K_vap := delta_vap*fv.rd + fv.r + log(delta_vap);
-    Delta_K := (K_vap-K_liq);
+    // residual vector
+    RES := {(J_vap-J_liq), (K_vap-K_liq)};
+    RSS := RES*RES/2;
 
-    while (abs(Delta_J) + abs(Delta_K) > tolerance) and (iter<iter_max) loop
-      // Modelica.Utilities.Streams.print(" ", "printlog.txt");
-      // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
-      // Modelica.Utilities.Streams.print("delta_liq=" + String(delta_liq) + " and delta_vap=" + String(delta_vap), "printlog.txt");
-      // Modelica.Utilities.Streams.print("Delta_J=" + String(Delta_J) + " and Delta_K=" + String(Delta_K), "printlog.txt");
+    while (RSS>tolerance) and (iter<iter_max) loop
       iter := iter+1;
 
-      // set additional parts of fl and fv, then calculate gradients
+      // calculate gradients of J and K, set up Jacobian matrix, get Newton step
       fl.rdd := EoS.f_rdd(tau=tau, delta=delta_liq);
       fv.rdd := EoS.f_rdd(tau=tau, delta=delta_vap);
       J_liq_delta := 1 + 2*delta_liq*fl.rd + delta_liq*delta_liq*fl.rdd;
       J_vap_delta := 1 + 2*delta_vap*fv.rd + delta_vap*delta_vap*fv.rdd;
-      K_liq_delta := 2*fl.rd+ delta_liq*fl.rdd + 1/delta_liq;
+      K_liq_delta := 2*fl.rd + delta_liq*fl.rdd + 1/delta_liq;
       K_vap_delta := 2*fv.rd + delta_vap*fv.rdd + 1/delta_vap;
-
-      // calculate determinant of Jacobi matrix
-      det := J_vap_delta*K_liq_delta - J_liq_delta*K_vap_delta;
+      Jacobian := [-J_liq_delta, J_vap_delta;
+                   -K_liq_delta, K_vap_delta];
+      NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
 
       // calculate better values for reduced density delta
-      delta_liq := delta_liq + gamma/det*((K_vap - K_liq)*J_vap_delta - (J_vap - J_liq)*K_vap_delta);
-      delta_vap := delta_vap + gamma/det*((K_vap - K_liq)*J_liq_delta - (J_vap - J_liq)*K_liq_delta);
+      delta_liq := delta_liq + lambda*NS[1];
+      delta_vap := delta_vap + lambda*NS[2];
 
       // check bounds
-      //delta_liq := max(delta_liq, 1);
+      delta_liq := max(delta_liq, 1);
       delta_liq := min(delta_liq, Modelica.Constants.inf);
       delta_vap := max(delta_vap, Modelica.Constants.small);
       delta_vap := min(delta_vap, 1);
@@ -175,23 +174,18 @@ protected
       fl.rd  := EoS.f_rd(tau=tau, delta=delta_liq);
       fv.rd  := EoS.f_rd(tau=tau, delta=delta_vap);
 
-      // dimensionless pressure difference liquid-vapor
+      // dimensionless pressure
       J_liq := delta_liq*(1 + delta_liq*fl.rd);
       J_vap := delta_vap*(1 + delta_vap*fv.rd);
-      Delta_J := (J_vap-J_liq);
-
-      // dimensionless Gibbs energy difference liquid-vapor
+      // dimensionless Gibbs energy
       K_liq := delta_liq*fl.rd + fl.r + log(delta_liq);
       K_vap := delta_vap*fv.rd + fv.r + log(delta_vap);
-      Delta_K := (K_vap-K_liq);
+      // residual vector
+      RES := {(J_vap-J_liq), (K_vap-K_liq)};
+      RSS := RES*RES/2;
+
     end while;
     // Modelica.Utilities.Streams.print("setSat_T total iteration steps " + String(iter), "printlog.txt");
-
-    // check all bounds again
-    delta_liq := max(delta_liq, 1);
-    delta_liq := min(delta_liq, Modelica.Constants.inf);
-    delta_vap := max(delta_vap, Modelica.Constants.small);
-    delta_vap := min(delta_vap, 1);
 
     sat.Tsat := T;
     sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
