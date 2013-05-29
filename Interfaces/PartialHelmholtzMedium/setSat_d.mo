@@ -25,7 +25,7 @@ protected
   Real NS[2] "Newton step vector";
 
   constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
-  constant Real tolerance=1e-6 "tolerance for RSS";
+  constant Real tolerance=1e-9 "tolerance for RSS";
   Integer iter = 0;
   constant Integer iter_max = 200;
 
@@ -33,10 +33,10 @@ algorithm
   // Modelica.Utilities.Streams.print(" ", "printlog.txt");
   // Modelica.Utilities.Streams.print("setSat_d: d="+String(d),"printlog.txt");
 
-  sat.Tsat := 0.99*Ancillary.saturationTemperature_d(d=d);
+  sat.Tsat := Ancillary.saturationTemperature_d(d=d);
   if (d<d_crit) and (d>dv_trip) then
     // Modelica.Utilities.Streams.print("d<d_crit: input is on vapour side: find d_liq and T_sat", "printlog.txt");
-    sat.liq.d := Ancillary.bubbleDensity_T(sat.Tsat);
+    sat.liq.d := 1.02*Ancillary.bubbleDensity_T(sat.Tsat);
     sat.vap.d := d; // d_vap is a constant
 
     // calculate residuals: liq-vap (=var-const)
@@ -75,7 +75,7 @@ algorithm
 
   elseif (d>d_crit) and (d<dl_trip) then
     // Modelica.Utilities.Streams.print("d>d_crit: input is on liquid side: find d_vap and T_sat", "printlog.txt");
-    sat.vap.d := Ancillary.dewDensity_T(sat.Tsat);
+    sat.vap.d := 0.98*Ancillary.dewDensity_T(sat.Tsat);
     sat.liq.d := d; // d_liq is a constant
 
     // calculate residuals: vap-liq (=var-const)
@@ -126,6 +126,6 @@ algorithm
     sat.vap := setState_dTX(d=d_crit, T=T_crit, phase=1);
   end if;
   // Modelica.Utilities.Streams.print("setSat_d total iteration steps " + String(iter), "printlog.txt");
-  assert(iter<iter_max, "setSat_d did not converge, input was d=" + String(d));
+  assert(iter<iter_max, "setSat_d did not converge, input was d=" + String(d)+ "; the remaining residuals are RES[1]=" + String(RES[1]) + " and RES[2]=" + String(RES[2]));
 
 end setSat_d;

@@ -116,7 +116,7 @@ protected
     Real NS[2] "Newton step vector";
 
     constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-6 "tolerance for RSS";
+    constant Real tolerance=1e-18 "tolerance for RSS";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -125,8 +125,8 @@ protected
 
   if ((T>=T_trip) and (T<T_crit)) then
     // calculate guess values for reduced density delta
-    delta_liq := Ancillary.bubbleDensity_T(T=T)/d_crit;
-    delta_vap := Ancillary.dewDensity_T(T=T)/d_crit;
+    delta_liq := 1.02*Ancillary.bubbleDensity_T(T=T)/d_crit;
+    delta_vap := 0.98*Ancillary.dewDensity_T(T=T)/d_crit;
 
     // set necessary parts of fl and fv
     fl.r   := EoS.f_r(tau=tau, delta=delta_liq);
@@ -190,7 +190,7 @@ protected
     sat.Tsat := T;
     sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
     sat.vap := setState_dTX(d=delta_vap*d_crit, T=T, phase=1);
-    sat.psat := sat.liq.p;
+    sat.psat := (sat.liq.p+sat.vap.p)/2;
 
   elseif (T>=T_crit) then
     // assert(T <= T_crit, "setSat_T error: Temperature is higher than critical temperature", level=AssertionLevel.warning);
@@ -202,7 +202,7 @@ protected
     sat.Tsat := T;
     sat.liq := setState_dTX(d=d_crit, T=T, phase=1);
     sat.vap := setState_dTX(d=d_crit, T=T, phase=1);
-    sat.psat := sat.liq.p;
+    sat.psat := (sat.liq.p+sat.vap.p)/2;
   else
     // assert(T >= T_trip, "setSat_T error: Temperature is lower than triple-point temperature", level=AssertionLevel.warning);
     // T<T_trip: this does not make sense: if T is below the triple temperature, the medium is solid, not fluid
@@ -214,7 +214,7 @@ protected
 
     sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
     sat.vap := setState_dTX(d=delta_vap*d_crit, T=T, phase=1);
-    sat.psat := sat.liq.p;
+    sat.psat := (sat.liq.p+sat.vap.p)/2;
   end if;
 
   annotation (Documentation(info="
@@ -262,7 +262,7 @@ protected
     Real NS[3] "Newton step vector";
 
     constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-4 "tolerance for RSS";
+    constant Real tolerance=1e-9 "tolerance for RSS";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
