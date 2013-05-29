@@ -187,8 +187,7 @@ protected
     end while;
     // Modelica.Utilities.Streams.print("setSat_T total iteration steps " + String(iter), "printlog.txt");
     assert(iter<iter_max, "setSat_T did not converge, input was T=" + String(T) +
-                          "; the remaining residuals are RES_pl=" + String(RES[1]) +
-                          " and RES_J=" + String(RES[1]) +
+                          "; the remaining residuals are RES_J=" + String(RES[1]) +
                           " and RES_K=" + String(RES[2]));
 
     sat.Tsat := T;
