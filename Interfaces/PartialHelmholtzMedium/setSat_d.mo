@@ -126,6 +126,8 @@ algorithm
     sat.vap := setState_dTX(d=d_crit, T=T_crit, phase=1);
   end if;
   // Modelica.Utilities.Streams.print("setSat_d total iteration steps " + String(iter), "printlog.txt");
-  assert(iter<iter_max, "setSat_d did not converge, input was d=" + String(d)+ "; the remaining residuals are RES[1]=" + String(RES[1]) + " and RES[2]=" + String(RES[2]));
+  assert(iter<iter_max, "setSat_d did not converge, input was d=" + String(d)+
+                        "; the remaining residuals are RES[1]=" + String(RES[1]) +
+                        " and RES[2]=" + String(RES[2]));
 
 end setSat_d;

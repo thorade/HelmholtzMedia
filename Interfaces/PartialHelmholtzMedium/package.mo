@@ -186,6 +186,10 @@ protected
 
     end while;
     // Modelica.Utilities.Streams.print("setSat_T total iteration steps " + String(iter), "printlog.txt");
+    assert(iter<iter_max, "setSat_T did not converge, input was T=" + String(T) +
+                          "; the remaining residuals are RES_pl=" + String(RES[1]) +
+                          " and RES_J=" + String(RES[1]) +
+                          " and RES_K=" + String(RES[2]));
 
     sat.Tsat := T;
     sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
@@ -312,7 +316,11 @@ protected
     end while;
     // if verbose then Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt"); end if;
     // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
-    assert(iter<iter_max, "setSat_p did not converge, input was p=" + String(p) + "; the remaining residuals are RES_pl=" + String(RES[1]) + " and RES_pv=" + String(RES[2]) + " and RES_g=" + String(RES[3]));
+    assert(iter<iter_max, "setSat_p did not converge, input was p=" + String(p) +
+                          "; the remaining residuals are RES_pl=" + String(RES[1]) +
+                          " and RES_pv=" + String(RES[2]) +
+                          " and RES_g=" + String(RES[3]));
+
     // check bounds, more strict
     sat.liq.d := max(sat.liq.d, d_crit);
     sat.liq.d := min(sat.liq.d, dl_trip);
