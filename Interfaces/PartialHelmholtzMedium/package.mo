@@ -1749,12 +1749,10 @@ The extended version has up to three terms with two parameters each.
     output Density d "Temperature";
 
   algorithm
-    d := density(setState_ph(p=p, h=h, phase=phase));
+    d := density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
 
   annotation (
-    derivative(noDerivative=phase)=density_ph_der,
-    inline=false,
-    lateInline=true,
+    Inline=true,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
 

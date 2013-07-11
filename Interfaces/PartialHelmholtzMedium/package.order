@@ -61,9 +61,10 @@ specificEnthalpy_ps
 specificEntropy_ph
 specificEnthalpy_pd
 density_ph
+density_ph_state
+density_ph_der
 density_derp_h
 density_derh_p
-density_ph_der
 density_derp_T
 density_derT_p
 saturationTemperature
