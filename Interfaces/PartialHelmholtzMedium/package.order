@@ -48,7 +48,6 @@ bubbleEntropy
 dewDensity
 bubbleDensity
 pressure_dT
-density_pT
 temperature_pd
 pressure_Ts
 temperature_ps
@@ -56,7 +55,6 @@ specificEntropy_pT
 density_Ts
 specificEntropy_dT
 specificEnthalpy_pT
-temperature_ph
 specificEnthalpy_ps
 specificEntropy_ph
 specificEnthalpy_pd
@@ -65,6 +63,14 @@ density_ph_state
 density_ph_der
 density_derp_h
 density_derh_p
+temperature_ph
+temperature_ph_state
+temperature_ph_der
+temperature_derp_h
+temperature_derh_p
+density_pT
+density_pT_state
+density_pT_der
 density_derp_T
 density_derT_p
 saturationTemperature

@@ -45,10 +45,10 @@ import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
 
   redeclare model extends BaseProperties(
-    h(stateSelect=StateSelect.prefer),
+    h(stateSelect=StateSelect.default),
     d(stateSelect=StateSelect.default),
     T(stateSelect=StateSelect.default),
-    p(stateSelect=StateSelect.prefer))
+    p(stateSelect=StateSelect.default))
   "Base properties (p, d, T, h, u, s) of a medium"
 
     SpecificEntropy s;
@@ -1669,15 +1669,6 @@ The extended version has up to three terms with two parameters each.
   end pressure_dT;
 
 
-  redeclare function extends density_pT
-  // input, output and algorithm are inherited from PartialTwoPhaseMedium
-
-  annotation (
-    inverse(p=pressure_dT(d=d, T=T, phase=phase),
-            T=temperature_pd(p=p, d=d, phase=phase)));
-  end density_pT;
-
-
   redeclare function temperature_ps "returns temperature for given p and d"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1710,21 +1701,6 @@ The extended version has up to three terms with two parameters each.
   end specificEnthalpy_pT;
 
 
-  redeclare function temperature_ph "returns temperature for given p and h"
-    extends Modelica.Icons.Function;
-    input AbsolutePressure p "Pressure";
-    input SpecificEnthalpy h "Enthalpy";
-    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output Temperature T "Temperature";
-
-  algorithm
-    T := temperature(setState_ph(p=p, h=h, phase=phase));
-
-  annotation (
-    inverse(h=specificEnthalpy_pT(p=p, T=T, phase=phase)));
-  end temperature_ph;
-
-
   redeclare function specificEnthalpy_ps
   "returns specific enthalpy for a given p and s"
     extends Modelica.Icons.Function;
@@ -1746,7 +1722,7 @@ The extended version has up to three terms with two parameters each.
     input AbsolutePressure p "Pressure";
     input SpecificEnthalpy h "Enthalpy";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output Density d "Temperature";
+    output Density d "density";
 
   algorithm
     d := density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
@@ -1826,6 +1802,40 @@ protected
       ddhp := -state.d^2*(1/sat.liq.d-1/sat.vap.d)/(sat.liq.h-sat.vap.h);
     end if;
   end density_derh_p;
+
+
+  redeclare function temperature_ph "returns temperature for given p and h"
+    extends Modelica.Icons.Function;
+    input AbsolutePressure p "Pressure";
+    input SpecificEnthalpy h "Enthalpy";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    output Temperature T "Temperature";
+
+  algorithm
+    T := temperature_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
+
+  annotation (
+    inverse(h=specificEnthalpy_pT(p=p, T=T, phase=phase)));
+  end temperature_ph;
+
+
+
+
+  redeclare function density_pT "Return density from p and T"
+    extends Modelica.Icons.Function;
+    input AbsolutePressure p "Pressure";
+    input Temperature T "Temperature";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    output Density d "Density";
+
+  algorithm
+    d := density_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
+
+  annotation (
+    inverse(p=pressure_dT(d=d, T=T, phase=phase),
+            T=temperature_pd(p=p, d=d, phase=phase)));
+  end density_pT;
+
 
 
   redeclare function extends density_derp_T
