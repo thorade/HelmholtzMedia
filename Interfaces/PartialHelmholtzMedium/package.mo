@@ -1815,10 +1815,9 @@ protected
     T := temperature_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
 
   annotation (
+    Inline=true,
     inverse(h=specificEnthalpy_pT(p=p, T=T, phase=phase)));
   end temperature_ph;
-
-
 
 
   redeclare function density_pT "Return density from p and T"
@@ -1832,10 +1831,10 @@ protected
     d := density_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
 
   annotation (
+    Inline=true,
     inverse(p=pressure_dT(d=d, T=T, phase=phase),
             T=temperature_pd(p=p, d=d, phase=phase)));
   end density_pT;
-
 
 
   redeclare function extends density_derp_T
