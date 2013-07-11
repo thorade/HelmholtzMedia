@@ -1724,16 +1724,11 @@ The extended version has up to three terms with two parameters each.
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
     output Density d "density";
 
-protected
-    ThermodynamicState state=setState_ph(p=p, h=h, phase=phase);
-
   algorithm
-    d := density(state);
+    d := density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
 
   annotation (
-    Inline=false,
-    LateInline=true,
-    derivative(noDerivative=phase)=density_ph_der,
+    Inline=true,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
 
