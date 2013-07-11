@@ -44,7 +44,11 @@ import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
   end SaturationProperties;
 
 
-  redeclare model extends BaseProperties
+  redeclare model extends BaseProperties(
+    h(stateSelect=StateSelect.default),
+    d(stateSelect=StateSelect.default),
+    T(stateSelect=StateSelect.default),
+    p(stateSelect=StateSelect.default))
   "Base properties (p, d, T, h, u, s) of a medium"
 
     SpecificEntropy s;
@@ -1748,7 +1752,9 @@ The extended version has up to three terms with two parameters each.
     d := density(setState_ph(p=p, h=h, phase=phase));
 
   annotation (
-    derivative=density_ph_der,
+    derivative(noDerivative=phase)=density_ph_der,
+    inline=false,
+    lateInline=true,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
 
