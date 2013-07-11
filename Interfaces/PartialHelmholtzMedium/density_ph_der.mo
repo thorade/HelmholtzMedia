@@ -3,6 +3,7 @@ function density_ph_der "time derivative of density_ph"
 
   input AbsolutePressure p;
   input SpecificEnthalpy h;
+//input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   input ThermodynamicState state;
   input Real p_der "time derivative of pressure";
   input Real h_der "time derivative of specific enthalpy";
