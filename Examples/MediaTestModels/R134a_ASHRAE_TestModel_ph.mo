@@ -1,5 +1,5 @@
 within HelmholtzMedia.Examples.MediaTestModels;
-model R134a_ASHRAE_TestModel "Test HelmholtzMedia.HelmholtzFluids.R134a"
+model R134a_ASHRAE_TestModel_ph "Test HelmholtzMedia.HelmholtzFluids.R134a"
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(
      redeclare package Medium = HelmholtzMedia.HelmholtzFluids.R134a_ASHRAE,
@@ -9,4 +9,4 @@ model R134a_ASHRAE_TestModel "Test HelmholtzMedia.HelmholtzFluids.R134a"
 
   annotation (experiment(StopTime=11));
 
-end R134a_ASHRAE_TestModel;
+end R134a_ASHRAE_TestModel_ph;
