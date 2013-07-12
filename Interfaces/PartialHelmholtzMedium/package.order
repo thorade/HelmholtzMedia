@@ -16,12 +16,12 @@ setSat_p
 setSat_d
 setBubbleState
 setDewState
-setState_dTX
+setState_dT
 setState_Tx
 setState_px
-setState_pTX
-setState_phX
-setState_psX
+setState_pT
+setState_ph
+setState_ps
 setState_pd
 setState_Ts
 temperature

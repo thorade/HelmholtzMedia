@@ -9,7 +9,7 @@ function pressure_dT_der "time derivative of pressure_dT"
   output Real der_p "Time derivative of pressure";
 
 protected
-  ThermodynamicState state=setState_dTX(d=d, T=T, phase=phase);
+  ThermodynamicState state=setState_dT( d=d, T=T, phase=phase);
 
 algorithm
   der_p := der_d*pressure_derd_T(state=state)

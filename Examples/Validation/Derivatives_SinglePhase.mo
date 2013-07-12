@@ -6,7 +6,7 @@ model Derivatives_SinglePhase
   // p and T always result in single-phase
   parameter Medium.AbsolutePressure p=101325;
   parameter Medium.Temperature T=298.15;
-  Medium.ThermodynamicState state=Medium.setState_pTX(p=p, T=T);
+  Medium.ThermodynamicState state=Interfaces.PartialHelmholtzMedium.setState_pT(p=p, T=T);
   Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsThird(T=state.T, d=state.d, phase=state.phase);
 
 // Pressure wrt. dT
@@ -128,24 +128,24 @@ model Derivatives_SinglePhase
 protected
   Real eps= 1e-5;
 
-  Medium.ThermodynamicState    dplus_Tconst=Medium.setState_dTX(d=state.d+eps*state.d, T=state.T);
+  Medium.ThermodynamicState    dplus_Tconst=Interfaces.PartialHelmholtzMedium.setState_dT(d=state.d+eps*state.d, T=state.T);
   Medium.EoS.HelmholtzDerivs f_dplus_Tconst=Medium.EoS.setHelmholtzDerivsThird(T=state.T, d=dplus_Tconst.d, phase=state.phase);
-  Medium.ThermodynamicState    dminus_Tconst=Medium.setState_dTX(d=state.d-eps*state.d, T=state.T);
+  Medium.ThermodynamicState    dminus_Tconst=Interfaces.PartialHelmholtzMedium.setState_dT(d=state.d-eps*state.d, T=state.T);
   Medium.EoS.HelmholtzDerivs f_dminus_Tconst=Medium.EoS.setHelmholtzDerivsThird(T=state.T, d=dminus_Tconst.d, phase=state.phase);
 
-  Medium.ThermodynamicState    Tplus_dconst=Medium.setState_dTX(d=state.d, T=state.T+eps*state.T);
+  Medium.ThermodynamicState    Tplus_dconst=Interfaces.PartialHelmholtzMedium.setState_dT(d=state.d, T=state.T+eps*state.T);
   Medium.EoS.HelmholtzDerivs f_Tplus_dconst=Medium.EoS.setHelmholtzDerivsThird(T=Tplus_dconst.T, d=state.d, phase=state.phase);
-  Medium.ThermodynamicState    Tminus_dconst=Medium.setState_dTX(d=state.d, T=state.T-eps*state.T);
+  Medium.ThermodynamicState    Tminus_dconst=Interfaces.PartialHelmholtzMedium.setState_dT(d=state.d, T=state.T-eps*state.T);
   Medium.EoS.HelmholtzDerivs f_Tminus_dconst=Medium.EoS.setHelmholtzDerivsThird(T=Tminus_dconst.T, d=state.d, phase=state.phase);
 
-  Medium.ThermodynamicState    pplus_Tconst=Medium.setState_pTX(p=state.p+eps*state.p, T=state.T);
+  Medium.ThermodynamicState    pplus_Tconst=Interfaces.PartialHelmholtzMedium.setState_pT(p=state.p+eps*state.p, T=state.T);
   Medium.EoS.HelmholtzDerivs f_pplus_Tconst=Medium.EoS.setHelmholtzDerivsThird(T=pplus_Tconst.T, d=pplus_Tconst.d, phase=state.phase);
-  Medium.ThermodynamicState    pminus_Tconst=Medium.setState_pTX(p=state.p-eps*state.p, T=state.T);
+  Medium.ThermodynamicState    pminus_Tconst=Interfaces.PartialHelmholtzMedium.setState_pT(p=state.p-eps*state.p, T=state.T);
   Medium.EoS.HelmholtzDerivs f_pminus_Tconst=Medium.EoS.setHelmholtzDerivsThird(T=pminus_Tconst.T, d=pminus_Tconst.d, phase=state.phase);
 
-  Medium.ThermodynamicState    Tplus_pconst=Medium.setState_pTX(p=state.p, T=state.T+eps*state.T);
+  Medium.ThermodynamicState    Tplus_pconst=Interfaces.PartialHelmholtzMedium.setState_pT(p=state.p, T=state.T+eps*state.T);
   Medium.EoS.HelmholtzDerivs f_Tplus_pconst=Medium.EoS.setHelmholtzDerivsThird(T=Tplus_pconst.T, d=Tplus_pconst.d, phase=state.phase);
-  Medium.ThermodynamicState    Tminus_pconst=Medium.setState_pTX(p=state.p, T=state.T-eps*state.T);
+  Medium.ThermodynamicState    Tminus_pconst=Interfaces.PartialHelmholtzMedium.setState_pT(p=state.p, T=state.T-eps*state.T);
   Medium.EoS.HelmholtzDerivs f_Tminus_pconst=Medium.EoS.setHelmholtzDerivsThird(T=Tminus_pconst.T, d=Tminus_pconst.d, phase=state.phase);
 
   Medium.ThermodynamicState    dplus_pconst=Medium.setState_pd(p=state.p, d=state.d+eps*state.d);

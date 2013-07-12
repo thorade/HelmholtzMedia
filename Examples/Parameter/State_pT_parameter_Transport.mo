@@ -28,7 +28,7 @@ model State_pT_parameter_Transport "calculate state record from pT input"
   Medium.DerEnthalpyByPressure delta_T;
 
 equation
-  state=Medium.setState_pTX(p=p, T=T, phase=0, X={1});
+  state=Interfaces.PartialHelmholtzMedium.setState_pT(p=p, T=T, phase=0);
 
   // derived properties
   cv=Medium.specificHeatCapacityCv(state);

@@ -195,8 +195,8 @@ protected
                           " and RES_K=" + String(RES[2]));
 
     sat.Tsat := T;
-    sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
-    sat.vap := setState_dTX(d=delta_vap*d_crit, T=T, phase=1);
+    sat.liq := setState_dT( d=delta_liq*d_crit, T=T, phase=1);
+    sat.vap := setState_dT( d=delta_vap*d_crit, T=T, phase=1);
     sat.psat := (sat.liq.p+sat.vap.p)/2;
 
   elseif (T>=T_crit) then
@@ -207,8 +207,8 @@ protected
     // one possibility is use the state where ds/dT=max or ds/dp=max or dcp/dT=max or dcp/dp=max
     // here a very simple approximation is used by just setting d=d_crit
     sat.Tsat := T;
-    sat.liq := setState_dTX(d=d_crit, T=T, phase=1);
-    sat.vap := setState_dTX(d=d_crit, T=T, phase=1);
+    sat.liq := setState_dT( d=d_crit, T=T, phase=1);
+    sat.vap := setState_dT( d=d_crit, T=T, phase=1);
     sat.psat := (sat.liq.p+sat.vap.p)/2;
   else
     // assert(T >= T_trip, "setSat_T error: Temperature is lower than triple-point temperature", level=AssertionLevel.warning);
@@ -219,8 +219,8 @@ protected
     delta_liq := (T_trip/sat.Tsat)*Ancillary.bubbleDensity_T(T=T_trip)/d_crit;
     delta_vap := (sat.Tsat/T_trip)*Ancillary.dewDensity_T(T=T_trip)/d_crit;
 
-    sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
-    sat.vap := setState_dTX(d=delta_vap*d_crit, T=T, phase=1);
+    sat.liq := setState_dT( d=delta_liq*d_crit, T=T, phase=1);
+    sat.vap := setState_dT( d=delta_vap*d_crit, T=T, phase=1);
     sat.psat := (sat.liq.p+sat.vap.p)/2;
   end if;
 
@@ -353,8 +353,8 @@ protected
   end if;
 
     sat.psat := p;
-    sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
-    sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
+    sat.liq := setState_dT( d=sat.liq.d, T=sat.Tsat, phase=1);
+    sat.vap := setState_dT( d=sat.vap.d, T=sat.Tsat, phase=1);
 
   end setSat_p;
 
@@ -377,7 +377,7 @@ protected
   end setDewState;
 
 
-  redeclare function extends setState_dTX
+  redeclare function extends setState_dT
   "Return thermodynamic state as function of (d, T)"
 
 protected
@@ -441,7 +441,7 @@ protected
       state.u := EoS.u(f=f);
     end if;
 
-  end setState_dTX;
+  end setState_dT;
 
 
   redeclare function setState_Tx
@@ -484,7 +484,7 @@ protected
   end setState_px;
 
 
-  redeclare function extends setState_pTX
+  redeclare function extends setState_pT
   "Return thermodynamic state as function of (p, T)"
 
 protected
@@ -639,10 +639,10 @@ protected
     state.s := EoS.s(f=f);
     state.h := EoS.h(f=f);
     state.u := EoS.u(f=f);
-  end setState_pTX;
+  end setState_pT;
 
 
-  redeclare function extends setState_phX
+  redeclare function extends setState_ph
   "Return thermodynamic state as function of (p, h)"
 
 protected
@@ -904,10 +904,10 @@ protected
       state.s := EoS.s(f);
     end if;
 
-  end setState_phX;
+  end setState_ph;
 
 
-  redeclare function extends setState_psX
+  redeclare function extends setState_ps
   "Return thermodynamic state as function of (p, s)"
 
 protected
@@ -1248,7 +1248,7 @@ protected
       state.h := EoS.h(f);
     end if;
 
-  end setState_psX;
+  end setState_ps;
 
 
   redeclare function extends temperature
@@ -1694,7 +1694,7 @@ The extended version has up to three terms with two parameters each.
     output SpecificEnthalpy h "specific enthalpy";
 
   algorithm
-    h := specificEnthalpy(setState_pTX(p=p, T=T, phase=phase));
+    h := specificEnthalpy(setState_pT( p=p, T=T, phase=phase));
 
   annotation (
     inverse(T=temperature_ph(p=p, h=h, phase=phase)));
@@ -1710,7 +1710,7 @@ The extended version has up to three terms with two parameters each.
     output SpecificEnthalpy h "specific enthalpy";
 
   algorithm
-    h := specificEnthalpy(setState_psX(p=p, s=s, phase=phase));
+    h := specificEnthalpy(setState_ps( p=p, s=s, phase=phase));
 
   annotation (
     inverse(s=specificEntropy_ph(p=p, h=h, phase=phase)));
