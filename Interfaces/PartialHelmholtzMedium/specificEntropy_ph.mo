@@ -4,6 +4,7 @@ function specificEntropy_ph "returns specific entropy for a given p and h"
   input AbsolutePressure p "Pressure";
   input SpecificEnthalpy h "Specific Enthalpy";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+//input ThermodynamicState state;
   output SpecificEntropy s "Specific Entropy";
 
 algorithm

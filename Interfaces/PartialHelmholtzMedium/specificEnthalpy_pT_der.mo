@@ -1,6 +1,6 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
 function specificEnthalpy_pT_der "time derivative of specificEnthalpy_pT"
-
+  extends Modelica.Icons.Function;
   input AbsolutePressure p;
   input Temperature T;
 //input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";

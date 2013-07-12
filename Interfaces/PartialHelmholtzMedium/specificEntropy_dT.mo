@@ -4,6 +4,7 @@ function specificEntropy_dT "return specific enthalpy for given d and T"
   input Density d "Density";
   input Temperature T "Temperature";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+//input ThermodynamicState state;
   output SpecificEntropy s "specific entropy";
 
 algorithm

@@ -1807,6 +1807,7 @@ protected
     input AbsolutePressure p "Pressure";
     input SpecificEnthalpy h "Enthalpy";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+  //input ThermodynamicState state;
     output Density d "density";
 
   algorithm
@@ -1894,6 +1895,7 @@ protected
     input AbsolutePressure p "Pressure";
     input SpecificEnthalpy h "Enthalpy";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+  //input ThermodynamicState state;
     output Temperature T "Temperature";
 
   algorithm
@@ -1910,6 +1912,7 @@ protected
     input AbsolutePressure p "Pressure";
     input Temperature T "Temperature";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+  //input ThermodynamicState state;
     output Density d "Density";
 
   algorithm
@@ -1962,6 +1965,7 @@ protected
     input AbsolutePressure p "Pressure";
     input Temperature T "Temperature";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+  //input ThermodynamicState state;
     output SpecificEnthalpy h "specific enthalpy";
 
   algorithm
@@ -1992,18 +1996,37 @@ protected
   end specificEnthalpy_pT_state;
 
 
-  redeclare function extends pressure_dT
-  // input, output and algorithm are inherited from PartialTwoPhaseMedium
+  redeclare function pressure_dT
+    extends Modelica.Icons.Function;
+    input Density d "Density";
+    input Temperature T "Temperature";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+  //input ThermodynamicState state;
+    output AbsolutePressure p "pressure";
+
+  algorithm
+    p := pressure_dT_state(d=d, T=T, state=setState_dT(d=d, T=T, phase=phase));
+
   annotation (
-    derivative=pressure_dT_der,
+    Inline=true,
     inverse(d=density_pT(p=p, T=T, phase=phase),
             T=temperature_pd(p=p, d=d, phase=phase)));
   end pressure_dT;
 
 
-  redeclare function extends specificEnthalpy_dT
-  // input, output and algorithm are inherited from PartialTwoPhaseMedium
-  annotation(derivative=specificEnthalpy_dT_der);
+  redeclare function specificEnthalpy_dT
+    extends Modelica.Icons.Function;
+    input Density d "Density";
+    input Temperature T "Temperature";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+  //input ThermodynamicState state;
+    output SpecificEnthalpy h "Specific Enthalpy";
+
+  algorithm
+    h := specificEnthalpy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T, phase=phase));
+
+  annotation (
+    Inline=true);
   end specificEnthalpy_dT;
 
 
@@ -2012,6 +2035,7 @@ protected
     input AbsolutePressure p "Pressure";
     input SpecificEntropy s "Entropy";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+  //input ThermodynamicState state;
     output Temperature T "Temperature";
 
   algorithm
@@ -2029,6 +2053,7 @@ protected
     input AbsolutePressure p "Pressure";
     input SpecificEntropy s "Entropy";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+  //input ThermodynamicState state;
     output SpecificEnthalpy h "specific enthalpy";
 
   algorithm
