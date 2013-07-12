@@ -1,4 +1,7 @@
-ButaneTestModel
+ButaneTestModel_ph
+ButaneTestModel_pT
+ButaneTestModel_dT
+ButaneTestModel_dT_component_ph
 EthanolTestModel
 HeliumTestModel
 IsobutaneTestModel
@@ -7,5 +10,3 @@ PentaneTestModel
 PropaneTestModel
 R134aTestModel
 R134a_ASHRAE_TestModel_ph
-R134a_ASHRAE_TestModel_pT
-R134a_ASHRAE_TestModel_dT

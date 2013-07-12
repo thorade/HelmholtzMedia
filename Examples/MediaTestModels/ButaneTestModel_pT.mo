@@ -1,10 +1,10 @@
 within HelmholtzMedia.Examples.MediaTestModels;
-model ButaneTestModel "Test HelmholtzMedia.HelmholtzFluids.Butane"
+model ButaneTestModel_pT "Test HelmholtzMedia.HelmholtzFluids.Butane"
   extends Modelica.Icons.Example;
   extends Modelica.Media.Examples.Tests.Components.PartialTestModel(
-    redeclare package Medium = HelmholtzMedia.HelmholtzFluids.Butane,
+    redeclare package Medium = HelmholtzMedia.HelmholtzFluids.Butane(inputChoice=Medium.Types.InputChoice.pT),
     ambient(use_p_ambient=true, use_T_ambient=false));
 
   annotation (experiment(StopTime=1.01), Diagram(graphics));
 
-end ButaneTestModel;
+end ButaneTestModel_pT;
