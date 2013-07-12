@@ -7,8 +7,9 @@ function specificEntropy_ph "returns specific entropy for a given p and h"
   output SpecificEntropy s "Specific Entropy";
 
 algorithm
-  s := specificEntropy(setState_phX(p=p, h=h, phase=phase));
+  s := specificEntropy_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
 
 annotation (
+  Inline=true,
   inverse(h=specificEnthalpy_ps(p=p, s=s, phase=phase)));
 end specificEntropy_ph;
