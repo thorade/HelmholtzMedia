@@ -47,24 +47,24 @@ import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
   redeclare model extends BaseProperties(
       p(stateSelect = if preferredMediumStates and
-                         (basePropertiesInputChoice == InputChoice.ph or
-                          basePropertiesInputChoice == InputChoice.pT or
-                          basePropertiesInputChoice == InputChoice.ps) then
+                         (componentInputChoice == InputChoice.ph or
+                          componentInputChoice == InputChoice.pT or
+                          componentInputChoice == InputChoice.ps) then
                               StateSelect.prefer else StateSelect.default),
       T(stateSelect = if preferredMediumStates and
-                         (basePropertiesInputChoice == InputChoice.pT or
-                         basePropertiesInputChoice == InputChoice.dT) then
+                         (componentInputChoice == InputChoice.pT or
+                         componentInputChoice == InputChoice.dT) then
                            StateSelect.prefer else StateSelect.default),
       h(stateSelect = if preferredMediumStates and
-                         basePropertiesInputChoice == InputChoice.ph then
+                         componentInputChoice == InputChoice.ph then
                            StateSelect.prefer else StateSelect.default),
       d(stateSelect = if preferredMediumStates and
-                         basePropertiesInputChoice == InputChoice.dT then
+                         componentInputChoice == InputChoice.dT then
                            StateSelect.prefer else StateSelect.default))
   "Base properties (p, d, T, h, u, s) of a medium"
 
     SpecificEntropy s;
-    parameter InputChoice basePropertiesInputChoice=inputChoice
+    parameter InputChoice componentInputChoice=inputChoice
     "Choice of input variables for property computations";
 
   equation
@@ -72,22 +72,22 @@ import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
     R = Modelica.Constants.R/MM;
 
     // use functions to calculate properties
-    if (basePropertiesInputChoice == InputChoice.ph) then
+    if (componentInputChoice == InputChoice.ph) then
       // state = setState_ph(p=p, h=h);
       d = density_ph(p=p, h=h);
       T = temperature_ph(p=p, h=h);
       s = specificEntropy_ph(p=p, h=h);
-    elseif (basePropertiesInputChoice == InputChoice.ps) then
+    elseif (componentInputChoice == InputChoice.ps) then
       // state = setState_ps(p=p, s=s);
       d = density_ps(p=p, s=s);
       T = temperature_ps(p=p, s=s);
       h = specificEnthalpy_ps(p=p, s=s);
-    elseif (basePropertiesInputChoice == InputChoice.pT) then
+    elseif (componentInputChoice == InputChoice.pT) then
       // state = setState_pT(p=p, T=T);
       d = density_pT(p=p, T=T);
       h = specificEnthalpy_pT(p=p, T=T);
       s = specificEntropy_pT(p=p, T=T);
-    elseif (basePropertiesInputChoice == InputChoice.dT) then
+    elseif (componentInputChoice == InputChoice.dT) then
       // state = setState_dT(d=d, T=T);
       p = pressure_dT(d=d, T=T);
       h = specificEnthalpy_dT(d=d, T=T);
@@ -109,7 +109,7 @@ import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
     state.h = h;
     state.s = s;
     state.u = u;
-    state.phase =if ((p < fluidConstants[1].criticalPressure) and (p > fluidConstants[1].triplePointPressure) and (h > sat.liq.h) and (h < sat.vap.h)) then 2 else 1;
+    state.phase = if ((p < fluidConstants[1].criticalPressure) and (p > fluidConstants[1].triplePointPressure) and (h > sat.liq.h) and (h < sat.vap.h)) then 2 else 1;
 
   end BaseProperties;
 
