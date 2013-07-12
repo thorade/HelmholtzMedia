@@ -67,8 +67,6 @@ density_derh_p
 temperature_ph
 temperature_ph_state
 temperature_ph_der
-temperature_derp_h
-temperature_derh_p
 density_pT
 density_pT_state
 density_pT_der

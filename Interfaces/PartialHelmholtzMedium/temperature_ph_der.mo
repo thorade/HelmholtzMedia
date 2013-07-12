@@ -10,8 +10,8 @@ function temperature_ph_der "time derivative of temperature_ph"
   output Real T_der "time derivative of temperature";
 
 algorithm
-  T_der := p_der*temperature_derp_h(state=state)
-         + h_der*temperature_derh_p(state=state);
+  T_der := p_der*jouleThomsonCoefficient(state=state)
+         + h_der/specificHeatCapacityCp(state=state);
 
 annotation (Inline=true);
 end temperature_ph_der;
