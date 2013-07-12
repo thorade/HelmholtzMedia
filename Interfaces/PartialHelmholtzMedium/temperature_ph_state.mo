@@ -11,7 +11,7 @@ algorithm
   T := temperature(state);
 
 annotation (
-  derivative(noDerivative=state)=temperature_ph_der,
   Inline=false,
-  LateInline=true);
+  LateInline=true,
+  derivative(noDerivative=state)=temperature_ph_der);
 end temperature_ph_state;

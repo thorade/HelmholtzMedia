@@ -45,10 +45,10 @@ import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
 
   redeclare model extends BaseProperties(
-    h(stateSelect=StateSelect.default),
+    h(stateSelect=StateSelect.prefer),
     d(stateSelect=StateSelect.default),
     T(stateSelect=StateSelect.default),
-    p(stateSelect=StateSelect.default))
+    p(stateSelect=StateSelect.prefer))
   "Base properties (p, d, T, h, u, s) of a medium"
 
     SpecificEntropy s;

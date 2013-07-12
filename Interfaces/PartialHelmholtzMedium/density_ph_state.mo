@@ -11,7 +11,7 @@ algorithm
   d := density(state);
 
 annotation (
-  derivative(noDerivative=state)=density_ph_der,
   Inline=false,
-  LateInline=true);
+  LateInline=true,
+  derivative(noDerivative=state)=density_ph_der);
 end density_ph_state;
