@@ -10,9 +10,6 @@ partial package PartialHelmholtzMedium
 
 import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
-
-
-
   constant FluidLimits fluidLimits;
 
   constant EoS.HelmholtzCoefficients helmholtzCoefficients;
@@ -389,7 +386,6 @@ protected
     sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
 
   end setSat_p;
-
 
 
   redeclare function extends setBubbleState
@@ -1284,8 +1280,6 @@ protected
   end setState_psX;
 
 
-
-
   redeclare function extends temperature
   "returns temperature from given ThermodynamicState"
   // inherited from: PartialMedium
@@ -1508,8 +1502,6 @@ protected
   end isentropicExponent;
 
 
-
-
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
     // inherits input state and output eta
@@ -1697,68 +1689,117 @@ The extended version has up to three terms with two parameters each.
   end bubbleDensity;
 
 
-  redeclare function extends pressure_dT
-  // input, output and algorithm are inherited from PartialTwoPhaseMedium
-  annotation (
-    derivative=pressure_dT_der,
-    inverse(d=density_pT(p=p, T=T, phase=phase),
-            T=temperature_pd(p=p, d=d, phase=phase)));
-  end pressure_dT;
+  redeclare function extends saturationTemperature
 
-
-
-
-  redeclare function temperature_ps "returns temperature for given p and d"
-    extends Modelica.Icons.Function;
-    input AbsolutePressure p "Pressure";
-    input SpecificEntropy s "Entropy";
-    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output Temperature T "Temperature";
+protected
+    SaturationProperties sat = setSat_p(p=p);
 
   algorithm
-    T := temperature(setState_ps(p=p, s=s, phase=phase));
-
-  annotation (
-    inverse(p=pressure_Ts(T=T, s=s, phase=phase),
-            s=specificEntropy_pT(p=p, T=T, phase=phase)));
-  end temperature_ps;
+    T := sat.Tsat;
+  annotation(Inline = true);
+  end saturationTemperature;
 
 
+  redeclare function saturationTemperature_derp "returns (dT/dp)@sat"
+  // does not extend, because base class output has wrong units
+  input AbsolutePressure p;
+  output DerTemperatureByPressure dTp;
 
-
-
-  redeclare function specificEnthalpy_pT
-  "returns specific enthalpy for given p and T"
-    extends Modelica.Icons.Function;
-    input AbsolutePressure p "Pressure";
-    input Temperature T "Temperature";
-    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output SpecificEnthalpy h "specific enthalpy";
+protected
+   SaturationProperties sat=setSat_p(p=p);
 
   algorithm
-    h := specificEnthalpy(setState_pT(p=p, T=T, phase=phase));
+    // Clausius-Clapeyron equation
+    dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+  annotation(Inline = true);
+  end saturationTemperature_derp;
 
-  annotation (
-    inverse(T=temperature_ph(p=p, h=h, phase=phase)));
-  end specificEnthalpy_pT;
 
-
-  redeclare function specificEnthalpy_ps
-  "returns specific enthalpy for a given p and s"
-    extends Modelica.Icons.Function;
-    input AbsolutePressure p "Pressure";
-    input SpecificEntropy s "Entropy";
-    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output SpecificEnthalpy h "specific enthalpy";
+  redeclare function saturationTemperature_derp_sat "returns (dT/dp)@sat"
+  // does not extend, because base class output has wrong units
+  input SaturationProperties sat;
+  output DerTemperatureByPressure dTp;
 
   algorithm
-    h := specificEnthalpy(setState_psX(p=p, s=s, phase=phase));
+    // Clausius-Clapeyron equation
+    dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+  annotation(Inline = true);
+  end saturationTemperature_derp_sat;
 
-  annotation (
-    inverse(s=specificEntropy_ph(p=p, h=h, phase=phase)));
-  end specificEnthalpy_ps;
+
+  redeclare function extends saturationPressure
+
+protected
+    SaturationProperties sat = setSat_T(T=T);
+
+  algorithm
+    p := sat.psat;
+  annotation(Inline = true);
+  end saturationPressure;
 
 
+  redeclare function extends dBubbleDensity_dPressure
+  "Return bubble point density derivative"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output ddldp
+
+protected
+    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.liq.T);
+    DerDensityByPressure ddpT = 1.0/EoS.dpdT(f);
+    DerDensityByTemperature ddTp = -EoS.dpTd(f)/EoS.dpdT(f);
+    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+
+  algorithm
+    ddldp := ddpT + ddTp*dTp;
+  end dBubbleDensity_dPressure;
+
+
+  redeclare function extends dDewDensity_dPressure
+  "Return dew point density derivative"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output ddvdp
+
+protected
+    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.vap.T);
+    DerDensityByPressure ddpT = 1.0/EoS.dpdT(f);
+    DerDensityByTemperature ddTp = -EoS.dpTd(f)/EoS.dpdT(f);
+    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+
+  algorithm
+    ddvdp := ddpT + ddTp*dTp;
+  end dDewDensity_dPressure;
+
+
+  redeclare function extends dBubbleEnthalpy_dPressure
+  "Return bubble point enthalpy derivative"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output dhldp
+
+protected
+    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.liq.T);
+    DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
+    DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
+    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+
+  algorithm
+    dhldp := dhpT + dhTp*dTp;
+  end dBubbleEnthalpy_dPressure;
+
+
+  redeclare function extends dDewEnthalpy_dPressure
+  "Return dew point enthalpy derivative"
+  // inherited from: PartialTwoPhaseMedium
+  // inherits input sat and output dhvdp
+
+protected
+    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.vap.T);
+    DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
+    DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
+    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+
+  algorithm
+    dhvdp := dhpT + dhTp*dTp;
+  end dDewEnthalpy_dPressure;
 
 
   redeclare function density_ph "returns density for given p and h"
@@ -1775,8 +1816,6 @@ The extended version has up to three terms with two parameters each.
     Inline=true,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
-
-
 
 
   redeclare function extends density_derp_h
@@ -1866,10 +1905,6 @@ protected
   end temperature_ph;
 
 
-
-
-
-
   redeclare function density_pT "Return density from p and T"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1885,8 +1920,6 @@ protected
     inverse(p=pressure_dT(d=d, T=T, phase=phase),
             T=temperature_pd(p=p, d=d, phase=phase)));
   end density_pT;
-
-
 
 
   redeclare function extends density_derp_T
@@ -1923,128 +1956,86 @@ protected
   end density_derT_p;
 
 
-  redeclare function extends saturationTemperature
-
-protected
-    SaturationProperties sat = setSat_p(p=p);
-
-  algorithm
-    T := sat.Tsat;
-  annotation(Inline = true);
-  end saturationTemperature;
-
-
-  redeclare function saturationTemperature_derp "returns (dT/dp)@sat"
-  // does not extend, because base class output has wrong units
-  input AbsolutePressure p;
-  output DerTemperatureByPressure dTp;
-
-protected
-   SaturationProperties sat=setSat_p(p=p);
+  redeclare function specificEnthalpy_pT
+  "returns specific enthalpy for given p and T"
+    extends Modelica.Icons.Function;
+    input AbsolutePressure p "Pressure";
+    input Temperature T "Temperature";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    output SpecificEnthalpy h "specific enthalpy";
 
   algorithm
-    // Clausius-Clapeyron equation
-    dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
-  annotation(Inline = true);
-  end saturationTemperature_derp;
+    h := specificEnthalpy_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
+
+  annotation (
+    Inline=true,
+    inverse(T=temperature_ph(p=p, h=h, phase=phase)));
+  end specificEnthalpy_pT;
 
 
-  redeclare function saturationTemperature_derp_sat "returns (dT/dp)@sat"
-  // does not extend, because base class output has wrong units
-  input SaturationProperties sat;
-  output DerTemperatureByPressure dTp;
-
-  algorithm
-    // Clausius-Clapeyron equation
-    dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
-  annotation(Inline = true);
-  end saturationTemperature_derp_sat;
-
-
-  redeclare function extends saturationPressure
-
-protected
-    SaturationProperties sat = setSat_T(T=T);
+  function specificEnthalpy_pT_state
+  "returns specific enthalpy for given p and T"
+    extends Modelica.Icons.Function;
+    input AbsolutePressure p "Pressure";
+    input Temperature T "Temperature";
+  //input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    input ThermodynamicState state;
+    output SpecificEnthalpy h "specific enthalpy";
 
   algorithm
-    p := sat.psat;
-  annotation(Inline = true);
-  end saturationPressure;
+    h := specificEnthalpy(state);
+
+  annotation (
+    Inline=false,
+    LateInline=true,
+    derivative(noDerivative=state)=specificEnthalpy_pT_der);
+  end specificEnthalpy_pT_state;
 
 
-
-  redeclare function extends dBubbleDensity_dPressure
-  "Return bubble point density derivative"
-  // inherited from: PartialTwoPhaseMedium
-  // inherits input sat and output ddldp
-
-protected
-    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.liq.T);
-    DerDensityByPressure ddpT = 1.0/EoS.dpdT(f);
-    DerDensityByTemperature ddTp = -EoS.dpTd(f)/EoS.dpdT(f);
-    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
-
-  algorithm
-    ddldp := ddpT + ddTp*dTp;
-  end dBubbleDensity_dPressure;
-
-
-  redeclare function extends dDewDensity_dPressure
-  "Return dew point density derivative"
-  // inherited from: PartialTwoPhaseMedium
-  // inherits input sat and output ddvdp
-
-protected
-    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.vap.T);
-    DerDensityByPressure ddpT = 1.0/EoS.dpdT(f);
-    DerDensityByTemperature ddTp = -EoS.dpTd(f)/EoS.dpdT(f);
-    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
-
-  algorithm
-    ddvdp := ddpT + ddTp*dTp;
-  end dDewDensity_dPressure;
-
-
-  redeclare function extends dBubbleEnthalpy_dPressure
-  "Return bubble point enthalpy derivative"
-  // inherited from: PartialTwoPhaseMedium
-  // inherits input sat and output dhldp
-
-protected
-    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.liq.T);
-    DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
-    DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
-    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
-
-  algorithm
-    dhldp := dhpT + dhTp*dTp;
-  end dBubbleEnthalpy_dPressure;
-
-
-  redeclare function extends dDewEnthalpy_dPressure
-  "Return dew point enthalpy derivative"
-  // inherited from: PartialTwoPhaseMedium
-  // inherits input sat and output dhvdp
-
-protected
-    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.vap.T);
-    DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
-    DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
-    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
-
-  algorithm
-    dhvdp := dhpT + dhTp*dTp;
-  end dDewEnthalpy_dPressure;
-
-
-
-
-
-
+  redeclare function extends pressure_dT
+  // input, output and algorithm are inherited from PartialTwoPhaseMedium
+  annotation (
+    derivative=pressure_dT_der,
+    inverse(d=density_pT(p=p, T=T, phase=phase),
+            T=temperature_pd(p=p, d=d, phase=phase)));
+  end pressure_dT;
 
 
   redeclare function extends specificEnthalpy_dT
   // input, output and algorithm are inherited from PartialTwoPhaseMedium
   annotation(derivative=specificEnthalpy_dT_der);
   end specificEnthalpy_dT;
+
+
+  redeclare function temperature_ps "returns temperature for given p and d"
+    extends Modelica.Icons.Function;
+    input AbsolutePressure p "Pressure";
+    input SpecificEntropy s "Entropy";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    output Temperature T "Temperature";
+
+  algorithm
+    T := temperature(setState_ps(p=p, s=s, phase=phase));
+
+  annotation (
+    inverse(p=pressure_Ts(T=T, s=s, phase=phase),
+            s=specificEntropy_pT(p=p, T=T, phase=phase)));
+  end temperature_ps;
+
+
+  redeclare function specificEnthalpy_ps
+  "returns specific enthalpy for a given p and s"
+    extends Modelica.Icons.Function;
+    input AbsolutePressure p "Pressure";
+    input SpecificEntropy s "Entropy";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    output SpecificEnthalpy h "specific enthalpy";
+
+  algorithm
+    h := specificEnthalpy(setState_psX(p=p, s=s, phase=phase));
+
+  annotation (
+    inverse(s=specificEntropy_ph(p=p, h=h, phase=phase)));
+  end specificEnthalpy_ps;
+
 end PartialHelmholtzMedium;
