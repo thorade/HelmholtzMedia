@@ -45,7 +45,7 @@ import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
 
   redeclare model extends BaseProperties(
-    h(stateSelect=StateSelect.prefer),
+    h(stateSelect=StateSelect.default),
     d(stateSelect=StateSelect.default),
     T(stateSelect=StateSelect.default),
     p(stateSelect=StateSelect.prefer))
