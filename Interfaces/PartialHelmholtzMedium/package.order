@@ -8,6 +8,7 @@ thermalConductivityCoefficients
 dynamicViscosityCoefficients
 surfaceTensionCoefficients
 ancillaryCoefficients
+inputChoice
 ThermodynamicState
 SaturationProperties
 BaseProperties
@@ -89,3 +90,4 @@ specificEnthalpy_derd_T
 specificEnthalpy_derT_d
 specificEnthalpy_dT_der
 specificEnthalpy_dT
+specificEntropy_ph_state

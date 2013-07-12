@@ -6,10 +6,12 @@ partial package PartialHelmholtzMedium
     smoothModel=true,
     DipoleMoment(min=0, max=5),
     AbsolutePressure(min=Modelica.Constants.small, max=1e12),
-    SpecificEntropy(min=-Modelica.Constants.inf, max=Modelica.Constants.inf),
-    ThermoStates = Choices.IndependentVariables.dTX);
+    SpecificEntropy(min=-Modelica.Constants.inf, max=Modelica.Constants.inf));
 
 import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
+
+
+
 
   constant FluidLimits fluidLimits;
 
@@ -24,6 +26,8 @@ import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
   constant Ancillary.AncillaryCoefficients ancillaryCoefficients;
 
   // constant IndependentVariables independentVariables=IndependentVariables.dTX;
+  constant InputChoice inputChoice=InputChoice.ph
+  "Default choice of input variables for property computations";
 
 
   redeclare record extends ThermodynamicState(phase(start=0))
@@ -45,27 +49,55 @@ import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
 
   redeclare model extends BaseProperties(
-    h(stateSelect=StateSelect.default),
-    d(stateSelect=StateSelect.default),
-    T(stateSelect=StateSelect.default),
-    p(stateSelect=StateSelect.prefer))
+      p(stateSelect = if preferredMediumStates and
+                         (basePropertiesInputChoice == InputChoice.ph or
+                          basePropertiesInputChoice == InputChoice.pT or
+                          basePropertiesInputChoice == InputChoice.ps) then
+                              StateSelect.prefer else StateSelect.default),
+      T(stateSelect = if preferredMediumStates and
+                         (basePropertiesInputChoice == InputChoice.pT or
+                         basePropertiesInputChoice == InputChoice.dT) then
+                           StateSelect.prefer else StateSelect.default),
+      h(stateSelect = if preferredMediumStates and
+                         basePropertiesInputChoice == InputChoice.ph then
+                           StateSelect.prefer else StateSelect.default),
+      d(stateSelect = if preferredMediumStates and
+                         basePropertiesInputChoice == InputChoice.dT then
+                           StateSelect.prefer else StateSelect.default))
   "Base properties (p, d, T, h, u, s) of a medium"
 
     SpecificEntropy s;
+    parameter InputChoice basePropertiesInputChoice=inputChoice
+    "Choice of input variables for property computations";
 
   equation
     MM = fluidConstants[1].molarMass;
     R = Modelica.Constants.R/MM;
 
-  // use functions to calculate properties
-    d = density_ph(p=p, h=h);
-    T = temperature_ph(p=p, h=h);
-    // s = specificEntropy_ph(p=p, h=h);
-
-    // d = density_pT(p=p, T=T);
-    // p =  pressure_dT(d=d, T=T);
-    // h =  specificEnthalpy_dT(d=d, T=T);
-    s =  specificEntropy_dT(d=d, T=T);
+    // use functions to calculate properties
+    if (basePropertiesInputChoice == InputChoice.ph) then
+      // state = setState_ph(p=p, h=h);
+      d = density_ph(p=p, h=h);
+      T = temperature_ph(p=p, h=h);
+      s = specificEntropy_ph(p=p, h=h);
+    elseif (basePropertiesInputChoice == InputChoice.ps) then
+      // state = setState_ps(p=p, s=s);
+      d = density_ps(p=p, s=s);
+      T = temperature_ps(p=p, s=s);
+      h = specificEnthalpy_ps(p=p, s=s);
+    elseif (basePropertiesInputChoice == InputChoice.pT) then
+      // state = setState_pT(p=p, T=T);
+      d = density_pT(p=p, T=T);
+      h = specificEnthalpy_pT(p=p, T=T);
+      s = specificEntropy_pT(p=p, T=T);
+    elseif (basePropertiesInputChoice == InputChoice.dT) then
+      // state = setState_dT(d=d, T=T);
+      p = pressure_dT(d=d, T=T);
+      h = specificEnthalpy_dT(d=d, T=T);
+      s = specificEntropy_dT(d=d, T=T);
+    else
+      assert(false, "Invalid choice for basePropertiesInput");
+    end if;
 
   // calculate u
     u = h - p/d;
@@ -357,6 +389,7 @@ protected
     sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
 
   end setSat_p;
+
 
 
   redeclare function extends setBubbleState
@@ -1251,6 +1284,8 @@ protected
   end setState_psX;
 
 
+
+
   redeclare function extends temperature
   "returns temperature from given ThermodynamicState"
   // inherited from: PartialMedium
@@ -1473,6 +1508,8 @@ protected
   end isentropicExponent;
 
 
+
+
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
     // inherits input state and output eta
@@ -1669,6 +1706,8 @@ The extended version has up to three terms with two parameters each.
   end pressure_dT;
 
 
+
+
   redeclare function temperature_ps "returns temperature for given p and d"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1685,6 +1724,9 @@ The extended version has up to three terms with two parameters each.
   end temperature_ps;
 
 
+
+
+
   redeclare function specificEnthalpy_pT
   "returns specific enthalpy for given p and T"
     extends Modelica.Icons.Function;
@@ -1694,7 +1736,7 @@ The extended version has up to three terms with two parameters each.
     output SpecificEnthalpy h "specific enthalpy";
 
   algorithm
-    h := specificEnthalpy(setState_pTX(p=p, T=T, phase=phase));
+    h := specificEnthalpy(setState_pT(p=p, T=T, phase=phase));
 
   annotation (
     inverse(T=temperature_ph(p=p, h=h, phase=phase)));
@@ -1717,6 +1759,8 @@ The extended version has up to three terms with two parameters each.
   end specificEnthalpy_ps;
 
 
+
+
   redeclare function density_ph "returns density for given p and h"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1731,6 +1775,8 @@ The extended version has up to three terms with two parameters each.
     Inline=true,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
+
+
 
 
   redeclare function extends density_derp_h
@@ -1820,6 +1866,10 @@ protected
   end temperature_ph;
 
 
+
+
+
+
   redeclare function density_pT "Return density from p and T"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1835,6 +1885,8 @@ protected
     inverse(p=pressure_dT(d=d, T=T, phase=phase),
             T=temperature_pd(p=p, d=d, phase=phase)));
   end density_pT;
+
+
 
 
   redeclare function extends density_derp_T
@@ -1920,6 +1972,7 @@ protected
   end saturationPressure;
 
 
+
   redeclare function extends dBubbleDensity_dPressure
   "Return bubble point density derivative"
   // inherited from: PartialTwoPhaseMedium
@@ -1982,6 +2035,12 @@ protected
   algorithm
     dhvdp := dhpT + dhTp*dTp;
   end dDewEnthalpy_dPressure;
+
+
+
+
+
+
 
 
   redeclare function extends specificEnthalpy_dT
