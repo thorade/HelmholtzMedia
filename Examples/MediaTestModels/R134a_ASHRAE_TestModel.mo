@@ -5,7 +5,7 @@ model R134a_ASHRAE_TestModel "Test HelmholtzMedia.HelmholtzFluids.R134a"
      redeclare package Medium = HelmholtzMedia.HelmholtzFluids.R134a_ASHRAE,
      fixedMassFlowRate(use_T_ambient=false),
      ambient(use_T_ambient=false),
-     volume(use_T_start=false));
+     volume(use_T_start=false, medium(preferredMediumStates=true, basePropertiesInputChoice=Medium.Types.InputChoice.ph)));
 
   annotation (experiment(StopTime=11));
 
