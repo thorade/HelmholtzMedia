@@ -9,7 +9,7 @@ function specificEnthalpy_dT_der "time derivative of specificEnthalpy_dT"
   output Real der_h "Time derivative of enthalpy";
 
 protected
-  ThermodynamicState state=setState_dT( d=d, T=T, phase=phase);
+  ThermodynamicState state=setState_dTX(d=d, T=T, phase=phase);
 
 algorithm
   der_h := der_d*specificEnthalpy_derd_T(state=state)

@@ -14,7 +14,7 @@ protected
   constant Real eps=1e-6;
 
 algorithm
-  criticalState := Interfaces.PartialHelmholtzMedium.setState_dT(d=d_crit, T=T_crit, phase=1);
+  criticalState := Medium.setState_dTX(d=d_crit, T=T_crit, phase=1);
   assert(abs(criticalState.h-HCRIT0)<eps, "HCRIT0 is wrong, should be equal to criticalState.h=" + String(criticalState.h,significantDigits=15));
   assert(abs(criticalState.s-SCRIT0)<eps, "SCRIT0 is wrong, should be equal to criticalState.s=" + String(criticalState.s,significantDigits=15));
 

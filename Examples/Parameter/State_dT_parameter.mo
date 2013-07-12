@@ -26,7 +26,7 @@ model State_dT_parameter "calculate state record from dT input"
   Medium.DerEnthalpyByPressure delta_T;
 
 equation
-  state=Interfaces.PartialHelmholtzMedium.setState_dT(d=d, T=T, phase=0);
+  state=Medium.setState_dTX(d=d, T=T, phase=0);
 
   // x=Medium.vapourQuality(state);
   // sigma=Medium.surfaceTension(Medium.setSat_T(T=T));

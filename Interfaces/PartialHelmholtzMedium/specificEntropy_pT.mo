@@ -7,7 +7,7 @@ function specificEntropy_pT
   output SpecificEntropy s "Specific Entropy";
 
 algorithm
-  s := specificEntropy(setState_pT( p=p, T=T, phase=phase));
+  s := specificEntropy(setState_pTX(p=p, T=T, phase=phase));
 
 annotation (
   inverse(T=temperature_ps(p=p, s=s, phase=phase),

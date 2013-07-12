@@ -4,7 +4,7 @@ model MaxwellLoop "show Maxwell Loops"
   parameter Medium.Temperature T=298.15;
 
   Medium.Density d;
-  Medium.ThermodynamicState state=Interfaces.PartialHelmholtzMedium.setState_dT(d=d, T=T);
+  Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
   Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsThird(d=d, T=T, phase=1);
   Medium.AbsolutePressure p=Medium.EoS.p(f);
 

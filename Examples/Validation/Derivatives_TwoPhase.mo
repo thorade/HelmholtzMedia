@@ -6,7 +6,7 @@ model Derivatives_TwoPhase
   // choose d and T which will result in two-phase
   parameter Medium.Density d=228;
   parameter Medium.Temperature T=220;
-  Medium.ThermodynamicState state=Interfaces.PartialHelmholtzMedium.setState_dT(d=d, T=T);
+  Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
 
 // Vapour mass fraction derivatives
@@ -55,10 +55,10 @@ protected
   Medium.EoS.HelmholtzDerivs fl=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs fv=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.vap.d, phase=1);
   Medium.MassFraction x=Medium.vapourQuality(state=state);
-  Medium.ThermodynamicState d_plus=Interfaces.PartialHelmholtzMedium.setState_dT(d=d*1.0001, T=T);
-  Medium.ThermodynamicState d_minus=Interfaces.PartialHelmholtzMedium.setState_dT(d=d*0.9999, T=T);
-  Medium.ThermodynamicState T_plus=Interfaces.PartialHelmholtzMedium.setState_dT(d=d, T=T*1.0001);
-  Medium.ThermodynamicState T_minus=Interfaces.PartialHelmholtzMedium.setState_dT(d=d, T=T*0.9999);
+  Medium.ThermodynamicState d_plus=Medium.setState_dTX(d=d*1.0001, T=T);
+  Medium.ThermodynamicState d_minus=Medium.setState_dTX(d=d*0.9999, T=T);
+  Medium.ThermodynamicState T_plus=Medium.setState_dTX(d=d, T=T*1.0001);
+  Medium.ThermodynamicState T_minus=Medium.setState_dTX(d=d, T=T*0.9999);
   Medium.ThermodynamicState h_plus=Medium.setState_phX(p=state.p, h=state.h+abs(0.0001*state.h));
   Medium.ThermodynamicState h_minus=Medium.setState_phX(p=state.p, h=state.h-abs(0.0001*state.h));
   Medium.ThermodynamicState p_plus=Medium.setState_phX(p=state.p*1.0001, h=state.h);

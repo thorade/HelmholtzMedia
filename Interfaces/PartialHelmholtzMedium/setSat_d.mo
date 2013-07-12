@@ -69,8 +69,8 @@ algorithm
       RES := {EoS.p(fl)-EoS.p(fv), EoS.g(fl)-EoS.g(fv)};
       RSS := RES*RES/2;
     end while;
-    sat.liq  := setState_dT( d=sat.liq.d, T=sat.Tsat, phase=1);
-    sat.vap  := setState_dT( d=sat.vap.d, T=sat.Tsat, phase=1);
+    sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
+    sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
     sat.psat := sat.liq.p;
 
   elseif (d>d_crit) and (d<dl_trip) then
@@ -108,22 +108,22 @@ algorithm
       RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
       RSS := RES*RES/2;
     end while;
-    sat.liq  := setState_dT( d=sat.liq.d, T=sat.Tsat, phase=1);
-    sat.vap  := setState_dT( d=sat.vap.d, T=sat.Tsat, phase=1);
+    sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
+    sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
     sat.psat := sat.liq.p;
 
   elseif (d>=dl_trip) or (d<=dv_trip) then
     // Modelica.Utilities.Streams.print("d out of two-phase range, return triple point values", "printlog.txt");
     sat.Tsat:= T_trip;
     sat.psat:= p_trip;
-    sat.liq := setState_dT( d=dl_trip, T=T_trip, phase=1);
-    sat.vap := setState_dT( d=dv_trip, T=T_trip, phase=1);
+    sat.liq := setState_dTX(d=dl_trip, T=T_trip, phase=1);
+    sat.vap := setState_dTX(d=dv_trip, T=T_trip, phase=1);
   else
     // Modelica.Utilities.Streams.print("d=d_crit: return critical values", "printlog.txt");
     sat.Tsat := T_crit;
     sat.psat := p_crit;
-    sat.liq := setState_dT( d=d_crit, T=T_crit, phase=1);
-    sat.vap := setState_dT( d=d_crit, T=T_crit, phase=1);
+    sat.liq := setState_dTX(d=d_crit, T=T_crit, phase=1);
+    sat.vap := setState_dTX(d=d_crit, T=T_crit, phase=1);
   end if;
   // Modelica.Utilities.Streams.print("setSat_d total iteration steps " + String(iter), "printlog.txt");
   assert(iter<iter_max, "setSat_d did not converge, input was d=" + String(d)+
