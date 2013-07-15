@@ -11,9 +11,6 @@ partial package PartialHelmholtzMedium
 
 import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
 
-
-
-
   constant FluidLimits fluidLimits;
 
   constant EoS.HelmholtzCoefficients helmholtzCoefficients;
@@ -390,7 +387,6 @@ protected
     sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
 
   end setSat_p;
-
 
 
   redeclare function extends setBubbleState
@@ -1285,8 +1281,6 @@ protected
   end setState_psX;
 
 
-
-
   redeclare function extends temperature
   "returns temperature from given ThermodynamicState"
   // inherited from: PartialMedium
@@ -1507,8 +1501,6 @@ protected
       gamma := Modelica.Constants.inf;
     end if;
   end isentropicExponent;
-
-
 
 
   redeclare replaceable function extends dynamicViscosity
@@ -1747,7 +1739,6 @@ protected
   end saturationPressure;
 
 
-
   redeclare function extends dBubbleDensity_dPressure
   "Return bubble point density derivative"
   // inherited from: PartialTwoPhaseMedium
@@ -1827,8 +1818,6 @@ protected
     Inline=true,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
-
-
 
 
   redeclare function extends density_derp_h
@@ -1919,11 +1908,6 @@ protected
   end temperature_ph;
 
 
-
-
-
-
-
   redeclare function density_pT "Return density from p and T"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1940,8 +1924,6 @@ protected
     inverse(p=pressure_dT(d=d, T=T, phase=phase),
             T=temperature_pd(p=p, d=d, phase=phase)));
   end density_pT;
-
-
 
 
   redeclare function extends density_derp_T
@@ -2011,9 +1993,9 @@ protected
   annotation (
     Inline=false,
     LateInline=true,
+    inverse(T=temperature_ph_state(p=p, h=h, state=state)),
     derivative(noDerivative=state)=specificEnthalpy_pT_der);
   end specificEnthalpy_pT_state;
-
 
 
   redeclare function pressure_dT
@@ -2034,10 +2016,6 @@ protected
   end pressure_dT;
 
 
-
-
-
-
   redeclare function specificEnthalpy_dT
     extends Modelica.Icons.Function;
     input Density d "Density";
@@ -2052,14 +2030,6 @@ protected
   annotation (
     Inline=true);
   end specificEnthalpy_dT;
-
-
-
-
-
-
-
-
 
 
   redeclare function temperature_ps "returns temperature for given p and d"
@@ -2077,7 +2047,6 @@ protected
     inverse(p=pressure_Ts(T=T, s=s, phase=phase),
             s=specificEntropy_pT(p=p, T=T, phase=phase)));
   end temperature_ps;
-
 
 
   redeclare function specificEnthalpy_ps

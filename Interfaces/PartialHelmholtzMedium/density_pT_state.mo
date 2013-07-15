@@ -13,5 +13,6 @@ algorithm
 annotation (
   Inline=false,
   LateInline=true,
+  inverse(p=pressure_dT_state(d=d, T=T, state=state)),
   derivative(noDerivative=state)=density_pT_der);
 end density_pT_state;

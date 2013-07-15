@@ -13,5 +13,6 @@ algorithm
 annotation (
   Inline=false,
   LateInline=true,
+  inverse(h=specificEnthalpy_pT_state(p=p, T=T, state=state)),
   derivative(noDerivative=state)=temperature_ph_der);
 end temperature_ph_state;
