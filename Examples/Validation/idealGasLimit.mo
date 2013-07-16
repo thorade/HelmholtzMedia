@@ -3,7 +3,8 @@ model idealGasLimit
   package Medium = HelmholtzFluids.Propane;
 
   parameter Medium.Temperature T=298.15;
-  Medium.Density d;
+  Modelica.SIunits.SpecificVolume v;
+  Medium.Density d=1/v;
 
   Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(d=d, T=T, phase=1);
   Medium.ThermodynamicState state = Medium.setState_dT(d=d, T=T, phase=1);
@@ -18,7 +19,7 @@ model idealGasLimit
   Real D=f.rddd/f.d_crit^3;
 
 equation
-  d = 100/exp(time);
+  v = exp(time/10);
 
   annotation (Documentation(info="
 <html>
@@ -39,6 +40,6 @@ How to use:
 </ol>
 
 </body>
-</html>"),experiment(StopTime=1000, __Dymola_NumberOfIntervals=10000),
+</html>"),experiment(StopTime=100000, __Dymola_NumberOfIntervals=10000),
     __Dymola_experimentSetupOutput);
 end idealGasLimit;
