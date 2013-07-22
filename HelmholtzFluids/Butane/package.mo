@@ -1,13 +1,14 @@
 within HelmholtzMedia.HelmholtzFluids;
 package Butane "Butane"
 extends Interfaces.PartialHelmholtzMedium(
-  fluidConstants={fluidConstantsButane},
-  helmholtzCoefficients=helmholtzCoefficientsButane,
-  thermalConductivityCoefficients=thermalConductivityCoefficientsButane,
-  dynamicViscosityCoefficients=dynamicViscosityCoefficientsButane,
-  surfaceTensionCoefficients=surfaceTensionCoefficientsButane,
-  ancillaryCoefficients=ancillaryCoefficientsButane,
-  fluidLimits=fluidLimitsButane,
+  mediumName="butane" "short name",
+  final fluidConstants={fluidConstantsButane},
+  final helmholtzCoefficients=helmholtzCoefficientsButane,
+  final thermalConductivityCoefficients=thermalConductivityCoefficientsButane,
+  final dynamicViscosityCoefficients=dynamicViscosityCoefficientsButane,
+  final surfaceTensionCoefficients=surfaceTensionCoefficientsButane,
+  final ancillaryCoefficients=ancillaryCoefficientsButane,
+  final fluidLimits=fluidLimitsButane,
   Density(min=fluidLimitsButane.DMIN, max=fluidLimitsButane.DMAX, start=fluidConstantsButane.molarMass/fluidConstantsButane.criticalMolarVolume),
   Temperature(min=fluidLimitsButane.TMIN, max=fluidLimitsButane.TMAX, start=298.15),
   AbsolutePressure(min=0, max=200e6, start=101325),
@@ -16,10 +17,10 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant Interfaces.PartialHelmholtzMedium.FluidConstants
   fluidConstantsButane(
-    chemicalFormula="C4H10",
-    structureFormula="",
     casRegistryNumber="106-97-8",
-    iupacName="",
+    iupacName="n-butane" "full name",
+    structureFormula="CH3-2(CH2)-CH3",
+    chemicalFormula="C4H10",
     molarMass=0.0581222,
     hasCriticalData=true,
        criticalTemperature=425.125,
