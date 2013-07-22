@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model printCoefficients "pretty printing of EoS coefficients"
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.Helium;
 
 protected
   String fileName = "printCoefficients.txt";
@@ -42,14 +42,18 @@ algorithm
   Modelica.Utilities.Streams.print("\n =============================================================================== \n #STN", fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.surfaceTensionCoefficients.coeffs), fileName);
   Modelica.Utilities.Streams.print("#MLT", fileName);
+  Modelica.Utilities.Streams.print(String(Medium.ancillaryCoefficients.pressureMeltingModel), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.ancillaryCoefficients.pressureMelting1), fileName);
 //Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.ancillaryCoefficients.pressureMelting2), fileName);
 //Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.ancillaryCoefficients.pressureMelting3), fileName);
   Modelica.Utilities.Streams.print("#PS", fileName);
+  Modelica.Utilities.Streams.print(String(Medium.ancillaryCoefficients.pressureSaturationModel), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.ancillaryCoefficients.pressureSaturation), fileName);
   Modelica.Utilities.Streams.print("#DL", fileName);
+  Modelica.Utilities.Streams.print(String(Medium.ancillaryCoefficients.densityLiquidModel), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.ancillaryCoefficients.densityLiquid), fileName);
   Modelica.Utilities.Streams.print("#DV", fileName);
+  Modelica.Utilities.Streams.print(String(Medium.ancillaryCoefficients.densityVaporModel), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.ancillaryCoefficients.densityVapor), fileName);
   Modelica.Utilities.Streams.print("===============================================================================", fileName);
 

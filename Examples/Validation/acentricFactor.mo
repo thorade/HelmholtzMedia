@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model acentricFactor "validate acentric factor"
-  package Medium = HelmholtzFluids.HMDS;
+  package Medium = HelmholtzFluids.Helium;
 
 protected
   Medium.Temperature T_crit = Medium.fluidConstants[1].criticalTemperature;

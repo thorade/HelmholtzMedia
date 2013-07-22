@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model SinglePhase_setState_b
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.Helium;
   Medium.AbsolutePressure p(start=101325);
   Medium.Temperature T(start=298.15);
 
@@ -56,5 +56,5 @@ equation
   state_ps=Medium.setState_ps(p=Medium.pressure(state), s=Medium.specificEntropy(state), phase=0);
   state_Ts=Medium.setState_Ts(T=Medium.temperature(state), s=Medium.specificEntropy(state), phase=0);
 
-  annotation (experiment(StopTime=12, NumberOfIntervals=10000));
+annotation (experiment(StopTime=12, NumberOfIntervals=1000));
 end SinglePhase_setState_b;

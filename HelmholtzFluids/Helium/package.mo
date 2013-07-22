@@ -1,6 +1,7 @@
 within HelmholtzMedia.HelmholtzFluids;
 package Helium "Helium"
 extends Interfaces.PartialHelmholtzMedium(
+  mediumName="helium" "short name",
   fluidConstants={fluidConstantsHelium},
   helmholtzCoefficients=helmholtzCoefficientsHelium,
   thermalConductivityCoefficients=thermalConductivityCoefficientsHelium,
@@ -16,17 +17,21 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant Interfaces.PartialHelmholtzMedium.FluidConstants
   fluidConstantsHelium(
+    casRegistryNumber="7440-59-7" "CAS number",
+    iupacName="helium-4" "full name",
+    structureFormula="He",
     chemicalFormula="He",
-    structureFormula="",
-    casRegistryNumber="7440-59-7",
-    iupacName="",
     molarMass=0.004002602,
+    triplePointTemperature=2.1768,
+    normalBoilingPoint=4.2226,
     hasCriticalData=true,
        criticalTemperature=5.1953,
-       criticalPressure=227600,
-       criticalMolarVolume=1/18.13e3,
-       HCRIT0=11338.2625757923,
-       SCRIT0=2079.6088606846,
+       criticalPressure=227610,
+       criticalMolarVolume=1.0/17.3837e3,
+       HCRIT0=11229.8913760996,
+       SCRIT0=2054.84033693702,
+    hasAcentricFactor=true,
+       acentricFactor=-0.385,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.0,
@@ -36,11 +41,7 @@ extends Interfaces.PartialHelmholtzMedium(
     hasAccurateViscosityData=true,
     hasAccurateConductivityData=true,
     hasVapourPressureCurve=true,
-    hasAcentricFactor=true,
-       acentricFactor=-0.385,
-    triplePointTemperature=2.1768,
-    triplePointPressure=5043.0,
-    normalBoilingPoint=4.222,
+    triplePointPressure=5033.5,
     meltingPoint=2.1768) "Fluid Constants";
 
   final constant Interfaces.PartialHelmholtzMedium.FluidLimits
@@ -62,35 +63,35 @@ extends Interfaces.PartialHelmholtzMedium(
     idealLog=[
           1.5,          1],
     idealPower=[
-        0.187171646656055,  0;
-        0.484851136045604,  1],
+        0.159269591430361000,  0;
+        0.476532113807410000,  1],
     idealEinstein=fill(0.0, 0, 2),
     idealCosh=fill(0.0, 0, 2),
     idealSinh=fill(0.0, 0, 2),
     residualPoly=[
-        0.9288766E-02,   1.0,    4,  0;
-        0.9258069E+00,   0.28,   1,  0;
-       -0.1718156E+01,   0.735,  1,  0;
-        0.7606137E+00,   0.64,   2,  0;
-       -0.1024864E+01,   0.82,   2,  0;
-        0.1052455E+00,   1.16,   3,  0],
+          0.014799269,   1.0,     4,  0;
+          3.06281562,    0.426,   1,  0;
+         -4.25338698,    0.631,   1,  0;
+          0.05192797,    0.596,   2,  0;
+         -0.165087335,   1.705,   2,  0;
+          0.087236897,   0.568,   3,  0],
     residualBwr=[
-       -0.1875722E+00,   1.28,   1,  1;
-       -0.1287812E+00,   2.0,    1,  2;
-       -0.2227619E-02,   0.41,   3,  2;
-        0.1823465E+00,   1.33,   2,  1;
-       -0.4450014E-01,   4.2,    2,  2;
-       -0.8729033E-04,   0.6,    8,  1],
+          2.10653786,    0.9524,  1,  1;
+         -0.62835030,    1.471,   1,  2;
+         -0.28200301,    1.48,    3,  2;
+          1.04234019,    1.393,   2,  1;
+         -0.07620555,    3.863,   2,  2;
+         -1.35006365,    0.803,   1,  1],
      residualGauss=[
-        0.3854320E-01,   3.0,    1,  2, 2,   -1.0833,  -0.0385,  1.9776,  0.6914;
-       -0.9585106E+00,   1.0,    1,  2, 2,  -18.3824, -19.8246,  1.6178,  0.8590;
-       -0.5454010E-01,   8.2,    1,  2, 2,   -5.0573,  -9.3799,  0.4371,  0.8787;
-       -0.3687260E-01,   1.0,    2,  2, 2,   -0.2832,  -0.8073,  0.5355,  2.7182;
-       -0.1021851E-02,   2.71,   2,  2, 2,   -6.0582,  -0.0310,  0.7777,  2.0301;
-        0.6166348E-01,   1.0,    2,  2, 2,   -0.2444,  -0.0061,  0.4832,  0.8900;
-        0.2493437E-01,   1.0,    3,  2, 2,   -0.0539,  -0.3581,  0.8162,  1.1790;
-       -0.8127424E-02,   2.0,    3,  2, 2,   -0.1850,  -0.7518,  1.2896,  0.5680;
-       -0.8233032E-02,   1.0,    2,  2, 2,   -0.5941,  -7.4629,  0.3577,  1.6412])
+          0.11997252,    3.273,   1,  2, 2,   -8.674,   -8.005,  1.1475,  0.912;
+          0.10724500,    0.66,    1,  2, 2,   -4.006,   -1.15,   1.7036,  0.79;
+         -0.35374839,    2.629,   1,  2, 2,   -8.1099,  -2.143,  1.6795,  0.90567;
+          0.75348862,    1.4379,  2,  2, 2,   -0.1449,  -0.147,  0.9512,  5.1136;
+          0.00701871,    3.317,   2,  2, 2,   -0.1784,  -0.154,  4.475,   3.6022;
+          0.226283167,   2.3676,  2,  2, 2,   -2.432,   -0.701,  2.7284,  0.6488;
+         -0.22464733,    0.7545,  3,  2, 2,   -0.0414,  -0.21,   1.7167,  4.2753;
+          0.12413584,    1.353,   2,  2, 2,   -0.421,   -0.134,  1.5237,  2.744;
+          0.00901399,    1.982,   2,  2, 2,   -5.8575, -19.256,  0.7649,  0.8736])
   "Coefficients of the Helmholtz EoS";
 
   final constant
@@ -130,39 +131,41 @@ extends Interfaces.PartialHelmholtzMedium(
   Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsHelium(
     coeffs=[
-       389.057E-6,  1.00;
-       521.410E-6,  2.00;
-      -579.737E-6,  3.00]) "Coefficients for the surface tension";
+       0.0004656,   1.04;
+       0.001889,    2.468;
+      -0.002006,    2.661]) "Coefficients for the surface tension";
 
   final constant
   Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
   ancillaryCoefficientsHelium(
-    pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
-    pressureSaturation=[
-      -0.399865E+01, 1.0;
-       0.870145E+00, 1.5;
-       0.171451E+00, 1.85;
-       0.120927E+01, 2.7],
-    densityLiquidModel=Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel.DL2,
-    densityLiquid=[
-       0.140808E+01, 1.17;
-      -0.543843E+00, 7.0;
-       0.177220E+01, 15.0;
-      -0.344056E+01, 20.0],
-    densityVaporModel=Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel.DV3,
-    densityVapor=[
-      -0.126074E+01, 0.263;
-      -0.363425E+01, 1.04;
-      -0.487998E+01, 3.25;
-      -0.130581E+02, 8.5],
     pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
     T_reducing=1,
     p_reducing=1000e3,
     pressureMelting1=[
-      -1.7455837, 0.000000;
-       1.6979793, 1.555414],
+      -1.7455837,      0.000000;
+       1.6979793,      1.555414],
     pressureMelting2=fill(0.0, 0, 2),
-    pressureMelting3=fill(0.0, 0, 2))
+    pressureMelting3=fill(0.0, 0, 2),
+    pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
+    pressureSaturation=[
+      -3.8357,   1.0;
+       1.7062,   1.5;
+      -0.71231,  1.25;
+       1.0862,   2.8],
+    densityLiquidModel=Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel.DL1,
+    densityLiquid=[
+       1.0929,   0.286;
+       1.6584,   1.2;
+      -3.6477,   2.0;
+       2.7440,   2.8;
+      -2.3859,   6.5],
+    densityVaporModel=Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel.DV3,
+    densityVapor=[
+      -1.5789,   0.333;
+      -10.749,   1.5;
+       17.711,   2.1;
+      -15.413,   2.7;
+      -14.352,   9.0])
   "Coefficients for the ancillary equations (PS5, DL1, DV3, ML1)";
 
 
@@ -171,8 +174,8 @@ These are the coefficients for Helium.
 
 <dl>
 <dt> Ortiz-Vega, D.O., Hall, K.R., Arp, V.D., and Lemmon, E.W.</dt>
-<dd> <b>Interim equation for the properties of helium</b><br>
-     to be published in Int. J. Thermophys.<br>
+<dd> <b>Interim equation (final version) for the properties of helium</b><br>
+     to be published in J. Phys. Chem. Ref. Data, 2013<br>
      DOI: <a href=\"http://dx.doi.org/\"></a>
 </dd>
 <dt> McCarty, R.D. and Arp, V.D.</dt>

@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model ReferenceState
-  package Medium = HelmholtzMedia.HelmholtzFluids.HMDS;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
   Medium.SpecificEnthalpy h_ref;
   Medium.SpecificEntropy s_ref;
 
