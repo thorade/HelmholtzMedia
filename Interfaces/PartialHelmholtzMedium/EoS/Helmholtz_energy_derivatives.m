@@ -46,7 +46,7 @@ Distance = ((1-tau)+ni8*((delta-1)^2)^(1/(2*ni7)))^2 + ni11*((delta-1)^2)^ni12
 Phi = exp(-ni9*(delta-1)^2-ni10*(tau-1)^2)
 nonAnalyticalTerms = ni1*delta*Distance^ni6*Phi;
 % fr = +residualPolyTerms +BWRTerms +GaussTerms +nonAnalyticalTerms;
-fr = +nonAnalyticalTerms  
+fr = +GaussTerms  
 fr = simplify(fr)
 
 %% First derivatives
@@ -83,3 +83,6 @@ frtdd = diff(frtd,delta);
 frtdd = simplify(frtdd)
 frddd = diff(frdd,delta);
 frddd = simplify(frddd)
+
+%% ideal gas limit
+limit(frd,delta,0,'right')
