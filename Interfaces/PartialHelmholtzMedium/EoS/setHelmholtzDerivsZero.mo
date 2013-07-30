@@ -23,7 +23,6 @@ algorithm
     f.i   := f_i(tau=tau, delta=delta);
 
     f.r   := f_r(tau=tau, delta=delta);
-    f.rd  := f_rd(tau=tau, delta=delta);
   else
     assert(false, "This function will return valid values for single phase input only!");
   end if;

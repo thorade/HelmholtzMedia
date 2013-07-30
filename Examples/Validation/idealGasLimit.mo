@@ -8,17 +8,19 @@ model idealGasLimit
 
   Medium.ThermodynamicState state = Medium.setState_dT(d=d, T=T, phase=1);
   Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(d=d, T=T, phase=1);
-  Medium.EoS.HelmholtzDerivs f0 = Medium.EoS.setHelmholtzDerivsZero(d=0, T=T, phase=1);
+//Medium.EoS.HelmholtzDerivs f0 = Medium.EoS.setHelmholtzDerivsThird(d=0, T=T, phase=1);
 
 //Real B=f.rd*f.delta/d;
   Real B=f.rd/f.d_crit;
-  Real B0=f0.rd/f0.d_crit;
+//Real B0=f0.rd/f0.d_crit;
 
 //Real C=f.rdd*f.delta^2/d^2;
   Real C=f.rdd/f.d_crit^2;
+//Real C0=f0.rdd/f0.d_crit^2;
 
 //Real D=f.rddd*f.delta^3/d^3;
   Real D=f.rddd/f.d_crit^3;
+//Real D0=f0.rddd/f0.d_crit^3;
 
 equation
   v = exp(time/10);
