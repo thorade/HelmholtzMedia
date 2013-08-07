@@ -17,17 +17,17 @@ _Environmental Earth Sciences_,
 doi:10.1007/s12665-013-2394-z
 
 The following fluids have been implemented with EoS and transport properties:  
-[Butane](HelmholtzFluids/Butane/package.mo), 
-[Ethanol](HelmholtzFluids/Ethanol/package.mo), 
-[Isobutane](HelmholtzFluids/Isobutane/package.mo), 
-[Isopentane](HelmholtzFluids/Isopentane/package.mo), 
-[Pentane](HelmholtzFluids/Pentane/package.mo), 
-[Propane](HelmholtzFluids/Propane/package.mo), 
-[R134a](HelmholtzFluids/R134a/package.mo) (with three reference states). 
+[Butane](HelmholtzMedia/HelmholtzFluids/Butane/package.mo), 
+[Ethanol](HelmholtzMedia/HelmholtzFluids/Ethanol/package.mo), 
+[Isobutane](HelmholtzMedia/HelmholtzFluids/Isobutane/package.mo), 
+[Isopentane](HelmholtzMedia/HelmholtzFluids/Isopentane/package.mo), 
+[Pentane](HelmholtzMedia/HelmholtzFluids/Pentane/package.mo), 
+[Propane](HelmholtzMedia/HelmholtzFluids/Propane/package.mo), 
+[R134a](HelmholtzMedia/HelmholtzFluids/R134a/package.mo) (with three reference states). 
 
 The following fluids have been implemented with EoS only:  
-[Helium](HelmholtzFluids/Helium/package.mo),
-[Hexamethyldisiloxane (HMDS)](HelmholtzFluids/HMDS/package.mo). 
+[Helium](HelmholtzMedia/HelmholtzFluids/Helium/package.mo),
+[Hexamethyldisiloxane (HMDS)](HelmholtzMedia/HelmholtzFluids/HMDS/package.mo). 
 
 ## Current release
 Download the newest [tagged version](../../tags).  
