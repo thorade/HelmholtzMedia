@@ -26,7 +26,8 @@ The following fluids have been implemented with EoS and transport properties:
 [R134a](HelmholtzFluids/R134a/package.mo) (with three reference states). 
 
 The following fluids have been implemented with EoS only:  
-[Helium](HelmholtzFluids/Helium/package.mo) (has convergence problems in the far super-critical region),  [Hexamethyldisiloxane (HMDS)](HelmholtzFluids/HMDS/package.mo). 
+[Helium](HelmholtzFluids/Helium/package.mo),
+[Hexamethyldisiloxane (HMDS)](HelmholtzFluids/HMDS/package.mo). 
 
 ## Current release
 Download the newest [tagged version](../../tags).  
