@@ -18,8 +18,8 @@ request
 status
 stop
 
-# ignore pdf files
-*.pdf
+# ignore pdf files in source code folder
+HelmholtzMedia/**/*.pdf
 
 # ignore Microsoft Office files
 *.doc
