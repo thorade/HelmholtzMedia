@@ -28,6 +28,11 @@ stop
 *.xlsx
 *.xlsm
 
+# ignore LaTeX auxiliary files
+*.aux
+*.log
+*.synctex.gz
+
 # ignore Matlab auto-save files
 *.asv
 

@@ -1,0 +1,22 @@
+% !TEX program = pdfLaTeX
+\documentclass{standalone}
+\input{00_myPreamble.tex}
+\input{00_myNewCommands.tex}
+% ==== ==== ==== ====
+\begin{document}
+$\displaystyle
+  \begin{pmatrix}
+     x_1 \\ y_1
+  \end{pmatrix} = 
+  \begin{pmatrix}
+     x_0 \\ y_0
+  \end{pmatrix} - 
+  \begin{pmatrix}
+     \der{f}{x}{y} & \der{f}{y}{x} \\ 
+     \der{g}{x}{y} & \der{g}{y}{x}
+  \end{pmatrix}^{-1}
+  \begin{pmatrix}
+     f(x_0) \\ g(y_0)
+  \end{pmatrix}
+$
+\end{document}
