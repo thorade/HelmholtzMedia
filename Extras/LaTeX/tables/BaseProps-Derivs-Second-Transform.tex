@@ -1,0 +1,25 @@
+% !TeX root = BaseProps-Derivs-Second-Transform_Standalone.tex
+% !TeX program = XeLaTeX
+% !TeX spellcheck = en
+\begin{tabularx}{\linewidth}{rcX}
+\toprule
+Definition &       & Transformation \\
+\midrule
+$ \der{^2 T}{p^2}{\varrho} $ & $=$   & $ -\der{^2p}{T^2}{\varrho}\der{p}{T}{\varrho}^{-3}$ \\[15pt]
+$ \der{^2 T}{\varrho^2}{p} $ & $=$   & $ -\left[\der{^2p}{\varrho^2}{T}\der{p}{T}{\varrho}-\der{p}{\varrho}{T}\der{^2 p}{T \,\partial \varrho}{}\right]\der{p}{T}{\varrho}^{-2} $\\
+\multicolumn{3}{r}{$ +\left[\der{^2p}{T \,\partial \varrho}{}\der{p}{T}{\varrho}-\der{p}{\varrho}{T}\der{^2p}{T^2}{\varrho}\right]\der{p}{T}{\varrho}^{-3} \der{p}{\varrho}{T}$ }\\[15pt]
+$ \der{^2 T}{p \,\partial \varrho}{} $ & $=$   & $ - \left[ \der{^2p}{T \,\partial \varrho}{}\der{p}{T}{\varrho} - \der{p}{\varrho}{T}\der{^2p}{T^2}{\varrho} \right] \der{p}{T}{\varrho}^{-3}$ \\[15pt]
+\midrule
+$ \der{^2 \varrho}{p^2}{T} $ & $=$   & $ -\der{^2p}{\varrho^2}{T}\der{p}{\varrho}{T}^{-3}$ \\[15pt]
+$ \der{^2 \varrho}{T^2}{p} $ & $=$   & $ -\left[\der{^2p}{T^2}{\varrho}\der{p}{\varrho}{T}-\der{p}{T}{\varrho}\der{^2 p}{T \,\partial \varrho}{}\right]\der{p}{\varrho}{T}^{-2} $\\
+\multicolumn{3}{r}{$ +\left[\der{^2p}{T \,\partial \varrho}{}\der{p}{\varrho}{T}-\der{p}{T}{\varrho}\der{^2p}{\varrho^2}{T}\right]\der{p}{\varrho}{T}^{-3} \der{p}{T}{\varrho}$ }\\[15pt]
+$ \der{^2 \varrho}{T \,\partial p}{} $ & $=$   & $ - \left[ \der{^2p}{T \,\partial \varrho}{}\der{p}{\varrho}{T} - \der{p}{T}{\varrho}\der{^2p}{\varrho^2}{T} \right] \der{p}{\varrho}{T}^{-3}$ \\[15pt]
+\midrule
+$ \der{\mu}{T}{\varrho} $ & $=$   & $ \left\lbrace-\der{^2p}{T^2}{\varrho} - \der{p}{\varrho}{T}\der{h}{T}{\varrho}\der{^2h}{T \,\partial \varrho}{}\der{h}{\varrho}{T}^{-2} \right.$\\
+\multicolumn{3}{r}{$ \left. + \left[ \der{^2p}{T \,\partial \varrho}{}\der{h}{T}{\varrho} + \der{p}{\varrho}{T}\der{^2h}{T^2}{\varrho} \right]\der{h}{\varrho}{T}^{-1} \right\rbrace \mu^2$ }\\[15pt]
+$ \der{\mu}{\varrho}{T} $ & $=$   & $ \left\lbrace-\der{^2p}{T \,\partial \varrho}{} - \der{p}{\varrho}{T}\der{h}{T}{\varrho}\der{^2h}{\varrho^2}{T}\der{h}{\varrho}{T}^{-2} \right.$\\
+\multicolumn{3}{r}{$ \left. + \left[ \der{^2p}{\varrho^2}{T}\der{h}{T}{\varrho} + \der{p}{\varrho}{T}\der{^2h}{T \,\partial \varrho}{} \right]\der{h}{\varrho}{T}^{-1} \right\rbrace \mu^2$ }\\[15pt]
+$ \der{^2 T}{p^2}{h} $ & $=$   & $ \der{\mu}{p}{h} = \frac{ \der{\mu}{T}{\varrho}\der{h}{\varrho}{T} - \der{\mu}{\varrho}{T}\der{h}{T}{\varrho} }
+					   { \der{p}{T}{\varrho}\der{h}{\varrho}{T} - \der{p}{\varrho}{T}\der{h}{T}{\varrho} }$\\[15pt]
+\bottomrule
+\end{tabularx}%

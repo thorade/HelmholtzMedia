@@ -1,0 +1,24 @@
+% !TeX root = ExtraDerivsJacobi_Standalone.tex
+% !TeX program = XeLaTeX
+% !TeX spellcheck = en
+\begin{tabularx}{\linewidth}{rcl}
+\toprule
+Definition &       & Transformation \\
+\midrule
+$ c_v = \der{u}{T}{v} $ & $=$   & $ \der{u}{T}{\varrho}$ \\[12pt]
+$ \der{\varrho}{p}{T} $ & $=$   & $ \der{p}{\varrho}{T}^{-1}$ \\[12pt]
+$ \delta_T = \der{h}{p}{T} $ & $=$   & $ \der{h}{\varrho}{T} \der{p}{\varrho}{T}^{-1}$ \\[12pt]
+$ \der{\varrho}{T}{p} $ & $=$   & $ - \der{p}{T}{\varrho}\der{p}{\varrho}{T}^{-1}$ \\[8.7pt]
+\midrule[0.5pt]
+$ c_p = \der{h}{T}{p} $ & $=$   & $ \der{h}{T}{\varrho} - \der{h}{\varrho}{T} \der{p}{T}{\varrho} \der{p}{\varrho}{T}^{-1}$ \\[10pt]
+$ w^2 = \der{p}{\varrho}{s} $ & $=$   & $ \der{p}{\varrho}{T} - \der{p}{T}{\varrho} \der{s}{\varrho}{T} \der{s}{T}{\varrho}^{-1}\phantom{\sqrt{\der{p}{\varrho}{s}}}$ \\[8.7pt]
+\midrule[0.5pt]
+$ \mu = \der{T}{p}{h} $ & $=$   & $ \left[\der{p}{T}{\varrho} - \der{p}{\varrho}{T} \der{h}{T}{\varrho} \der{h}{\varrho}{T}^{-1} \right]^{-1}$ \\[10pt]
+$ \der{T}{h}{p} $ & $=$   & $ \left[\der{h}{T}{\varrho} - \der{h}{\varrho}{T} \der{p}{T}{\varrho} \der{p}{\varrho}{T}^{-1} \right]^{-1}$ \\[10pt]
+$ \der{\varrho}{p}{h} $ & $=$   & $ \left[\der{p}{\varrho}{T} - \der{p}{T}{\varrho} \der{h}{\varrho}{T} \der{h}{T}{\varrho}^{-1} \right]^{-1}$ \\[10pt]
+$ \der{\varrho}{h}{p} $ & $=$   & $ \left[ \der{h}{\varrho}{T} - \der{h}{T}{\varrho} \der{p}{\varrho}{T} \der{p}{T}{\varrho}^{-1} \right]^{-1}$ \\[10pt]%[8.7pt]
+%\midrule[0.5pt]
+%$ \der{u}{p}{h} $ & $=$ & $ \frac{\der{u}{\varrho}{h}}{\der{p}{\varrho}{h}} = \frac{\der{u}{\varrho}{T} - \der{u}{T}{\varrho} \der{h}{\varrho}{T} \der{h}{T}{\varrho}^{-1}}{\der{p}{\varrho}{T} - \der{p}{T}{\varrho} \der{h}{\varrho}{T} \der{h}{T}{\varrho}^{-1}} $ \\[25pt]
+%$ \der{u}{h}{p} $ & $=$ & $ \frac{\der{u}{T}{p}}{\der{h}{T}{p}} = \frac{\der{u}{T}{\varrho} - \der{u}{\varrho}{T} \der{p}{T}{\varrho} \der{p}{\varrho}{T}^{-1}}{\der{h}{T}{\varrho} - \der{h}{\varrho}{T} \der{p}{T}{\varrho} \der{p}{\varrho}{T}^{-1}} $ \\[25pt]
+\bottomrule
+\end{tabularx}%
