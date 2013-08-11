@@ -1,0 +1,27 @@
+% !TeX root = xDerivs_Standalone.tex
+% !TeX program = pdfLaTeX
+{\setlength{\tabcolsep}{.2em}
+\begin{tabularx}{\linewidth}{ccl}
+\toprule
+% $x$ 	& $=$ & $\dfrac{v-v'}{v''-v'}$ \\[15pt]
+$\der{x}{T}{v}$ 
+	& $=$ & $\dfrac{-\DER{v'}{T}\left(v''-v'\right) - \left(v-v'\right)\left(\DER{v''}{T}-\DER{v'}{T}\right)}{\left(v''-v'\right)^2}$\\[15pt]
+	& $=$ & $\dfrac{ \DER{v'}{T}+x\left(\DER{v''}{T}-\DER{v'}{T}\right)}{\left(v'-v''\right)}$\\[15pt]
+	& $=$ & $\dfrac{x\DER{v''}{T}+\left(1-x\right)\DER{v'}{T}}{\left(v'-v''\right)}$ \\[15pt]
+%
+\midrule
+% $x$ 	& $=$ & $\dfrac{h-h'}{h''-h'}$ \\[15pt]
+$\der{x}{p}{h}$ 
+	& $=$ & $\dfrac{-\DER{h'}{p}\left(h''-h'\right) - \left(h-h'\right)\left(\DER{h''}{p}-\DER{h'}{p}\right)}{\left(h''-h'\right)^2}$\\[15pt]
+	& $=$ & $\dfrac{\DER{h'}{p}+x\left(\DER{h''}{p}-\DER{h'}{p}\right)}{\left(h'-h''\right)}$\\[15pt]
+	& $=$ & $\dfrac{x\DER{h''}{p}+\left(1-x\right)\DER{h'}{p}}{\left(h'-h''\right)}$\\[15pt]
+\midrule
+% $x$ 	& $=$ & $\dfrac{s-s'}{s''-s'}$ \\[15pt]
+$\der{x}{p}{s}$ 
+	& $=$ & $\dfrac{-\DER{s'}{p}\left(s''-s'\right) - \left(s-s'\right)\left(\DER{s''}{p}-\DER{s'}{p}\right)}{\left(s''-s'\right)^2}$\\[15pt]
+	& $=$ & $\dfrac{\DER{s'}{p}+x\left(\DER{s''}{p}-\DER{s'}{p}\right)}{\left(s'-s''\right)}$\\[15pt]
+	& $=$ & $\dfrac{x\DER{s''}{p}+\left(1-x\right)\DER{s'}{p}}{\left(s'-s''\right)}$\\[15pt]
+%
+\bottomrule
+\end{tabularx}%
+}
