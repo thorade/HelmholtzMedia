@@ -27,17 +27,9 @@ stop
 *.xls
 *.xlsx
 *.xlsm
-*.csv
 
 # ignore Matlab auto-save files
 *.asv
-
-# ignore Refprop files
-*.rfp
-*.fld
-
-# ignore LaTeX folder
-[Ll][Aa][Tt][Ee][Xx]*/
 
 # ignore PowerShell
 *.ps1
