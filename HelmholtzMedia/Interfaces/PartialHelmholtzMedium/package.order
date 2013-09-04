@@ -39,6 +39,7 @@ isothermalCompressibility
 isentropicExponent
 jouleThomsonCoefficient
 isothermalThrottlingCoefficient
+isentropicExpansionCoefficient
 dynamicViscosity
 thermalConductivity
 surfaceTension
