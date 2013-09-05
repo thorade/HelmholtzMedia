@@ -20,12 +20,10 @@ model Derivatives_TwoPhase
   Real dxph_analytical1;
   Real dxph_analytical2;
   Real dxph_analytical3;
-  /*Real dxTs_numerical;
-  Real dxTs_analytical;
-  Real dxTs_analytical2;
-  Real dxTh_numerical;
-  Real dxTh_analytical;
-  Real dxTh_analytical2; */
+  Real dxps_numerical;
+  Real dxps_analytical1;
+  Real dxps_analytical2;
+  Real dxps_analytical3;
 // Entropy derivatives
   Medium.Types.DerEntropyByTemperature dsTd_numerical;
   Medium.Types.DerEntropyByTemperature dsTd_analytical;
@@ -42,6 +40,8 @@ model Derivatives_TwoPhase
   Medium.DerDensityByPressure ddph_numerical;
   Medium.DerDensityByPressure ddph_analytical1;
   Medium.DerDensityByPressure ddph_analytical2;
+  Medium.DerDensityByPressure ddps_numerical;
+  Medium.DerDensityByPressure ddps_analytical1;
 // Enthalpy derivatives
   Medium.Types.DerEnthalpyByDensity dhdT_numerical;
   Medium.Types.DerEnthalpyByDensity dhdT_analytical;
@@ -61,8 +61,12 @@ protected
   Medium.ThermodynamicState T_minus=Medium.setState_dTX(d=d, T=T*0.9999);
   Medium.ThermodynamicState h_plus=Medium.setState_phX(p=state.p, h=state.h+abs(0.0001*state.h));
   Medium.ThermodynamicState h_minus=Medium.setState_phX(p=state.p, h=state.h-abs(0.0001*state.h));
-  Medium.ThermodynamicState p_plus=Medium.setState_phX(p=state.p*1.0001, h=state.h);
-  Medium.ThermodynamicState p_minus=Medium.setState_phX(p=state.p*0.9999, h=state.h);
+  Medium.ThermodynamicState p_plus_h=Medium.setState_phX(p=state.p*1.0001, h=state.h);
+  Medium.ThermodynamicState p_minus_h=Medium.setState_phX(p=state.p*0.9999, h=state.h);
+  Medium.ThermodynamicState s_plus=Medium.setState_psX(p=state.p, s=state.s+abs(0.0001*state.s));
+  Medium.ThermodynamicState s_minus=Medium.setState_psX(p=state.p, s=state.s-abs(0.0001*state.s));
+  Medium.ThermodynamicState p_plus_s=Medium.setState_psX(p=state.p*1.0001, s=state.s);
+  Medium.ThermodynamicState p_minus_s=Medium.setState_psX(p=state.p*0.9999, s=state.s);
 // Entropy derivatives along saturation
   Medium.Types.DerEntropyByTemperature dsTd_liq = fl.R/T*(-fl.tau^2*(fl.itt+fl.rtt));
   Medium.Types.DerEntropyByDensity dsdT_liq = fl.R/sat.liq.d*(-(1+fl.delta*fl.rd)+(0+fl.tau*fl.delta*fl.rtd));
@@ -125,7 +129,7 @@ equation
   Modelica.Utilities.Streams.print("  (dx/dT)@v=const analytical5= " + String(dxTv_analytical5));
 
   Modelica.Utilities.Streams.print(" ");
-  dxph_numerical = (Medium.vapourQuality(p_plus) - Medium.vapourQuality(p_minus))/(p_plus.p - p_minus.p);
+  dxph_numerical = (Medium.vapourQuality(p_plus_h) - Medium.vapourQuality(p_minus_h))/(p_plus_h.p - p_minus_h.p);
   dxph_analytical1 = (-dhp_liq*(sat.vap.h - sat.liq.h) - (state.h - sat.liq.h)*(dhp_vap - dhp_liq))/(sat.vap.h - sat.liq.h)^2;
   dxph_analytical2 = (dhp_liq + x*(dhp_vap-dhp_liq))/(sat.liq.h - sat.vap.h);
   dxph_analytical3 = (x*dhp_vap + (1 - x)*dhp_liq)/(sat.liq.h - sat.vap.h);
@@ -134,11 +138,15 @@ equation
   Modelica.Utilities.Streams.print("  (dx/dp)@h=const analytical2= " + String(dxph_analytical2));
   Modelica.Utilities.Streams.print("  (dx/dp)@h=const analytical3= " + String(dxph_analytical3));
 
-  // dxTh_analytical1 = (-dhT_liq *(sat.vap.h-sat.liq.h) -(state.h-sat.liq.h)*(dhT_vap -dhT_liq) ) / (sat.vap.h-sat.liq.h)^2;
-  // dxTs_analytical1 = (-dsT_liq *(sat.vap.s-sat.liq.s) -(state.s-sat.liq.s)*(dsT_vap -dsT_liq) ) / (sat.vap.s-sat.liq.s)^2;
-  // dxTh_analytical2 = (x*dhT_vap+(1-x)*dhT_liq) / (sat.liq.h-sat.vap.h);
-  // dxTs_analytical2 = (x*dsT_vap+(1-x)*dsT_liq) / (sat.liq.s-sat.vap.s);
-  // dxps_analytical1 = (-dsp_liq*(sat.vap.s-sat.liq.s)-(state.s-sat.liq.s)*(dsp_vap-dsp_liq)) / (sat.vap.s-sat.liq.s)^2;
+  Modelica.Utilities.Streams.print(" ");
+  dxps_numerical = (Medium.vapourQuality(p_plus_s) - Medium.vapourQuality(p_minus_s))/(p_plus_s.p - p_minus_s.p);
+  dxps_analytical1 = (-dsp_liq*(sat.vap.s - sat.liq.s) - (state.s - sat.liq.s)*(dsp_vap - dsp_liq))/(sat.vap.s - sat.liq.s)^2;
+  dxps_analytical2 = (dsp_liq + x*(dsp_vap-dsp_liq))/(sat.liq.s - sat.vap.s);
+  dxps_analytical3 = (x*dsp_vap + (1 - x)*dsp_liq)/(sat.liq.s - sat.vap.s);
+  Modelica.Utilities.Streams.print("  (dx/dp)@s=const   numerical= " + String(dxps_numerical));
+  Modelica.Utilities.Streams.print("  (dx/dp)@s=const analytical1= " + String(dxps_analytical1));
+  Modelica.Utilities.Streams.print("  (dx/dp)@s=const analytical2= " + String(dxps_analytical2));
+  Modelica.Utilities.Streams.print("  (dx/dp)@s=const analytical3= " + String(dxps_analytical3));
 
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Entropy");
@@ -177,12 +185,17 @@ equation
   Modelica.Utilities.Streams.print("  (dd/dh)@p=const analytical2= " + String(ddhp_analytical2));
   Modelica.Utilities.Streams.print("  (dd/dh)@p=const analytical3= " + String(ddhp_analytical3));
   // check (dd/dp)@h=const
-  ddph_numerical = (p_plus.d - p_minus.d)/(p_plus.p - p_minus.p);
+  ddph_numerical = (p_plus_h.d - p_minus_h.d)/(p_plus_h.p - p_minus_h.p);
   ddph_analytical1 = Medium.density_derp_h(state=state);
   ddph_analytical2 = -state.d^2*(dvp_liq + x*(dvp_vap - dvp_liq) + dxph_analytical1*(1/sat.vap.d - 1/sat.liq.d));
   Modelica.Utilities.Streams.print("  (dd/dp)@h=const   numerical= " + String(ddph_numerical));
   Modelica.Utilities.Streams.print("  (dd/dp)@h=const analytical1= " + String(ddph_analytical1));
   Modelica.Utilities.Streams.print("  (dd/dp)@h=const analytical2= " + String(ddph_analytical2));
+  // check (dd/dp)@s=const
+  ddps_numerical = (p_plus_s.d - p_minus_s.d)/(p_plus_s.p - p_minus_s.p);
+  ddps_analytical1 = Medium.velocityOfSound(state=state)^(-2);
+  Modelica.Utilities.Streams.print("  (dd/dp)@s=const   numerical= " + String(ddps_numerical));
+  Modelica.Utilities.Streams.print("  (dd/dp)@s=const analytical1= " + String(ddps_analytical1));
 
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Enthalpy");

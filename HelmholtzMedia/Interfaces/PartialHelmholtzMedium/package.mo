@@ -1332,31 +1332,15 @@ protected
 
 
   redeclare function vapourQuality "returns the vapour quality"
-    // redeclare with algorithm based on d and T
-    // previously only input state and output x were defined
-    // optional input for saturation properties can save some time
 
-    input ThermodynamicState state;
-    input SaturationProperties sat=setSat_T(state.T);
-    output MassFraction x;
-
-protected
-    Temperature T_trip=fluidConstants[1].triplePointTemperature;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
+  input ThermodynamicState state;
+  output MassFraction x;
 
   algorithm
-    assert(state.T >= T_trip, "vapourQuality warning: Temperature is lower than triple-point temperature", level=AssertionLevel.warning);
-    assert(state.T <= T_crit, "vapourQuality warning: Temperature is higher than critical temperature", level=AssertionLevel.warning);
-
-    if state.d <= sat.vap.d then
-      x := 1;
-    elseif state.d >= sat.liq.d then
-      x := 0;
-    else
-      x := (1.0/state.d - 1.0/sat.liq.d)/(1.0/sat.vap.d - 1.0/sat.liq.d);
-    end if;
-
+  x := vapourQuality_sat(state=state, sat=setSat_T(state.T));
+  annotation (Inline=true);
   end vapourQuality;
+
 
 
   redeclare function extends specificHeatCapacityCp
@@ -1407,9 +1391,9 @@ protected
       cv := EoS.duTd(f);
 
     elseif (state.phase == 2) then
-      sat:=setSat_T(T=state.T);
-      x := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
-      dpT := (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);
+      sat := setSat_T(T=state.T);
+      x := vapourQuality_sat(state=state, sat=sat);
+      dpT := saturationPressure_derT_sat(sat=sat);
 
       fl := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.liq.d, phase=1);
       fv := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.vap.d, phase=1);
@@ -1430,16 +1414,49 @@ protected
 
   redeclare function extends velocityOfSound
   "returns the speed or velocity of sound"
-  //input state and
-  //output a are inherited from PartialMedium
+  // a^2 := (dp/dd)@s=const
 
 protected
     EoS.HelmholtzDerivs f;
 
+    SaturationProperties sat;
+    MassFraction x "vapour quality";
+    DerTemperatureByPressure dTp;
+    EoS.HelmholtzDerivs fl;
+    EoS.HelmholtzDerivs fv;
+
+    DerEntropyByPressure dsp_liq;
+    DerEntropyByPressure dsp_vap;
+    DerDensityByPressure ddp_liq;
+    DerDensityByPressure ddp_vap;
+    DerVolumeByPressure dvp_liq;
+    DerVolumeByPressure dvp_vap;
+    DerVolumeByPressure dvps;
+    DerFractionByPressure dxps;
+
   algorithm
-    assert(state.phase <> 2, "velocityOfSound error: property not defined in two-phase region");
-    f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
-    a := sqrt(EoS.dpdT(f)-EoS.dpTd(f)*EoS.dsdT(f)/EoS.dsTd(f));
+    if (state.phase == 1) then
+      f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      a := sqrt(EoS.dpdT(f)-EoS.dpTd(f)*EoS.dsdT(f)/EoS.dsTd(f));
+    elseif (state.phase == 2) then
+      sat := setSat_T(T=state.T);
+      x := vapourQuality_sat(state=state, sat=sat);
+      dTp := saturationTemperature_derp_sat(sat=sat);
+
+      fl := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.liq.d, phase=1);
+      fv := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.vap.d, phase=1);
+
+      dsp_liq := EoS.dsdT(fl)/EoS.dpdT(fl) + (EoS.dsTd(fl)-EoS.dsdT(fl)*EoS.dpTd(fl)/EoS.dpdT(fl))*dTp;
+      dsp_vap := EoS.dsdT(fv)/EoS.dpdT(fv) + (EoS.dsTd(fv)-EoS.dsdT(fv)*EoS.dpTd(fv)/EoS.dpdT(fv))*dTp;
+      ddp_liq := 1.0/EoS.dpdT(fl) - EoS.dpTd(fl)/EoS.dpdT(fl)*dTp;
+      ddp_vap := 1.0/EoS.dpdT(fv) - EoS.dpTd(fv)/EoS.dpdT(fv)*dTp;
+      dvp_liq := -1.0/sat.liq.d^2 * ddp_liq;
+      dvp_vap := -1.0/sat.vap.d^2 * ddp_vap;
+      dxps :=(x*dsp_vap + (1 - x)*dsp_liq)/(sat.liq.s - sat.vap.s);
+
+      dvps := dvp_liq + dxps*(1.0/sat.vap.d-1.0/sat.liq.d) + x*(dvp_vap-dvp_liq);
+      a := sqrt(-1.0/(state.d*state.d*dvps));
+    end if;
   end velocityOfSound;
 
 
@@ -1706,12 +1723,8 @@ protected
   input AbsolutePressure p;
   output DerTemperatureByPressure dTp;
 
-protected
-   SaturationProperties sat=setSat_p(p=p);
-
   algorithm
-    // Clausius-Clapeyron equation
-    dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+    dTp := saturationTemperature_derp_sat(sat=setSat_p(p=p));
   annotation(Inline = true);
   end saturationTemperature_derp;
 
@@ -1849,8 +1862,8 @@ protected
       ddph := 1.0/(EoS.dpdT(f) - EoS.dpTd(f)*EoS.dhdT(f)/EoS.dhTd(f));
     elseif (state.phase == 2) then
       sat := setSat_T(T=state.T);
-      x := (state.h - sat.liq.h)/(sat.vap.h - sat.liq.h);
-      dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+      x := vapourQuality_sat(state=state, sat=sat);
+      dTp := saturationTemperature_derp_sat(sat=sat);
 
       fl := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.liq.d, phase=1);
       fv := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.vap.d, phase=1);
@@ -1977,25 +1990,6 @@ protected
     inverse(T=temperature_ph(p=p, h=h, phase=phase)));
   end specificEnthalpy_pT;
 
-
-  function specificEnthalpy_pT_state
-  "returns specific enthalpy for given p and T"
-    extends Modelica.Icons.Function;
-    input AbsolutePressure p "Pressure";
-    input Temperature T "Temperature";
-  //input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    input ThermodynamicState state;
-    output SpecificEnthalpy h "specific enthalpy";
-
-  algorithm
-    h := specificEnthalpy(state);
-
-  annotation (
-    Inline=false,
-    LateInline=true,
-    inverse(T=temperature_ph_state(p=p, h=h, state=state)),
-    derivative(noDerivative=state)=specificEnthalpy_pT_der);
-  end specificEnthalpy_pT_state;
 
 
   redeclare function pressure_dT
