@@ -31,6 +31,7 @@ pressure
 specificEntropy
 specificEnthalpy
 vapourQuality
+vapourQuality_sat
 specificHeatCapacityCp
 specificHeatCapacityCv
 velocityOfSound
@@ -54,6 +55,7 @@ saturationTemperature_derp
 saturationTemperature_derp_sat
 saturationPressure
 saturationPressure_derT
+saturationPressure_derT_sat
 dBubbleDensity_dPressure
 dDewDensity_dPressure
 dBubbleEnthalpy_dPressure

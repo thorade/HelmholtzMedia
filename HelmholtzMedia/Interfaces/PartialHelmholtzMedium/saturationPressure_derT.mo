@@ -4,11 +4,7 @@ function saturationPressure_derT "returns (dp/dT)@sat"
 input Temperature T;
 output DerPressureByTemperature dpT;
 
-protected
-  SaturationProperties sat=setSat_T(T=T);
-
 algorithm
-  // Clausius-Clapeyron equation
-  dpT := (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);
+  dpT := saturationPressure_derT_sat(sat=setSat_T(T=T));
 annotation(Inline = true);
 end saturationPressure_derT;
