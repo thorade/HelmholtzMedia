@@ -26,7 +26,6 @@ model State_pT_parameter_Transport "calculate state record from pT input"
   Modelica.SIunits.IsothermalCompressibility kappa;
   Medium.IsobaricExpansionCoefficient beta;
   Medium.DerEnthalpyByPressure delta_T;
-  Medium.Types.DerTemperatureByPressure delta_s;
 
 equation
   state=Medium.setState_pTX(p=p, T=T, phase=0, X={1});
@@ -46,6 +45,5 @@ equation
   kappa=Medium.isothermalCompressibility(state);
   beta=Medium.isobaricExpansionCoefficient(state);
   delta_T=Medium.isothermalThrottlingCoefficient(state);
-  delta_s=Medium.isentropicExpansionCoefficient(state);
 
 end State_pT_parameter_Transport;
