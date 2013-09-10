@@ -1342,7 +1342,6 @@ protected
   end vapourQuality;
 
 
-
   redeclare function extends specificHeatCapacityCp
   "returns the isobaric specific heat capcacity"
   //input state
@@ -1498,25 +1497,12 @@ protected
   end isothermalCompressibility;
 
 
-  redeclare function extends isentropicExponent "returns cp/cv"
-  //input state and
-  //output gamma are inherited from PartialMedium
-
-protected
-    EoS.HelmholtzDerivs f;
-    SpecificHeatCapacity cp;
-    SpecificHeatCapacity cv;
+  redeclare function extends isentropicExponent "returns -v/p*(dp/dv)@s=const"
+  // also known as isentropic expansion coefficient
 
   algorithm
-    if (state.phase == 1) then
-      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
-      cp := EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
-      cv := EoS.duTd(f);
-      gamma := cp/cv;
-    elseif (state.phase == 2) then
-      assert(false, "isentropicExponent warning: in the two-phase region gamma is infinite", level=AssertionLevel.warning);
-      gamma := Modelica.Constants.inf;
-    end if;
+    gamma := state.d/state.p*velocityOfSound(state)^2;
+    annotation(Inline = true);
   end isentropicExponent;
 
 
@@ -1989,7 +1975,6 @@ protected
     Inline=true,
     inverse(T=temperature_ph(p=p, h=h, phase=phase)));
   end specificEnthalpy_pT;
-
 
 
   redeclare function pressure_dT
