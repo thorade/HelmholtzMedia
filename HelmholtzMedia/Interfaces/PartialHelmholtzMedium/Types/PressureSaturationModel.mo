@@ -1,4 +1,8 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types;
 type PressureSaturationModel = enumeration(
-    PS5 "Lemmon",
-    PS6 "Tillner-Roth");
+    PS1,
+    PS2,
+    PS3,
+    PS4,
+    PS5 "most common",
+    PS6);
