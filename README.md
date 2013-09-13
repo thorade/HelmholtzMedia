@@ -47,5 +47,5 @@ Contributions in the form of [Pull Requests](../../pulls) are always welcome.
 
 
 [1]: http://goo.gl/Ynuky "Conference Paper: HelmholtzMedia implementation"
-[2]: http://goo.gl/HeUzM "Conference Poster: HelmholtzMedia implementation"
+[2]: http://goo.gl/RAjHOk "Conference Poster: HelmholtzMedia implementation"
 [3]: http://goo.gl/HsDXN "ISI Journal Paper: Partial derivatives"
