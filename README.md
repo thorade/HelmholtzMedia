@@ -46,6 +46,6 @@ You may report feedback, issues or feature-requests using the [Issues](../../iss
 Contributions in the form of [Pull Requests](../../pulls) are always welcome.
 
 
-[1]: http://goo.gl/Ynuky "Conference Paper: HelmholtzMedia implementation"
+[1]: http://goo.gl/QQhS9J "Conference Paper: HelmholtzMedia implementation"
 [2]: http://goo.gl/RAjHOk "Conference Poster: HelmholtzMedia implementation"
-[3]: http://goo.gl/HsDXN "ISI Journal Paper: Partial derivatives"
+[3]: http://goo.gl/UoEHnG "ISI Journal Paper: Partial derivatives"
