@@ -407,6 +407,25 @@ protected
   end setDewState;
 
 
+  redeclare function extends setSmoothState
+  "Return thermodynamic state so that it smoothly approximates: if x > 0 then state_a else state_b"
+  import Modelica.Media.Common.smoothStep;
+  algorithm
+    state := ThermodynamicState(
+      p=smoothStep(x, state_a.p, state_b.p, x_small),
+      h=smoothStep(x, state_a.h, state_b.h, x_small),
+      d=density_ph(p=smoothStep(x, state_a.p, state_b.p, x_small),
+                   h=smoothStep(x, state_a.h, state_b.h, x_small)),
+      T=temperature_ph(p=smoothStep(x, state_a.p, state_b.p, x_small),
+                       h=smoothStep(x, state_a.h, state_b.h, x_small)),
+      s=specificEntropy_ph(p=smoothStep(x, state_a.p, state_b.p, x_small),
+                           h=smoothStep(x, state_a.h, state_b.h, x_small)),
+      u=h-p/d,
+      phase=0);
+  annotation (Inline=true);
+  end setSmoothState;
+
+
   redeclare function extends setState_dTX
   "Return thermodynamic state as function of (d, T)"
 

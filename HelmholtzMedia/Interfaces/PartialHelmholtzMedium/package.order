@@ -17,6 +17,7 @@ setSat_p
 setSat_d
 setBubbleState
 setDewState
+setSmoothState
 setState_dTX
 setState_Tx
 setState_px
