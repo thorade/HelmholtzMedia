@@ -41,10 +41,6 @@ equation
   annotation (
     Documentation(info="
 <html>
-<style type=\"text/css\">
-  code{background-color:#EEEEEE; padding:2px; margin:2px;}
-</style>
-<body>
 This model is used to compare the curvatures of two sub-critical isotherms in the two-phase region of a p,d-plot.<br />
 One isotherm is calcualted directly from the EoS (showing some loops in the two-phase region), <br />
 one isotherm is calculated taking into account the VLE conditions (straight line in the two-phase region).<br />
@@ -66,8 +62,6 @@ How to use:
     DOI: <a href=\"http://dx.doi.org/10.1063/1.1797813\">10.1063/1.1797813</a>
 </dd>
 </dl>
-</body>
 </html>"),
-    experiment(StopTime=12, __Dymola_NumberOfIntervals=1000),
-    __Dymola_experimentSetupOutput);
+experiment(StopTime=12));
 end MaxwellLoop;
