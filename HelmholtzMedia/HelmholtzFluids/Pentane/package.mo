@@ -181,12 +181,12 @@ package Pentane "Pentane"
 These are the coefficients for Pentane.
 
 <dl>
-<dt> Span, R. & Wagner, W. </dt>
+<dt> Span, R. and Wagner, W. </dt>
 <dd> <b>Equations of State for Technical Applications. II. Results for Nonpolar Fluids</b><br>
      International Journal of Thermophysics, Vol. 24, No. 1, (2003), pp. 41-109 <br>
      DOI: <a href=\"http://dx.doi.org/10.1023/A:1022310214958\">10.1023/A:1022310214958</a>
 </dd>
-<dt> Jaeschke, M. & Schley, P. </dt>
+<dt> Jaeschke, M. and Schley, P. </dt>
 <dd> <b>Ideal-gas thermodynamic properties for natural-gas applications</b><br>
      International Journal of Thermophysics, Vol. 16, No. 6 (1995), pp. 1381-1392<br>
      DOI: <a href=\"http://dx.doi.org/10.1007/BF02083547\">10.1007/BF02083547</a>

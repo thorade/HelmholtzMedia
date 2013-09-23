@@ -217,7 +217,7 @@ These are the coefficients for Propane.
 <dl>
 <dt> Lemmon, Eric W.; McLinden, M. O. and Wagner, W.</dt>
 <dd> <b>Thermodynamic Properties of Propane. III. A Reference Equation of State for Temperatures from the Melting Line to 650 K and Pressures up to 1000 MPa</b><br>
-     Journal of Chemical & Engineering Data Vol. 54 Issue 12, Pages 3141-3180 (2009)<br>
+     Journal of Chemical &amp; Engineering Data Vol. 54 Issue 12, Pages 3141-3180 (2009)<br>
      DOI: <a href=\"http://dx.doi.org/10.1021/je900217v\">10.1021/je900217v</a>
 </dd>
 <dt> Vogel, E.; Küchenmeister, C.; Bich, E. & Laesecke, A.</dt>

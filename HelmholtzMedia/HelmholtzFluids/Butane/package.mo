@@ -232,7 +232,7 @@ These are the coefficients for Butane.
 </dd>
 <dt> Perkins, Richard A. et. al.</dt>
 <dd> <b>Measurement and Correlation of the Thermal Conductivity of Butane from 135 K to 600 K at Pressures to 70 MPa</b><br>
-     Journal of Chemical & Engineering Data 47.5, S. 1263-1271. (2002)<br>
+     Journal of Chemical &amp; Engineering Data 47.5, S. 1263-1271. (2002)<br>
      DOI: <a href=\"http://dx.doi.org/10.1021/je0101202\">10.1021/je0101202</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>

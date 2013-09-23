@@ -178,9 +178,9 @@ package Isopentane "Isopentane"
 These are the coefficients for Isopentane. 
 
 <dl>
-<dt> Lemmon, E. W. & Span, R</dt>
+<dt> Lemmon, E. W. and Span, R</dt>
 <dd> <b>Short Fundamental Equations of State for 20 Industrial Fluids</b><br>
-     Journal of Chemical & Engineering Data 51 (3) , 785-850 (2006)<br>
+     Journal of Chemical &amp; Engineering Data 51 (3) , 785-850 (2006)<br>
      DOI: <a href=\"http://dx.doi.org/10.1021/je050186n\">10.1021/je050186n</a>
 </dd>
 <dt> Reeves, L.E. and Scott, G.J. and Babb, S.E.Jr.</dt>
