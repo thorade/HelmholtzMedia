@@ -68,7 +68,7 @@ algorithm
         d := p/(R*T*(Y1+1/3));
       else
         // this is very unlikely, but not impossible
-        assert(p <> psat, "setState_pTX error: pressure equals saturation pressure");
+        assert(p <> psat, "Ancillary.density_pT_Soave error: pressure equals saturation pressure");
       end if;
     else
       // Modelica.Utilities.Streams.print("T>T_crit: multiple roots can occur, but two of the roots result in negative densities", "printlog.txt");
