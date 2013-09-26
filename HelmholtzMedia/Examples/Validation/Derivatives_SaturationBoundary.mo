@@ -14,7 +14,7 @@ model Derivatives_SaturationBoundary
   Medium.Temperature T=T_ramp.y;
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
   Medium.Types.DerPressureByTemperature dpT = Medium.saturationPressure_derT(T=T);
-  Medium.Types.DerTemperatureByPressure dTp = 1.0/dpT;
+  Medium.Types.DerTemperatureByPressure dTp = Medium.saturationTemperature_derp(p=sat.psat);
 
 // Density derivatives
   Medium.DerDensityByTemperature ddT_liq_numerical;

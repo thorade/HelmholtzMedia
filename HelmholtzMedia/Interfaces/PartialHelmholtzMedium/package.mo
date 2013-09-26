@@ -156,6 +156,7 @@ protected
 
   algorithm
     // Modelica.Utilities.Streams.print("setSat_T: T="+String(T),"printlog.txt");
+    sat.Tsat := T;
 
   if ((T>=T_trip) and (T<T_crit)) then
     // calculate guess values for reduced density delta
@@ -224,7 +225,6 @@ protected
                           "; the remaining residuals are RES_J=" + String(RES[1]) +
                           " and RES_K=" + String(RES[2]));
 
-    sat.Tsat := T;
     sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
     sat.vap := setState_dTX(d=delta_vap*d_crit, T=T, phase=1);
     sat.psat := (sat.liq.p+sat.vap.p)/2;
@@ -235,8 +235,7 @@ protected
     // anyway, it is possible to extend the vapour-pressure curve into this region
     // this can happen when called from BaseProperties
     // one possibility is use the state where ds/dT=max or ds/dp=max or dcp/dT=max or dcp/dp=max
-    // here a very simple approximation is used by just setting d=d_crit
-    sat.Tsat := T;
+    // here, the critical isochore is returned
     sat.liq := setState_dTX(d=d_crit, T=T, phase=1);
     sat.vap := setState_dTX(d=d_crit, T=T, phase=1);
     sat.psat := (sat.liq.p+sat.vap.p)/2;
@@ -304,6 +303,7 @@ protected
   algorithm
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");
     // Modelica.Utilities.Streams.print("setSat_p: p=" + String(p), "printlog.txt");
+    sat.psat := p;
 
   if ((p>p_trip) and (p<p_crit)) then
     // calculate start values, density should be outside of two-phase dome
@@ -360,29 +360,28 @@ protected
     sat.Tsat  := max(sat.Tsat,  T_trip);
     sat.Tsat  := min(sat.Tsat,  T_crit);
 
+    sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
+    sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
+
   elseif (p>=p_crit) then
     // assert(p <= p_crit, "setSat_p error: pressure is higher than critical pressure", level=AssertionLevel.warning);
     // above critical pressure, no stable two-phase state exists
     // anyway, it is possible to extend the vapour-pressure curve into this region
     // this can happen when called from BaseProperties
     // one possibility is to use the state where ds/dT=max or ds/dp=max or dcp/dT=max or dcp/dp=max
-    // here, critical values are returned
-    sat.psat  := p_crit;
-    sat.Tsat  := T_crit;
-    sat.liq.d := d_crit;
-    sat.vap.d := d_crit;
+    // here, the critical isochore is returned
+    sat.psat  := p;
+    sat.liq := setState_pd(p=p, d=d_crit, phase=1);
+    sat.vap := sat.liq;
+    sat.Tsat := sat.liq.T;
   elseif (p<=p_trip) then
     sat.psat  := p;
-    sat.Tsat  := T_trip;
-    sat.liq.d := dl_trip;
-    sat.vap.d := dv_trip;
+    sat.liq := setState_pd(p=p, d=dl_trip, phase=1);
+    sat.vap := setState_pd(p=p, d=dv_trip, phase=1);
+    sat.Tsat := T_trip;
   else
     assert(false, "setSat_p: this should not happen, check p");
   end if;
-
-    sat.psat := p;
-    sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
-    sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
 
   end setSat_p;
 
