@@ -1726,8 +1726,13 @@ protected
   input AbsolutePressure p;
   output DerTemperatureByPressure dTp;
 
+protected
+    constant MolarMass MM = fluidConstants[1].molarMass;
+    constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+    constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+
   algorithm
-    dTp := saturationTemperature_derp_sat(sat=setSat_p(p=p));
+    dTp := if p<p_crit then saturationTemperature_derp_sat(sat=setSat_p(p=p)) else 1.0/pressure_derT_d(state=setState_pd(p=p, d=d_crit));
   annotation(Inline = true);
   end saturationTemperature_derp;
 
@@ -1764,10 +1769,11 @@ protected
     EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.liq.T);
     DerDensityByPressure ddpT = 1.0/EoS.dpdT(f);
     DerDensityByTemperature ddTp = -EoS.dpTd(f)/EoS.dpdT(f);
-    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+    DerTemperatureByPressure dTp = saturationTemperature_derp(p=sat.psat);
 
   algorithm
     ddldp := ddpT + ddTp*dTp;
+  annotation(Inline = true);
   end dBubbleDensity_dPressure;
 
 
@@ -1780,10 +1786,11 @@ protected
     EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.vap.T);
     DerDensityByPressure ddpT = 1.0/EoS.dpdT(f);
     DerDensityByTemperature ddTp = -EoS.dpTd(f)/EoS.dpdT(f);
-    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+    DerTemperatureByPressure dTp = saturationTemperature_derp(p=sat.psat);
 
   algorithm
     ddvdp := ddpT + ddTp*dTp;
+  annotation(Inline = true);
   end dDewDensity_dPressure;
 
 
@@ -1796,10 +1803,11 @@ protected
     EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.liq.T);
     DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
     DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
-    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+    DerTemperatureByPressure dTp = saturationTemperature_derp(p=sat.psat);
 
   algorithm
     dhldp := dhpT + dhTp*dTp;
+  annotation(Inline = true);
   end dBubbleEnthalpy_dPressure;
 
 
@@ -1812,10 +1820,11 @@ protected
     EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.vap.T);
     DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
     DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
-    DerTemperatureByPressure dTp = (1.0/sat.vap.d-1.0/sat.liq.d)/(sat.vap.s-sat.liq.s);
+    DerTemperatureByPressure dTp = saturationTemperature_derp(p=sat.psat);
 
   algorithm
     dhvdp := dhpT + dhTp*dTp;
+  annotation(Inline = true);
   end dDewEnthalpy_dPressure;
 
 
