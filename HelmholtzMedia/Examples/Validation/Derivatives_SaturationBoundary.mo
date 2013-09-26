@@ -13,6 +13,8 @@ model Derivatives_SaturationBoundary
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
   Medium.Temperature T=T_ramp.y;
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
+  Medium.Types.DerPressureByTemperature dpT = Medium.saturationPressure_derT(T=T);
+  Medium.Types.DerTemperatureByPressure dTp = 1.0/dpT;
 
 // Density derivatives
   Medium.DerDensityByTemperature ddT_liq_numerical;
@@ -61,8 +63,6 @@ protected
   constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
   Medium.EoS.HelmholtzDerivs fl=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs fv=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.vap.d, phase=1);
-  Medium.Types.DerPressureByTemperature dpT = Medium.saturationPressure_derT(T=T);
-  Medium.Types.DerTemperatureByPressure dTp = 1.0/dpT;
   Medium.SaturationProperties sat_Tplus = Medium.setSat_T(T=1.0001*T);
   Medium.SaturationProperties sat_Tminus= Medium.setSat_T(T=0.9999*T);
   Medium.SaturationProperties sat_pplus = Medium.setSat_p(p=1.0001*sat.psat);
