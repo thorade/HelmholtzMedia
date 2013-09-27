@@ -220,7 +220,7 @@ These are the coefficients for Propane.
      Journal of Chemical &amp; Engineering Data Vol. 54 Issue 12, Pages 3141-3180 (2009)<br>
      DOI: <a href=\"http://dx.doi.org/10.1021/je900217v\">10.1021/je900217v</a>
 </dd>
-<dt> Vogel, E.; Küchenmeister, C.; Bich, E. & Laesecke, A.</dt>
+<dt> Vogel, E.; Küchenmeister, C.; Bich, E. and Laesecke, A.</dt>
 <dd> <b>Reference Correlation of the Viscosity of Propane</b><br>
      Journal of Physical and Chemical Reference Data 27/5, 947-970 (1998)<br>
      DOI: <a href=\"http://dx.doi.org/10.1063/1.556025\">10.1063/1.556025</a>
