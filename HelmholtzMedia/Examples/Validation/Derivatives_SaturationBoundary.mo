@@ -8,8 +8,8 @@ model Derivatives_SaturationBoundary
   Modelica.Blocks.Sources.Ramp T_ramp(
     duration=10,
     startTime=0,
-    height=Tcrit - Tmin,
-    offset=Tmin)
+    height=5,
+    offset=Tcrit - 5)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
   Medium.Temperature T=T_ramp.y;
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
@@ -27,6 +27,8 @@ model Derivatives_SaturationBoundary
   Medium.DerDensityByPressure ddp_vap_numerical;
   Medium.DerDensityByPressure ddp_vap_analytical1;
   Medium.DerDensityByPressure ddp_vap_analytical2;
+  Medium.Types.DerVolumeByPressure dvp_liq_analytical1;
+  Medium.Types.DerVolumeByPressure dvp_vap_analytical1;
 // Enthalpy derivatives
   Medium.Types.DerEnthalpyByTemperature dhT_liq_analytical;
   Medium.Types.DerEnthalpyByTemperature dhT_liq_numerical;
@@ -116,6 +118,10 @@ equation
   // Modelica.Utilities.Streams.print("  (dd/dp)@vap   numerical= " + String(ddp_vap_numerical));
   // Modelica.Utilities.Streams.print("  (dd/dp)@vap analytical1= " + String(ddp_vap_analytical1));
   // Modelica.Utilities.Streams.print("  (dd/dp)@vap analytical2= " + String(ddp_vap_analytical2));
+  // check (dv/dp)@liq
+  dvp_liq_analytical1 = -1.0/sat.liq.d^2*ddp_liq_analytical1;
+  // check (dv/dp)@vap
+  dvp_vap_analytical1 = -1.0/sat.vap.d^2*ddp_vap_analytical1;
 
   // Modelica.Utilities.Streams.print(" ");
   // Modelica.Utilities.Streams.print("Enthalpy");
