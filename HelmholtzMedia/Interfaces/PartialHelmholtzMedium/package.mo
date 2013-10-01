@@ -539,7 +539,6 @@ protected
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-    constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
     constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     // constant Real Z_crit=1/(d_crit*R*T_crit/p_crit);
