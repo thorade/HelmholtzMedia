@@ -8,8 +8,8 @@ model Derivatives_SaturationBoundary
   Modelica.Blocks.Sources.Ramp T_ramp(
     duration=10,
     startTime=0,
-    height=5,
-    offset=Tcrit - 5)
+    height=1e-3,
+    offset=Tcrit - 1e-3)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
   Medium.Temperature T=T_ramp.y;
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
