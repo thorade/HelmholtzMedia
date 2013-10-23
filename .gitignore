@@ -16,6 +16,7 @@ dymosim.lib
 *.mof
 request
 status
+stat
 stop
 
 # ignore pdf files in source code folder
