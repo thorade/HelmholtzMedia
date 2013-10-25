@@ -654,7 +654,7 @@ protected
 
       // check bounds, if out of bounds use bisection
       if (d_iter<d_min) or (d_iter>d_max) then
-        // Modelica.Utilities.Streams.print("d_iter out of bounds, fallback to bisection method, step=" + String(iter) + ", d_iter=" + String(d_iter), "printlog.txt");
+        // Modelica.Utilities.Streams.print("d_iter out of bounds, fallback to bisection method, step=" + String(iter) + ", d_iter=" + String(d_iter) + ", input was p=" + String(p) + " and T=" + String(T), "printlog.txt");
         d_iter := (d_min+d_max)/2;
       end if;
 
