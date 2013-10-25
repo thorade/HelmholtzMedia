@@ -1530,7 +1530,7 @@ protected
     constant Real micro=1e-6;
 
   algorithm
-    assert(state.phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
+    // assert(state.phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
 
     // RefProp results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
     eta := micro*(Transport.dynamicViscosity_dilute(state)
