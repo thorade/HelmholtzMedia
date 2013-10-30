@@ -1,0 +1,28 @@
+% !TEX program = pdfLaTeX
+\documentclass{article}
+\input{../00_myPreamble.tex}
+\input{../00_myNewCommands.tex}
+\begin{document}
+\begin{equation}
+A = \der{p}{\varrho}{T} ,\quad  
+B  = \der{p}{T}{\varrho} ,\quad 
+C  = \der{s}{\varrho}{T} ,\quad 
+D  = \der{s}{T}{\varrho}
+\end{equation}
+
+\begin{equation}
+\der{p}{\varrho}{s} = \der{p}{\varrho}{T}- \left. \der{p}{T}{\varrho}\der{s}{\varrho}{T} \middle/ \der{s}{T}{\varrho} \right. = A - \frac{B\cdot C}{D}
+\end{equation}
+
+\begin{align}
+\der{^2p}{\varrho^2}{s} &= \der{A}{\varrho}{s} -\frac{\der{B}{\varrho}{s} C D + B \der{C}{\varrho}{s} D - B C \der{D}{\varrho}{s} }{D^2} 
+\\[10pt] &= \der{A}{\varrho}{s} - \der{B}{\varrho}{s}\frac{C}{D} - \der{C}{\varrho}{s}\frac{B}{D} + \der{D}{\varrho}{s}\frac{BC}{D^2}
+\end{align}
+
+\begin{align}
+\der{A}{\varrho}{s} &= \der{^2p}{\varrho^2}{T} - \left. \der{^2p}{T\partial\varrho}{} \der{s}{\varrho}{T} \middle/ \der{s}{T}{\varrho} \right. \\
+\der{B}{\varrho}{s} &= \der{^2p}{T\partial\varrho}{} - \left. \der{^2p}{T^2}{\varrho} \der{s}{\varrho}{T} \middle/ \der{s}{T}{\varrho} \right. \\
+\der{C}{\varrho}{s} &= \der{^2s}{\varrho^2}{T} - \left. \der{^2s}{T\partial\varrho}{} \der{s}{\varrho}{T} \middle/ \der{s}{T}{\varrho} \right. \\
+\der{D}{\varrho}{s} &= \der{^2s}{T\partial\varrho}{} - \left. \der{^2s}{T^2}{\varrho} \der{s}{\varrho}{T} \middle/ \der{s}{T}{\varrho} \right. 
+\end{align}
+\end{document}
