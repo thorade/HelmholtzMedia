@@ -109,6 +109,7 @@ model Derivatives_SinglePhase
   Medium.Types.Der2TemperatureByPressureDensity d2Tpd_numerical2;
 // Second order derivatives wrt. mixed properties
   Medium.Types.Der2EnthalpyByTemperature2 dcpTd_analytical;
+  //Medium.Types.Der2EnthalpyByTemperature2 dcpTd_analytical2;
   Medium.Types.Der2EnthalpyByTemperature2 dcpTd_numerical;
   Medium.Types.Der2EnthalpyByTemperatureDensity dcpdT_analytical;
   Medium.Types.Der2EnthalpyByTemperatureDensity dcpdT_numerical;
@@ -404,8 +405,10 @@ equation
   // check (d cp/dT)@d=const
   dcpTd_analytical =  Medium.EoS.d2hT2d(f) + Medium.EoS.dhdT(f)*Medium.EoS.dpTd(f)*Medium.EoS.d2pTd(f)/Medium.EoS.dpdT(f)^2
                    - (Medium.EoS.d2hTd(f)*Medium.EoS.dpTd(f) + Medium.EoS.dhdT(f)*Medium.EoS.d2pT2d(f))/Medium.EoS.dpdT(f);
+  //dcpTd_analytical2 =  Medium.EoS.d2hT2d(f) - Medium.EoS.d2hTd(f)*Medium.EoS.dpTd(f)/Medium.EoS.dpdT(f);
   dcpTd_numerical = (Medium.specificHeatCapacityCp(Tplus_dconst)-Medium.specificHeatCapacityCp(Tminus_dconst))/(Tplus_dconst.T-Tminus_dconst.T);
   Modelica.Utilities.Streams.print("  (d cp/dT)@d=const analytical= " + String(dcpTd_analytical));
+  //Modelica.Utilities.Streams.print("  (d cp/dT)@d=const analytical2= " + String(dcpTd_analytical2));
   Modelica.Utilities.Streams.print("  (d cp/dT)@d=const  numerical= " + String(dcpTd_numerical));
   // check (d cp/dd)@T=const
   dcpdT_analytical =  Medium.EoS.d2hTd(f) + Medium.EoS.dhdT(f)*Medium.EoS.dpTd(f)*Medium.EoS.d2pd2T(f)/Medium.EoS.dpdT(f)^2
