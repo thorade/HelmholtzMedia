@@ -1,5 +1,7 @@
 % !TEX program = pdfLaTeX
 \documentclass{article}
+\usepackage[margin=2cm]{geometry}
+\thispagestyle{empty}
 \input{../00_myPreamble.tex}
 \input{../00_myNewCommands.tex}
 \begin{document}
@@ -25,4 +27,11 @@ D  = \der{s}{T}{\varrho}
 \der{C}{\varrho}{s} &= \der{^2s}{\varrho^2}{T} - \left. \der{^2s}{T\partial\varrho}{} \der{s}{\varrho}{T} \middle/ \der{s}{T}{\varrho} \right. \\
 \der{D}{\varrho}{s} &= \der{^2s}{T\partial\varrho}{} - \left. \der{^2s}{T^2}{\varrho} \der{s}{\varrho}{T} \middle/ \der{s}{T}{\varrho} \right. 
 \end{align}
+
+\begin{multline}
+\der{^2p}{\varrho^2}{s} = \der{^2p}{\varrho^2}{T} 
++ \left. \left[ \der{p}{T}{\varrho} \der{s}{\varrho}{T}^2 \der{^2s}{T^2}{\varrho} \right] \middle/ \der{s}{T}{\varrho}^{3} \right.\\
+- \left. \left[ \der{^2p}{T^2}{\varrho} \der{s}{\varrho}{T}^2 + \der{p}{T}{\varrho} \der{s}{\varrho}{T} \der{^2s}{T\partial\varrho}{} + \der{p}{T}{\varrho} \der{s}{\varrho}{T} \der{^2s}{T\partial\varrho}{} \right] \middle/ \der{s}{T}{\varrho}^{2} \right. \\
+- \left. \left[ \der{^2p}{T\partial\varrho}{} \der{s}{\varrho}{T} + \der{p}{T}{\varrho} \der{^2s}{\varrho^2}{T} + \der{^2p}{T\partial\varrho}{} \der{s}{\varrho}{T} \right] \middle/ \der{s}{T}{\varrho} \right. \\
+\end{multline}
 \end{document}
