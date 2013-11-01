@@ -15,7 +15,8 @@ model Derivatives_SinglePhase
   Medium.Types.DerPressureByTemperature dpTd_analytical;
   Medium.Types.DerPressureByTemperature dpTd_numerical;
 // Pressure wrt. dT 2nd order
-  Medium.Types.Der2PressureByDensity2 d2pd2T_analytical;
+  Medium.Types.Der2PressureByDensity2 d2pd2T_analytical1;
+  Medium.Types.Der2PressureByDensity2 d2pd2T_analytical2;
   Medium.Types.Der2PressureByDensity2 d2pd2T_numerical;
   Medium.Types.Der2PressureByTemperature2 d2pT2d_analytical;
   Medium.Types.Der2PressureByTemperature2 d2pT2d_numerical;
@@ -183,9 +184,11 @@ equation
   Modelica.Utilities.Streams.print("  (dp/dT)@d=const analytical= " + String(dpTd_analytical));
   Modelica.Utilities.Streams.print("  (dp/dT)@d=const  numerical= " + String(dpTd_numerical));
   // check (d2p/dd2)@T=const
-  d2pd2T_analytical = Medium.EoS.d2pd2T(f);
+  d2pd2T_analytical1 = Medium.EoS.d2pd2T(f);
+  d2pd2T_analytical2 = Medium.EoS.dpvT(f)*2/state.d^3 + Medium.EoS.d2pv2T(f)/state.d^4;
   d2pd2T_numerical = (Medium.EoS.dpdT(f_dplus_Tconst)-Medium.EoS.dpdT(f_dminus_Tconst))/(dplus_Tconst.d-dminus_Tconst.d);
-  Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const analytical= " + String(d2pd2T_analytical));
+  Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const analytical1= " + String(d2pd2T_analytical1));
+  Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const analytical2= " + String(d2pd2T_analytical2));
   Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const  numerical= " + String(d2pd2T_numerical));
   // check (d2p/dT2)@d=const
   d2pT2d_analytical = Medium.EoS.d2pT2d(f);
