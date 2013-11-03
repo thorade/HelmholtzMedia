@@ -4,8 +4,8 @@ model Derivatives_SinglePhase
 
   package Medium = HelmholtzFluids.Propane;
   // p and T always result in single-phase
-  parameter Medium.Temperature T=0.93*Medium.fluidConstants[1].criticalTemperature;
-  Medium.AbsolutePressure p=2629921;
+  parameter Medium.Temperature T=298.15;
+  Medium.AbsolutePressure p=101325;
   Medium.ThermodynamicState state=Medium.setState_pTX(p=p, T=T);
   //Medium.Density d=Medium.dewDensity(sat=Medium.setSat_T(T));
   //Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
