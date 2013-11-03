@@ -2,11 +2,13 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_SinglePhase
   "compare analytical derivatives to numerical derivatives"
 
-  package Medium = HelmholtzFluids.Propane;
+  package Medium = HelmholtzFluids.Butane;
   // p and T always result in single-phase
-  parameter Medium.Temperature T=298.15;
-  parameter Medium.AbsolutePressure p=101325;
-  Medium.ThermodynamicState state=Medium.setState_pTX(p=p, T=T);
+  parameter Medium.Temperature T=0.95*Medium.fluidConstants[1].criticalTemperature;
+  //Medium.AbsolutePressure p=101325;
+  //Medium.ThermodynamicState state=Medium.setState_pTX(p=p, T=T);
+  Medium.Density d=Medium.dewDensity(sat=Medium.setSat_T(T));
+  Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
   Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsThird(T=state.T, d=state.d, phase=state.phase);
 
 // Pressure wrt. dT
@@ -20,6 +22,14 @@ model Derivatives_SinglePhase
   Medium.Types.Der2PressureByDensity2 d2pd2T_analytical2;
   //Medium.Types.Der2PressureByDensity2 d2pd2T_analytical3;
   Medium.Types.Der2PressureByDensity2 d2pd2T_numerical;
+  Medium.Types.Der2PressureByDensity2 d2pd2s_analytical1;
+  Medium.Types.Der2PressureByDensity2 d2pd2s_analytical2;
+  Medium.Types.Der2PressureByVolume2 d2pv2s_analytical1;
+  Medium.Types.Der2PressureByVolume2 d2pv2s_analytical2;
+  Real fd_gd_analytical1_d;
+  Real fd_gd_analytical2_d;
+  Real fd_gd_analytical1_v;
+  Real fd_gd_analytical2_v;
   Medium.Types.Der2PressureByTemperature2 d2pT2d_analytical;
   Medium.Types.Der2PressureByTemperature2 d2pT2d_numerical;
   Medium.Types.Der2PressureByTemperatureDensity d2pTd_analytical1;
@@ -197,6 +207,26 @@ equation
   Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const analytical2= " + String(d2pd2T_analytical2));
   //Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const analytical3= " + String(d2pd2T_analytical3));
   Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const   numerical= " + String(d2pd2T_numerical));
+  // calculate (d2p/dd2)@s=const  and  (d2p/dv2)@s=const
+  d2pd2s_analytical1 = Medium.EoS.d2pd2T(f)
+    - (Medium.EoS.dpTd(f)*Medium.EoS.d2sd2T(f)   + 2*Medium.EoS.d2pTd(f)*Medium.EoS.dsdT(f))/Medium.EoS.dsTd(f)
+    - (Medium.EoS.d2pT2d(f)*Medium.EoS.dsdT(f)^2 + 2*Medium.EoS.dpTd(f)*Medium.EoS.dsdT(f)*Medium.EoS.d2sTd(f))/Medium.EoS.dsTd(f)^2
+    + (Medium.EoS.dpTd(f)*Medium.EoS.dsdT(f)^2*Medium.EoS.d2sT2d(f))/Medium.EoS.dsTd(f)^3;
+  d2pv2s_analytical1 = Medium.EoS.d2pv2T(f)
+    -3/Medium.EoS.dsTd(f)*Medium.EoS.dpTd(f)*Medium.EoS.d2pTv(f)
+    +(Medium.EoS.dpTd(f)/Medium.EoS.dsTd(f))^2*(3*Medium.EoS.d2pT2d(f)+1/state.T*Medium.EoS.dpTd(f)*(1-Medium.EoS.d2uT2d(f)/Medium.EoS.dsTd(f)));
+  // calculate using second way
+  d2pd2s_analytical2 = 2/state.d^3*(-state.d^2)*Medium.velocityOfSound(state)^2 + 1/state.d^4*d2pv2s_analytical1;
+  d2pv2s_analytical2 = 2*state.d^3*Medium.velocityOfSound(state)^2 +   state.d^4*d2pd2s_analytical1;
+  // check fundamental derivative of gasdynamics
+  fd_gd_analytical1_d = 1 + state.d/2/Medium.velocityOfSound(state)^2*d2pd2s_analytical1;
+  fd_gd_analytical2_d = 1 + state.d/2/Medium.velocityOfSound(state)^2*d2pd2s_analytical2;
+  fd_gd_analytical1_v = 1/state.d^3/2/Medium.velocityOfSound(state)^2*d2pv2s_analytical1;
+  fd_gd_analytical2_v = 1/state.d^3/2/Medium.velocityOfSound(state)^2*d2pv2s_analytical2;
+  Modelica.Utilities.Streams.print("  fd_gd_analytical1_d = " + String(fd_gd_analytical1_d));
+  Modelica.Utilities.Streams.print("  fd_gd_analytical2_d = " + String(fd_gd_analytical2_d));
+  Modelica.Utilities.Streams.print("  fd_gd_analytical1_v = " + String(fd_gd_analytical1_v));
+  Modelica.Utilities.Streams.print("  fd_gd_analytical2_v = " + String(fd_gd_analytical2_v));
   // check (d2p/dT2)@d=const
   d2pT2d_analytical = Medium.EoS.d2pT2d(f);
   d2pT2d_numerical = (Medium.EoS.dpTd(f_Tplus_dconst)-Medium.EoS.dpTd(f_Tminus_dconst))/(Tplus_dconst.T-Tminus_dconst.T);
@@ -475,7 +505,7 @@ equation
 
   // assertions for additional relations
   assert((dhpT_analytical - (1/state.d+state.T/state.d^2*ddTp_analytical))<eps, "additional hpT relation violated");
-  assert((-state.d^2*dudT_analytical - (state.T*dpTd_analytical-p))<eps, "additional uvT relation violated");
+  assert((-state.d^2*dudT_analytical - (state.T*dpTd_analytical-state.p))<eps, "additional uvT relation violated");
 
 annotation (experiment(NumberOfIntervals=1));
 end Derivatives_SinglePhase;
