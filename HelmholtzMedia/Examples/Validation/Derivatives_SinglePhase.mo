@@ -20,16 +20,17 @@ model Derivatives_SinglePhase
 // Pressure wrt. dT 2nd order
   Medium.Types.Der2PressureByDensity2 d2pd2T_analytical1;
   Medium.Types.Der2PressureByDensity2 d2pd2T_analytical2;
-  //Medium.Types.Der2PressureByDensity2 d2pd2T_analytical3;
   Medium.Types.Der2PressureByDensity2 d2pd2T_numerical;
   Medium.Types.Der2PressureByDensity2 d2pd2s_analytical1;
   Medium.Types.Der2PressureByDensity2 d2pd2s_analytical2;
   Medium.Types.Der2PressureByVolume2 d2pv2s_analytical1;
   Medium.Types.Der2PressureByVolume2 d2pv2s_analytical2;
+  Medium.Types.Der2PressureByVolume2 d2pv2s_analytical3;
   Real fd_gd_analytical1_d;
   Real fd_gd_analytical2_d;
   Real fd_gd_analytical1_v;
   Real fd_gd_analytical2_v;
+  Real fd_gd_analytical3_v;
   Medium.Types.Der2PressureByTemperature2 d2pT2d_analytical;
   Medium.Types.Der2PressureByTemperature2 d2pT2d_numerical;
   Medium.Types.Der2PressureByTemperatureDensity d2pTd_analytical1;
@@ -55,7 +56,8 @@ model Derivatives_SinglePhase
 // Energy wrt. dT 2nd order
   Medium.Types.Der2EnergyByDensity2 d2ud2T_analytical;
   Medium.Types.Der2EnergyByDensity2 d2ud2T_numerical;
-  Medium.Types.Der2EnergyByTemperature2 d2uT2d_analytical;
+  Medium.Types.Der2EnergyByTemperature2 d2uT2d_analytical1;
+  Medium.Types.Der2EnergyByTemperature2 d2uT2d_analytical2;
   Medium.Types.Der2EnergyByTemperature2 d2uT2d_numerical;
   Medium.Types.Der2EnergyByTemperatureDensity d2uTd_analytical;
   Medium.Types.Der2EnergyByTemperatureDensity d2uTd_numerical;
@@ -201,32 +203,10 @@ equation
   // check (d2p/dd2)@T=const
   d2pd2T_analytical1 = Medium.EoS.d2pd2T(f);
   d2pd2T_analytical2 = Medium.EoS.dpvT(f)*2/state.d^3 + Medium.EoS.d2pv2T(f)/state.d^4;
-  //d2pd2T_analytical3 = Medium.EoS.d2pv2T(f)/2/state.d^3; // wrong!
   d2pd2T_numerical = (Medium.EoS.dpdT(f_dplus_Tconst)-Medium.EoS.dpdT(f_dminus_Tconst))/(dplus_Tconst.d-dminus_Tconst.d);
   Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const analytical1= " + String(d2pd2T_analytical1));
   Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const analytical2= " + String(d2pd2T_analytical2));
-  //Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const analytical3= " + String(d2pd2T_analytical3));
   Modelica.Utilities.Streams.print("  (d2p/dd2)@T=const   numerical= " + String(d2pd2T_numerical));
-  // calculate (d2p/dd2)@s=const  and  (d2p/dv2)@s=const
-  d2pd2s_analytical1 = Medium.EoS.d2pd2T(f)
-    - (Medium.EoS.dpTd(f)*Medium.EoS.d2sd2T(f)   + 2*Medium.EoS.d2pTd(f)*Medium.EoS.dsdT(f))/Medium.EoS.dsTd(f)
-    - (Medium.EoS.d2pT2d(f)*Medium.EoS.dsdT(f)^2 + 2*Medium.EoS.dpTd(f)*Medium.EoS.dsdT(f)*Medium.EoS.d2sTd(f))/Medium.EoS.dsTd(f)^2
-    + (Medium.EoS.dpTd(f)*Medium.EoS.dsdT(f)^2*Medium.EoS.d2sT2d(f))/Medium.EoS.dsTd(f)^3;
-  d2pv2s_analytical1 = Medium.EoS.d2pv2T(f)
-    -3/Medium.EoS.dsTd(f)*Medium.EoS.dpTd(f)*Medium.EoS.d2pTv(f)
-    +(Medium.EoS.dpTd(f)/Medium.EoS.dsTd(f))^2*(3*Medium.EoS.d2pT2d(f)+1/state.T*Medium.EoS.dpTd(f)*(1-Medium.EoS.d2uT2d(f)/Medium.EoS.dsTd(f)));
-  // calculate using second way
-  d2pd2s_analytical2 = 2/state.d^3*(-state.d^2)*Medium.velocityOfSound(state)^2 + 1/state.d^4*d2pv2s_analytical1;
-  d2pv2s_analytical2 = 2*state.d^3*Medium.velocityOfSound(state)^2 +   state.d^4*d2pd2s_analytical1;
-  // check fundamental derivative of gasdynamics
-  fd_gd_analytical1_d = 1 + state.d/2/Medium.velocityOfSound(state)^2*d2pd2s_analytical1;
-  fd_gd_analytical2_d = 1 + state.d/2/Medium.velocityOfSound(state)^2*d2pd2s_analytical2;
-  fd_gd_analytical1_v = 1/state.d^3/2/Medium.velocityOfSound(state)^2*d2pv2s_analytical1;
-  fd_gd_analytical2_v = 1/state.d^3/2/Medium.velocityOfSound(state)^2*d2pv2s_analytical2;
-  Modelica.Utilities.Streams.print("  fd_gd_analytical1_d = " + String(fd_gd_analytical1_d));
-  Modelica.Utilities.Streams.print("  fd_gd_analytical2_d = " + String(fd_gd_analytical2_d));
-  Modelica.Utilities.Streams.print("  fd_gd_analytical1_v = " + String(fd_gd_analytical1_v));
-  Modelica.Utilities.Streams.print("  fd_gd_analytical2_v = " + String(fd_gd_analytical2_v));
   // check (d2p/dT2)@d=const
   d2pT2d_analytical = Medium.EoS.d2pT2d(f);
   d2pT2d_numerical = (Medium.EoS.dpTd(f_Tplus_dconst)-Medium.EoS.dpTd(f_Tminus_dconst))/(Tplus_dconst.T-Tminus_dconst.T);
@@ -239,6 +219,39 @@ equation
   Modelica.Utilities.Streams.print("  (d2p/dT dd) analytical1= " + String(d2pTd_analytical1));
   Modelica.Utilities.Streams.print("  (d2p/dT dd) analytical2= " + String(d2pTd_analytical2));
   Modelica.Utilities.Streams.print("  (d2p/dT dd)   numerical= " + String(d2pTd_numerical));
+
+  Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
+  // calculate (d2p/dd2)@s=const  and  (d2p/dv2)@s=const
+  d2pd2s_analytical1 = Medium.EoS.d2pd2T(f)
+    - (Medium.EoS.dpTd(f)*Medium.EoS.d2sd2T(f)   + 2*Medium.EoS.d2pTd(f)*Medium.EoS.dsdT(f))/Medium.EoS.dsTd(f)
+    + (Medium.EoS.d2pT2d(f)*Medium.EoS.dsdT(f)^2 + 2*Medium.EoS.dpTd(f)*Medium.EoS.dsdT(f)*Medium.EoS.d2sTd(f))/Medium.EoS.dsTd(f)^2
+    - (Medium.EoS.dpTd(f)*Medium.EoS.dsdT(f)^2*Medium.EoS.d2sT2d(f))/Medium.EoS.dsTd(f)^3;
+  d2pv2s_analytical1 = Medium.EoS.d2pv2T(f)
+    -3/Medium.EoS.dsTd(f)*Medium.EoS.dpTd(f)*Medium.EoS.d2pTv(f)
+    +(Medium.EoS.dpTd(f)/Medium.EoS.dsTd(f))^2*(3*Medium.EoS.d2pT2d(f)+1/state.T*Medium.EoS.dpTd(f)*(1-Medium.EoS.d2uT2d(f)/Medium.EoS.dsTd(f)));
+  d2pv2s_analytical2 = Medium.EoS.d2pv2T(f)
+    - 3*Medium.EoS.d2pTv(f)*Medium.EoS.dpTd(f)/Medium.EoS.dsTd(f)
+    + 3*Medium.EoS.dpTd(f)^2*Medium.EoS.d2pT2d(f)/Medium.EoS.dsTd(f)^2
+    -   Medium.EoS.dpTd(f)^3*Medium.EoS.d2sT2d(f)/Medium.EoS.dsTd(f)^3;
+  // calculate using second way
+  d2pd2s_analytical2 = 2/state.d^3*(-state.d^2)*Medium.velocityOfSound(state)^2 + 1/state.d^4*d2pv2s_analytical1;
+  d2pv2s_analytical3 = 2*state.d^3*Medium.velocityOfSound(state)^2 +   state.d^4*d2pd2s_analytical1;
+  Modelica.Utilities.Streams.print("  d2pd2s_analytical1 = " + String(d2pd2s_analytical1));
+  Modelica.Utilities.Streams.print("  d2pd2s_analytical2 = " + String(d2pd2s_analytical2));
+  Modelica.Utilities.Streams.print("  d2pv2s_analytical1 = " + String(d2pv2s_analytical1));
+  Modelica.Utilities.Streams.print("  d2pv2s_analytical2 = " + String(d2pv2s_analytical2));
+  Modelica.Utilities.Streams.print("  d2pv2s_analytical3 = " + String(d2pv2s_analytical3));
+  // check fundamental derivative of gasdynamics
+  fd_gd_analytical1_d = 1 + state.d/2/Medium.velocityOfSound(state)^2*d2pd2s_analytical1;
+  fd_gd_analytical2_d = 1 + state.d/2/Medium.velocityOfSound(state)^2*d2pd2s_analytical2;
+  fd_gd_analytical1_v = 1/state.d^3/2/Medium.velocityOfSound(state)^2*d2pv2s_analytical1;
+  fd_gd_analytical2_v = 1/state.d^3/2/Medium.velocityOfSound(state)^2*d2pv2s_analytical2;
+  fd_gd_analytical3_v = 1/state.d^3/2/Medium.velocityOfSound(state)^2*d2pv2s_analytical3;
+  Modelica.Utilities.Streams.print("  fd_gd_analytical1_d = " + String(fd_gd_analytical1_d));
+  //Modelica.Utilities.Streams.print("  fd_gd_analytical2_d = " + String(fd_gd_analytical2_d));
+  Modelica.Utilities.Streams.print("  fd_gd_analytical1_v = " + String(fd_gd_analytical1_v));
+  Modelica.Utilities.Streams.print("  fd_gd_analytical2_v = " + String(fd_gd_analytical2_v));
+  //Modelica.Utilities.Streams.print("  fd_gd_analytical3_v = " + String(fd_gd_analytical3_v));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
   Modelica.Utilities.Streams.print("Entropy wrt. dT");
@@ -286,10 +299,12 @@ equation
   Modelica.Utilities.Streams.print("  (d2u/dd2)@T=const analytical= " + String(d2ud2T_analytical));
   Modelica.Utilities.Streams.print("  (d2u/dd2)@T=const  numerical= " + String(d2ud2T_numerical));
   // check (d2u/dT2)@d=const
-  d2uT2d_analytical = Medium.EoS.d2uT2d(f);
+  d2uT2d_analytical1 = Medium.EoS.d2uT2d(f);
+  d2uT2d_analytical2 = state.T*Medium.EoS.d2sT2d(f) + Medium.EoS.dsTd(f);
   d2uT2d_numerical = (Medium.EoS.duTd(f_Tplus_dconst)-Medium.EoS.duTd(f_Tminus_dconst))/(Tplus_dconst.T-Tminus_dconst.T);
-  Modelica.Utilities.Streams.print("  (d2u/dT2)@d=const analytical= " + String(d2uT2d_analytical));
-  Modelica.Utilities.Streams.print("  (d2u/dT2)@d=const  numerical= " + String(d2uT2d_numerical));
+  Modelica.Utilities.Streams.print("  (d2u/dT2)@d=const analytical1= " + String(d2uT2d_analytical1));
+  Modelica.Utilities.Streams.print("  (d2u/dT2)@d=const analytical2= " + String(d2uT2d_analytical2));
+  Modelica.Utilities.Streams.print("  (d2u/dT2)@d=const   numerical= " + String(d2uT2d_numerical));
   // check (d2u/dT dd)
   d2uTd_analytical = Medium.EoS.d2uTd(f);
   d2uTd_numerical = (Medium.EoS.duTd(f_dplus_Tconst)-Medium.EoS.duTd(f_dminus_Tconst))/(dplus_Tconst.d-dminus_Tconst.d);
