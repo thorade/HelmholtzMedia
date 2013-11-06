@@ -1522,6 +1522,13 @@ protected
   end isentropicExponent;
 
 
+  redeclare function extends isentropicEnthalpy "returns isentropic enthalpy"
+
+  algorithm
+    h_is := specificEnthalpy(setState_ps(p=p_downstream, s=specificEntropy(refState)));
+    annotation(Inline = true);
+  end isentropicEnthalpy;
+
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
     // inherits input state and output eta
