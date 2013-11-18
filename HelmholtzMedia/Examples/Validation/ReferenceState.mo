@@ -1,33 +1,49 @@
 within HelmholtzMedia.Examples.Validation;
 model ReferenceState
   package Medium = HelmholtzMedia.HelmholtzFluids.Isobutane;
-  Medium.SpecificEnthalpy h_ref;
-  Medium.SpecificEntropy s_ref;
 
-  // remember to delete file manually before starting!
+  input String fileName = "ReferenceState_.csv";
+  input String separator = ";";
+  Medium.Types.ReferenceState ref = Medium.Types.ReferenceState.IIR;
+  output Medium.SpecificEnthalpy h_ref;
+  output Medium.SpecificEntropy s_ref;
+
 protected
-  String fileName = "ReferenceState.csv";
+  Boolean hasBeenExecuted;
   Medium.SaturationProperties sat;
   final constant Medium.Temperature T_IIR = 273.15; // 0°C;
   final constant Medium.Temperature T_ASHRAE = 233.15; // -40°C;
   final constant Medium.AbsolutePressure p_NBP = 101325; // 1.01325 bar = 1 atm
 
 algorithm
-   sat := Medium.setSat_T(T=T_IIR);
-  // sat := Medium.setSat_T(T=T_ASHRAE);
-  // sat := Medium.setSat_p(p=p_NBP);
+  if ref == Medium.Types.ReferenceState.IIR then
+    sat := Medium.setSat_T(T=T_IIR);
+  elseif ref == Medium.Types.ReferenceState.ASHRAE then
+    sat := Medium.setSat_T(T=T_ASHRAE);
+  elseif ref == Medium.Types.ReferenceState.NBP then
+    sat := Medium.setSat_p(p=p_NBP);
+  else
+    assert(false, "No Ref type selected");
+  end if;
 
   s_ref := sat.liq.s;
   h_ref := sat.liq.h;
 
-  // While csv originally stood for comma-seperated-values, MS Excel uses semicolons to seperate the values
-  // Modelica.Utilities.Streams.print("idealPower[1,1];" + "s_ref;" + "idealPower[2,1];" + "h_ref;", fileName);
-  // Modelica.Utilities.Streams.print("idealPower1;" + "sref;" + "idealPower2;" + "href;", fileName);
-  Modelica.Utilities.Streams.print( String(Medium.helmholtzCoefficients.idealPower[1,1],significantDigits=30)+";"
-                                   +String(s_ref,significantDigits=30)+";"
-                                   +String(Medium.helmholtzCoefficients.idealPower[2,1],significantDigits=30)+";"
-                                   +String(h_ref,significantDigits=30)+";",
+  if not hasBeenExecuted then
+  if not Modelica.Utilities.Files.exist(fileName) then
+    Modelica.Utilities.Streams.print("idealPower1" + separator
+                                    +"sref" + separator
+                                    +"idealPower2" + separator
+                                    +"href" + separator,
+                                     fileName);
+  end if;
+  Modelica.Utilities.Streams.print( String(Medium.helmholtzCoefficients.idealPower[1,1],significantDigits=15) + separator
+                                   +String(s_ref,significantDigits=15) + separator
+                                   +String(Medium.helmholtzCoefficients.idealPower[2,1],significantDigits=15) + separator
+                                   +String(h_ref,significantDigits=15) + separator,
                                     fileName);
+  hasBeenExecuted := true;
+  end if;
 
 annotation (
 Documentation(info="<html>
