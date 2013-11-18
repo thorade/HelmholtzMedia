@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model ReferenceState
-  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Isobutane;
   Medium.SpecificEnthalpy h_ref;
   Medium.SpecificEntropy s_ref;
 
@@ -13,9 +13,9 @@ protected
   final constant Medium.AbsolutePressure p_NBP = 101325; // 1.01325 bar = 1 atm
 
 algorithm
-  // sat := Medium.setSat_T(T=T_IIR);
+   sat := Medium.setSat_T(T=T_IIR);
   // sat := Medium.setSat_T(T=T_ASHRAE);
-   sat := Medium.setSat_p(p=p_NBP);
+  // sat := Medium.setSat_p(p=p_NBP);
 
   s_ref := sat.liq.s;
   h_ref := sat.liq.h;
@@ -47,5 +47,6 @@ there are at least three standard reference states:
 
 </dl>
 </html>"),
-experiment(NumberOfIntervals=1, Tolerance=1e-012));
+experiment(NumberOfIntervals=1, Tolerance=1e-012),
+    __Dymola_experimentSetupOutput(doublePrecision=true));
 end ReferenceState;
