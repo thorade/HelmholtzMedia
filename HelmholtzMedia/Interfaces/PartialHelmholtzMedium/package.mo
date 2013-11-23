@@ -1529,6 +1529,7 @@ protected
     annotation(Inline = true);
   end isentropicEnthalpy;
 
+
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
     // inherits input state and output eta
