@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model SinglePhase_setState_b
-  package Medium = HelmholtzFluids.Helium;
+  package Medium = HelmholtzFluids.Butane;
   Medium.AbsolutePressure p(start=101325);
   Medium.Temperature T(start=298.15);
 
@@ -37,7 +37,7 @@ protected
   final constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
   final constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
   final constant Medium.Temperature Tmax=Medium.fluidLimits.TMAX;
-  final constant Medium.AbsolutePressure pmin=1e-6;//Medium.fluidLimits.PMIN;
+  final constant Medium.AbsolutePressure pmin=Medium.fluidConstants[1].triplePointPressure;
   final constant Medium.AbsolutePressure pcrit=Medium.fluidConstants[1].criticalPressure;
   final constant Medium.AbsolutePressure pmax=Medium.fluidLimits.PMAX;
 
