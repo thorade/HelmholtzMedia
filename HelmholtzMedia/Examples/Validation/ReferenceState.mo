@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model ReferenceState
-  package Medium = HelmholtzMedia.HelmholtzFluids.Isobutane;
+  package Medium = HelmholtzMedia.HelmholtzFluids.R134a;
 
   input String fileName = "ReferenceState_.csv";
   input String separator = ";";
@@ -26,8 +26,8 @@ algorithm
     assert(false, "No Ref type selected");
   end if;
 
-  s_ref := sat.liq.s;
-  h_ref := sat.liq.h;
+  s_ref := Medium.bubbleEntropy(sat);
+  h_ref := Medium.bubbleEnthalpy(sat);
 
   if not hasBeenExecuted then
   if not Modelica.Utilities.Files.exist(fileName) then

@@ -61,8 +61,8 @@ package R134a "R134a with IIR reference state"
     idealLog=[
       -1.629789E+0,     1.00E0],
     idealPower=[
-      -1.019535E+0,     0.00E0;
-       9.047135E+0,     1.00E0;
+      -1.020846726749488,     0.00E0;
+       9.047573551047574,     1.00E0;
       -9.723916E+0,    -0.50E0;
       -3.927170E+0,    -0.75E0],
     idealEinstein=fill(0.0, 0, 2),
