@@ -1719,19 +1719,13 @@ The extended version has up to three terms with two parameters each.
 
   redeclare function extends saturationTemperature
 
-protected
-    SaturationProperties sat = setSat_p(p=p);
-
   algorithm
-    T := sat.Tsat;
+    T := saturationTemperature_sat(setSat_p(p=p));
   annotation(Inline = true);
   end saturationTemperature;
 
 
-  redeclare function saturationTemperature_derp "returns (dT/dp)@sat"
-  // does not extend, because base class output has wrong units
-  input AbsolutePressure p;
-  output DerTemperatureByPressure dTp;
+  redeclare function extends saturationTemperature_derp "returns (dT/dp)@sat"
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
@@ -1745,7 +1739,7 @@ protected
 
 
   redeclare function saturationTemperature_derp_sat "returns (dT/dp)@sat"
-  // does not extend, because base class output has wrong units
+  // does not extend, because base class already defines an algorithm
   input SaturationProperties sat;
   output DerTemperatureByPressure dTp;
 
@@ -1758,11 +1752,8 @@ protected
 
   redeclare function extends saturationPressure
 
-protected
-    SaturationProperties sat = setSat_T(T=T);
-
   algorithm
-    p := sat.psat;
+    p := saturationPressure_sat(setSat_T(T=T));
   annotation(Inline = true);
   end saturationPressure;
 
