@@ -23,7 +23,7 @@ protected
   MassFraction x "vapour quality";
 
   Temperature T_min=0.98*fluidLimits.TMIN;
-  Temperature T_max=1.5*fluidLimits.TMAX;
+  Temperature T_max=2*max(fluidLimits.TMAX, p/(R*d));
   Temperature T_iter=T_crit;
   AbsolutePressure RES_min;
   AbsolutePressure RES_max;
@@ -45,7 +45,7 @@ algorithm
     assert(d <= sat.liq.d, "setState_pdX_error: density is higher than saturated liquid density: this is single phase liquid");
     assert(d >= sat.vap.d, "setState_pdX_error: density is lower than saturated vapor density: this is single phase vapor");
   else
-    if (p < p_crit) and (p>p_trip) then
+    if (p < p_crit) and (p>=p_trip) then
       // two-phase possible, do a region check
       if (p>0.98*p_crit) or (p<300*p_trip) then
         // Modelica.Utilities.Streams.print("close to critical or triple point", "printlog.txt");
@@ -76,18 +76,15 @@ algorithm
         // Modelica.Utilities.Streams.print("single-phase vapour region", "printlog.txt");
         state.phase := 1;
         T_min := 0.99*sat.Tsat;
-        T_max := 2*fluidLimits.TMAX;
         T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       else
         // Modelica.Utilities.Streams.print("two-phase region, all properties can be calculated from sat record", "printlog.txt");
         state.phase := 2;
       end if;
 
-    elseif (p <= p_trip) then
+    elseif (p < p_trip) then
       state.phase := 1;
       // very low pressure, behaves like an ideal gas
-      T_min := 0.95*fluidLimits.TMIN;
-      T_max := 10*fluidLimits.TMAX;
       T_iter := p/(d*R);
       // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
 
