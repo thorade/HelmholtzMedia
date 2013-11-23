@@ -375,9 +375,11 @@ protected
     sat.vap := sat.liq;
     sat.Tsat := sat.liq.T;
   elseif (p<=p_trip) then
+    // at pressures below triple point pressure, only single-phase vapor is possible
+    // just return triple-point values
     sat.psat  := p;
-    sat.liq := setState_pd(p=p, d=dl_trip, phase=1);
-    sat.vap := setState_pd(p=p, d=dv_trip, phase=1);
+    sat.liq := setState_dT(d=dl_trip, T=T_trip, phase=1);
+    sat.vap := setState_dT(d=dv_trip, T=T_trip, phase=1);
     sat.Tsat := T_trip;
   else
     assert(false, "setSat_p: this should not happen, check p");
