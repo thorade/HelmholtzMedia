@@ -85,4 +85,4 @@ frddd = diff(frdd,delta);
 frddd = simplify(frddd)
 
 %% ideal gas limit
-limit(frd,delta,0,'right')
+%limit(frd,delta,0,'right')
