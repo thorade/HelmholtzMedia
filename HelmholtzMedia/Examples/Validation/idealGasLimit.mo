@@ -10,6 +10,13 @@ model idealGasLimit
   Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(d=d, T=T, phase=1);
 //Medium.EoS.HelmholtzDerivs f0 = Medium.EoS.setHelmholtzDerivsThird(d=0, T=T, phase=1);
 
+  constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
+  constant Medium.SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+  Real Z = (state.p*v)/(R*state.T);
+
+  Medium.SpecificHeatCapacity cp = Medium.specificHeatCapacityCp(state);
+  Medium.SpecificHeatCapacity cp0 = Medium.EoS.cp0(f);
+
 //Real B=f.rd*f.delta/d;
   Real B=f.rd/f.d_crit;
 //Real B0=f0.rd/f0.d_crit;

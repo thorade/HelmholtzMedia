@@ -40,7 +40,7 @@ algorithm
   else
     lambda_0 := sum(A_num[i, 1]*tau^A_num[i, 2] for i in 1:nDilute_num-1);
     f := EoS.setHelmholtzDerivsSecond(d=state.d,T=state.T);
-    cp0 := f.R*(1 - f.tau*f.tau*f.itt);
+    cp0 := EoS.cp0(f);
     eta_0 := dynamicViscosity_dilute(state);
     // Modelica.Utilities.Streams.print("flagged algorithms, cp0=" + String(cp0) + " and eta_0=" + String(eta_0));
     if (abs(A_num[nDilute_num,2]+99)<eps) then
