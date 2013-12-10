@@ -4,8 +4,8 @@ model Derivatives_SinglePhase
 
   package Medium = HelmholtzFluids.Butane;
   // p and T always result in single-phase
-  parameter Medium.Temperature T=403.86875;
-  Medium.AbsolutePressure p=2666889.;
+  parameter Medium.Temperature T=400;
+  Medium.AbsolutePressure p=101325;
   Medium.ThermodynamicState state=Medium.setState_pTX(p=p, T=T);
   //Medium.Density d=Medium.dewDensity(sat=Medium.setSat_T(T));
   //Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
