@@ -6,18 +6,21 @@ clear all;
 
 % symbolic variables for Helmholtz energy
 syms fi fr delta tau;
-% symbolic variables for bank of terms
+
+% symbolic variables for parameters in bank of terms
 syms li1 li2 ei1 ei2 ci1 ci2 si1 si2;
 syms pi1 pi2 pi3;
 syms bi1 bi2 bi3 bi4;
 syms gi1 gi2 gi3 gi4 gi5 gi6 gi7 gi8 gi9;
 syms ni1 ni2 ni3 ni4 ni5 ni6 ni7 ni8 ni9 ni10 ni11 ni12 Distance Phi;
+
 % terms for ideal Helmholtz energy
 logTerms = + li1*log(tau^li2);
 idealPolyTerms = + pi1*tau^pi2;
 EinsteinTerms = + ei1*log(1 - exp(ei2*tau));
 coshTerms = - ci1*log((cosh(ci2*tau)));
 sinhTerms = + si1*log((sinh(si2*tau)));
+
 % terms for residual Helmholtz energy
 residualPolyTerms = pi1*tau^pi2*delta^pi3;
 BWRTerms = bi1*tau^bi2*delta^bi3*exp(-delta^bi4);
