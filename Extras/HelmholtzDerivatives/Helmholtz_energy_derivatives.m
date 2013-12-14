@@ -12,12 +12,13 @@ syms pi1 pi2 pi3;
 syms bi1 bi2 bi3 bi4;
 syms gi1 gi2 gi3 gi4 gi5 gi6 gi7 gi8 gi9;
 syms ni1 ni2 ni3 ni4 ni5 ni6 ni7 ni8 ni9 ni10 ni11 ni12 Distance Phi;
-% terms for Helmholtz energy
+% terms for ideal Helmholtz energy
 logTerms = + li1*log(tau^li2);
 idealPolyTerms = + pi1*tau^pi2;
 EinsteinTerms = + ei1*log(1 - exp(ei2*tau));
 coshTerms = - ci1*log((cosh(ci2*tau)));
 sinhTerms = + si1*log((sinh(si2*tau)));
+% terms for residual Helmholtz energy
 residualPolyTerms = pi1*tau^pi2*delta^pi3;
 BWRTerms = bi1*tau^bi2*delta^bi3*exp(-delta^bi4);
 GaussTerms = gi1*tau^gi2*delta^gi3*exp(gi6*(delta-gi9)^2 + gi7*(tau-gi8)^2);
@@ -31,37 +32,23 @@ nonAnalyticalTerms = ni1*delta*Distance^ni6*Phi;
 fi = +EinsteinTerms ;
 fi = simplify(fi)
 % fr = +residualPolyTerms +BWRTerms +GaussTerms +nonAnalyticalTerms;
-fr = +BWRTerms  
+fr = +BWRTerms ;
 fr = simplify(fr)
 
 %% Helmholtz energy first derivatives
-fit = diff(fi,tau);
-fit = simplify(fit);
-fid = diff(fi,delta);
-fid = simplify(fid);
-frt = diff(fr,tau);
-frt = simplify(frt)
-frd = diff(fr,delta);
-frd = simplify(frd)
+fit = simplify(diff(fi,tau))
+frt = simplify(diff(fr,tau))
+frd = simplify(diff(fr,delta))
 
 %% Helmholtz energy second derivatives
-fitt = diff(fit,tau);
-fitt = simplify(fitt);
-frtt = diff(frt,tau);
-frtt = simplify(frtt)
-frtd = diff(frt,delta);
-frtd = simplify(frtd)
-frdd = diff(frd,delta);
-frdd = simplify(frdd)
+fitt = simplify(diff(fit,tau))
+frtt = simplify(diff(frt,tau))
+frtd = simplify(diff(frt,delta))
+frdd = simplify(diff(frd,delta))
 
 %% Helmholtz energy third derivatives
-fittt = diff(fitt,tau);
-fittt = simplify(fittt);
-frttt = diff(frtt,tau);
-frttt = simplify(frttt)
-frttd = diff(frtd,tau);
-frttd = simplify(frttd)
-frtdd = diff(frtd,delta);
-frtdd = simplify(frtdd)
-frddd = diff(frdd,delta);
-frddd = simplify(frddd)
+fittt = simplify(diff(fitt,tau))
+frttt = simplify(diff(frtt,tau))
+frttd = simplify(diff(frtd,tau))
+frtdd = simplify(diff(frtd,delta))
+frddd = simplify(diff(frdd,delta))
