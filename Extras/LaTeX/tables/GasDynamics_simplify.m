@@ -1,3 +1,5 @@
+clear;
+
 syms A B C D 
 syms dA_dd_s dB_dd_s dC_dd_s dD_dd_s
 syms AD AT BD BT CD CT DD DT
