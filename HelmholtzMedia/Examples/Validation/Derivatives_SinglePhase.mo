@@ -45,11 +45,14 @@ model Derivatives_SinglePhase
   Medium.Types.DerEntropyByTemperature dsTd_analytical2;
   Medium.Types.DerEntropyByTemperature dsTd_numerical;
 // Entropy wrt. dT 2nd order
-  Medium.Types.Der2EntropyByDensity2 d2sd2T_analytical;
+  Medium.Types.Der2EntropyByDensity2 d2sd2T_analytical1;
+  Medium.Types.Der2EntropyByDensity2 d2sd2T_analytical2;
   Medium.Types.Der2EntropyByDensity2 d2sd2T_numerical;
-  Medium.Types.Der2EntropyByTemperature2 d2sT2d_analytical;
+  Medium.Types.Der2EntropyByTemperature2 d2sT2d_analytical1;
+  Medium.Types.Der2EntropyByTemperature2 d2sT2d_analytical2;
   Medium.Types.Der2EntropyByTemperature2 d2sT2d_numerical;
-  Medium.Types.Der2EntropyByTemperatureDensity d2sTd_analytical;
+  Medium.Types.Der2EntropyByTemperatureDensity d2sTd_analytical1;
+  Medium.Types.Der2EntropyByTemperatureDensity d2sTd_analytical2;
   Medium.Types.Der2EntropyByTemperatureDensity d2sTd_numerical;
 // Energy wrt. dT
   Medium.Types.DerEnergyByDensity dudT_analytical1;
@@ -58,12 +61,14 @@ model Derivatives_SinglePhase
   Medium.Types.DerEnergyByTemperature duTd_analytical;
   Medium.Types.DerEnergyByTemperature duTd_numerical;
 // Energy wrt. dT 2nd order
-  Medium.Types.Der2EnergyByDensity2 d2ud2T_analytical;
+  Medium.Types.Der2EnergyByDensity2 d2ud2T_analytical1;
+  Medium.Types.Der2EnergyByDensity2 d2ud2T_analytical2;
   Medium.Types.Der2EnergyByDensity2 d2ud2T_numerical;
   Medium.Types.Der2EnergyByTemperature2 d2uT2d_analytical1;
   Medium.Types.Der2EnergyByTemperature2 d2uT2d_analytical2;
   Medium.Types.Der2EnergyByTemperature2 d2uT2d_numerical;
-  Medium.Types.Der2EnergyByTemperatureDensity d2uTd_analytical;
+  Medium.Types.Der2EnergyByTemperatureDensity d2uTd_analytical1;
+  Medium.Types.Der2EnergyByTemperatureDensity d2uTd_analytical2;
   Medium.Types.Der2EnergyByTemperatureDensity d2uTd_numerical;
 // Enthalpy wrt. dT
   Medium.Types.DerEnthalpyByDensity dhdT_analytical1;
@@ -289,20 +294,26 @@ equation
   Modelica.Utilities.Streams.print("  (ds/dT)@d=const analytical2= " + String(dsTd_analytical2));
   Modelica.Utilities.Streams.print("  (ds/dT)@d=const   numerical= " + String(dsTd_numerical));
   // check (d2s/dd2)@T=const
-  d2sd2T_analytical = Medium.EoS.d2sd2T(f);
+  d2sd2T_analytical1 = Medium.EoS.d2sd2T(f);
+  d2sd2T_analytical2 = -1/state.d^2*Medium.EoS.d2pTd(f) + 2/state.d^3*Medium.EoS.dpTd(f);
   d2sd2T_numerical = (Medium.EoS.dsdT(f_dplus_Tconst)-Medium.EoS.dsdT(f_dminus_Tconst))/(dplus_Tconst.d-dminus_Tconst.d);
-  Modelica.Utilities.Streams.print("  (d2s/dd2)@T=const analytical= " + String(d2sd2T_analytical));
-  Modelica.Utilities.Streams.print("  (d2s/dd2)@T=const  numerical= " + String(d2sd2T_numerical));
+  Modelica.Utilities.Streams.print("  (d2s/dd2)@T=const analytical1= " + String(d2sd2T_analytical1));
+  Modelica.Utilities.Streams.print("  (d2s/dd2)@T=const analytical2= " + String(d2sd2T_analytical2));
+  Modelica.Utilities.Streams.print("  (d2s/dd2)@T=const   numerical= " + String(d2sd2T_numerical));
   // check (d2s/dT2)@d=const
-  d2sT2d_analytical = Medium.EoS.d2sT2d(f);
+  d2sT2d_analytical1 = Medium.EoS.d2sT2d(f);
+  d2sT2d_analytical2 = 1/state.T*Medium.EoS.d2uT2d(f) - 1/state.T^2*Medium.EoS.duTd(f);
   d2sT2d_numerical = (Medium.EoS.dsTd(f_Tplus_dconst)-Medium.EoS.dsTd(f_Tminus_dconst))/(Tplus_dconst.T-Tminus_dconst.T);
-  Modelica.Utilities.Streams.print("  (d2s/dT2)@d=const analytical= " + String(d2sT2d_analytical));
-  Modelica.Utilities.Streams.print("  (d2s/dT2)@d=const  numerical= " + String(d2sT2d_numerical));
+  Modelica.Utilities.Streams.print("  (d2s/dT2)@d=const analytical1= " + String(d2sT2d_analytical1));
+  Modelica.Utilities.Streams.print("  (d2s/dT2)@d=const analytical2= " + String(d2sT2d_analytical2));
+  Modelica.Utilities.Streams.print("  (d2s/dT2)@d=const   numerical= " + String(d2sT2d_numerical));
   // check (d2s/dT dd)
-  d2sTd_analytical = Medium.EoS.d2sTd(f);
+  d2sTd_analytical1 = Medium.EoS.d2sTd(f);
+  d2sTd_analytical2 = -1/state.d^2*Medium.EoS.d2pT2d(f);
   d2sTd_numerical = (Medium.EoS.dsTd(f_dplus_Tconst)-Medium.EoS.dsTd(f_dminus_Tconst))/(dplus_Tconst.d-dminus_Tconst.d);
-  Modelica.Utilities.Streams.print("  (d2s/dT dd) analytical= " + String(d2sTd_analytical));
-  Modelica.Utilities.Streams.print("  (d2s/dT dd)  numerical= " + String(d2sTd_numerical));
+  Modelica.Utilities.Streams.print("  (d2s/dT dd) analytical1= " + String(d2sTd_analytical1));
+  Modelica.Utilities.Streams.print("  (d2s/dT dd) analytical2= " + String(d2sTd_analytical2));
+  Modelica.Utilities.Streams.print("  (d2s/dT dd)   numerical= " + String(d2sTd_numerical));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
   Modelica.Utilities.Streams.print("internal Energy wrt. dT");
@@ -319,10 +330,12 @@ equation
   Modelica.Utilities.Streams.print("  (du/dT)@d=const analytical= " + String(duTd_analytical));
   Modelica.Utilities.Streams.print("  (du/dT)@d=const  numerical= " + String(duTd_numerical));
   // check (d2u/dd2)@T=const
-  d2ud2T_analytical = Medium.EoS.d2ud2T(f);
+  d2ud2T_analytical1 = Medium.EoS.d2ud2T(f);
+  d2ud2T_analytical2 = -state.T/state.d^2*Medium.EoS.d2pTd(f) + 2*state.T/state.d^3*Medium.EoS.dpTd(f) + 1/state.d^2*Medium.EoS.dpdT(f) -2*state.p/state.d^3;
   d2ud2T_numerical = (Medium.EoS.dudT(f_dplus_Tconst)-Medium.EoS.dudT(f_dminus_Tconst))/(dplus_Tconst.d-dminus_Tconst.d);
-  Modelica.Utilities.Streams.print("  (d2u/dd2)@T=const analytical= " + String(d2ud2T_analytical));
-  Modelica.Utilities.Streams.print("  (d2u/dd2)@T=const  numerical= " + String(d2ud2T_numerical));
+  Modelica.Utilities.Streams.print("  (d2u/dd2)@T=const analytical1= " + String(d2ud2T_analytical1));
+  Modelica.Utilities.Streams.print("  (d2u/dd2)@T=const analytical2= " + String(d2ud2T_analytical2));
+  Modelica.Utilities.Streams.print("  (d2u/dd2)@T=const   numerical= " + String(d2ud2T_numerical));
   // check (d2u/dT2)@d=const
   d2uT2d_analytical1 = Medium.EoS.d2uT2d(f);
   d2uT2d_analytical2 = state.T*Medium.EoS.d2sT2d(f) + Medium.EoS.dsTd(f);
@@ -331,10 +344,12 @@ equation
   Modelica.Utilities.Streams.print("  (d2u/dT2)@d=const analytical2= " + String(d2uT2d_analytical2));
   Modelica.Utilities.Streams.print("  (d2u/dT2)@d=const   numerical= " + String(d2uT2d_numerical));
   // check (d2u/dT dd)
-  d2uTd_analytical = Medium.EoS.d2uTd(f);
+  d2uTd_analytical1 = Medium.EoS.d2uTd(f);
+  d2uTd_analytical2 = -state.T/state.d^2*Medium.EoS.d2pT2d(f);
   d2uTd_numerical = (Medium.EoS.duTd(f_dplus_Tconst)-Medium.EoS.duTd(f_dminus_Tconst))/(dplus_Tconst.d-dminus_Tconst.d);
-  Modelica.Utilities.Streams.print("  (d2u/dT dd) analytical= " + String(d2uTd_analytical));
-  Modelica.Utilities.Streams.print("  (d2u/dT dd)  numerical= " + String(d2uTd_numerical));
+  Modelica.Utilities.Streams.print("  (d2u/dT dd) analytical1= " + String(d2uTd_analytical1));
+  Modelica.Utilities.Streams.print("  (d2u/dT dd) analytical2= " + String(d2uTd_analytical2));
+  Modelica.Utilities.Streams.print("  (d2u/dT dd)   numerical= " + String(d2uTd_numerical));
 
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
   Modelica.Utilities.Streams.print("Enthalpy wrt. dT");
