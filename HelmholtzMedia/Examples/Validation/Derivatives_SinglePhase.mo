@@ -38,9 +38,11 @@ model Derivatives_SinglePhase
   Medium.Types.Der2PressureByTemperatureDensity d2pTd_analytical2;
   Medium.Types.Der2PressureByTemperatureDensity d2pTd_numerical;
 // Entropy wrt. dT
-  Medium.Types.DerEntropyByDensity dsdT_analytical;
+  Medium.Types.DerEntropyByDensity dsdT_analytical1;
+  Medium.Types.DerEntropyByDensity dsdT_analytical2;
   Medium.Types.DerEntropyByDensity dsdT_numerical;
-  Medium.Types.DerEntropyByTemperature dsTd_analytical;
+  Medium.Types.DerEntropyByTemperature dsTd_analytical1;
+  Medium.Types.DerEntropyByTemperature dsTd_analytical2;
   Medium.Types.DerEntropyByTemperature dsTd_numerical;
 // Entropy wrt. dT 2nd order
   Medium.Types.Der2EntropyByDensity2 d2sd2T_analytical;
@@ -86,9 +88,11 @@ model Derivatives_SinglePhase
   Medium.DerEnthalpyByPressure dhpT_analytical;
   Medium.DerEnthalpyByPressure dhpT_numerical;
 // Gibbs wrt. dT
-  Medium.Types.DerEnergyByDensity dgdT_analytical;
+  Medium.Types.DerEnergyByDensity dgdT_analytical1;
+  Medium.Types.DerEnergyByDensity dgdT_analytical2;
   Medium.Types.DerEnergyByDensity dgdT_numerical;
-  Medium.Types.DerEnergyByTemperature dgTd_analytical;
+  Medium.Types.DerEnergyByTemperature dgTd_analytical1;
+  Medium.Types.DerEnergyByTemperature dgTd_analytical2;
   Medium.Types.DerEnergyByTemperature dgTd_numerical;
   Medium.Types.Der2EnergyByDensity2 d2gd2T_analytical1;
   Medium.Types.Der2EnergyByDensity2 d2gd2T_analytical2;
@@ -271,16 +275,20 @@ equation
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
   Modelica.Utilities.Streams.print("Entropy wrt. dT");
   // check (ds/dd)@T=const
-  dsdT_analytical = Medium.EoS.dsdT(f);
+  dsdT_analytical1 = Medium.EoS.dsdT(f);
+  dsdT_analytical2 = -1/state.d^2*Medium.EoS.dpTd(f);
   dsdT_numerical = (dplus_Tconst.s-dminus_Tconst.s)/(dplus_Tconst.d-dminus_Tconst.d);
-  Modelica.Utilities.Streams.print("  (ds/dd)@T=const analytical= " + String(dsdT_analytical));
-  Modelica.Utilities.Streams.print("  (ds/dd)@T=const  numerical= " + String(dsdT_numerical));
+  Modelica.Utilities.Streams.print("  (ds/dd)@T=const analytical1= " + String(dsdT_analytical1));
+  Modelica.Utilities.Streams.print("  (ds/dd)@T=const analytical1= " + String(dsdT_analytical2));
+  Modelica.Utilities.Streams.print("  (ds/dd)@T=const   numerical= " + String(dsdT_numerical));
   // check (ds/dT)@d=const
-  dsTd_analytical = Medium.EoS.dsTd(f);
+  dsTd_analytical1 = Medium.EoS.dsTd(f);
+  dsTd_analytical2 = 1/T*Medium.EoS.duTd(f);
   dsTd_numerical = (Tplus_dconst.s-Tminus_dconst.s)/(Tplus_dconst.T-Tminus_dconst.T);
-  Modelica.Utilities.Streams.print("  (ds/dT)@d=const analytical= " + String(dsTd_analytical));
-  Modelica.Utilities.Streams.print("  (ds/dT)@d=const  numerical= " + String(dsTd_numerical));
-  // check (d2u/dd2)@T=const
+  Modelica.Utilities.Streams.print("  (ds/dT)@d=const analytical1= " + String(dsTd_analytical1));
+  Modelica.Utilities.Streams.print("  (ds/dT)@d=const analytical2= " + String(dsTd_analytical2));
+  Modelica.Utilities.Streams.print("  (ds/dT)@d=const   numerical= " + String(dsTd_numerical));
+  // check (d2s/dd2)@T=const
   d2sd2T_analytical = Medium.EoS.d2sd2T(f);
   d2sd2T_numerical = (Medium.EoS.dsdT(f_dplus_Tconst)-Medium.EoS.dsdT(f_dminus_Tconst))/(dplus_Tconst.d-dminus_Tconst.d);
   Modelica.Utilities.Streams.print("  (d2s/dd2)@T=const analytical= " + String(d2sd2T_analytical));
@@ -380,15 +388,19 @@ equation
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters
   Modelica.Utilities.Streams.print("Gibbs energy wrt. dT");
   // check (dg/dd)@T=const
-  dgdT_analytical = Medium.EoS.dgdT(f);
+  dgdT_analytical1 = Medium.EoS.dgdT(f);
+  dgdT_analytical2 = 1/state.d*Medium.EoS.dpdT(f);
   dgdT_numerical = ((dplus_Tconst.h-dplus_Tconst.T*dplus_Tconst.s)-(dminus_Tconst.h-dminus_Tconst.T*dminus_Tconst.s))/(dplus_Tconst.d-dminus_Tconst.d);
-  Modelica.Utilities.Streams.print("  (dg/dd)@T=const analytical= " + String(dgdT_analytical));
-  Modelica.Utilities.Streams.print("  (dg/dd)@T=const  numerical= " + String(dgdT_numerical));
+  Modelica.Utilities.Streams.print("  (dg/dd)@T=const analytical1= " + String(dgdT_analytical1));
+  Modelica.Utilities.Streams.print("  (dg/dd)@T=const analytical2= " + String(dgdT_analytical2));
+  Modelica.Utilities.Streams.print("  (dg/dd)@T=const   numerical= " + String(dgdT_numerical));
   // check (dg/dT)@d=const
-  dgTd_analytical = Medium.EoS.dgTd(f);
+  dgTd_analytical1 = Medium.EoS.dgTd(f);
+  dgTd_analytical2 = -state.s + 1/state.d*Medium.EoS.dpTd(f);
   dgTd_numerical = ((Tplus_dconst.h-Tplus_dconst.T*Tplus_dconst.s)-(Tminus_dconst.h-Tminus_dconst.T*Tminus_dconst.s))/(Tplus_dconst.T-Tminus_dconst.T);
-  Modelica.Utilities.Streams.print("  (dg/dT)@d=const analytical= " + String(dgTd_analytical));
-  Modelica.Utilities.Streams.print("  (dg/dT)@d=const  numerical= " + String(dgTd_numerical));
+  Modelica.Utilities.Streams.print("  (dg/dT)@d=const analytical1= " + String(dgTd_analytical1));
+  Modelica.Utilities.Streams.print("  (dg/dT)@d=const analytical2= " + String(dgTd_analytical2));
+  Modelica.Utilities.Streams.print("  (dg/dT)@d=const   numerical= " + String(dgTd_numerical));
   // check (d2g/dd2)@T=const
   d2gd2T_analytical1 = Medium.EoS.d2gd2T(f);
   d2gd2T_analytical2 = 1/state.d*Medium.EoS.d2pd2T(f) - 1/state.d^2*Medium.EoS.dpdT(f);
@@ -541,19 +553,6 @@ equation
   Modelica.Utilities.Streams.print("  (d mu/dp)@h=const analytical1= " + String(dmuph_analytical1));
   Modelica.Utilities.Streams.print("  (d mu/dp)@h=const analytical2= " + String(dmuph_analytical2));
   Modelica.Utilities.Streams.print("  (d mu/dp)@h=const   numerical= " + String(dmuph_numerical));
-
-  // assertions for stability
-  assert(dpdT_analytical1>0, "mechanical stability violated");
-  assert(dsTd_analytical>0, "heat capacity violated");
-  assert(duTd_analytical>0, "isochoric heat capacity violated");
-  assert(dhTp_analytical>0, "isobaric heat capacity violated");
-
-  // assertions for Maxwell relations
-  assert((-state.d^2*dsdT_analytical - dpTd_analytical)<eps, "Maxwell svT relation violated");
-
-  // assertions for additional relations
-  assert((dhpT_analytical - (1/state.d+state.T/state.d^2*ddTp_analytical))<eps, "additional hpT relation violated");
-  //assert((-state.d^2*dudT_analytical - (state.T*dpTd_analytical-state.p))<eps, "additional uvT relation violated");
 
 annotation (experiment(NumberOfIntervals=1));
 end Derivatives_SinglePhase;
