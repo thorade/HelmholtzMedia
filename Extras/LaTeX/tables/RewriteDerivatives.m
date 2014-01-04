@@ -70,6 +70,10 @@ d2T_P2_H = simplify(d2T_P2_H)
 d2T_P2_H = simplifyFraction(d2T_P2_H)
 %d2T_P2_H = expand(d2T_P2_H)
 
+dm_T = (-d2P_T2 - dP_D*dH_T*d2H_TD/dH_D^2 + d2P_TD*dH_T/dH_D + dP_D*d2H_T2/dH_D) * dT_P_H^2 ;
+dm_D = (-d2P_TD - dP_D*dH_T*d2H_D2/dH_D^2 + d2P_D2*dH_T/dH_D + dP_D*d2H_TD/dH_D) * dT_P_H^2 ;
+d2T_P2_Hx = (dm_T*dH_D - dm_D*dH_T) / (dP_T*dH_D - dP_D*dH_T)
+d2T_P2_Hx = simplify(d2T_P2_Hx)
 
 %% PVT second order derivatives
 d2T_D2_P = -(d2P_D2*dP_T - dP_D*d2P_TD)/dP_T^2 ...
