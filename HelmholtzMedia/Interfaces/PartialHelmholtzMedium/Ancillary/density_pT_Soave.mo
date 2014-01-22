@@ -73,8 +73,7 @@ algorithm
     else
       // Modelica.Utilities.Streams.print("T>T_crit: multiple roots can occur, but two of the roots result in negative densities", "printlog.txt");
       // Modelica.Utilities.Streams.print("d(Y1)=" + String(p/(R*T*(Y1+1/3))) + ", d(Y2)=" + String(p/(R*T*(Y2+1/3))) + ", d(Y3)=" + String(p/(R*T*(Y3+1/3))), "printlog.txt");
-      d := max(p/(R*T*(Y1+1/3)), p/(R*T*(Y2+1/3)));
-      d := max(p/(R*T*(Y3+1/3)), d);
+      d := max({p/(R*T*(Y1+1/3)), p/(R*T*(Y2+1/3)), p/(R*T*(Y3+1/3))});
     end if;
   end if;
   // Modelica.Utilities.Streams.print("RKS finished, d=" + String(d), "printlog.txt");
