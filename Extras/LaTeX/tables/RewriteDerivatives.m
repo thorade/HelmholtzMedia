@@ -6,11 +6,23 @@ clear;
 clc;
 
 % independent vars and base props
-syms D T P;
+syms R D T P;
+syms fi fit fitt fittt;
+syms fr frt frtt frttt frd frdd frddd frtd frttd frtdd;
 % three basic first-order derivatives (wrt d and T)
 syms dP_D dP_T dU_T;
 % four basic second-order derivatives (wrt d and T)
 syms d2P_D2 d2P_T2 d2P_TD d2U_T2;
+
+%step 0: rewrite basic derivatives in terms of Helmholtz energy (optional)
+% dP_D = T*R*(1 + 2*frd + frdd);
+% dP_T = D*R*(1 + frd - frtd);
+% dU_T =   R*(-fitt - frtt);
+% 
+% d2P_D2 = T*R/D*(2*frd + 4*frdd + frddd);
+% d2P_T2 = D*R/T*(frttd); 
+% d2P_TD =   R  *(1 + 2*frd + frdd - 2*frtd - frtdd);
+% d2U_T2 =   R/T*(fittt + frttt + 2*fitt + 2*frtt);
 
 % step 1: rewrite the first-order derivatives (wrt d and T)
 dU_D = -T/D^2*dP_T+P/D^2 ;
