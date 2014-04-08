@@ -1,21 +1,21 @@
 within HelmholtzMedia.HelmholtzFluids;
-package HMDS "HMDS hexamethyldisiloxane (MM)"
+package Hexamethyldisiloxane "hexamethyldisiloxane (MM)"
 extends Interfaces.PartialHelmholtzMedium(
-  fluidConstants={fluidConstantsHMDS},
-  helmholtzCoefficients=helmholtzCoefficientsHMDS,
-  thermalConductivityCoefficients=thermalConductivityCoefficientsHMDS,
-  dynamicViscosityCoefficients=dynamicViscosityCoefficientsHMDS,
-  surfaceTensionCoefficients=surfaceTensionCoefficientsHMDS,
-  ancillaryCoefficients=ancillaryCoefficientsHMDS,
-  fluidLimits=fluidLimitsHMDS,
-  Density(min=fluidLimitsHMDS.DMIN, max=fluidLimitsHMDS.DMAX, start=fluidConstantsHMDS.molarMass/fluidConstantsHMDS.criticalMolarVolume),
-  Temperature(min=fluidLimitsHMDS.TMIN, max=fluidLimitsHMDS.TMAX, start=298.15),
+  fluidConstants={fluidConstantsMM},
+  helmholtzCoefficients=helmholtzCoefficientsMM,
+  thermalConductivityCoefficients=thermalConductivityCoefficientsMM,
+  dynamicViscosityCoefficients=dynamicViscosityCoefficientsMM,
+  surfaceTensionCoefficients=surfaceTensionCoefficientsMM,
+  ancillaryCoefficients=ancillaryCoefficientsMM,
+  fluidLimits=fluidLimitsMM,
+  Density(min=fluidLimitsMM.DMIN, max=fluidLimitsMM.DMAX, start=fluidConstantsMM.molarMass/fluidConstantsMM.criticalMolarVolume),
+  Temperature(min=fluidLimitsMM.TMIN, max=fluidLimitsMM.TMAX, start=298.15),
   AbsolutePressure(min=0, max=200e6, start=101325),
-  SpecificEnthalpy(min=fluidLimitsHMDS.HMIN, max=fluidLimitsHMDS.HMAX, start=0),
-  SpecificEntropy(min=fluidLimitsHMDS.SMIN, max=fluidLimitsHMDS.SMAX, start=0));
+  SpecificEnthalpy(min=fluidLimitsMM.HMIN, max=fluidLimitsMM.HMAX, start=0),
+  SpecificEntropy(min=fluidLimitsMM.SMIN, max=fluidLimitsMM.SMAX, start=0));
 
   final constant Interfaces.PartialHelmholtzMedium.FluidConstants
-  fluidConstantsHMDS(
+  fluidConstantsMM(
     chemicalFormula="C6H18OSi2",
     structureFormula="",
     casRegistryNumber="107-46-0",
@@ -44,7 +44,7 @@ extends Interfaces.PartialHelmholtzMedium(
     meltingPoint=204.93) "Fluid Constants";
 
   final constant Interfaces.PartialHelmholtzMedium.FluidLimits
-  fluidLimitsHMDS(
+  fluidLimitsMM(
     TMIN=273,
     TMAX=673,
     DMIN=Modelica.Constants.small,
@@ -57,7 +57,7 @@ extends Interfaces.PartialHelmholtzMedium(
     SMAX=8100) "Helmholtz EoS Limits";
 
   final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
-  helmholtzCoefficientsHMDS(
+  helmholtzCoefficientsMM(
     idealLog=[
       +51.894/8.314472-1,           1],
     idealPower=[
@@ -85,7 +85,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant
   Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
-  thermalConductivityCoefficientsHMDS(
+  thermalConductivityCoefficientsMM(
     reducingTemperature_0=1,
     reducingThermalConductivity_0=1,
     lambda_0_num_coeffs=fill(0.0, 0, 2),
@@ -100,7 +100,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant
   Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
-  dynamicViscosityCoefficientsHMDS(
+  dynamicViscosityCoefficientsMM(
     dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
     collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
     sigma=1,
@@ -118,12 +118,12 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant
   Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
-  surfaceTensionCoefficientsHMDS(
+  surfaceTensionCoefficientsMM(
     coeffs=fill(0.0, 0, 2)) "Coefficients for the surface tension";
 
   final constant
   Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
-  ancillaryCoefficientsHMDS(
+  ancillaryCoefficientsMM(
     pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
     pressureSaturation=[
       -0.86671E+01,   1.0;
@@ -149,7 +149,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
 
   annotation (Documentation(info="<html>
-These are the coefficients for HMDS. 
+These are the coefficients for MM. 
 
 <dl>
 <dt> Colonna, P., Nannan, N.R., Guardone, A., Lemmon, E.W.</dt>
@@ -165,4 +165,4 @@ These are the coefficients for HMDS.
 </dl>
 </html>"));
 
-end HMDS;
+end Hexamethyldisiloxane;

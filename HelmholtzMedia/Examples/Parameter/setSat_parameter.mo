@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Parameter;
 model setSat_parameter
-  package Medium = HelmholtzFluids.HMDS;
+  package Medium = HelmholtzFluids.Hexamethyldisiloxane;
 
   Medium.SaturationProperties sat;
   Medium.SaturationProperties sat_p;

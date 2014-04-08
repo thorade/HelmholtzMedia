@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model Ancillary_Saturation
-  package Medium = HelmholtzFluids.HMDS;
+  package Medium = HelmholtzFluids.Hexamethyldisiloxane;
   Medium.Temperature Tsat;
   Medium.AbsolutePressure psat;
   Medium.AbsolutePressure pmelt;
