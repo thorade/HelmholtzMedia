@@ -15,14 +15,14 @@ syms dP_D dP_T dU_T;
 syms d2P_D2 d2P_T2 d2P_TD d2U_T2;
 
 %step 0: rewrite basic derivatives in terms of Helmholtz energy (optional)
-% dP_D = T*R*(1 + 2*frd + frdd);
-% dP_T = D*R*(1 + frd - frtd);
-% dU_T =   R*(-fitt - frtt);
+ dP_D = T*R*(1 + 2*frd + frdd);
+ dP_T = D*R*(1 + frd - frtd);
+ dU_T =   R*(-fitt - frtt);
 % 
-% d2P_D2 = T*R/D*(2*frd + 4*frdd + frddd);
-% d2P_T2 = D*R/T*(frttd); 
-% d2P_TD =   R  *(1 + 2*frd + frdd - 2*frtd - frtdd);
-% d2U_T2 =   R/T*(fittt + frttt + 2*fitt + 2*frtt);
+ d2P_D2 = T*R/D*(2*frd + 4*frdd + frddd);
+ d2P_T2 = D*R/T*(frttd); 
+ d2P_TD =   R  *(1 + 2*frd + frdd - 2*frtd - frtdd);
+ d2U_T2 =   R/T*(fittt + frttt + 2*fitt + 2*frtt);
 
 % step 1: rewrite the first-order derivatives (wrt d and T)
 dU_D = -T/D^2*dP_T+P/D^2 ;
@@ -78,20 +78,20 @@ b1 = (d2P_TD*dH_D - d2P_D2*dH_T) / (dP_T*dH_D - dP_D*dH_T) ;
 c1 = (d2H_T2*dH_D - d2H_TD*dH_T) / (dP_T*dH_D - dP_D*dH_T) ;
 d1 = (d2H_TD*dH_D - d2H_D2*dH_T) / (dP_T*dH_D - dP_D*dH_T) ;
 d2T_P2_H = (-dH_D^2*a1 + dH_T*dH_D*b1 + dP_D*dH_D*c1 - dP_D*dH_T*d1) / (dP_D*dH_T - dP_T*dH_D)^2
-d2T_P2_H = simplify(d2T_P2_H)
-d2T_P2_H = simplifyFraction(d2T_P2_H)
-%d2T_P2_H = expand(d2T_P2_H)
+d2T_P2_H = simplify(d2T_P2_H);
+d2T_P2_H = simplifyFraction(d2T_P2_H);
+%d2T_P2_H = expand(d2T_P2_H);
 
 dm_T = (-d2P_T2 - dP_D*dH_T*d2H_TD/dH_D^2 + d2P_TD*dH_T/dH_D + dP_D*d2H_T2/dH_D) * dT_P_H^2 ;
 dm_D = (-d2P_TD - dP_D*dH_T*d2H_D2/dH_D^2 + d2P_D2*dH_T/dH_D + dP_D*d2H_TD/dH_D) * dT_P_H^2 ;
-d2T_P2_Hx = (dm_T*dH_D - dm_D*dH_T) / (dP_T*dH_D - dP_D*dH_T)
-d2T_P2_Hx = simplify(d2T_P2_Hx)
+d2T_P2_Hx = (dm_T*dH_D - dm_D*dH_T) / (dP_T*dH_D - dP_D*dH_T);
+d2T_P2_Hx = simplify(d2T_P2_Hx);
 
 %% PVT second order derivatives
 d2T_D2_P = -(d2P_D2*dP_T - dP_D*d2P_TD)/dP_T^2 ...
-           +(d2P_TD*dP_T - dP_D*d2P_T2)*dP_D/dP_T^3 ;
-d2T_D2_P = simplify(d2T_D2_P);
-d2T_D2_P = expand(d2T_D2_P);
+           +(d2P_TD*dP_T - dP_D*d2P_T2)*dP_D/dP_T^3 
+d2T_D2_P = simplify(d2T_D2_P)
+d2T_D2_P = expand(d2T_D2_P)
 
 d2D_T2_P = -(d2P_T2*dP_D - dP_T*d2P_TD)/dP_D^2 ...
            +(d2P_TD*dP_D - dP_T*d2P_D2)*dP_T/dP_D^3 ;
