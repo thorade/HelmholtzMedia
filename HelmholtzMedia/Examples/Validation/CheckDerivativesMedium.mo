@@ -11,7 +11,7 @@ partial model CheckDerivativesMedium
    final parameter Real dpdt = (p1-p0)/dt;
    final parameter Real dhdt = (h1-h0)/dt;
 
-   Medium.AbsolutePressure p=p0 + dpdt*time;
+   Medium.AbsolutePressure p = p0 + dpdt*time;
    Medium.SpecificEnthalpy h = h0 + dhdt*time;
 
    Medium.ThermodynamicState state_p, state_h;
