@@ -4,7 +4,7 @@ model Derivatives_Helmholtz
   // values for comparison are given in IAPWS-95 (Table 6)
   // http://iapws.org/relguide/IAPWS-95.htm
 
-  package Medium = HelmholtzMedia.HelmholtzFluids.Butane;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
   parameter Medium.Density d=838.025;
   parameter Medium.Temperature T=500;
 

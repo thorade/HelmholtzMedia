@@ -4,7 +4,7 @@ model Derivatives_Helmholtz_Multiplied
   // values for comparison are given by RefProp
   // go to Options, Preferences, check "Show options used for analyzing EoS"
 
-  package Medium = HelmholtzMedia.HelmholtzFluids.Propane;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
   parameter Medium.Density d=1e-3;
   parameter Medium.Temperature T=500;
 

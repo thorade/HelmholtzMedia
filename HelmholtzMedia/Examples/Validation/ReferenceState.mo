@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model ReferenceState
-  package Medium = HelmholtzMedia.HelmholtzFluids.R134a;
+  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
 
   input String fileName = "ReferenceState_.csv";
   input String separator = ";";
