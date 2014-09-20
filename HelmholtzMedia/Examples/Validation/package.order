@@ -10,3 +10,6 @@ acentricFactor
 ThermoSurface
 MaxwellLoop
 idealGasLimit
+CheckDerivativesMedium
+CheckDerivativesButane
+CheckDerivativesHelium
