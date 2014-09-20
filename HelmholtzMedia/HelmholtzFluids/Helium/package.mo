@@ -94,10 +94,9 @@ extends Interfaces.PartialHelmholtzMedium(
           0.00901399,    1.982,   2,  2, 2,   -5.8575, -19.256,  0.7649,  0.8736])
   "Coefficients of the Helmholtz EoS";
 
-  final constant
-  Transport.ThermalConductivityCoefficients
+  final constant Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsHelium(
-    reducingTemperature_0=1,
+    reducingTemperature_0=10,
     reducingThermalConductivity_0=1,
     lambda_0_num_coeffs=fill(0.0, 0, 2),
     reducingTemperature_residual=1,
@@ -109,8 +108,7 @@ extends Interfaces.PartialHelmholtzMedium(
     qd_inverse=0.875350E-9,
     T_ref=637.68) "Coefficients for the thermal conductivity";
 
-  final constant
-  Transport.DynamicViscosityCoefficients
+  final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsHelium(
     dynamicViscosityModel=DynamicViscosityModel.VS1,
     collisionIntegralModel=CollisionIntegralModel.CI1,
@@ -127,19 +125,17 @@ extends Interfaces.PartialHelmholtzMedium(
     nu_po=fill(0.0, 0, 5),
     de_po=fill(0.0, 0, 5)) "Coefficients for the dynamic viscosity";
 
-  final constant
-  Transport.SurfaceTensionCoefficients
+  final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsHelium(
     coeffs=[
        0.0004656,   1.04;
        0.001889,    2.468;
       -0.002006,    2.661]) "Coefficients for the surface tension";
 
-  final constant
-  Ancillary.AncillaryCoefficients
+  final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsHelium(
     pressureMeltingModel=PressureMeltingModel.ML1,
-    T_reducing=1,
+    T_reducing=10,
     p_reducing=1000e3,
     pressureMelting1=[
       -1.7455837,      0.000000;

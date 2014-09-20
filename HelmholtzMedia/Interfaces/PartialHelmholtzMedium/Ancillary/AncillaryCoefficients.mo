@@ -15,8 +15,8 @@ record AncillaryCoefficients
     "saturated vapor density coefficients";
 
   constant PressureMeltingModel pressureMeltingModel=PressureMeltingModel.ML1;
-  constant Temperature T_reducing=1;
-  constant AbsolutePressure p_reducing=1;
+  constant Temperature T_reducing=273.15;
+  constant AbsolutePressure p_reducing=101325;
   constant Real[:,2] pressureMelting1 = fill(0.0, 0, 2)
     "melting pressure coefficients";
   constant Real[:,2] pressureMelting2 = fill(0.0, 0, 2)
