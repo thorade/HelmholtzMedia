@@ -15,7 +15,7 @@ extends Interfaces.PartialHelmholtzMedium(
   SpecificEnthalpy(min=fluidLimitsButane.HMIN, max=fluidLimitsButane.HMAX, start=(fluidLimitsButane.HMIN+fluidLimitsButane.HMAX)/2),
   SpecificEntropy(min=fluidLimitsButane.SMIN, max=fluidLimitsButane.SMAX, start=(fluidLimitsButane.SMIN+fluidLimitsButane.SMAX)/2));
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidConstants
+  final constant FluidConstants
   fluidConstantsButane(
     casRegistryNumber="106-97-8",
     iupacName="n-butane" "full name",
@@ -44,7 +44,7 @@ extends Interfaces.PartialHelmholtzMedium(
     normalBoilingPoint=272.660,
     meltingPoint=134.912) "Fluid Constants";
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidLimits
+  final constant FluidLimits
   fluidLimitsButane(
     TMIN=fluidConstantsButane.triplePointTemperature,
     TMAX=575,
@@ -57,7 +57,7 @@ extends Interfaces.PartialHelmholtzMedium(
     SMIN=-465,
     SMAX=8100) "Helmholtz EoS Limits";
 
-  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
+  final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsButane(
     idealLog=[
       +3.24680487,         1.],
@@ -99,8 +99,7 @@ extends Interfaces.PartialHelmholtzMedium(
        +0.14904666224681E-02,   0.0,    2., 2, 2,  -10.,  -200.,  1.13,  1.0])
   "Coefficients of the Helmholtz EoS";
 
-  final constant
-  Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
+  final constant Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsButane(
     reducingTemperature_0=425.16,
     reducingThermalConductivity_0=1,
@@ -127,11 +126,10 @@ extends Interfaces.PartialHelmholtzMedium(
     qd_inverse=0.875350E-9,
     T_ref=637.68) "Coefficients for the thermal conductivity";
 
-  final constant
-  Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
+final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsButane(
-    dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
-    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
+  dynamicViscosityModel=DynamicViscosityModel.VS1,
+  collisionIntegralModel=CollisionIntegralModel.CI1,
     sigma=0.57335,
     epsilon_kappa=280.51,
     CET=[
@@ -177,35 +175,33 @@ extends Interfaces.PartialHelmholtzMedium(
     -1.,                 0.0,    1,  0,  0])
   "Coefficients for the dynamic viscosity";
 
-  final constant
-  Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
+  final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsButane(
     coeffs=[
       0.05418,    1.26]) "Coefficients for the surface tension";
 
-  final constant
-  Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
+final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsButane(
-    pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
+    pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -0.71897E+01,   1.0;
        0.26122E+01,   1.5;
       -0.21729E+01,   2.0;
       -0.27230E+01,   4.5],
-    densityLiquidModel=Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel.DL1,
+    densityLiquidModel=DensityLiquidModel.DL1,
     densityLiquid=[
        0.52341E+01,   0.44;
       -0.62011E+01,   0.60;
        0.36063E+01,   0.76;
        0.22137E+00,   5.00],
-    densityVaporModel=Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel.DV3,
+    densityVaporModel=DensityVaporModel.DV3,
     densityVapor=[
       -0.27390E+01,   0.391;
       -0.57347E+01,   1.14;
       -0.16408E+02,   3.0;
       -0.46986E+02,   6.5;
       -0.10090E+03,  14.0],
-    pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
+    pressureMeltingModel=PressureMeltingModel.ML1,
     T_reducing=134.895,
     p_reducing=0.00066566e3,
     pressureMelting1=[

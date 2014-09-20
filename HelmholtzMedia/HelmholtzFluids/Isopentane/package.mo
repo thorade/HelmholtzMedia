@@ -14,7 +14,7 @@ package Isopentane "Isopentane"
     SpecificEnthalpy(min=fluidLimitsIsopentane.HMIN, max=fluidLimitsIsopentane.HMAX, start=(fluidLimitsIsopentane.HMIN+fluidLimitsIsopentane.HMAX)/2),
     SpecificEntropy(min=fluidLimitsIsopentane.SMIN, max=fluidLimitsIsopentane.SMAX, start=(fluidLimitsIsopentane.SMIN+fluidLimitsIsopentane.SMAX)/2));
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidConstants
+  final constant FluidConstants
   fluidConstantsIsopentane(
     chemicalFormula="C5H12",
     structureFormula="",
@@ -43,7 +43,7 @@ package Isopentane "Isopentane"
     normalBoilingPoint=300.98,
     meltingPoint=112.662) "Fluid Constants";
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidLimits
+  final constant FluidLimits
   fluidLimitsIsopentane(
     TMIN=fluidConstantsIsopentane.triplePointTemperature,
     TMAX=500,
@@ -56,7 +56,7 @@ package Isopentane "Isopentane"
     SMIN=-3036,
     SMAX=9283) "Helmholtz EoS Limits";
 
-  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
+  final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsIsopentane(
     idealLog=[
       +3.0000000000,    1],
@@ -85,7 +85,7 @@ package Isopentane "Isopentane"
    residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
+  Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsIsopentane(
     reducingTemperature_0 = 341.06,
     reducingThermalConductivity_0 = 1e-3,
@@ -109,10 +109,10 @@ package Isopentane "Isopentane"
     T_ref=690.525) "Coefficients for the thermal conductivity";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
+  Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsIsopentane(
-    dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS2,
-    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI0,
+    dynamicViscosityModel=DynamicViscosityModel.VS2,
+    collisionIntegralModel=CollisionIntegralModel.CI0,
     sigma=0.56232,
     epsilon_kappa=341.06,
     CET=[
@@ -133,29 +133,29 @@ package Isopentane "Isopentane"
        3.24]) "Coefficients for the dynamic viscosity";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
+  Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsIsopentane(
     coeffs=[
        0.05106,     1.21]) "Coefficients for the surface tension";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
+  Ancillary.AncillaryCoefficients
   ancillaryCoefficientsIsopentane(
-    pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
+    pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -0.72392E+01,       1.0;
        0.22635E+01,       1.5;
       -0.18237E+01,       2.02;
       -0.29997E+01,       4.24;
       -0.27752E+01,      16.1],
-    densityLiquidModel=Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel.DL1,
+    densityLiquidModel=DensityLiquidModel.DL1,
     densityLiquid=[
        0.18367E+02,       1.21;
       -0.30283E+02,       1.41;
        0.13557E+02,       1.65;
       -0.90533E+00,       0.09;
        0.20927E+01,       0.164],
-    densityVaporModel=Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel.DV3,
+    densityVaporModel=DensityVaporModel.DV3,
     densityVapor=[
       -0.38825E+02,       0.565;
        0.79040E+02,       0.66;
@@ -163,7 +163,7 @@ package Isopentane "Isopentane"
       -0.21603E+02,       3.25;
       -0.57218E+02,       7.3;
       -0.15164E+03,      16.6],
-    pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
+    pressureMeltingModel=PressureMeltingModel.ML1,
     T_reducing=112.65,
     p_reducing=0.84e-4,
     pressureMelting1=[

@@ -14,7 +14,7 @@ package R134a "R134a with IIR reference state"
     SpecificEnthalpy(min=fluidLimitsR134a.HMIN, max=fluidLimitsR134a.HMAX, start=(fluidLimitsR134a.HMIN+fluidLimitsR134a.HMAX)/2),
     SpecificEntropy(min=fluidLimitsR134a.SMIN, max=fluidLimitsR134a.SMAX, start=(fluidLimitsR134a.SMIN+fluidLimitsR134a.SMAX)/2));
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidConstants
+  final constant FluidConstants
   fluidConstantsR134a(
     chemicalFormula="C2H2F4",
     structureFormula="",
@@ -43,7 +43,7 @@ package R134a "R134a with IIR reference state"
     normalBoilingPoint=247.076,
     meltingPoint=247.076063) "Fluid Constants";
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidLimits
+  final constant FluidLimits
   fluidLimitsR134a(
     TMIN=fluidConstantsR134a.triplePointTemperature,
     TMAX=455,
@@ -56,7 +56,7 @@ package R134a "R134a with IIR reference state"
     SMIN=0,
     SMAX=1e12) "Helmholtz EoS Limits";
 
-  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
+  final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsR134a(
     idealLog=[
       -1.629789E+0,     1.00E0],
@@ -92,7 +92,7 @@ package R134a "R134a with IIR reference state"
    residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
+  Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsR134a(
     reducingTemperature_0=1.0,
     reducingThermalConductivity_0=1.0,
@@ -113,10 +113,10 @@ package R134a "R134a with IIR reference state"
     T_ref=561.411) "Coefficients for the thermal conductivity";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
+  Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsR134a(
-    dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1_alternative,
-    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
+    dynamicViscosityModel=DynamicViscosityModel.VS1_alternative,
+    collisionIntegralModel=CollisionIntegralModel.CI1,
     sigma=0.468932,
     epsilon_kappa=299.363,
     CET=[
@@ -158,28 +158,28 @@ package R134a "R134a with IIR reference state"
   "Coefficients for the dynamic viscosity";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
+  Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsR134a(
     coeffs=[
       0.06016,    1.26]) "Coefficients for the surface tension";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
+  Ancillary.AncillaryCoefficients
   ancillaryCoefficientsR134a(
-    pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
+    pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -0.77513E+01,   1.0;
        0.29263E+01,   1.5;
       -0.26622E+01,   1.9;
       -0.39711E+01,   4.25],
-    densityLiquidModel=Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel.DL1,
+    densityLiquidModel=DensityLiquidModel.DL1,
     densityLiquid=[
        0.12449E+02,   0.5;
       -0.41023E+02,   0.7;
        0.73641E+02,   0.9;
       -0.64635E+02,   1.1;
        0.22551E+02,   1.3],
-    densityVaporModel=Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel.DV3,
+    densityVaporModel=DensityVaporModel.DV3,
     densityVapor=[
       -0.29174E+01,   0.383;
       -0.72542E+01,   1.21;

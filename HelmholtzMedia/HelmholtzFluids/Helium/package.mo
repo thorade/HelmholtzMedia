@@ -15,7 +15,7 @@ extends Interfaces.PartialHelmholtzMedium(
   SpecificEnthalpy(min=fluidLimitsHelium.HMIN, max=fluidLimitsHelium.HMAX, start=0),
   SpecificEntropy(min=fluidLimitsHelium.SMIN, max=fluidLimitsHelium.SMAX, start=0));
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidConstants
+  final constant FluidConstants
   fluidConstantsHelium(
     casRegistryNumber="7440-59-7" "CAS number",
     iupacName="helium-4" "full name",
@@ -44,7 +44,7 @@ extends Interfaces.PartialHelmholtzMedium(
     triplePointPressure=5033.5,
     meltingPoint=2.1768) "Fluid Constants";
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidLimits
+  final constant FluidLimits
   fluidLimitsHelium(
     TMIN=fluidConstantsHelium.triplePointTemperature,
     TMAX=2000,
@@ -57,7 +57,7 @@ extends Interfaces.PartialHelmholtzMedium(
     SMIN=-1.8782e3,
     SMAX=120e3) "Helmholtz EoS Limits";
 
-  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
+  final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsHelium(
     useLineSearch=true,
     idealLog=[
@@ -95,7 +95,7 @@ extends Interfaces.PartialHelmholtzMedium(
   "Coefficients of the Helmholtz EoS";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
+  Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsHelium(
     reducingTemperature_0=1,
     reducingThermalConductivity_0=1,
@@ -110,10 +110,10 @@ extends Interfaces.PartialHelmholtzMedium(
     T_ref=637.68) "Coefficients for the thermal conductivity";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
+  Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsHelium(
-    dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
-    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
+    dynamicViscosityModel=DynamicViscosityModel.VS1,
+    collisionIntegralModel=CollisionIntegralModel.CI1,
     sigma=1,
     epsilon_kappa=1,
     CET=fill(0.0, 0, 2),
@@ -128,7 +128,7 @@ extends Interfaces.PartialHelmholtzMedium(
     de_po=fill(0.0, 0, 5)) "Coefficients for the dynamic viscosity";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
+  Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsHelium(
     coeffs=[
        0.0004656,   1.04;
@@ -136,9 +136,9 @@ extends Interfaces.PartialHelmholtzMedium(
       -0.002006,    2.661]) "Coefficients for the surface tension";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
+  Ancillary.AncillaryCoefficients
   ancillaryCoefficientsHelium(
-    pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
+    pressureMeltingModel=PressureMeltingModel.ML1,
     T_reducing=1,
     p_reducing=1000e3,
     pressureMelting1=[
@@ -146,20 +146,20 @@ extends Interfaces.PartialHelmholtzMedium(
        1.6979793,      1.555414],
     pressureMelting2=fill(0.0, 0, 2),
     pressureMelting3=fill(0.0, 0, 2),
-    pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
+    pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -3.8357,   1.0;
        1.7062,   1.5;
       -0.71231,  1.25;
        1.0862,   2.8],
-    densityLiquidModel=Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel.DL1,
+    densityLiquidModel=DensityLiquidModel.DL1,
     densityLiquid=[
        1.0929,   0.286;
        1.6584,   1.2;
       -3.6477,   2.0;
        2.7440,   2.8;
       -2.3859,   6.5],
-    densityVaporModel=Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel.DV3,
+    densityVaporModel=DensityVaporModel.DV3,
     densityVapor=[
       -1.5789,   0.333;
       -10.749,   1.5;

@@ -14,7 +14,7 @@ extends Interfaces.PartialHelmholtzMedium(
   SpecificEnthalpy(min=fluidLimitsEthanol.HMIN, max=fluidLimitsEthanol.HMAX, start=(fluidLimitsEthanol.HMIN+fluidLimitsEthanol.HMAX)/2),
   SpecificEntropy(min=fluidLimitsEthanol.SMIN, max=fluidLimitsEthanol.SMAX, start=(fluidLimitsEthanol.SMIN+fluidLimitsEthanol.SMAX)/2));
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidConstants
+  final constant FluidConstants
   fluidConstantsEthanol(
     chemicalFormula="C2H6O",
     structureFormula="",
@@ -43,7 +43,7 @@ extends Interfaces.PartialHelmholtzMedium(
     normalBoilingPoint=351.39,
     meltingPoint=159) "Fluid Constants";
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidLimits
+  final constant FluidLimits
   fluidLimitsEthanol(
     TMIN=250,
     TMAX=650,
@@ -56,7 +56,7 @@ extends Interfaces.PartialHelmholtzMedium(
     SMIN=-465,
     SMAX=8100) "Helmholtz EoS Limits";
 
-  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
+  final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsEthanol(
     idealLog=[
       +5.41129,         1],
@@ -96,7 +96,7 @@ extends Interfaces.PartialHelmholtzMedium(
      residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
+  Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsEthanol(
     reducingTemperature_0=513.9,
     reducingThermalConductivity_0=1,
@@ -123,11 +123,10 @@ extends Interfaces.PartialHelmholtzMedium(
     qd_inverse=0.875350E-9,
     T_ref=637.68) "Coefficients for the thermal conductivity";
 
-  final constant
-  Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
+  final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsEthanol(
-    dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
-    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
+    dynamicViscosityModel=DynamicViscosityModel.VS1,
+    collisionIntegralModel=CollisionIntegralModel.CI1,
     sigma=0.453,
     epsilon_kappa=362.6,
     CET=[
@@ -170,29 +169,29 @@ extends Interfaces.PartialHelmholtzMedium(
   "Coefficients for the dynamic viscosity";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
+  Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsEthanol(
     coeffs=[
       0.065,    1.26]) "Coefficients for the surface tension";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
+  Ancillary.AncillaryCoefficients
   ancillaryCoefficientsEthanol(
-    pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
+    pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -0.81829E+01,   1.0;
       -0.62767E+00,   1.5;
       -0.33289E+01,   3.0;
       -0.35278E+01,   5.6;
        0.93103E+01,   7.0],
-    densityLiquidModel=Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel.DL1,
+    densityLiquidModel=DensityLiquidModel.DL1,
     densityLiquid=[
        0.11818E+01,   0.098;
       -0.36120E+01,   0.22;
        0.54325E+01,   0.35;
       -0.47789E+00,   0.7;
       -0.17766E-01,   2.0],
-    densityVaporModel=Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel.DV3,
+    densityVaporModel=DensityVaporModel.DV3,
     densityVapor=[
       -0.93315E+00,   0.09;
       -0.40761E+02,   1.07;

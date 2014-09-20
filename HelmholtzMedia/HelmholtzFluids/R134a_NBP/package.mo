@@ -3,7 +3,7 @@ package R134a_NBP "R134a with NBP reference state"
   extends HelmholtzMedia.HelmholtzFluids.R134a(
     helmholtzCoefficients=helmholtzCoefficientsR134a_NBP);
 
-  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
+  final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsR134a_NBP(
     idealLog=[
       -1.629789E+0,     1.00E0],

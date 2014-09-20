@@ -14,7 +14,7 @@ package Isobutane "Isobutane"
     SpecificEnthalpy(min=fluidLimitsIsobutane.HMIN, max=fluidLimitsIsobutane.HMAX, start=(fluidLimitsIsobutane.HMIN+fluidLimitsIsobutane.HMAX)/2),
     SpecificEntropy(min=fluidLimitsIsobutane.SMIN, max=fluidLimitsIsobutane.SMAX, start=(fluidLimitsIsobutane.SMIN+fluidLimitsIsobutane.SMAX)/2));
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidConstants
+  final constant FluidConstants
   fluidConstantsIsobutane(
     chemicalFormula="C4H10",
     structureFormula="",
@@ -43,7 +43,7 @@ package Isobutane "Isobutane"
     normalBoilingPoint=261.401,
     meltingPoint=113.73) "Fluid Constants";
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidLimits
+  final constant FluidLimits
   fluidLimitsIsobutane(
     TMIN=fluidConstantsIsobutane.triplePointTemperature,
     TMAX=575,
@@ -56,7 +56,7 @@ package Isobutane "Isobutane"
     SMIN=-3036,
     SMAX=9283) "Helmholtz EoS Limits";
 
-  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
+  final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsIsobutane(
     idealLog=[
       +3.05956619,         1.],
@@ -99,7 +99,7 @@ package Isobutane "Isobutane"
   "Coefficients of the Helmholtz EoS";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
+  Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsIsobutane(
     reducingTemperature_0 = 407.85,
     reducingThermalConductivity_0 = 1,
@@ -127,10 +127,10 @@ package Isobutane "Isobutane"
     T_ref=611.73) "Coefficients for the thermal conductivity";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
+  Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsIsobutane(
-    dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS1,
-    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI1,
+    dynamicViscosityModel=DynamicViscosityModel.VS1,
+    collisionIntegralModel=CollisionIntegralModel.CI1,
     sigma=0.46445,
     epsilon_kappa=280.51,
     CET=[
@@ -177,34 +177,34 @@ package Isobutane "Isobutane"
   "Coefficients for the dynamic viscosity";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
+  Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsIsobutane(
     coeffs=[
        0.05756,     1.290;
       -0.009554,    2.290]) "Coefficients for the surface tension";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
+  Ancillary.AncillaryCoefficients
   ancillaryCoefficientsIsobutane(
-    pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
+    pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -6.85093103,         1.0;
        1.36543198,         1.5;
       -1.32542691,         2.5;
       -2.56190994,         4.5],
-    densityLiquidModel=Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel.DL2,
+    densityLiquidModel=DensityLiquidModel.DL2,
     densityLiquid=[
        2.04025104,          1.065;
        0.850874089,         3.0;
       -0.479052281,         4.0;
        0.348201252,         7.0],
-    densityVaporModel=Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel.DV6,
+    densityVaporModel=DensityVaporModel.DV6,
     densityVapor=[
       -2.12933323,          1.065;
       -2.93790085,          2.5;
       -0.89441086,          9.5;
       -3.46343707,         13.0],
-    pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
+    pressureMeltingModel=PressureMeltingModel.ML1,
     T_reducing=113.73,
     p_reducing=0.022891,
     pressureMelting1=[

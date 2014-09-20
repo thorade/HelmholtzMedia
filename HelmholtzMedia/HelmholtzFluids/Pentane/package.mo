@@ -14,7 +14,7 @@ package Pentane "Pentane"
     SpecificEnthalpy(min=fluidLimitsPentane.HMIN, max=fluidLimitsPentane.HMAX, start=(fluidLimitsPentane.HMIN+fluidLimitsPentane.HMAX)/2),
     SpecificEntropy(min=fluidLimitsPentane.SMIN, max=fluidLimitsPentane.SMAX, start=(fluidLimitsPentane.SMIN+fluidLimitsPentane.SMAX)/2));
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidConstants
+  final constant FluidConstants
   fluidConstantsPentane(
     chemicalFormula="C5H12",
     structureFormula="",
@@ -43,7 +43,7 @@ package Pentane "Pentane"
     normalBoilingPoint=309.21,
     meltingPoint=143.47) "Fluid Constants";
 
-  final constant Interfaces.PartialHelmholtzMedium.FluidLimits
+  final constant FluidLimits
   fluidLimitsPentane(
     TMIN=fluidConstantsPentane.triplePointTemperature,
     TMAX=600,
@@ -56,7 +56,7 @@ package Pentane "Pentane"
     SMIN=-1000,
     SMAX=5000) "Helmholtz EoS Limits";
 
-  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
+  final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsPentane(
     idealLog=[
       3,    1],
@@ -86,7 +86,7 @@ package Pentane "Pentane"
    residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.ThermalConductivityCoefficients
+  Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsPentane(
     reducingTemperature_0 = 341.1,
     reducingThermalConductivity_0 = 1e-3,
@@ -110,10 +110,10 @@ package Pentane "Pentane"
     T_ref=704.55) "Coefficients for the thermal conductivity";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.DynamicViscosityCoefficients
+  Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsPentane(
-    dynamicViscosityModel=Interfaces.PartialHelmholtzMedium.Types.DynamicViscosityModel.VS2,
-    collisionIntegralModel=Interfaces.PartialHelmholtzMedium.Types.CollisionIntegralModel.CI0,
+    dynamicViscosityModel=DynamicViscosityModel.VS2,
+    collisionIntegralModel=CollisionIntegralModel.CI0,
     sigma=0.5784,
     epsilon_kappa=341.10,
     CET=[
@@ -134,7 +134,7 @@ package Pentane "Pentane"
        3.215]) "Coefficients for the dynamic viscosity";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Transport.SurfaceTensionCoefficients
+  Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsPentane(
     coeffs=[
      0.0562267,   1.25;
@@ -142,23 +142,23 @@ package Pentane "Pentane"
     -0.0029861,   3.25]) "Coefficients for the surface tension";
 
   final constant
-  Interfaces.PartialHelmholtzMedium.Ancillary.AncillaryCoefficients
+  Ancillary.AncillaryCoefficients
   ancillaryCoefficientsPentane(
-    pressureSaturationModel=Interfaces.PartialHelmholtzMedium.Types.PressureSaturationModel.PS5,
+    pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
      -0.73918E+01,   1.0;
       0.31102E+01,   1.5;
      -0.22415E+01,   1.74;
      -0.31585E+01,   3.75;
      -0.90451E+00,   8.0],
-    densityLiquidModel=Interfaces.PartialHelmholtzMedium.Types.DensityLiquidModel.DL1,
+    densityLiquidModel=DensityLiquidModel.DL1,
     densityLiquid=[
       0.10178E+01,   0.27;
       0.42703E+00,   0.44;
       0.11334E+01,   0.6;
       0.41518E+00,   4.0;
      -0.47950E-01,   5.0],
-    densityVaporModel=Interfaces.PartialHelmholtzMedium.Types.DensityVaporModel.DV3,
+    densityVaporModel=DensityVaporModel.DV3,
     densityVapor=[
      -0.29389E+01,   0.4;
      -0.62784E+01,   1.18;
@@ -166,7 +166,7 @@ package Pentane "Pentane"
      -0.16709E+02,   6.6;
      -0.36543E+02,   7.0;
      -0.12799E+03,  15.0],
-    pressureMeltingModel=Interfaces.PartialHelmholtzMedium.Types.PressureMeltingModel.ML1,
+    pressureMeltingModel=PressureMeltingModel.ML1,
     T_reducing=143.47,
     p_reducing=0.076322,
     pressureMelting1=[

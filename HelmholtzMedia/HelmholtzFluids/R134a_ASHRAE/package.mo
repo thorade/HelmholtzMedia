@@ -3,7 +3,7 @@ package R134a_ASHRAE "R134a with ASHRAE reference state"
   extends HelmholtzMedia.HelmholtzFluids.R134a(
     helmholtzCoefficients=helmholtzCoefficientsR134a_ASHRAE);
 
-  final constant Interfaces.PartialHelmholtzMedium.EoS.HelmholtzCoefficients
+  final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsR134a_ASHRAE(
     idealLog=[
       -1.629789E+0,     1.00E0],
