@@ -5,8 +5,8 @@ model setSat
   Medium.SaturationProperties sat_p;
   Medium.SaturationProperties sat_dl;
   Medium.SaturationProperties sat_dv;
-  Medium.Types.DerPressureByTemperature dpT;
-  Medium.Types.DerTemperatureByPressure dTp;
+  Medium.DerPressureByTemperature dpT;
+  Medium.DerTemperatureByPressure dTp;
 
   Modelica.Blocks.Sources.Ramp T_ramp(
     duration=8,

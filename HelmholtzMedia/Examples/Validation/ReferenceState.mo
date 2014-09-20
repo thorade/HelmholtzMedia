@@ -4,7 +4,7 @@ model ReferenceState
 
   input String fileName = "ReferenceState_.csv";
   input String separator = ";";
-  Medium.Types.ReferenceState ref = Medium.Types.ReferenceState.IIR;
+  Medium.ReferenceState ref=Medium.ReferenceState.IIR;
   output Medium.SpecificEnthalpy h_ref;
   output Medium.SpecificEntropy s_ref;
 
@@ -16,11 +16,11 @@ protected
   final constant Medium.AbsolutePressure p_NBP = 101325; // 1.01325 bar = 1 atm
 
 algorithm
-  if ref == Medium.Types.ReferenceState.IIR then
+  if ref == Medium.ReferenceState.IIR then
     sat := Medium.setSat_T(T=T_IIR);
-  elseif ref == Medium.Types.ReferenceState.ASHRAE then
+  elseif ref == Medium.ReferenceState.ASHRAE then
     sat := Medium.setSat_T(T=T_ASHRAE);
-  elseif ref == Medium.Types.ReferenceState.NBP then
+  elseif ref == Medium.ReferenceState.NBP then
     sat := Medium.setSat_p(p=p_NBP);
   else
     assert(false, "No Ref type selected");

@@ -13,8 +13,8 @@ model Derivatives_SaturationBoundary
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
   Medium.Temperature T=T_ramp.y;
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
-  Medium.Types.DerPressureByTemperature dpT = Medium.saturationPressure_derT(T=T);
-  Medium.Types.DerTemperatureByPressure dTp = Medium.saturationTemperature_derp(p=sat.psat);
+  Medium.DerPressureByTemperature dpT=Medium.saturationPressure_derT(T=T);
+  Medium.DerTemperatureByPressure dTp=Medium.saturationTemperature_derp(p=sat.psat);
 
 // Density derivatives
   Medium.DerDensityByTemperature ddT_liq_numerical;
@@ -27,38 +27,38 @@ model Derivatives_SaturationBoundary
   Medium.DerDensityByPressure ddp_vap_numerical;
   Medium.DerDensityByPressure ddp_vap_analytical1;
   Medium.DerDensityByPressure ddp_vap_analytical2;
-  Medium.Types.DerVolumeByPressure dvp_liq_analytical1;
-  Medium.Types.DerVolumeByPressure dvp_vap_analytical1;
+  Medium.DerVolumeByPressure dvp_liq_analytical1;
+  Medium.DerVolumeByPressure dvp_vap_analytical1;
 // Enthalpy derivatives
-  Medium.Types.DerEnthalpyByTemperature dhT_liq_analytical;
-  Medium.Types.DerEnthalpyByTemperature dhT_liq_numerical;
-  Medium.Types.DerEnthalpyByTemperature dhT_vap_analytical;
-  Medium.Types.DerEnthalpyByTemperature dhT_vap_numerical;
-  Medium.Types.DerEnthalpyByPressure dhp_liq_analytical;
-  Medium.Types.DerEnthalpyByPressure dhp_liq_numerical;
-  Medium.Types.DerEnthalpyByPressure dhp_vap_analytical;
-  Medium.Types.DerEnthalpyByPressure dhp_vap_numerical;
+  Medium.DerEnthalpyByTemperature dhT_liq_analytical;
+  Medium.DerEnthalpyByTemperature dhT_liq_numerical;
+  Medium.DerEnthalpyByTemperature dhT_vap_analytical;
+  Medium.DerEnthalpyByTemperature dhT_vap_numerical;
+  Medium.DerEnthalpyByPressure dhp_liq_analytical;
+  Medium.DerEnthalpyByPressure dhp_liq_numerical;
+  Medium.DerEnthalpyByPressure dhp_vap_analytical;
+  Medium.DerEnthalpyByPressure dhp_vap_numerical;
 // Entropy derivatives
-  Medium.Types.DerEntropyByTemperature dsT_liq_analytical;
-  Medium.Types.DerEntropyByTemperature dsT_liq_numerical;
-  Medium.Types.DerEntropyByTemperature dsT_vap_analytical;
-  Medium.Types.DerEntropyByTemperature dsT_vap_numerical;
-  Medium.Types.DerEntropyByPressure dsp_liq_analytical;
-  Medium.Types.DerEntropyByPressure dsp_liq_numerical;
-  Medium.Types.DerEntropyByPressure dsp_vap_analytical;
-  Medium.Types.DerEntropyByPressure dsp_vap_numerical;
+  Medium.DerEntropyByTemperature dsT_liq_analytical;
+  Medium.DerEntropyByTemperature dsT_liq_numerical;
+  Medium.DerEntropyByTemperature dsT_vap_analytical;
+  Medium.DerEntropyByTemperature dsT_vap_numerical;
+  Medium.DerEntropyByPressure dsp_liq_analytical;
+  Medium.DerEntropyByPressure dsp_liq_numerical;
+  Medium.DerEntropyByPressure dsp_vap_analytical;
+  Medium.DerEntropyByPressure dsp_vap_numerical;
 //saturated heat capacity
-  Medium.Types.DerEnthalpyByTemperature c_sigma_liq_Span2000;
-  Medium.Types.DerEnthalpyByTemperature c_sigma_liq_analytical;
-  Medium.Types.DerEnthalpyByTemperature c_sigma_liq_numerical;
-  Medium.Types.DerEnthalpyByTemperature c_sigma_vap_Span2000;
-  Medium.Types.DerEnthalpyByTemperature c_sigma_vap_analytical;
-  Medium.Types.DerEnthalpyByTemperature c_sigma_vap_numerical;
+  Medium.DerEnthalpyByTemperature c_sigma_liq_Span2000;
+  Medium.DerEnthalpyByTemperature c_sigma_liq_analytical;
+  Medium.DerEnthalpyByTemperature c_sigma_liq_numerical;
+  Medium.DerEnthalpyByTemperature c_sigma_vap_Span2000;
+  Medium.DerEnthalpyByTemperature c_sigma_vap_analytical;
+  Medium.DerEnthalpyByTemperature c_sigma_vap_numerical;
 // Energy derivatives
-  Medium.Types.DerEnergyByTemperature duT_liq_numerical;
-  Medium.Types.DerEnergyByTemperature duT_liq_analytical;
-  Medium.Types.DerEnergyByTemperature duT_vap_numerical;
-  Medium.Types.DerEnergyByTemperature duT_vap_analytical;
+  Medium.DerEnergyByTemperature duT_liq_numerical;
+  Medium.DerEnergyByTemperature duT_liq_analytical;
+  Medium.DerEnergyByTemperature duT_vap_numerical;
+  Medium.DerEnergyByTemperature duT_vap_analytical;
 
 protected
   constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
@@ -70,23 +70,39 @@ protected
   Medium.SaturationProperties sat_pplus = Medium.setSat_p(p=1.0001*sat.psat);
   Medium.SaturationProperties sat_pminus= Medium.setSat_p(p=0.9999*sat.psat);
 // Entropy single phase derivatives
-  Medium.Types.DerEntropyByDensity dsdT_liq = fl.R/sat.liq.d*(-(1+fl.delta*fl.rd)+(0+fl.tau*fl.delta*fl.rtd));
-  Medium.Types.DerEntropyByTemperature dsTd_liq = fl.R/T*(-fl.tau^2*(fl.itt+fl.rtt));
-  Medium.Types.DerEntropyByTemperature dsTp_liq = dsTd_liq-dsdT_liq*Medium.pressure_derT_d(state=sat.liq)/Medium.pressure_derd_T(state=sat.liq);
-  Medium.Types.DerEntropyByPressure dspT_liq = dsdT_liq/Medium.pressure_derd_T(state=sat.liq);
-  Medium.Types.DerEntropyByDensity dsdT_vap = fv.R/sat.vap.d*(-(1+fv.delta*fv.rd)+(0+fv.tau*fv.delta*fv.rtd));
-  Medium.Types.DerEntropyByTemperature dsTd_vap = fv.R/T*(-fv.tau^2*(fv.itt+fv.rtt));
-  Medium.Types.DerEntropyByTemperature dsTp_vap = dsTd_vap-dsdT_vap*Medium.pressure_derT_d(state=sat.vap)/Medium.pressure_derd_T(state=sat.vap);
-  Medium.Types.DerEntropyByPressure dspT_vap = dsdT_vap/Medium.pressure_derd_T(state=sat.vap);
+  Medium.DerEntropyByDensity dsdT_liq=fl.R/sat.liq.d*(-(1 + fl.delta*
+      fl.rd) + (0 + fl.tau*fl.delta*fl.rtd));
+  Medium.DerEntropyByTemperature dsTd_liq=fl.R/T*(-fl.tau^2*(fl.itt
+       + fl.rtt));
+  Medium.DerEntropyByTemperature dsTp_liq=dsTd_liq - dsdT_liq*
+      Medium.pressure_derT_d(state=sat.liq)/Medium.pressure_derd_T(state=sat.liq);
+  Medium.DerEntropyByPressure dspT_liq=dsdT_liq/
+      Medium.pressure_derd_T(state=sat.liq);
+  Medium.DerEntropyByDensity dsdT_vap=fv.R/sat.vap.d*(-(1 + fv.delta*
+      fv.rd) + (0 + fv.tau*fv.delta*fv.rtd));
+  Medium.DerEntropyByTemperature dsTd_vap=fv.R/T*(-fv.tau^2*(fv.itt
+       + fv.rtt));
+  Medium.DerEntropyByTemperature dsTp_vap=dsTd_vap - dsdT_vap*
+      Medium.pressure_derT_d(state=sat.vap)/Medium.pressure_derd_T(state=sat.vap);
+  Medium.DerEntropyByPressure dspT_vap=dsdT_vap/
+      Medium.pressure_derd_T(state=sat.vap);
 // Internal energy single phase derivatives
-  Medium.Types.DerEnergyByDensity dudT_liq = fl.R*T/sat.liq.d*fl.tau*fl.delta*fl.rtd;
-  Medium.Types.DerEnergyByTemperature duTd_liq = Medium.specificHeatCapacityCv(state=sat.liq);
-  Medium.Types.DerEnergyByTemperature duTp_liq = duTd_liq-dudT_liq*Medium.pressure_derT_d(state=sat.liq)/Medium.pressure_derd_T(state=sat.liq);
-  Medium.Types.DerEnergyByPressure dupT_liq = dudT_liq/Medium.pressure_derd_T(state=sat.liq);
-  Medium.Types.DerEnergyByDensity dudT_vap = fv.R*T/sat.vap.d*fv.tau*fv.delta*fv.rtd;
-  Medium.Types.DerEnergyByTemperature duTd_vap = Medium.specificHeatCapacityCv(state=sat.vap);
-  Medium.Types.DerEnergyByTemperature duTp_vap = duTd_vap-dudT_vap*Medium.pressure_derT_d(state=sat.vap)/Medium.pressure_derd_T(state=sat.vap);
-  Medium.Types.DerEnergyByPressure dupT_vap = dudT_vap/Medium.pressure_derd_T(state=sat.vap);
+  Medium.DerEnergyByDensity dudT_liq=fl.R*T/sat.liq.d*fl.tau*fl.delta
+      *fl.rtd;
+  Medium.DerEnergyByTemperature duTd_liq=
+      Medium.specificHeatCapacityCv(state=sat.liq);
+  Medium.DerEnergyByTemperature duTp_liq=duTd_liq - dudT_liq*
+      Medium.pressure_derT_d(state=sat.liq)/Medium.pressure_derd_T(state=sat.liq);
+  Medium.DerEnergyByPressure dupT_liq=dudT_liq/Medium.pressure_derd_T(
+      state=sat.liq);
+  Medium.DerEnergyByDensity dudT_vap=fv.R*T/sat.vap.d*fv.tau*fv.delta
+      *fv.rtd;
+  Medium.DerEnergyByTemperature duTd_vap=
+      Medium.specificHeatCapacityCv(state=sat.vap);
+  Medium.DerEnergyByTemperature duTp_vap=duTd_vap - dudT_vap*
+      Medium.pressure_derT_d(state=sat.vap)/Medium.pressure_derd_T(state=sat.vap);
+  Medium.DerEnergyByPressure dupT_vap=dudT_vap/Medium.pressure_derd_T(
+      state=sat.vap);
 
 equation
   // Modelica.Utilities.Streams.print(" ");

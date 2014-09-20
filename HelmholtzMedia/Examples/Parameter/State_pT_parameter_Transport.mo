@@ -17,7 +17,7 @@ model State_pT_parameter_Transport "calculate state record from pT input"
   Medium.SpecificHeatCapacity cp0;
   Medium.IsentropicExponent gamma;
   Medium.VelocityOfSound a;
-  Medium.Types.DerTemperatureByPressure mu;
+  Medium.DerTemperatureByPressure mu;
   // transport proerties
   Medium.ThermalConductivity lambda;
   Medium.DynamicViscosity eta;

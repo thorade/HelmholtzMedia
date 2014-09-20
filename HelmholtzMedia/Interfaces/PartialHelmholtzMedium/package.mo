@@ -1,5 +1,10 @@
 within HelmholtzMedia.Interfaces;
 partial package PartialHelmholtzMedium 
+  extends HelmholtzMedia.Interfaces.Types;
+
+  extends HelmholtzMedia.Interfaces.Choices;
+
+
   extends Modelica.Media.Interfaces.PartialTwoPhaseMedium(
     onePhase=false,
     singleState=false,
@@ -7,9 +12,9 @@ partial package PartialHelmholtzMedium
     DipoleMoment(min=0, max=5),
     AbsolutePressure(min=Modelica.Constants.small, max=1e12),
     SpecificEntropy(min=-Modelica.Constants.inf, max=Modelica.Constants.inf),
-    ThermoStates = Modelica.Media.Interfaces.PartialMedium.Choices.IndependentVariables.ph);
+    ThermoStates = Choices.IndependentVariables.ph);
 
-import HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Types.*;
+
 
   constant FluidLimits fluidLimits;
 
@@ -388,6 +393,7 @@ protected
   end setSat_p;
 
 
+
   redeclare function extends setBubbleState
   "returns bubble ThermodynamicState from given saturation properties"
   // inherited from: PartialTwoPhaseMedium
@@ -408,7 +414,8 @@ protected
 
   redeclare function extends setSmoothState
   "Return thermodynamic state so that it smoothly approximates: if x > 0 then state_a else state_b"
-  import Modelica.Media.Common.smoothStep;
+    import Modelica.Media.Common.smoothStep;
+
   algorithm
     state := ThermodynamicState(
       p=smoothStep(x, state_a.p, state_b.p, x_small),
@@ -419,7 +426,7 @@ protected
                        h=smoothStep(x, state_a.h, state_b.h, x_small)),
       s=specificEntropy_ph(p=smoothStep(x, state_a.p, state_b.p, x_small),
                            h=smoothStep(x, state_a.h, state_b.h, x_small)),
-      u=h-p/d,
+      u=state.h-state.p/state.d,
       phase=0);
   annotation (Inline=true);
   end setSmoothState;
@@ -1299,6 +1306,8 @@ protected
   end setState_psX;
 
 
+
+
   redeclare function extends temperature
   "returns temperature from given ThermodynamicState"
   // inherited from: PartialMedium
@@ -1358,6 +1367,7 @@ protected
   x := vapourQuality_sat(state=state, sat=setSat_T(state.T));
   annotation (Inline=true);
   end vapourQuality;
+
 
 
   redeclare function extends specificHeatCapacityCp
@@ -1530,6 +1540,8 @@ protected
     h_is := specificEnthalpy(setState_ps(p=p_downstream, s=specificEntropy(refState)));
     annotation(Inline = true);
   end isentropicEnthalpy;
+
+
 
 
   redeclare replaceable function extends dynamicViscosity
@@ -1760,6 +1772,8 @@ protected
   end saturationPressure;
 
 
+
+
   redeclare function extends dBubbleDensity_dPressure
   "Return bubble point density derivative"
   // inherited from: PartialTwoPhaseMedium
@@ -1843,6 +1857,8 @@ protected
     Inline=true,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
+
+
 
 
   redeclare function extends density_derp_h
@@ -1933,6 +1949,11 @@ protected
   end temperature_ph;
 
 
+
+
+
+
+
   redeclare function density_pT "Return density from p and T"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1949,6 +1970,8 @@ protected
     inverse(p=pressure_dT(d=d, T=T, phase=phase),
             T=temperature_pd(p=p, d=d, phase=phase)));
   end density_pT;
+
+
 
 
   redeclare function extends density_derp_T
@@ -2003,6 +2026,8 @@ protected
   end specificEnthalpy_pT;
 
 
+
+
   redeclare function pressure_dT
     extends Modelica.Icons.Function;
     input Density d "Density";
@@ -2021,6 +2046,10 @@ protected
   end pressure_dT;
 
 
+
+
+
+
   redeclare function specificEnthalpy_dT
     extends Modelica.Icons.Function;
     input Density d "Density";
@@ -2035,6 +2064,14 @@ protected
   annotation (
     Inline=true);
   end specificEnthalpy_dT;
+
+
+
+
+
+
+
+
 
 
   redeclare function temperature_ps "returns temperature for given p and d"
@@ -2052,6 +2089,7 @@ protected
     inverse(p=pressure_Ts(T=T, s=s, phase=phase),
             s=specificEntropy_pT(p=p, T=T, phase=phase)));
   end temperature_ps;
+
 
 
   redeclare function specificEnthalpy_ps
