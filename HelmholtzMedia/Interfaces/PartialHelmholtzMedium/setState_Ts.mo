@@ -30,6 +30,8 @@ protected
   constant Integer iter_max = 200;
 
 algorithm
+  // Modelica.Utilities.Streams.print(" ", "printlog.txt");
+  // Modelica.Utilities.Streams.print("setState_Ts: T=" + String(T) + " and s=" + String(s), "printlog.txt");
   state.phase := phase;
 
   if (state.phase == 2) then
