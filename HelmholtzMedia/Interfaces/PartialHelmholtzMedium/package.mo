@@ -732,7 +732,7 @@ protected
     Real grad[2] "gradient vector";
     Real slope;
 
-    constant Real tolerance=1e-7 "tolerance for RSS";
+    constant Real tolerance=1e-9 "tolerance for RSS";
     Integer iter = 0;
     Integer iter_max = 200;
     Real lambda(min=1e-3,max=1) = 1 "convergence speed, default=1";
@@ -817,13 +817,13 @@ protected
         // Modelica.Utilities.Streams.print("p>=p_crit, only single-phase possible", "printlog.txt");
         if (h<=h_crit) then
           // Modelica.Utilities.Streams.print("h<=h_crit, single-phase super-critical liquid-like region", "printlog.txt");
-          d_min := d_crit*0.98;
-          d_iter:= fluidLimits.DMAX*0.9;
+          d_min := d_crit*0.99;
+          d_iter:= fluidLimits.DMAX*0.85;
           d_max := fluidLimits.DMAX*1.1;
 
           T_min := fluidLimits.TMIN;
-          T_iter:= Ancillary.saturationTemperature_h_liq(h=h);
-          T_max := T_iter*1.2;
+          T_max := 1.25*Ancillary.saturationTemperature_h_liq(h=h);
+          T_iter:= (1*T_min + 5*T_max/1.25)/6;
         else
           // Modelica.Utilities.Streams.print("h>h_crit, single-phase super-critical vapour-like region", "printlog.txt");
           // due to the curvature, Newton will converge better when starting from the ideal gas region (low d, high T)
