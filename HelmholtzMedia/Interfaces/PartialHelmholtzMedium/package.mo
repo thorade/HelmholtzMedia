@@ -861,8 +861,8 @@ protected
         // calculate Jacobian matrix, Newton Step vector, gradient and slope
         Jacobian := [EoS.dpdT(f), EoS.dpTd(f);
                      EoS.dhdT(f), EoS.dhTd(f)];
-        NS := -Modelica.Math.Matrices.solve(Jacobian,RES) "-J^(-1)·F";
-        grad := RES*Jacobian "F·J";
+        NS := -Modelica.Math.Matrices.solve(Jacobian,RES) "-J^(-1)*F";
+        grad := RES*Jacobian "F*J";
         slope := grad*NS;
         // Modelica.Utilities.Streams.print("  Jacobian=" + Modelica.Math.Matrices.toString(Jacobian) + "  NS=" + Modelica.Math.Vectors.toString(NS) + "  grad=" + Modelica.Math.Vectors.toString(grad) + "  slope=" + String(slope), "printlog.txt");
         assert(slope<0,"roundoff problem, input was p=" + String(p) + " and h=" + String(h));
@@ -1171,8 +1171,8 @@ protected
         // calculate Jacobian matrix, Newton Step vector, gradient and slope
         Jacobian := [EoS.dpdT(f), EoS.dpTd(f);
                      EoS.dsdT(f), EoS.dsTd(f)];
-        NS := -Modelica.Math.Matrices.solve(Jacobian,RES) "-J^(-1)·F";
-        grad := RES*Jacobian "F·J";
+        NS := -Modelica.Math.Matrices.solve(Jacobian,RES) "-J^(-1)*F";
+        grad := RES*Jacobian "F*J";
         slope := grad*NS;
         // Modelica.Utilities.Streams.print("  Jacobian=" + Modelica.Math.Matrices.toString(Jacobian) + "  NS=" + Modelica.Math.Vectors.toString(NS) + "  grad=" + Modelica.Math.Vectors.toString(grad) + "  slope=" + String(slope), "printlog.txt");
         assert(slope<0,"roundoff problem, input was p=" + String(p) + " and s=" + String(s), level=AssertionLevel.warning);
@@ -1551,7 +1551,7 @@ protected
   algorithm
     // assert(state.phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
 
-    // RefProp results are in µPa·s where µ means micro or 1E-6 but SI default is Pa·s
+    // RefProp results are in µPa*s where µ means micro or 1E-6 but SI default is Pa*s
     eta := micro*(Transport.dynamicViscosity_dilute(state)
                 + Transport.dynamicViscosity_initial(state)
                 + Transport.dynamicViscosity_residual(state));
@@ -1582,7 +1582,7 @@ and programming a special version of RefProp that outputs also intermediate valu
      National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
 </dd>
-<dt>Vogel, E.; Küchenmeister, C. and Birch, E.</dt>
+<dt>Vogel, E.; K&uuml;chenmeister, C. and Birch, E.</dt>
 <dd> <b>Reference correlation of the viscosity of propane</b>.<br>
      Journal of Thermophysics (1998) 10, 417-426.<br>
      DOI: <a href=\"http://dx.doi.org/10.1007/BF01133538\">10.1007/BF01133538</a>
@@ -1649,7 +1649,7 @@ protected
 
     annotation (Documentation(info="<html>
   <p>
-This is an implementation of the model as suggested by Somayajulu, G.R., 
+This is an implementation of the model as suggested by Somayajulu, G.R.,
 which is an extension of the van der Waals surface tension correlation. 
 The extended version has up to three terms with two parameters each.
 </p>
@@ -1660,8 +1660,8 @@ The extended version has up to three terms with two parameters each.
      DOI: <a href=\"http://dx.doi.org/10.1007/BF00503154\">10.1007/BF00503154</a>
 </dd>
 <dt>Van der Waals, J.D.</dt>
-<dd> <b>Thermodynamische Theorie der Kapillarität unter Voraussetzung stetiger Dichteänderung</b>.<br>
-     Zeitschrift für Physikalische Chemie (1894) 13, 657-725.
+<dd> <b>Thermodynamische Theorie der Kapillarit&auml;t unter Voraussetzung stetiger Dichte&auml;nderung</b>.<br>
+     Zeitschrift f&uuml;r Physikalische Chemie (1894) 13, 657-725.
 </dd>
 </dl>
 </html>"));

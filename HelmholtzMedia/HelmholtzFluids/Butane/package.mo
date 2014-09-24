@@ -216,12 +216,12 @@ final constant Ancillary.AncillaryCoefficients
 These are the coefficients for Butane. 
 
 <dl>
-<dt> Bücker, D. and Wagner, W.</dt>
+<dt> B&uuml;cker, D. and Wagner, W.</dt>
 <dd> <b>Reference Equations of State for the Thermodynamic Properties of Fluid Phase n-Butane and Isobutane</b><br>
      Journal of Physical and Chemical Reference Data 35.2, S. 929-1019 (2006)<br>
      DOI: <a href=\"http://dx.doi.org/10.1063/1.1901687\">10.1063/1.1901687</a>
 </dd>
-<dt> Vogel, Eckhard; Küchenmeister, Cornelia and Bich, Eckard</dt>
+<dt> Vogel, Eckhard; K&uuml;chenmeister, Cornelia and Bich, Eckard</dt>
 <dd> <b>Viscosity correlation for n-butane in the fluid region</b><br>
      High Temperatures - High Pressures 31.2, 173-186 (1999)<br>
      DOI: <a href=\"http://dx.doi.org/10.1068/htrt154\">10.1068/htrt154</a>

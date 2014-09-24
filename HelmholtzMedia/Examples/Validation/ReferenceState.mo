@@ -53,10 +53,10 @@ there are at least three standard reference states:
 <dl>
 
 <dt><b>International Institute of Refrigeration (IIR)</b></dt>
-<dd>at T=0°C and saturated liquid set h=200 kJ/kg and s=1 kJ/kgK</dd>
+<dd>at T=0&deg;C and saturated liquid set h=200 kJ/kg and s=1 kJ/kgK</dd>
 
 <dt><b>American Society of Heating, Refrigerating and Air-Conditioning Engineers (ASHRAE)</b></dt>
-<dd>at T=-40°C and saturated liquid set h=0 kJ/kg and s=0 kJ/kgK</dd>
+<dd>at T=-40&deg;C and saturated liquid set h=0 kJ/kg and s=0 kJ/kgK</dd>
 
 <dt><b>normal boiling point (NBP)</b></dt>
 <dd>at p=1 atm = 1.01325 bar  and saturated liquid set h=0 kJ/kg and s=0 kJ/kgK</dd>

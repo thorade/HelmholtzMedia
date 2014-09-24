@@ -142,7 +142,7 @@ and programming a special version of RefProp that outputs also intermediate valu
      National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
 </dd>
-<dt>Vogel, E.; Küchenmeister, C. and Birch, E.</dt>
+<dt>Vogel, E.; K&uuml;chenmeister, C. and Birch, E.</dt>
 <dd> <b>Reference correlation of the viscosity of propane</b>.<br>
      Journal of Thermophysics (1998) 10, 417-426.<br>
      DOI: <a href=\"http://dx.doi.org/10.1007/BF01133538\">10.1007/BF01133538</a>
