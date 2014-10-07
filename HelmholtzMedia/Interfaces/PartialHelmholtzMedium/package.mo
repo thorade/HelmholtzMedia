@@ -1544,127 +1544,31 @@ protected
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
     // inherits input state and output eta
-
-protected
-    constant Real micro=1e-6;
-
   algorithm
-    // assert(state.phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
-
-    // RefProp results are in µPa*s where µ means micro or 1E-6 but SI default is Pa*s
-    eta := micro*(Transport.dynamicViscosity_dilute(state)
-                + Transport.dynamicViscosity_initial(state)
-                + Transport.dynamicViscosity_residual(state));
-
-    annotation (Documentation(info="<html>
-<p>
-This model is identical to the RefProp VS1 or VS2 model.
-
-The viscosity is split into three contributions: 
-zero density (dilute gas) viscosity eta_0, 
-initial density contribution eta_1
-and residual contribution eta_r.
-
-This allows to develop functions for each contribution seperately.
-The so called background viscosity is the sum of initial and residual viscosity.
-
-At the critical point and a small region around the critical point, the viscosity is enhanced. 
-As this critical enhancement is small, it is neglected here.
-
-Special thanks go to Eric W. Lemmon for answering all my emails 
-and programming a special version of RefProp that outputs also intermediate values.
-
-</p>
-
-<dl>
-<dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
-<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
-     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
-     URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
-</dd>
-<dt>Vogel, E.; K&uuml;chenmeister, C. and Birch, E.</dt>
-<dd> <b>Reference correlation of the viscosity of propane</b>.<br>
-     Journal of Thermophysics (1998) 10, 417-426.<br>
-     DOI: <a href=\"http://dx.doi.org/10.1007/BF01133538\">10.1007/BF01133538</a>
-</dd>
-</dl>
-</html>"));
+    assert(state.phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
+    eta := Transport.dynamicViscosity(state);
   end dynamicViscosity;
 
 
   redeclare replaceable function extends thermalConductivity
   "Return thermal conductivity"
     // inherits input state and output lambda
-
   algorithm
     assert(state.phase <> 2, "thermalConductivity warning: property not defined in two-phase region", level=AssertionLevel.warning);
-
-    lambda := ( Transport.thermalConductivity_dilute(state)
-              + Transport.thermalConductivity_residual(state)
-              + Transport.thermalConductivity_critical(state));
-
-    annotation (Documentation(info="<html>
-  <p>
-The thermal conductivity (TC) is split into three parts: ideal gas TC lamda_0, residual TC lambda_r and critical TC enhancement lambda_c.
-Sometimes the residual TC is again split into two parts.
-This allows to develop functions for each contribution seperately.
-The sum of ideal gas TC and residual TC is called background TC.
-Ideal gas TC depends on Temperature only and can be modelled by a quadratic function.
-Residual TC is also modeled by a polynominal.
-At the critical point TC becomes infinite; TC is enhanced for a large region around the critical point.
-The critical enhancement can be described by various alternative approaches.
-Here, the simplified approach as suggested by Olchowy and Sengers is implemented.
-
-Special thanks go to Eric W. Lemmon for answering all my emails 
-and programming a special version of RefProp that outputs also intermediate values.
-
-</p>
-
-</html>"));
+    lambda := Transport.thermalConductivity(state);
   end thermalConductivity;
 
 
   redeclare replaceable function extends surfaceTension
   "Return surface tension sigma in the two phase region"
       // inherits input saturationProperties sat and output SurfaceTension sigma
-      // this algorithm uses T only
-      // liquid and vapour density are used in some mixture models
-
 protected
     Temperature T_trip=fluidConstants[1].triplePointTemperature;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
-
-    Real[size(surfaceTensionCoefficients.coeffs, 1)] a=
-        surfaceTensionCoefficients.coeffs[:, 1];
-    Real[size(surfaceTensionCoefficients.coeffs, 1)] n=
-        surfaceTensionCoefficients.coeffs[:, 2];
-    Real X "reduced temperature difference";
-
   algorithm
-    assert(sat.Tsat >= T_trip, "vapourQuality error: Temperature is lower than triple-point temperature");
-    assert(sat.Tsat <= T_crit, "vapourQuality error: Temperature is higher than critical temperature");
-
-    X := (T_crit - sat.Tsat)/T_crit;
-    sigma := sum(a[i]*X^n[i] for i in 1:size(a, 1));
-
-    annotation (Documentation(info="<html>
-  <p>
-This is an implementation of the model as suggested by Somayajulu, G.R.,
-which is an extension of the van der Waals surface tension correlation. 
-The extended version has up to three terms with two parameters each.
-</p>
-<dl>
-<dt>Somayajulu, G.R.</dt>
-<dd> <b>A generalized equation for surface tension from the triple point to the critical point</b>.<br>
-     International Journal of Thermophysics (1988) 9, 559-566.<br>
-     DOI: <a href=\"http://dx.doi.org/10.1007/BF00503154\">10.1007/BF00503154</a>
-</dd>
-<dt>Van der Waals, J.D.</dt>
-<dd> <b>Thermodynamische Theorie der Kapillarit&auml;t unter Voraussetzung stetiger Dichte&auml;nderung</b>.<br>
-     Zeitschrift f&uuml;r Physikalische Chemie (1894) 13, 657-725.
-</dd>
-</dl>
-</html>"));
+    assert(sat.Tsat >= T_trip, "surfaceTension error: Temperature is lower than triple-point temperature");
+    assert(sat.Tsat <= T_crit, "surfaceTension error: Temperature is higher than critical temperature");
+    sigma := Transport.surfaceTension(sat=sat);
   end surfaceTension;
 
 
