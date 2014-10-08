@@ -4,15 +4,21 @@ function dynamicViscosity "Returns dynamic Viscosity"
   output DynamicViscosity eta;
 
 protected
+  DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
   constant Real micro=1e-6;
 
 algorithm
   // assert(state.phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
 
+  if (dynamicViscosityModel == DynamicViscosityModel.VS0) then
+    // hardcoded models return full viscosity in one equation
+    eta := dynamicViscosity_residual(state);
+  else
+    // composite models
+    eta := dynamicViscosity_dilute(state) + dynamicViscosity_initial(state) + dynamicViscosity_residual(state);
+  end if;
   // RefProp results are in µPa*s where µ means micro or 1E-6 but SI default is Pa*s
-  eta := micro*(Transport.dynamicViscosity_dilute(state)
-              + Transport.dynamicViscosity_initial(state)
-              + Transport.dynamicViscosity_residual(state));
+  eta := micro*eta;
 
   annotation (Documentation(info="<html>
 <p>

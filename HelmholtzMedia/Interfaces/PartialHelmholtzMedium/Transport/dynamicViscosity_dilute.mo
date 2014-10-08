@@ -14,8 +14,11 @@ protected
   Real T_star "reduced temperature";
   Real tau "reduced temperature";
 
-  Real[size(dynamicViscosityCoefficients.a, 1),2] a=dynamicViscosityCoefficients.a;
+  MolarMass MM = fluidConstants[1].molarMass;
+  Real dm=state.d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
+  //Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
 
+  Real[size(dynamicViscosityCoefficients.a, 1),2] a=dynamicViscosityCoefficients.a;
   Real[size(dynamicViscosityCoefficients.CET, 1),2] CET=dynamicViscosityCoefficients.CET; // Chapman-Enskog-Term
   Real Omega=0 "reduced effective cross section / Omega collision integral";
   Real sigma=dynamicViscosityCoefficients.sigma;
@@ -23,8 +26,9 @@ protected
   Real eta_red_0=dynamicViscosityCoefficients.reducingViscosity_0;
 
 algorithm
-  // collision integral
-  if (collisionIntegralModel == CollisionIntegralModel.CI0) then
+  // first, calculate the collision integral Omega
+  if ((collisionIntegralModel == CollisionIntegralModel.CI0)
+   or (dynamicViscosityModel == DynamicViscosityModel.VS0)) then
     T_star := (state.T/dynamicViscosityCoefficients.epsilon_kappa);
     Omega := 1.16145/T_star^0.14874 + 0.52487*exp(-0.77320*T_star) + 2.16178*exp(-2.43787*T_star);
   elseif (collisionIntegralModel == CollisionIntegralModel.CI1) then
@@ -37,8 +41,11 @@ algorithm
 
   // dilute gas (zero density) contribution
   // using the Chapman-Enskog-Term and the collision integral Omega
-  if ((dynamicViscosityModel == DynamicViscosityModel.VS1)
-  or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
+  if (dynamicViscosityModel == DynamicViscosityModel.VS0) then
+    // hardcoded models
+    eta_0 := 26.692E-3 * sqrt(dm*state.T)/(sigma^2*Omega);
+  elseif ((dynamicViscosityModel == DynamicViscosityModel.VS1)
+      or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
     tau := state.T/T_red_0;
     // first term is the Chapman-Enskog-Term
     eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);

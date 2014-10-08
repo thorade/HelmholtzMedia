@@ -110,8 +110,8 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsHelium(
-    dynamicViscosityModel=DynamicViscosityModel.VS1,
-    collisionIntegralModel=CollisionIntegralModel.CI1,
+    dynamicViscosityModel=DynamicViscosityModel.VS0,
+    collisionIntegralModel=CollisionIntegralModel.CI0,
     sigma=1,
     epsilon_kappa=1,
     CET=fill(0.0, 0, 2),

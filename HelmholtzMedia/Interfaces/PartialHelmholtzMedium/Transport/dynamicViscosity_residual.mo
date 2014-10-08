@@ -17,6 +17,7 @@ protected
   MolarMass MM = fluidConstants[1].molarMass;
   Real dm=state.d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
   //Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
+  Real d_gcm=state.d/1000 "density in g/cm3";
 
   Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
   Density d_red_residual=MM/dynamicViscosityCoefficients.reducingMolarVolume_residual;
@@ -24,7 +25,7 @@ protected
   Real delta_exp=0 "reduced density in exponential term";
   Real delta_0=0 "close packed density";
 
-Real[size(dynamicViscosityCoefficients.c, 1),1] c=dynamicViscosityCoefficients.c;
+  Real[size(dynamicViscosityCoefficients.c, 1),1] c=dynamicViscosityCoefficients.c;
 
   Real[size(dynamicViscosityCoefficients.g, 1),2] g=dynamicViscosityCoefficients.g;
   Real[size(dynamicViscosityCoefficients.e, 1),5] e=dynamicViscosityCoefficients.e;
@@ -40,12 +41,49 @@ Real[size(dynamicViscosityCoefficients.c, 1),1] c=dynamicViscosityCoefficients.c
   Real H=0 "RefProp temporary variable";
   Real F=0 "RefProp temporary variable";
 
+  Real x=0 "RefProp temporary variable";
+  Real B=0 "RefProp temporary variable";
+  Real C=0 "RefProp temporary variable";
+  Real D=0 "RefProp temporary variable";
+  Real eta_e= 0 "RefProp temporary variable";
+  Real eta_0= 0 "RefProp temporary variable";
+  Real eta_0a=0 "RefProp temporary variable";
+  Real eta_0b=0 "RefProp temporary variable";
+
   Real eta_red_residual=dynamicViscosityCoefficients.reducingViscosity_residual;
 
 algorithm
   // residual contribution
-  if ((dynamicViscosityModel == DynamicViscosityModel.VS1)
-  or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
+
+  if (dynamicViscosityModel == DynamicViscosityModel.VS0) then
+    // hardcoded models, use mediumName to distinguish further
+    if mediumName == "helium" then
+      x := if (state.T<=300.0E0) then log(state.T) else 5.703782474656201;
+      B := -47.5295259E0/x + 87.6799309E0 - 42.0741589E0*x + 8.33128289E0*x^2 - 0.589252385E0*x^3;
+      C :=  547.309267E0/x - 904.870586E0 + 431.404928E0*x - 81.4504854E0*x^2 + 5.37008433E0*x^3;
+      D := -1684.39324E0/x + 3331.08630E0 - 1632.19172E0*x + 308.804413E0*x^2 - 20.2936367E0*x^3;
+      eta_e  := exp(min(100, B*d_gcm + C*d_gcm^2 + D*d_gcm^3));
+      eta_0a := exp(-0.135311743E0/x + 1.00347841E0 + 1.20654649E0*x - 0.149564551E0*x^2 + 0.0125208416E0*x^3);
+      if (state.T < 100.0E0) then
+        eta_r := eta_0a*eta_e;
+      else
+        eta_0b := 196.0E0*state.T^0.71938E0*exp(12.451E0/state.T - 295.67E0/state.T^2 - 4.1249E0);
+        if (state.T <=110.0E0) then
+          //linear interpolation between T=100...110 K
+          eta_0 := eta_0a + (eta_0b-eta_0a)*(state.T-100.0E0)/10.0E0;
+        else
+          // above 110K use eta_0b
+          eta_0 := eta_0b;
+        end if;
+        eta_r :=eta_0a*eta_e + eta_0 - eta_0a;
+      end if;
+      eta_r := eta_r/10.0E0;
+    elseif mediumName == "water" then
+      assert(false, "water viscosity not yet implemented");
+    end if;
+
+  elseif ((dynamicViscosityModel == DynamicViscosityModel.VS1)
+      or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
     // use the reduced close-packed density delta_0,
     // a simple polynominal, a rational polynominal and an exponential term
     tau := state.T/T_red_residual;
@@ -97,7 +135,7 @@ algorithm
     eta_r :=exp(F) - exp(G);
 
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
-    // not yet implemented!!
+    assert(false,"VS4 not yet implemented!!");
   end if;
   eta_r := eta_r*eta_red_residual;
 
@@ -107,6 +145,7 @@ algorithm
   Modelica.Utilities.Streams.print("      tau = " + String(tau));
   Modelica.Utilities.Streams.print("        d = " + String(state.d));
   Modelica.Utilities.Streams.print("       dm = " + String(dm));
+  Modelica.Utilities.Streams.print("    d_gcm = " + String(d_gcm));
   Modelica.Utilities.Streams.print("    delta = " + String(delta));
   Modelica.Utilities.Streams.print("delta_exp = " + String(delta_exp));
   Modelica.Utilities.Streams.print("===========================================");

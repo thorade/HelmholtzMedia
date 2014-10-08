@@ -19,9 +19,9 @@ model State_pT_parameter_Transport "calculate state record from pT input"
   Medium.VelocityOfSound a;
   Medium.DerTemperatureByPressure mu;
   // transport proerties
-  Medium.ThermalConductivity lambda;
+  //Medium.ThermalConductivity lambda;
   Medium.DynamicViscosity eta;
-  Medium.PrandtlNumber Pr;
+  //Medium.PrandtlNumber Pr;
   // more derived properties
   Modelica.SIunits.IsothermalCompressibility kappa;
   Medium.IsobaricExpansionCoefficient beta;
@@ -38,9 +38,9 @@ equation
   a=Medium.velocityOfSound(state);
   mu=Medium.jouleThomsonCoefficient(state);
   // transport properties
-  lambda=Medium.thermalConductivity(state);
+  //lambda=Medium.thermalConductivity(state);
   eta=Medium.dynamicViscosity(state);
-  Pr=Medium.prandtlNumber(state);
+  //Pr=Medium.prandtlNumber(state);
   // more derived properties
   kappa=Medium.isothermalCompressibility(state);
   beta=Medium.isobaricExpansionCoefficient(state);

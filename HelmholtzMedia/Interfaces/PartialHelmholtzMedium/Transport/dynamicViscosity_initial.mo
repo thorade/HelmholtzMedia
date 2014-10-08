@@ -27,9 +27,11 @@ protected
 
 algorithm
   // inital density contribution
-  if ((dynamicViscosityModel == DynamicViscosityModel.VS1)
-  or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)
-  or  (dynamicViscosityModel == DynamicViscosityModel.VS4)) then
+  if (dynamicViscosityModel == DynamicViscosityModel.VS0) then
+    eta_1 := 0;
+  elseif ((dynamicViscosityModel == DynamicViscosityModel.VS1)
+      or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)
+      or  (dynamicViscosityModel == DynamicViscosityModel.VS4)) then
     // use the second viscosity virial coefficient B according to Rainwater and Friend theory
     T_star := (state.T/dynamicViscosityCoefficients.epsilon_kappa);
     B_star := sum(b[i, 1]*T_star^b[i, 2] for i in 1:size(b, 1));
