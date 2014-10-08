@@ -16,8 +16,7 @@ _VDI Thermodynamik-Kolloquium 2012_
 _Environmental Earth Sciences_, 
 doi:10.1007/s12665-013-2394-z
 * Thorade, M. (2014/unpublished). "Entropiebasierte Bewertungskriterien für den Wärmeübergang in Kraftwerksprozessen und ihre Relevanz für praktische Anwendungen", 
-_Dissertation (TU Hamburg-Harburg)_, 
-doi:10.1007/s12665-013-2394-z
+_Dissertation (TU Hamburg-Harburg)_
 
 The following fluids have been implemented with EoS and transport properties:  
 [Butane](HelmholtzMedia/HelmholtzFluids/Butane/package.mo), 
