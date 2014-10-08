@@ -42,10 +42,9 @@ This Modelica package is free software and the use is completely at your own ris
 it can be redistributed and/or modified under the terms of the [Modelica License 2](https://www.modelica.org/licenses/ModelicaLicense2) or newer.  
 For license conditions (including the disclaimer of warranty) visit [https://www.modelica.org/licenses/](https://www.modelica.org/licenses/).
 
-## Development and contribution
-Any feedback regarding the library is highly appreciated (beta-testers welcome!).  
+## Development and contribution 
 You may report feedback, issues or feature-requests using the [Issues](../../issues) button.  
-Contributions in the form of [Pull Requests](../../pulls) are always welcome.
+Code contributions are very welcome, especially in the form of [Pull Requests](../../pulls).
 
 
 [1]: http://goo.gl/7obgqq "Modelica Conference Paper: HelmholtzMedia implementation"
