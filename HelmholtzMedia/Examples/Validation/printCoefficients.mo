@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model printCoefficients "pretty printing of EoS coefficients"
-  package Medium = HelmholtzFluids.Helium;
+  package Medium = HelmholtzFluids.Butane;
 
 protected
   String fileName = "printCoefficients.txt";
@@ -28,19 +28,37 @@ algorithm
   Modelica.Utilities.Streams.print(String(Medium.fluidConstants[1].acentricFactor), fileName);
   Modelica.Utilities.Streams.print(String(Medium.fluidConstants[1].dipoleMoment), fileName);
 
-  Modelica.Utilities.Streams.print("\n =============================================================================== \n #FEQ", fileName); // 80 characters
+  Modelica.Utilities.Streams.print("\n =============================================================================== \n#FEQ", fileName); // 80 characters
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.residualPoly), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.residualBwr), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.residualGauss), fileName);
 
-  Modelica.Utilities.Streams.print("\n =============================================================================== \n #AUX: CPP or PH0", fileName);
+  Modelica.Utilities.Streams.print("\n =============================================================================== \n#AUX: CPP or PH0", fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.idealLog), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.idealPower), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.idealEinstein), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.idealCosh), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.idealSinh), fileName);
 
-  Modelica.Utilities.Streams.print("\n =============================================================================== \n #STN", fileName);
+  Modelica.Utilities.Streams.print("\n =============================================================================== \n#TCX", fileName);
+  Modelica.Utilities.Streams.print(String(Medium.thermalConductivityCoefficients.thermalConductivityModel), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.thermalConductivityCoefficients.lambda_0_num_coeffs), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.thermalConductivityCoefficients.lambda_0_den_coeffs), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.thermalConductivityCoefficients.lambda_r_coeffs), fileName);
+  Modelica.Utilities.Streams.print(String(Medium.thermalConductivityCoefficients.thermalConductivityCriticalEnhancementModel), fileName);
+  Modelica.Utilities.Streams.print("#ETA", fileName);
+  Modelica.Utilities.Streams.print(String(Medium.dynamicViscosityCoefficients.dynamicViscosityModel), fileName);
+  Modelica.Utilities.Streams.print(String(Medium.dynamicViscosityCoefficients.collisionIntegralModel), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.dynamicViscosityCoefficients.a), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.dynamicViscosityCoefficients.CET), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.dynamicViscosityCoefficients.b), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.dynamicViscosityCoefficients.c), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.dynamicViscosityCoefficients.g), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.dynamicViscosityCoefficients.e), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.dynamicViscosityCoefficients.nu_po), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.dynamicViscosityCoefficients.de_po), fileName);
+
+  Modelica.Utilities.Streams.print("\n =============================================================================== \n#STN", fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.surfaceTensionCoefficients.coeffs), fileName);
   Modelica.Utilities.Streams.print("#MLT", fileName);
   Modelica.Utilities.Streams.print(String(Medium.ancillaryCoefficients.pressureMeltingModel), fileName);
