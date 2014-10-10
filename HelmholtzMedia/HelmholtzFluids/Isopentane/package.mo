@@ -84,9 +84,10 @@ package Isopentane "Isopentane"
        0.018156,       12.0,     4.0,   3],
    residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
-  final constant
-  Transport.ThermalConductivityCoefficients
+  final constant Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsIsopentane(
+    thermalConductivityModel=ThermalConductivityModel.TC1,
+    thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
     reducingTemperature_0 = 341.06,
     reducingThermalConductivity_0 = 1e-3,
     lambda_0_num_coeffs=[
@@ -108,8 +109,7 @@ package Isopentane "Isopentane"
     qd_inverse=0.9316E-9,
     T_ref=690.525) "Coefficients for the thermal conductivity";
 
-  final constant
-  Transport.DynamicViscosityCoefficients
+  final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsIsopentane(
     dynamicViscosityModel=DynamicViscosityModel.VS2,
     collisionIntegralModel=CollisionIntegralModel.CI0,
@@ -132,14 +132,12 @@ package Isopentane "Isopentane"
       -20914.7951660000;
        3.24]) "Coefficients for the dynamic viscosity";
 
-  final constant
-  Transport.SurfaceTensionCoefficients
+  final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsIsopentane(
     coeffs=[
        0.05106,     1.21]) "Coefficients for the surface tension";
 
-  final constant
-  Ancillary.AncillaryCoefficients
+  final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsIsopentane(
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[

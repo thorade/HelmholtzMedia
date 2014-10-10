@@ -3,12 +3,19 @@ function thermalConductivity "Return thermal conductivity"
   input ThermodynamicState state;
   output ThermalConductivity lambda;
 
+protected
+  ThermalConductivityModel thermalConductivityModel=thermalConductivityCoefficients.thermalConductivityModel;
+
 algorithm
   assert(state.phase <> 2, "thermalConductivity warning: property not defined in two-phase region", level=AssertionLevel.warning);
 
-  lambda := ( Transport.thermalConductivity_dilute(state)
-            + Transport.thermalConductivity_residual(state)
-            + Transport.thermalConductivity_critical(state));
+    if (thermalConductivityModel == ThermalConductivityModel.TC0) then
+    // hardcoded models return full thermal conductivity in one equation
+    lambda := thermalConductivity_residual(state);
+  else
+    // composite models
+    lambda := thermalConductivity_dilute(state) + thermalConductivity_residual(state) + thermalConductivity_critical(state);
+  end if;
 
   annotation (Documentation(info="<html>
   <p>

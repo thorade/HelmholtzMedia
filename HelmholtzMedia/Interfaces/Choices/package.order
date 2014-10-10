@@ -1,6 +1,7 @@
 ReferenceState
-DynamicViscosityModel
 ThermalConductivityModel
+ThermalConductivityCriticalEnhancementModel
+DynamicViscosityModel
 CollisionIntegralModel
 PressureSaturationModel
 DensityLiquidModel

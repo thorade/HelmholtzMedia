@@ -83,9 +83,10 @@ extends Interfaces.PartialHelmholtzMedium(
        0.25902341E-1,   12.0,     4,   3],
      residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
-  final constant
-  Transport.ThermalConductivityCoefficients
+  final constant Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsMM(
+    thermalConductivityModel=ThermalConductivityModel.TC1,
+    thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
     reducingTemperature_0=1,
     reducingThermalConductivity_0=1,
     lambda_0_num_coeffs=fill(0.0, 0, 2),
@@ -98,8 +99,7 @@ extends Interfaces.PartialHelmholtzMedium(
     qd_inverse=0.875350E-9,
     T_ref=637.68) "Coefficients for the thermal conductivity";
 
-  final constant
-  Transport.DynamicViscosityCoefficients
+  final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsMM(
     dynamicViscosityModel=DynamicViscosityModel.VS1,
     collisionIntegralModel=CollisionIntegralModel.CI1,
@@ -116,13 +116,11 @@ extends Interfaces.PartialHelmholtzMedium(
     nu_po=fill(0.0, 0, 5),
     de_po=fill(0.0, 0, 5)) "Coefficients for the dynamic viscosity";
 
-  final constant
-  Transport.SurfaceTensionCoefficients
+  final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsMM(
     coeffs=fill(0.0, 0, 2)) "Coefficients for the surface tension";
 
-  final constant
-  Ancillary.AncillaryCoefficients
+  final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsMM(
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[

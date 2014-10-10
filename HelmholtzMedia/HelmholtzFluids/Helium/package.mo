@@ -96,6 +96,8 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsHelium(
+    thermalConductivityModel=ThermalConductivityModel.TC0,
+    thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK0,
     reducingTemperature_0=10,
     reducingThermalConductivity_0=1,
     lambda_0_num_coeffs=fill(0.0, 0, 2),

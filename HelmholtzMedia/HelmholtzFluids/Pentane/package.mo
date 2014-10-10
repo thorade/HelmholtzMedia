@@ -85,9 +85,10 @@ package Pentane "Pentane"
       0.016877016,       12.0,     4.0,   3],
    residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
-  final constant
-  Transport.ThermalConductivityCoefficients
+  final constant Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsPentane(
+    thermalConductivityModel=ThermalConductivityModel.TC1,
+    thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
     reducingTemperature_0 = 341.1,
     reducingThermalConductivity_0 = 1e-3,
     lambda_0_num_coeffs=[
@@ -109,8 +110,7 @@ package Pentane "Pentane"
     qd_inverse=0.9345E-9,
     T_ref=704.55) "Coefficients for the thermal conductivity";
 
-  final constant
-  Transport.DynamicViscosityCoefficients
+  final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsPentane(
     dynamicViscosityModel=DynamicViscosityModel.VS2,
     collisionIntegralModel=CollisionIntegralModel.CI0,
@@ -133,16 +133,14 @@ package Pentane "Pentane"
        21435.7720323;
        3.215]) "Coefficients for the dynamic viscosity";
 
-  final constant
-  Transport.SurfaceTensionCoefficients
+  final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsPentane(
     coeffs=[
      0.0562267,   1.25;
     -0.0037496,   2.25;
     -0.0029861,   3.25]) "Coefficients for the surface tension";
 
-  final constant
-  Ancillary.AncillaryCoefficients
+  final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsPentane(
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[

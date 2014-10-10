@@ -91,9 +91,10 @@ package R134a "R134a with IIR reference state"
      -0.1285458000E-03,  50.00,  10.00,   4],
    residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
-  final constant
-  Transport.ThermalConductivityCoefficients
+  final constant Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsR134a(
+    thermalConductivityModel=ThermalConductivityModel.TC1,
+    thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
     reducingTemperature_0=1.0,
     reducingThermalConductivity_0=1.0,
     lambda_0_num_coeffs=[
@@ -112,8 +113,7 @@ package R134a "R134a with IIR reference state"
     qd_inverse=5.285356E-10,
     T_ref=561.411) "Coefficients for the thermal conductivity";
 
-  final constant
-  Transport.DynamicViscosityCoefficients
+  final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsR134a(
     dynamicViscosityModel=DynamicViscosityModel.VS1_alternative,
     collisionIntegralModel=CollisionIntegralModel.CI1,
@@ -157,14 +157,12 @@ package R134a "R134a with IIR reference state"
     -1.00,                   0.00,  1.00,  0.00,  0])
   "Coefficients for the dynamic viscosity";
 
-  final constant
-  Transport.SurfaceTensionCoefficients
+  final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsR134a(
     coeffs=[
       0.06016,    1.26]) "Coefficients for the surface tension";
 
-  final constant
-  Ancillary.AncillaryCoefficients
+  final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsR134a(
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[

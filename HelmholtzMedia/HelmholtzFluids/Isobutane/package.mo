@@ -98,9 +98,10 @@ package Isobutane "Isobutane"
       -0.53001044558079E-02,    0.0,    2.,   2, 2,  -10.,  -200.,  1.13,  1.0])
   "Coefficients of the Helmholtz EoS";
 
-  final constant
-  Transport.ThermalConductivityCoefficients
+  final constant Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsIsobutane(
+    thermalConductivityModel=ThermalConductivityModel.TC1,
+    thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
     reducingTemperature_0 = 407.85,
     reducingThermalConductivity_0 = 1,
     lambda_0_num_coeffs=[
@@ -126,8 +127,7 @@ package Isobutane "Isobutane"
     qd_inverse=0.657661E-9,
     T_ref=611.73) "Coefficients for the thermal conductivity";
 
-  final constant
-  Transport.DynamicViscosityCoefficients
+  final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsIsobutane(
     dynamicViscosityModel=DynamicViscosityModel.VS1,
     collisionIntegralModel=CollisionIntegralModel.CI1,
@@ -176,15 +176,13 @@ package Isobutane "Isobutane"
      -1.,                0.0,    1.00,  0.00,  0])
   "Coefficients for the dynamic viscosity";
 
-  final constant
-  Transport.SurfaceTensionCoefficients
+  final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsIsobutane(
     coeffs=[
        0.05756,     1.290;
       -0.009554,    2.290]) "Coefficients for the surface tension";
 
-  final constant
-  Ancillary.AncillaryCoefficients
+  final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsIsobutane(
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[

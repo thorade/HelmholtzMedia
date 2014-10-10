@@ -95,9 +95,10 @@ extends Interfaces.PartialHelmholtzMedium(
        0.972795913095E-3,  23.0,   7,   4],
      residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
-  final constant
-  Transport.ThermalConductivityCoefficients
+  final constant Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsEthanol(
+    thermalConductivityModel=ThermalConductivityModel.TC1,
+    thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
     reducingTemperature_0=513.9,
     reducingThermalConductivity_0=1,
     lambda_0_num_coeffs=[
@@ -168,14 +169,12 @@ extends Interfaces.PartialHelmholtzMedium(
     -1.,                 0.0,    1,  0,  0])
   "Coefficients for the dynamic viscosity";
 
-  final constant
-  Transport.SurfaceTensionCoefficients
+  final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsEthanol(
     coeffs=[
       0.065,    1.26]) "Coefficients for the surface tension";
 
-  final constant
-  Ancillary.AncillaryCoefficients
+  final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsEthanol(
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[

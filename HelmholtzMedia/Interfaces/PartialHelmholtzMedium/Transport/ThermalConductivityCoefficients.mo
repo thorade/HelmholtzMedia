@@ -1,5 +1,7 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Transport;
 record ThermalConductivityCoefficients
+  constant ThermalConductivityModel thermalConductivityModel;
+  constant ThermalConductivityCriticalEnhancementModel thermalConductivityCriticalEnhancementModel;
   // dilute gas / zero density terms
   constant Temperature reducingTemperature_0=1 "reducing temperature";
   constant Real reducingThermalConductivity_0=1 "usually unity";
@@ -9,7 +11,8 @@ record ThermalConductivityCoefficients
     "coeffs for dilute contribution denominator";
 
   // residual / background terms
-  constant Temperature reducingTemperature_residual=1 "reducing temperature";
+  constant Temperature reducingTemperature_residual(min=1)=1
+    "reducing temperature";
   constant MolarVolume reducingMolarVolume_residual "reducing molar volume";
   constant Real reducingThermalConductivity_residual=1 "usually unity";
   constant Real[:,4] lambda_r_coeffs = fill(0.0, 0, 4)
@@ -25,5 +28,5 @@ record ThermalConductivityCoefficients
   constant Real xi_0 "amplitude";
   constant Real Gamma_0 "amplitude";
   constant Real qd_inverse "modified effective cutoff parameter";
-  constant Temperature T_ref "reference temperature";
+  constant Temperature T_ref(min=1,max=3e3) "reference temperature";
 end ThermalConductivityCoefficients;

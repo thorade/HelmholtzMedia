@@ -101,6 +101,8 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsButane(
+    thermalConductivityModel=ThermalConductivityModel.TC1,
+    thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
     reducingTemperature_0=425.16,
     reducingThermalConductivity_0=1,
     lambda_0_num_coeffs=[
