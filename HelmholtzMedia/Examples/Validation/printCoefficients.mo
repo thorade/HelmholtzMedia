@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model printCoefficients "pretty printing of EoS coefficients"
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.Helium;
 
 protected
   String fileName = "printCoefficients.txt";
