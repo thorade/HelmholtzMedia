@@ -32,6 +32,5 @@ equation
 
   annotation (experiment(
       StopTime=10,
-      NumberOfIntervals=10000,
       Tolerance=1e-005));
 end setSat;

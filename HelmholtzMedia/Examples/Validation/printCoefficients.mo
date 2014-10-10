@@ -7,6 +7,7 @@ protected
   final constant Real kilo = 1e3;
 
 algorithm
+  when terminal() then
   // if printing fails with error "Room to allocate string"
   // go to $Dymola$/source/matrixop.h and increase the size of simplestring, e.g. by a factor of 10
 
@@ -56,6 +57,5 @@ algorithm
   Modelica.Utilities.Streams.print(String(Medium.ancillaryCoefficients.densityVaporModel), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.ancillaryCoefficients.densityVapor), fileName);
   Modelica.Utilities.Streams.print("===============================================================================", fileName);
-
-annotation (experiment(NumberOfIntervals=1));
+  end when;
 end printCoefficients;

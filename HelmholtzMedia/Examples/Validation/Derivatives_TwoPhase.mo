@@ -218,5 +218,5 @@ equation
   Modelica.Utilities.Streams.print("  (dh/dT)@d=const analytical1= " + String(dhTd_analytical1));
   Modelica.Utilities.Streams.print("  (dh/dT)@d=const analytical2= " + String(dhTd_analytical2));
 
-annotation (experiment(NumberOfIntervals=1));
+annotation (experiment(Interval=1));
 end Derivatives_TwoPhase;

@@ -53,5 +53,5 @@ equation
   p_dT_Waals = Medium.Ancillary.pressure_dT_Waals(d=d, T=T);
   T_pd_Waals = Medium.Ancillary.temperature_pd_Waals(p=p, d=d);
 
-  annotation (experiment(StopTime=12, NumberOfIntervals=10000));
+  annotation (experiment(StopTime=12));
 end Ancillary_StartValues;

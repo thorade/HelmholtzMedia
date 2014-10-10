@@ -48,6 +48,5 @@ equation
 
 annotation (experiment(
       StopTime=7,
-      NumberOfIntervals=10000,
       Tolerance=1e-005));
 end Ancillary_Saturation;

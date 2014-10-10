@@ -569,5 +569,5 @@ equation
   Modelica.Utilities.Streams.print("  (d mu/dp)@h=const analytical2= " + String(dmuph_analytical2));
   Modelica.Utilities.Streams.print("  (d mu/dp)@h=const   numerical= " + String(dmuph_numerical));
 
-annotation (experiment(NumberOfIntervals=1));
+annotation (experiment(Interval=1));
 end Derivatives_SinglePhase;

@@ -39,5 +39,5 @@ equation
   state_ps=Medium.setState_ps(p=state.p, s=state.s, phase=0);
   state_Ts=Medium.setState_Ts(T=state.T, s=state.s, phase=0);
 
-  annotation (experiment(StopTime=12, NumberOfIntervals=10000));
+  annotation (experiment(StopTime=12));
 end TwoPhase_setState;

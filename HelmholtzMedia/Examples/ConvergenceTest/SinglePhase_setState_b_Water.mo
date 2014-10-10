@@ -54,5 +54,5 @@ equation
   state_ps=Medium.setState_ps(p=Medium.pressure(state), s=Medium.specificEntropy(state), phase=0);
   //state_Ts=Medium.setState_Ts(T=Medium.temperature(state), s=Medium.specificEntropy(state), phase=0);
 
-  annotation (experiment(StopTime=12, NumberOfIntervals=10000));
+  annotation (experiment(StopTime=12));
 end SinglePhase_setState_b_Water;

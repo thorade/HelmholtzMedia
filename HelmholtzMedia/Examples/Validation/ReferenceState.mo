@@ -4,12 +4,11 @@ model ReferenceState
 
   input String fileName = "ReferenceState_.csv";
   input String separator = ";";
-  Medium.ReferenceState ref=Medium.ReferenceState.IIR;
+  Medium.ReferenceState ref=Medium.ReferenceState.NBP;
   output Medium.SpecificEnthalpy h_ref;
   output Medium.SpecificEntropy s_ref;
 
 protected
-  Boolean hasBeenExecuted;
   Medium.SaturationProperties sat;
   final constant Medium.Temperature T_IIR = 273.15; // 0°C;
   final constant Medium.Temperature T_ASHRAE = 233.15; // -40°C;
@@ -29,21 +28,22 @@ algorithm
   s_ref := Medium.bubbleEntropy(sat);
   h_ref := Medium.bubbleEnthalpy(sat);
 
-  if not hasBeenExecuted then
   if not Modelica.Utilities.Files.exist(fileName) then
+    // if file doesn't exist, create file and print header
     Modelica.Utilities.Streams.print("idealPower1" + separator
                                     +"sref" + separator
                                     +"idealPower2" + separator
                                     +"href" + separator,
                                      fileName);
   end if;
+
+  when terminal() then
   Modelica.Utilities.Streams.print( String(Medium.helmholtzCoefficients.idealPower[1,1],significantDigits=15) + separator
                                    +String(s_ref,significantDigits=15) + separator
                                    +String(Medium.helmholtzCoefficients.idealPower[2,1],significantDigits=15) + separator
                                    +String(h_ref,significantDigits=15) + separator,
                                     fileName);
-  hasBeenExecuted := true;
-  end if;
+  end when;
 
 annotation (
 Documentation(info="<html>
@@ -63,6 +63,6 @@ there are at least three standard reference states:
 
 </dl>
 </html>"),
-experiment(NumberOfIntervals=1, Tolerance=1e-012),
+experiment(Tolerance=1e-012),
     __Dymola_experimentSetupOutput(doublePrecision=true));
 end ReferenceState;

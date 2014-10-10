@@ -9,7 +9,6 @@ model Derivatives_Helmholtz_Multiplied
   parameter Medium.Temperature T=500;
 
 protected
-  final constant Boolean appendToFile = false;
   final constant String fileName = "HelmholtzDerivs_multiplied.csv";
   final constant String Separator = ";";
 
@@ -56,11 +55,8 @@ algorithm
   f_num.rdd  := (Medium.EoS.f_rd(tau=tau, delta=delta+eps)-Medium.EoS.f_rd(tau=tau, delta=delta-eps))/(2*eps);
   f_num.rddd := (Medium.EoS.f_rdd(tau=tau, delta=delta+eps)-Medium.EoS.f_rdd(tau=tau, delta=delta-eps))/(2*eps);
 
-  if (time<=0) then
-    if not appendToFile then
-      // remove old file
-      Modelica.Utilities.Files.remove(fileName);
-    end if;
+  when initial() then
+  if not Modelica.Utilities.Files.exist(fileName) then
     // print headers
     Modelica.Utilities.Streams.print("" +Separator
                                    + "" +Separator
@@ -216,7 +212,9 @@ algorithm
                                  + String(f_NBP.rttd*f_NBP.tau*f_NBP.tau*f_NBP.delta)+Separator,
                                    fileName);
   end if;
+  end when;
 
+  when terminal() then
   // print non-fixed values
   Modelica.Utilities.Streams.print(String(f.T) + Separator
                                  + String(f.d) + Separator
@@ -256,6 +254,7 @@ algorithm
                                  + String(f_num.rtdd*f_num.tau*f_num.delta*f_num.delta)+Separator
                                  + String(f_num.rttd*f_num.tau*f_num.tau*f_num.delta)+Separator,
                                    fileName);
+  end when;
 
-annotation (experiment(NumberOfIntervals=1));
+  annotation (experiment(Interval=1));
 end Derivatives_Helmholtz_Multiplied;

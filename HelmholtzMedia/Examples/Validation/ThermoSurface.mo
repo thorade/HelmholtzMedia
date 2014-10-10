@@ -54,7 +54,7 @@ algorithm
   T := T_sub.y + T_super.y;
   p := min({p_melt, p_sub.y + p_super.y});
 
-  if (time<=0) then
+  when initial() then
     if not appendToFile then
       // remove old file
       Modelica.Utilities.Files.remove(fileName);
@@ -77,7 +77,7 @@ algorithm
                                    + "dgdT" +Separator
                                    + "dgTd" +Separator,
                                      fileName);
-  end if;
+  end when;
 
   // print the actual values
   Modelica.Utilities.Streams.print(String(f.d) + Separator
@@ -99,6 +99,5 @@ algorithm
                                  + String(Medium.EoS.dgTd(f))+Separator,
                                    fileName);
 
-annotation (experiment(StopTime=12, __Dymola_NumberOfIntervals=1000),
-                                     __Dymola_experimentSetupOutput);
+annotation (experiment(StopTime=12));
 end ThermoSurface;

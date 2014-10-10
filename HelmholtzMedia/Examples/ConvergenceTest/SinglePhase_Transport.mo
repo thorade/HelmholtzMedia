@@ -44,5 +44,5 @@ equation
   eta=Medium.dynamicViscosity(state);
   lambda=Medium.thermalConductivity(state);
 
-  annotation (experiment(StopTime=12, NumberOfIntervals=10000));
+  annotation (experiment(StopTime=12));
 end SinglePhase_Transport;
