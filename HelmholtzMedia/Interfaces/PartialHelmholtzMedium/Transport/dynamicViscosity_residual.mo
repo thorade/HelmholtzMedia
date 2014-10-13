@@ -135,7 +135,9 @@ algorithm
     eta_r :=exp(F) - exp(G);
 
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
-    assert(false,"VS4 not yet implemented!!");
+    assert(false, "VS4 not yet implemented!!");
+  else
+    assert(false, "unknown dynamicViscosityModel");
   end if;
   eta_r := eta_r*eta_red_residual;
 

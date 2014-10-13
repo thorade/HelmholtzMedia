@@ -39,6 +39,8 @@ algorithm
     eta_1 := dynamicViscosity_dilute(state)*B*dm;
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
     eta_1 := dm * (b[1,1] + b[2,1]*(b[3,1]-log(state.T/b[4,1]))^2);
+  else
+    assert(false, "unknown dynamicViscosityModel");
   end if;
   eta_1 := eta_1*eta_red_1;
 

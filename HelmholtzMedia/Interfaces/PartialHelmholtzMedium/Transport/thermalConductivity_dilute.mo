@@ -1,17 +1,10 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Transport;
 function thermalConductivity_dilute
-  "Return thermal conductivity dilute contribution"
-  // depends on dynamicViscosity, specificHeatCapacityCp, specificHeatCapacityCv and dpdd=1/dddp
+  "Return thermal conductivity dilute (i.e. density-independent) contribution"
   input ThermodynamicState state;
   output ThermalConductivity lambda_0;
 
 protected
-  MolarMass MM = fluidConstants[1].molarMass;
-  Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-  Density d_red_residual=fluidConstants[1].molarMass/
-      thermalConductivityCoefficients.reducingMolarVolume_residual;
-  Real delta "reduced density";
-
   Temperature T_red_0=thermalConductivityCoefficients.reducingTemperature_0;
   Real tau "reduced temperature";
 

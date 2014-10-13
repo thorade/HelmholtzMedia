@@ -1,9 +1,9 @@
 within HelmholtzMedia.Examples.Validation;
-model printCoefficients "pretty printing of EoS coefficients"
+model prettyPrintCoefficients "pretty printing of EoS coefficients"
   package Medium = HelmholtzFluids.Helium;
 
 protected
-  String fileName = "printCoefficients.txt";
+  String fileName = "prettyPrintCoefficients.txt";
   final constant Real kilo = 1e3;
 
 algorithm
@@ -44,7 +44,7 @@ algorithm
   Modelica.Utilities.Streams.print(String(Medium.thermalConductivityCoefficients.thermalConductivityModel), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.thermalConductivityCoefficients.lambda_0_num_coeffs), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.thermalConductivityCoefficients.lambda_0_den_coeffs), fileName);
-  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.thermalConductivityCoefficients.lambda_r_coeffs), fileName);
+  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.thermalConductivityCoefficients.lambda_b_coeffs), fileName);
   Modelica.Utilities.Streams.print(String(Medium.thermalConductivityCoefficients.thermalConductivityCriticalEnhancementModel), fileName);
   Modelica.Utilities.Streams.print("#ETA", fileName);
   Modelica.Utilities.Streams.print(String(Medium.dynamicViscosityCoefficients.dynamicViscosityModel), fileName);
@@ -76,4 +76,4 @@ algorithm
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.ancillaryCoefficients.densityVapor), fileName);
   Modelica.Utilities.Streams.print("===============================================================================", fileName);
   end when;
-end printCoefficients;
+end prettyPrintCoefficients;

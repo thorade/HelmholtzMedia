@@ -1,36 +1,44 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Transport;
-function thermalConductivity_residual
-  "Return thermal conductivity residual contribution"
+function thermalConductivity_background
+  "Return thermal conductivity background/residual  contribution"
   input ThermodynamicState state;
-  output ThermalConductivity lambda_r;
+  output ThermalConductivity lambda_b;
 
 protected
+  ThermalConductivityModel thermalConductivityModel=thermalConductivityCoefficients.thermalConductivityModel;
   MolarMass MM = fluidConstants[1].molarMass;
   Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-  Density d_red_residual=fluidConstants[1].molarMass/
-      thermalConductivityCoefficients.reducingMolarVolume_residual;
+  Density d_red_background=fluidConstants[1].molarMass/thermalConductivityCoefficients.reducingMolarVolume_background;
   Real delta "reduced density";
-
-  Temperature T_red_residual=thermalConductivityCoefficients.reducingTemperature_residual;
+  Temperature T_red_background=thermalConductivityCoefficients.reducingTemperature_background;
   Real tau "reduced temperature";
 
-  // coeffs for residual contribution
-  Integer nResidual = size(thermalConductivityCoefficients.lambda_r_coeffs, 1);
-  Real[nResidual, 4] B= thermalConductivityCoefficients.lambda_r_coeffs;
+  // coeffs for background contribution
+  Integer nBackground = size(thermalConductivityCoefficients.lambda_b_coeffs, 1);
+  Real[nBackground, 4] B= thermalConductivityCoefficients.lambda_b_coeffs;
 
-  Real lambda_red_residual=thermalConductivityCoefficients.reducingThermalConductivity_residual;
+  Real lambda_red_background=thermalConductivityCoefficients.reducingThermalConductivity_background;
 
 algorithm
-  // residual contribution; RefProp uses the name background contribution
-  tau := state.T/T_red_residual;
-  delta := state.d/d_red_residual;
-  lambda_r := sum((B[i, 1]*tau^B[i, 2])*(delta)^B[i, 3] for i in 1:nResidual);
-  lambda_r := lambda_r*lambda_red_residual;
+  if (thermalConductivityModel == ThermalConductivityModel.TC0) then
+    // hardcoded models, use mediumName to distinguish further
+    if mediumName == "helium" then
+    end if;
+  elseif (thermalConductivityModel == ThermalConductivityModel.TC1) then
+    tau := state.T/T_red_background;
+    delta := state.d/d_red_background;
+    lambda_b := sum((B[i, 1]*tau^B[i, 2])*(delta)^B[i, 3] for i in 1:nBackground);
+    lambda_b := lambda_b*lambda_red_background;
+  elseif (thermalConductivityModel == ThermalConductivityModel.TC2) then
+    assert(false, "ThermalconductivityModel TC2 not yet implemented");
+  else
+    assert(false, "unknown ThermalconductivityModel");
+  end if;
 
   /* // following lines are for debugging only
   Modelica.Utilities.Streams.print("===========================================");
   Modelica.Utilities.Streams.print("        d = " + String(state.d) + " and T = " + String(state.T));
-  Modelica.Utilities.Streams.print(" lambda_r = " + String(lambda_r));
+  Modelica.Utilities.Streams.print(" lambda_b = " + String(lambda_b));
   Modelica.Utilities.Streams.print("===========================================");
   */
 
@@ -58,4 +66,4 @@ and programming a special version of RefProp that outputs also intermediate valu
 </dd>
 </dl>
 </html>"));
-end thermalConductivity_residual;
+end thermalConductivity_background;

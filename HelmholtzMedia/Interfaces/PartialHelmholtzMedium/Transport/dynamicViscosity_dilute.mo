@@ -37,10 +37,11 @@ algorithm
   elseif (collisionIntegralModel == CollisionIntegralModel.CI2) then
     T_star := (dynamicViscosityCoefficients.epsilon_kappa/state.T)^(1/3);
     Omega := 1/(sum(a[i, 1]*(T_star)^(4-i) for i in 1:size(a, 1)));
+  else
+    assert(false, "unknown CollisionIntegralModel");
   end if;
 
   // dilute gas (zero density) contribution
-  // using the Chapman-Enskog-Term and the collision integral Omega
   if (dynamicViscosityModel == DynamicViscosityModel.VS0) then
     // hardcoded models
     eta_0 := 26.692E-3 * sqrt(dm*state.T)/(sigma^2*Omega);
@@ -54,6 +55,9 @@ algorithm
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
     eta_0 := CET[1, 1]*state.T^CET[1,2]/(sigma^2*Omega);
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
+    assert(false, "dynamicViscosityModel VS4 not yet implemented");
+  else
+    assert(false, "unknown dynamicViscosityModel");
   end if;
   eta_0 := eta_0*eta_red_0;
 

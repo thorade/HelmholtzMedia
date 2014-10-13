@@ -100,10 +100,10 @@ package R134a "R134a with IIR reference state"
     lambda_0_num_coeffs=[
     -1.05248E-2,    0;
      8.00982E-5,    1],
-    reducingTemperature_residual=1,
-    reducingMolarVolume_residual=1/5049.886,
-    reducingThermalConductivity_residual=2.055E-3,
-    lambda_r_coeffs=[
+    reducingTemperature_background=1,
+    reducingMolarVolume_background=1/5049.886,
+    reducingThermalConductivity_background=2.055E-3,
+    lambda_b_coeffs=[
      1.836526E+0,   0,   1,   0;
      5.126143E+0,   0,   2,   0;
     -1.436883E+0,   0,   3,   0;

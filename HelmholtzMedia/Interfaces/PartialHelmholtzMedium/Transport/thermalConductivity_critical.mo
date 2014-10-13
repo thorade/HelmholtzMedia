@@ -7,12 +7,8 @@ function thermalConductivity_critical
 protected
   MolarMass MM = fluidConstants[1].molarMass;
   Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-  Density d_red_residual=fluidConstants[1].molarMass/
-      thermalConductivityCoefficients.reducingMolarVolume_residual;
-
   Temperature T_crit=fluidConstants[1].criticalTemperature;
   Real tau "reduced temperature";
-
   AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
   // coeffs for critical enhancement

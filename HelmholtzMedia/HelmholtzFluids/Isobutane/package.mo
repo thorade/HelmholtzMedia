@@ -108,10 +108,10 @@ package Isobutane "Isobutane"
      -2.37901E-3,    0;
       1.06601E-2,    1;
       2.15811E-2,    2],
-    reducingTemperature_residual=407.85,
-    reducingMolarVolume_residual=1/3860,
-    reducingThermalConductivity_residual=1,
-    lambda_r_coeffs=[
+    reducingTemperature_background=407.85,
+    reducingMolarVolume_background=1/3860,
+    reducingThermalConductivity_background=1,
+    lambda_b_coeffs=[
       -4.11789E-2,    0,   1,   0;
        4.76346E-2,    1,   1,   0;
        1.46805E-1,    0,   2,   0;

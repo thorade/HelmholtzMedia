@@ -95,10 +95,10 @@ package Pentane "Pentane"
        1.35558587,             0.0;
       -0.15569137,            -1.0;
        1.,                    -96.0],
-    reducingTemperature_residual=469.69,
-    reducingMolarVolume_residual=1/3215,
-    reducingThermalConductivity_residual=1e-3,
-    lambda_r_coeffs=[
+    reducingTemperature_background=469.69,
+    reducingMolarVolume_background=1/3215,
+    reducingThermalConductivity_background=1e-3,
+    lambda_b_coeffs=[
       18.608933103800,  0.0,    1.0,   0.0;
       -5.836570612990,  0.0,    3.0,   0.0;
        3.489871005290,  0.0,    4.0,   0.0;

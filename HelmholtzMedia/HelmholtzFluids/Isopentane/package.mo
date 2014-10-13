@@ -94,10 +94,10 @@ package Isopentane "Isopentane"
        1.35558587,              0.0;
       -0.152666315743857,      -1.0;
        1.,                    -96.0],
-    reducingTemperature_residual=460.51,
-    reducingMolarVolume_residual=1/3240,
-    reducingThermalConductivity_residual=1e-3,
-    lambda_r_coeffs=[
+    reducingTemperature_background=460.51,
+    reducingMolarVolume_background=1/3240,
+    reducingThermalConductivity_background=1e-3,
+    lambda_b_coeffs=[
       18.608933103800,  0.0,    1.0,   0.0;
       -5.836570612990,  0.0,    3.0,   0.0;
        3.489871005290,  0.0,    4.0,   0.0;

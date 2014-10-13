@@ -7,6 +7,6 @@ dynamicViscosity_initial
 dynamicViscosity_residual
 thermalConductivity
 thermalConductivity_dilute
-thermalConductivity_residual
+thermalConductivity_background
 thermalConductivity_critical
 surfaceTension

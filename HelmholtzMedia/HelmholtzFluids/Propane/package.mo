@@ -101,10 +101,10 @@ extends Interfaces.PartialHelmholtzMedium(
       -1.24778E-3,    0;
        8.16371E-3,    1;
        1.99374E-2,    2],
-    reducingTemperature_residual=369.85,
-    reducingMolarVolume_residual=1/5000,
-    reducingThermalConductivity_residual=1,
-    lambda_r_coeffs=[
+    reducingTemperature_background=369.85,
+    reducingMolarVolume_background=1/5000,
+    reducingThermalConductivity_background=1,
+    lambda_b_coeffs=[
       -3.69500E-2,    0,   1,   0;
        4.82798E-2,    1,   1,   0;
        1.48658E-1,    0,   2,   0;

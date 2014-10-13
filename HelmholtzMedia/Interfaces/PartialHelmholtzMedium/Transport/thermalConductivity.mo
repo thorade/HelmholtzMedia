@@ -9,12 +9,12 @@ protected
 algorithm
   assert(state.phase <> 2, "thermalConductivity warning: property not defined in two-phase region", level=AssertionLevel.warning);
 
-    if (thermalConductivityModel == ThermalConductivityModel.TC0) then
+  if (thermalConductivityModel == ThermalConductivityModel.TC0) then
     // hardcoded models return full thermal conductivity in one equation
-    lambda := thermalConductivity_residual(state);
+    lambda :=thermalConductivity_background(state);
   else
     // composite models
-    lambda := thermalConductivity_dilute(state) + thermalConductivity_residual(state) + thermalConductivity_critical(state);
+    lambda :=thermalConductivity_dilute(state) + thermalConductivity_background(state) + thermalConductivity_critical(state);
   end if;
 
   annotation (Documentation(info="<html>
