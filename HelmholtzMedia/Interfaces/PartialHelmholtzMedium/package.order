@@ -28,6 +28,7 @@ setState_Ts
 temperature
 density
 pressure
+specificInternalEnergy
 specificEntropy
 specificEnthalpy
 vapourQuality

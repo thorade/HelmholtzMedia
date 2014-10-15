@@ -1338,6 +1338,15 @@ protected
   end pressure;
 
 
+  redeclare function extends specificInternalEnergy
+  "returns specificEnergy from given ThermodynamicState"
+  // inherited from: PartialMedium
+  // inherits input state and output u
+  algorithm
+    u := state.u;
+  annotation(Inline = true);
+  end specificInternalEnergy;
+
   redeclare function extends specificEntropy
   "returns specificEntropy from given ThermodynamicState"
   // inherited from: PartialMedium
