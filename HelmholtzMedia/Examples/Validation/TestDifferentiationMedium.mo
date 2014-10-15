@@ -1,5 +1,5 @@
 within HelmholtzMedia.Examples.Validation;
-model TestDifferentiationMedium
+partial model TestDifferentiationMedium
   // This example was taken from https://trac.modelica.org/Modelica/ticket/1575
   replaceable package Medium = Modelica.Media.Interfaces.PartialTwoPhaseMedium;
   parameter Modelica.SIunits.Volume V=1;
