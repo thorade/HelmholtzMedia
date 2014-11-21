@@ -1,4 +1,4 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
-package EoS 
+package EoS
 
 end EoS;

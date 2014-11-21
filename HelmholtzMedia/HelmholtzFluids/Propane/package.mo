@@ -210,7 +210,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
 
   annotation (Documentation(info="<html>
-These are the coefficients for Propane. 
+These are the coefficients for Propane.
 
 <dl>
 <dt> Lemmon, Eric W.; McLinden, M. O. and Wagner, W.</dt>

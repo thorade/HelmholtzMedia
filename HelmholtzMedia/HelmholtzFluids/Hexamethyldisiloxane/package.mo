@@ -147,7 +147,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
 
   annotation (Documentation(info="<html>
-These are the coefficients for MM. 
+These are the coefficients for MM.
 
 <dl>
 <dt> Colonna, P., Nannan, N.R., Guardone, A., Lemmon, E.W.</dt>

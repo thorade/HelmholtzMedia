@@ -40,7 +40,7 @@ package R134a_NBP "R134a with NBP reference state"
 
 
   annotation (Documentation(info="<html>
-These are the coefficients for R134a. 
+These are the coefficients for R134a.
 
 <dl>
 <dt> Tillner-Roth, R. and Baehr, H.D.,</dt>

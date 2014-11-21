@@ -26,10 +26,10 @@ algorithm
       <p>
       This algorithm returns the saturation pressure as a function of Temperature: psat=psat(T).
       This type of vapor pressure equation was developed by W. Wagner.
-      Because it cannot be solved for temperature analytically, 
+      Because it cannot be solved for temperature analytically,
       the inverse function Tsat=Tsat(p) has to find Tsat iteratively.
       </p>
-      
+
       <dl>
       <dt>Wagner, W.</dt>
       <dd> <b>Eine mathematisch statistische Methode zum Aufstellen thermodynamischer Gleichungen - gezeigt am Beispiel der Dampfdruckkurve reiner fluider Stoffe.</b><br>

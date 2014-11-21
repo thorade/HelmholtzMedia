@@ -16,7 +16,7 @@ algorithm
   annotation (Documentation(info="<html>
   <p>
 This is an implementation of the model as suggested by Somayajulu, G.R.,
-which is an extension of the van der Waals surface tension correlation. 
+which is an extension of the van der Waals surface tension correlation.
 The extended version has up to three terms with two parameters each.
 This algorithm uses T only, some mixture models also use liquid and vapour density.
 </p>

@@ -187,7 +187,7 @@ package R134a "R134a with IIR reference state"
 
 
   annotation (Documentation(info="<html>
-These are the coefficients for R134a. 
+These are the coefficients for R134a.
 The reference state is set to IIR.
 
 <dl>

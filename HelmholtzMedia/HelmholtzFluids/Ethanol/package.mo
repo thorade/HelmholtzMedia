@@ -202,7 +202,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
 
   annotation (Documentation(info="<html>
-These are the coefficients for Ethanol. 
+These are the coefficients for Ethanol.
 
 <dl>
 <dt> Dillon, H. E. and Penoncello, S. G.</dt>

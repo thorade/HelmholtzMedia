@@ -1,4 +1,4 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
-package Ancillary 
+package Ancillary
 
 end Ancillary;

@@ -54,7 +54,7 @@ At the critical point TC becomes infinite; TC is enhanced for a large region aro
 The critical enhancement can be described by various alternative approaches.
 Here, the simplified approach as suggested by Olchowy and Sengers is implemented.
 
-Special thanks go to Eric W. Lemmon for answering all my emails 
+Special thanks go to Eric W. Lemmon for answering all my emails
 and programming a special version of RefProp that outputs also intermediate values.
 
 </p>

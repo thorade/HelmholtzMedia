@@ -1,5 +1,5 @@
 within HelmholtzMedia.Interfaces;
-partial package PartialHelmholtzMedium 
+partial package PartialHelmholtzMedium
   extends HelmholtzMedia.Interfaces.Types;
 
 
@@ -259,8 +259,8 @@ protected
 
   annotation (Documentation(info="
 <html>
-This function iteratively determines the saturation state  for a given temperature 
-by varying the density of saturated liquid and saturated vapor 
+This function iteratively determines the saturation state  for a given temperature
+by varying the density of saturated liquid and saturated vapor
 with a Newton-Raphson approach for simultaneous equations.
 
 <dl>

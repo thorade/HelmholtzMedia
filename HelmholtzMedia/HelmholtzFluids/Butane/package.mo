@@ -215,7 +215,7 @@ final constant Ancillary.AncillaryCoefficients
 
 
   annotation (Documentation(info="<html>
-These are the coefficients for Butane. 
+These are the coefficients for Butane.
 
 <dl>
 <dt> B&uuml;cker, D. and Wagner, W.</dt>

@@ -173,7 +173,7 @@ package Isopentane "Isopentane"
 
 
   annotation (Documentation(info="<html>
-These are the coefficients for Isopentane. 
+These are the coefficients for Isopentane.
 
 <dl>
 <dt> Lemmon, E. W. and Span, R</dt>
