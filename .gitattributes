@@ -5,3 +5,8 @@
 # to native line endings on checkout.
 *.mo text
 *.mos text
+
+# Explicitly declare Modelica code files
+# see https://github.com/github/linguist#overrides
+*.mo linguist-language=Modelica
+*.mos linguist-language=Modelica
