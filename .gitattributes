@@ -1,15 +1,15 @@
 # Explicitly declare all file extensions to be text or binary
-*.csv text                                                                                                                                                          
-*.m text                                                                                                                                                                           
-*.md text                                                                                                                                                                          
+*.csv text
+*.m text
+*.md text
 *.mo text
-*.mos text                                                                                                                                                                          
-*.order text                                                                                                                                                                       
-*.pdf binary                                                                                                                                                                         
-*.rfp text                                                                                                                                                                         
-*.svg text                                                                                                                                                                         
-*.tex text                                                                                                                                                                         
-*.txt text   
+*.mos text
+*.order text
+*.pdf binary
+*.rfp text
+*.svg text
+*.tex text
+*.txt text
 
 # Explicitly declare languages, see https://github.com/github/linguist#overrides
 *.m linguist-language=Matlab
