@@ -1,12 +1,19 @@
-# Set the default behavior, in case people don't have core.autocrlf set.
-* text=auto
-
-# Explicitly declare text files you want to always be normalized and converted
-# to native line endings on checkout.
+# Explicitly declare all file extensions to be text or binary
+*.csv text                                                                                                                                                          
+*.m text                                                                                                                                                                           
+*.md text                                                                                                                                                                          
 *.mo text
-*.mos text
+*.mos text                                                                                                                                                                          
+*.order text                                                                                                                                                                       
+*.pdf binary                                                                                                                                                                         
+*.rfp text                                                                                                                                                                         
+*.svg text                                                                                                                                                                         
+*.tex text                                                                                                                                                                         
+*.txt text   
 
-# Explicitly declare Modelica code files
-# see https://github.com/github/linguist#overrides
+# Explicitly declare languages, see https://github.com/github/linguist#overrides
+*.m linguist-language=Matlab
 *.mo linguist-language=Modelica
 *.mos linguist-language=Modelica
+*.order linguist-language=Modelica
+*.tex linguist-language=TeX
