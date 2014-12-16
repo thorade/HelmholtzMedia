@@ -15,7 +15,7 @@ _VDI Thermodynamik-Kolloquium 2012_
 * Thorade, M. and Saadat, A. (2013). "[Partial derivatives of thermodynamic state properties for dynamic simulation][3]", 
 _Environmental Earth Sciences_, 
 doi:10.1007/s12665-013-2394-z
-* Thorade, M. (2014/unpublished). "Entropiebasierte Bewertungskriterien für den Wärmeübergang in Kraftwerksprozessen und ihre Relevanz für praktische Anwendungen", 
+* Thorade, M. (2014/unpublished). "[Entropiebasierte Bewertungskriterien für den Wärmeübergang in Kraftwerksprozessen und ihre Relevanz für praktische Anwendungen][4]", 
 _Dissertation (TU Hamburg-Harburg)_
 
 The following fluids have been implemented with EoS and transport properties:  
@@ -50,3 +50,4 @@ Code contributions are very welcome, especially in the form of [Pull Requests](.
 [1]: http://goo.gl/7obgqq "Modelica Conference Paper: HelmholtzMedia implementation"
 [2]: http://goo.gl/6dNHNP "Conference Poster: HelmholtzMedia implementation"
 [3]: http://goo.gl/xbGJA9 "ISI Journal Paper: Partial derivatives"
+[4]: http://goo.gl/4xgQ5X "Dissertation"
