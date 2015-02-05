@@ -151,13 +151,13 @@ These are the coefficients for MM.
 
 <dl>
 <dt> Colonna, P., Nannan, N.R., Guardone, A., Lemmon, E.W.</dt>
-<dd> <b>Multiparameter Equations of State for Selected Siloxanes</b><br>
-     Fluid Phase Equilibria, 244:193-211, (2006)<br>
+<dd> <b>Multiparameter Equations of State for Selected Siloxanes</b><br />
+     Fluid Phase Equilibria, 244:193-211, (2006)<br />
      DOI: <a href=\"http://dx.doi.org/10.1016/j.fluid.2006.04.015\">10.1016/j.fluid.2006.04.015</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
-<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
-     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
+<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
+     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br />
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
 </dd>
 </dl>

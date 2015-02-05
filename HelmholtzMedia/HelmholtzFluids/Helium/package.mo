@@ -172,18 +172,18 @@ These are the coefficients for Helium.
 
 <dl>
 <dt> Ortiz-Vega, D.O., Hall, K.R., Arp, V.D., and Lemmon, E.W.</dt>
-<dd> <b>Interim equation (final version) for the properties of helium</b><br>
-     to be published in J. Phys. Chem. Ref. Data, 2013<br>
+<dd> <b>Interim equation (final version) for the properties of helium</b><br />
+     to be published in J. Phys. Chem. Ref. Data, 2013<br />
      DOI: <a href=\"http://dx.doi.org/\"></a>
 </dd>
 <dt> McCarty, R.D. and Arp, V.D.</dt>
-<dd> <b>A new wide rand equation of state for helium</b><br>
-     Adv. Cryo. Eng. 35:1465-1475 (1990)<br>
+<dd> <b>A new wide rand equation of state for helium</b><br />
+     Adv. Cryo. Eng. 35:1465-1475 (1990)<br />
      DOI: <a href=\"http://dx.doi.org/\"></a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
-<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
-     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
+<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
+     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br />
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
 </dd>
 </dl>

@@ -214,23 +214,23 @@ These are the coefficients for Propane.
 
 <dl>
 <dt> Lemmon, Eric W.; McLinden, M. O. and Wagner, W.</dt>
-<dd> <b>Thermodynamic Properties of Propane. III. A Reference Equation of State for Temperatures from the Melting Line to 650 K and Pressures up to 1000 MPa</b><br>
-     Journal of Chemical &amp; Engineering Data Vol. 54 Issue 12, Pages 3141-3180 (2009)<br>
+<dd> <b>Thermodynamic Properties of Propane. III. A Reference Equation of State for Temperatures from the Melting Line to 650 K and Pressures up to 1000 MPa</b><br />
+     Journal of Chemical &amp; Engineering Data Vol. 54 Issue 12, Pages 3141-3180 (2009)<br />
      DOI: <a href=\"http://dx.doi.org/10.1021/je900217v\">10.1021/je900217v</a>
 </dd>
 <dt> Vogel, E.; K&uuml;chenmeister, C.; Bich, E. and Laesecke, A.</dt>
-<dd> <b>Reference Correlation of the Viscosity of Propane</b><br>
-     Journal of Physical and Chemical Reference Data 27/5, 947-970 (1998)<br>
+<dd> <b>Reference Correlation of the Viscosity of Propane</b><br />
+     Journal of Physical and Chemical Reference Data 27/5, 947-970 (1998)<br />
      DOI: <a href=\"http://dx.doi.org/10.1063/1.556025\">10.1063/1.556025</a>
 </dd>
 <dt> Reeves, L.E. and Scott, G.J. and Babb, S.E.Jr.</dt>
-<dd> <b>Melting curves of pressure-transmitting fluids</b><br>
-     Journal of Chemical Physics 40 (12) , 3662-3666 (1964)<br>
+<dd> <b>Melting curves of pressure-transmitting fluids</b><br />
+     Journal of Chemical Physics 40 (12) , 3662-3666 (1964)<br />
      DOI: <a href=\"http://dx.doi.org/10.1063/1.1725068\">10.1063/1.1725068</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
-<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
-     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
+<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
+     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br />
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
 </dd>
 </dl>

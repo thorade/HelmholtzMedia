@@ -265,8 +265,8 @@ with a Newton-Raphson approach for simultaneous equations.
 
 <dl>
 <dt> Ryo Akasaka:</dt>
-<dd> <b>A reliable and useful method to determine the saturation state from Helmholtz energy equations of state</b>.<br>
-     Journal of Thermal Science and Technology 3 (3) , 442-451.<br>
+<dd> <b>A reliable and useful method to determine the saturation state from Helmholtz energy equations of state</b>.<br />
+     Journal of Thermal Science and Technology 3 (3) , 442-451.<br />
      DOI: <a href=\"http://dx.doi.org/10.1299/jtst.3.442\">10.1299/jtst.3.442</a>
 </dd>
 </dl>

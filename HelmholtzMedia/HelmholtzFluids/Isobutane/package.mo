@@ -218,23 +218,23 @@ These are the coefficients for Isobutane.
 
 <dl>
 <dt> B&uuml;cker, D. and Wagner, W.</dt>
-<dd> <b>Reference Equations of State for the Thermodynamic Properties of Fluid Phase n-Butane and Isobutane</b><br>
-     Journal of Physical and Chemical Reference Data 35.2, S. 929-1019 (2006)<br>
+<dd> <b>Reference Equations of State for the Thermodynamic Properties of Fluid Phase n-Butane and Isobutane</b><br />
+     Journal of Physical and Chemical Reference Data 35.2, S. 929-1019 (2006)<br />
      DOI: <a href=\"http://dx.doi.org/10.1063/1.1901687\">10.1063/1.1901687</a>
 </dd>
 <dt> Vogel, Eckhard; K&uuml;chenmeister, Cornelia and Bich, Eckard</dt>
-<dd> <b>Viscosity correlation for n-Butane in the fluid region</b><br>
-     High Temperatures - High Pressures 31.2, 173-186 (1999)<br>
+<dd> <b>Viscosity correlation for n-Butane in the fluid region</b><br />
+     High Temperatures - High Pressures 31.2, 173-186 (1999)<br />
      DOI: <a href=\"http://dx.doi.org/10.1068/htrt154\">10.1068/htrt154</a>
 </dd>
 <dt> Perkins, Richard A. et. al.</dt>
-<dd> <b>Measurement and Correlation of the Thermal Conductivity of Butane from 135 K to 600 K at Pressures to 70 MPa</b><br>
-     Journal of Chemical &amp; Engineering Data 47.5, S. 1263-1271. (2002)<br>
+<dd> <b>Measurement and Correlation of the Thermal Conductivity of Butane from 135 K to 600 K at Pressures to 70 MPa</b><br />
+     Journal of Chemical &amp; Engineering Data 47.5, S. 1263-1271. (2002)<br />
      DOI: <a href=\"http://dx.doi.org/10.1021/je0101202\">10.1021/je0101202</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
-<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
-     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
+<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
+     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br />
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
 </dd>
 </dl>

@@ -177,18 +177,18 @@ These are the coefficients for Isopentane.
 
 <dl>
 <dt> Lemmon, E. W. and Span, R</dt>
-<dd> <b>Short Fundamental Equations of State for 20 Industrial Fluids</b><br>
-     Journal of Chemical &amp; Engineering Data 51 (3) , 785-850 (2006)<br>
+<dd> <b>Short Fundamental Equations of State for 20 Industrial Fluids</b><br />
+     Journal of Chemical &amp; Engineering Data 51 (3) , 785-850 (2006)<br />
      DOI: <a href=\"http://dx.doi.org/10.1021/je050186n\">10.1021/je050186n</a>
 </dd>
 <dt> Reeves, L.E. and Scott, G.J. and Babb, S.E.Jr.</dt>
-<dd> <b>Melting curves of pressure-transmitting fluids</b><br>
-     Journal of Chemical Physics 40 (12) , 3662-3666 (1964)<br>
+<dd> <b>Melting curves of pressure-transmitting fluids</b><br />
+     Journal of Chemical Physics 40 (12) , 3662-3666 (1964)<br />
      DOI: <a href=\"http://dx.doi.org/10.1063/1.1725068\">10.1063/1.1725068</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
-<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
-     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
+<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
+     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br />
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
 </dd>
 </dl>

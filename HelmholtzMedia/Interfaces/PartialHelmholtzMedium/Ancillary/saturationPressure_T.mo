@@ -32,7 +32,7 @@ algorithm
 
       <dl>
       <dt>Wagner, W.</dt>
-      <dd> <b>Eine mathematisch statistische Methode zum Aufstellen thermodynamischer Gleichungen - gezeigt am Beispiel der Dampfdruckkurve reiner fluider Stoffe.</b><br>
+      <dd> <b>Eine mathematisch statistische Methode zum Aufstellen thermodynamischer Gleichungen - gezeigt am Beispiel der Dampfdruckkurve reiner fluider Stoffe.</b><br />
            Forschrittberichte der VDI Zeitschriften, Reihe 3, Nr. 39 (1974)
       </dd>
       </dl>

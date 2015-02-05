@@ -105,8 +105,8 @@ and programming a special version of RefProp that outputs also intermediate valu
 </p>
 <dl>
 <dt>Olchowy, G.A. and Sengers, J.V</dt>
-<dd> <b>A simplified representation for the thermal conductivity of fluids in the critical region</b>.<br>
-     International Journal of Thermophysics (1998) 10, 417-426.<br>
+<dd> <b>A simplified representation for the thermal conductivity of fluids in the critical region</b>.<br />
+     International Journal of Thermophysics (1998) 10, 417-426.<br />
      DOI: <a href=\"http://dx.doi.org/10.1007/BF01133538\">10.1007/BF01133538</a>
 </dd>
 </dl>

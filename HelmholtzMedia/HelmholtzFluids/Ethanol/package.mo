@@ -206,13 +206,13 @@ These are the coefficients for Ethanol.
 
 <dl>
 <dt> Dillon, H. E. and Penoncello, S. G.</dt>
-<dd> <b>A Fundamental Equation for Calculation of the Thermodynamic Properties of Ethanol</b><br>
-     International Journal of Thermophysics 25, 321-335 (2004)<br>
+<dd> <b>A Fundamental Equation for Calculation of the Thermodynamic Properties of Ethanol</b><br />
+     International Journal of Thermophysics 25, 321-335 (2004)<br />
      DOI: <a href=\"http://dx.doi.org/10.1023/B:IJOT.0000028470.49774.14\">10.1023/B:IJOT.0000028470.49774.14</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
-<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
-     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
+<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
+     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br />
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
 </dd>
 </dl>

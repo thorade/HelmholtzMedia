@@ -44,21 +44,21 @@ These are the coefficients for R134a.
 
 <dl>
 <dt> Tillner-Roth, R. and Baehr, H.D.,</dt>
-<dd> <b>An international standard formulation of the thermodynamic properties of 1,1,1,2-tetrafluoroethane (HFC-134a) for temperatures from 170 K to 455 K at pressures up to 70 MPa</b><br>
-     J. Phys. Chem. Ref. Data, 23:657-729, 1994.<br>
+<dd> <b>An international standard formulation of the thermodynamic properties of 1,1,1,2-tetrafluoroethane (HFC-134a) for temperatures from 170 K to 455 K at pressures up to 70 MPa</b><br />
+     J. Phys. Chem. Ref. Data, 23:657-729, 1994.<br />
      DOI: <a href=\"http://dx.doi.org/10.1063/1.555958\">10.1063/1.555958</a>
 </dd>
 <dt> Huber, M.L., Laesecke, A., and Perkins, R.A.</dt>
-<dd> <b>Model for the Viscosity and Thermal Conductivity of Refrigerants, Including a New Correlation for the Viscosity of R134a</b><br>
-     Ind. Eng. Chem. Res., 42:3163-3178, 2003.<br>
+<dd> <b>Model for the Viscosity and Thermal Conductivity of Refrigerants, Including a New Correlation for the Viscosity of R134a</b><br />
+     Ind. Eng. Chem. Res., 42:3163-3178, 2003.<br />
      DOI: <a href=\"http://dx.doi.org/10.1021/ie0300880\">10.1021/ie0300880</a>
 </dd>
 <dt> Perkins, R.A., Laesecke, A., Howley, J., Ramires, M.L.V., Gurova, A.N., and Cusco, L.</dt>
-<dd> <b>Experimental thermal conductivity values for the IUPAC round-robin sample of 1,1,1,2-tetrafluoroethane (R134a)</b><br>
+<dd> <b>Experimental thermal conductivity values for the IUPAC round-robin sample of 1,1,1,2-tetrafluoroethane (R134a)</b><br />
      NISTIR, 2000.
 </dd><dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
-<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
-     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
+<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
+     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br />
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
 </dd>
 </dl>

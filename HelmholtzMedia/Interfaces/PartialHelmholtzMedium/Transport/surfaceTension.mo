@@ -22,12 +22,12 @@ This algorithm uses T only, some mixture models also use liquid and vapour densi
 </p>
 <dl>
 <dt>Somayajulu, G.R.</dt>
-<dd> <b>A generalized equation for surface tension from the triple point to the critical point</b>.<br>
-     International Journal of Thermophysics (1988) 9, 559-566.<br>
+<dd> <b>A generalized equation for surface tension from the triple point to the critical point</b>.<br />
+     International Journal of Thermophysics (1988) 9, 559-566.<br />
      DOI: <a href=\"http://dx.doi.org/10.1007/BF00503154\">10.1007/BF00503154</a>
 </dd>
 <dt>Van der Waals, J.D.</dt>
-<dd> <b>Thermodynamische Theorie der Kapillarit&auml;t unter Voraussetzung stetiger Dichte&auml;nderung</b>.<br>
+<dd> <b>Thermodynamische Theorie der Kapillarit&auml;t unter Voraussetzung stetiger Dichte&auml;nderung</b>.<br />
      Zeitschrift f&uuml;r Physikalische Chemie (1894) 13, 657-725.
 </dd>
 </dl>

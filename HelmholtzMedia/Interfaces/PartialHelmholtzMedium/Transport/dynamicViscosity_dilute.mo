@@ -94,13 +94,13 @@ and programming a special version of RefProp that outputs also intermediate valu
 
 <dl>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
-<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br>
-     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br>
+<dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
+     National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br />
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>
 </dd>
 <dt>Vogel, E.; K&uuml;chenmeister, C. and Birch, E.</dt>
-<dd> <b>Reference correlation of the viscosity of propane</b>.<br>
-     Journal of Thermophysics (1998) 10, 417-426.<br>
+<dd> <b>Reference correlation of the viscosity of propane</b>.<br />
+     Journal of Thermophysics (1998) 10, 417-426.<br />
      DOI: <a href=\"http://dx.doi.org/10.1007/BF01133538\">10.1007/BF01133538</a>
 </dd>
 </dl>

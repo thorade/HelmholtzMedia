@@ -57,8 +57,8 @@ How to use:
 <dl>
 <dt>Further reading:</dt>
 <dt>Lemmon, E. W. and Jacobsen, R. T.:</dt>
-<dd><b>A New Functional Form and New Fitting Techniques for Equations of State with Application to Pentafluoroethane (HFC-125)</b>.<br>
-    Journal of Physical and Chemical Reference Data 34 (1) , 69-108 (2005)<br>
+<dd><b>A New Functional Form and New Fitting Techniques for Equations of State with Application to Pentafluoroethane (HFC-125)</b>.<br />
+    Journal of Physical and Chemical Reference Data 34 (1) , 69-108 (2005)<br />
     DOI: <a href=\"http://dx.doi.org/10.1063/1.1797813\">10.1063/1.1797813</a>
 </dd>
 </dl>
