@@ -38,7 +38,7 @@ equation
 <style type=\"text/css\">
   code{background-color:#EEEEEE; padding:2px; margin:2px;}
 </style>
-This model is used to validate the behavior of the EoS in the ideal gas limit, that is at <code> lim d -> 0 </code>.
+This model is used to validate the behavior of the EoS in the ideal gas limit, that is at <code> lim d &rarr; 0 </code>.
 <br />
 How to use:
 <ol>
