@@ -19,6 +19,7 @@ model Derivatives_SaturationBoundary
 // Density derivatives
   Medium.DerDensityByTemperature ddT_liq_numerical;
   Medium.DerDensityByTemperature ddT_liq_analytical;
+  Medium.DerDensityByTemperature ddT_liq_analytical2;
   Medium.DerDensityByTemperature ddT_vap_numerical;
   Medium.DerDensityByTemperature ddT_vap_analytical;
   Medium.DerDensityByPressure ddp_liq_numerical;
@@ -114,6 +115,7 @@ equation
   // check (dd/dT)@liq
   ddT_liq_numerical = (sat_Tplus.liq.d - sat_Tminus.liq.d)/(sat_Tplus.liq.T - sat_Tminus.liq.T);
   ddT_liq_analytical = Medium.density_derT_p(state=sat.liq) +Medium.density_derp_T(state=sat.liq)*dpT;
+  ddT_liq_analytical2 = (dpT - Medium.EoS.dpTd(fl))/Medium.EoS.dpdT(fl);
   // Modelica.Utilities.Streams.print("  (dd/dT)@liq  numerical= " + String(ddT_liq_numerical));
   // Modelica.Utilities.Streams.print("  (dd/dT)@liq analytical= " + String(ddT_liq_analytical));
   // check (dd/dT)@vap
