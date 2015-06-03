@@ -40,6 +40,7 @@ model Derivatives_SaturationBoundary
   Medium.DerEnthalpyByPressure dhp_vap_numerical;
 // Entropy derivatives
   Medium.DerEntropyByTemperature dsT_liq_analytical;
+  Medium.DerEntropyByTemperature dsT_liq_analytical2;
   Medium.DerEntropyByTemperature dsT_liq_numerical;
   Medium.DerEntropyByTemperature dsT_vap_analytical;
   Medium.DerEntropyByTemperature dsT_vap_numerical;
@@ -167,6 +168,7 @@ equation
   // check (ds/dT)@liq
   dsT_liq_numerical = (sat_Tplus.liq.s-sat_Tminus.liq.s)/(sat_Tplus.liq.T-sat_Tminus.liq.T);
   dsT_liq_analytical = dsTp_liq+dspT_liq*dpT;
+  dsT_liq_analytical2 = Medium.EoS.dsTd(fl) + Medium.EoS.dsdT(fl)*(dpT - Medium.EoS.dpTd(fl))/Medium.EoS.dpdT(fl);
   // Modelica.Utilities.Streams.print("  (ds/dT)@liq  numerical= " + String(dsT_liq_numerical));
   // Modelica.Utilities.Streams.print("  (ds/dT)@liq analytical= " + String(dsT_liq_analytical));
   // check (ds/dT)@vap
