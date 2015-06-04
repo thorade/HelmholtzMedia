@@ -2,12 +2,12 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_SinglePhase
   "compare analytical derivatives to numerical derivatives"
 
-  package Medium = HelmholtzFluids.Helium;
+  package Medium = HelmholtzFluids.Butane;
   // p and T always result in single-phase
   parameter Medium.Temperature T=400;
   Medium.AbsolutePressure p=101325;
   Medium.ThermodynamicState state=Medium.setState_pTX(p=p, T=T);
-  //Medium.Density d=Medium.dewDensity(sat=Medium.setSat_T(T));
+  //Medium.Density d=Medium.bubbleDensity(sat=Medium.setSat_T(T));
   //Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
   Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsThird(T=state.T, d=state.d, phase=state.phase);
 
