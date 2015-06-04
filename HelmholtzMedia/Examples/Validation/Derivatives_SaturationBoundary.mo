@@ -2,14 +2,14 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_SaturationBoundary
   "compare analytical derivatives to numerical derivatives"
 
-  package Medium = HelmholtzFluids.Helium;
+  package Medium = HelmholtzFluids.Butane;
 
   // right at T_trip and T_crit, numerical derivatives will fail
   Modelica.Blocks.Sources.Ramp T_ramp(
     duration=10,
     startTime=0,
-    height=1e-3,
-    offset=Tcrit - 1e-3)
+    height=Tcrit - Tmin - 3,
+    offset=Tmin + 1)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
   Medium.Temperature T=T_ramp.y;
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
