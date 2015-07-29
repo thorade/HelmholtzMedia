@@ -7,16 +7,15 @@ It supports EoS of the form f=f(T,d) meaning Helmholtz energy as a funtion of te
 In addition to all state properties, this library calculates viscosity, thermal conductivity and surface tension.  
 
 A general description of the library can be found in the related publications:
-* Thorade, M. and Saadat, A. (2012). "[HelmholtzMedia - A fluid properties library][1]",
+* Thorade, M. and Saadat, A. (2012). "HelmholtzMedia - A fluid properties library",
 _Proceedings of the 9th International Modelica Conference_,
-doi:10.3384/ecp1207663
-* Thorade, M. (2012) "[Poster HelmholtzMedia][2]",
-_VDI Thermodynamik-Kolloquium 2012_  
-* Thorade, M. and Saadat, A. (2013). "[Partial derivatives of thermodynamic state properties for dynamic simulation][3]",
+doi:[10.3384/ecp1207663][1]
+* Thorade, M. and Saadat, A. (2013). "Partial derivatives of thermodynamic state properties for dynamic simulation",
 _Environmental Earth Sciences_,
-doi:10.1007/s12665-013-2394-z
-* Thorade, M. (2014/unpublished). "[Entropiebasierte Bewertungskriterien für den Wärmeübergang in Kraftwerksprozessen und ihre Relevanz für praktische Anwendungen][4]", 
-_Dissertation (TU Hamburg-Harburg)_
+doi:[10.1007/s12665-013-2394-z][2]
+* Thorade, M. (2014). "Entropiebasierte Bewertungskriterien für den Wärmeübergang in Kraftwerksprozessen und ihre Relevanz für praktische Anwendungen", 
+_Dissertation (TU Hamburg-Harburg)_,
+doi:[10.15480/882.1207][3]
 
 The following fluids have been implemented with EoS and transport properties:  
 [Butane](HelmholtzMedia/HelmholtzFluids/Butane/package.mo),
@@ -47,7 +46,6 @@ You may report feedback, issues or feature-requests using the [Issues](../../iss
 Code contributions are very welcome, especially in the form of [Pull Requests](../../pulls).
 
 
-[1]: http://goo.gl/7obgqq "Modelica Conference Paper: HelmholtzMedia implementation"
-[2]: http://goo.gl/6dNHNP "Conference Poster: HelmholtzMedia implementation"
-[3]: http://goo.gl/xbGJA9 "ISI Journal Paper: Partial derivatives"
-[4]: http://goo.gl/4xgQ5X "Dissertation"
+[1]: http://dx.doi.org/10.3384/ecp1207663 "Modelica Conference Paper: HelmholtzMedia"
+[2]: http://dx.doi.org/10.1007/s12665-013-2394-z "ISI Journal Paper: Partial derivatives"
+[3]: http://dx.doi.org/10.15480/882.1207 "Dissertation"
