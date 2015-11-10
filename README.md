@@ -35,11 +35,11 @@ Download the newest [tagged version](../../tags).
 In the future, there might be a release branch and official releases.
 
 ## License
-Copyright  2009-2014 Helmholtz Centre Potsdam, GFZ German Research Centre for Geosciences
+Copyright  2009-2015 Matthis Thorade
 
-This Modelica package is free software and the use is completely at your own risk;  
-it can be redistributed and/or modified under the terms of the [Modelica License 2](https://www.modelica.org/licenses/ModelicaLicense2) or newer.  
-For license conditions (including the disclaimer of warranty) visit [https://www.modelica.org/licenses/](https://www.modelica.org/licenses/).
+This Modelica package is free software and the use is completely at your own risk; 
+it is available under the BSD 3-Clause license. 
+Upon request, it is also available under other licenses, including the [Modelica License 2](https://www.modelica.org/licenses/ModelicaLicense2).  
 
 ## Development and contribution
 You may report feedback, issues or feature-requests using the [Issues](../../issues) button.  
