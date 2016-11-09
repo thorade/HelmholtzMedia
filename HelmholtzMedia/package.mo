@@ -5,5 +5,5 @@ package HelmholtzMedia "Data and models of real pure fluids (liquid, two-phase a
 
 
 
-  annotation (uses(Modelica(version="3.2.1")));
+  annotation (uses(Modelica(version="3.2.2")));
 end HelmholtzMedia;
