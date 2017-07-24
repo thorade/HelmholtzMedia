@@ -24,7 +24,7 @@ protected
   Medium.SaturationProperties sat_ASHRAE = Medium.setSat_T(T=233.15); // -40°C
   Medium.SaturationProperties sat_NBP = Medium.setSat_p(p=101325); // 1.01325 bar = 1atm
 
- // Medium.EoS.HelmholtzDerivs f_crit = Medium.EoS.setHelmholtzDerivsThird(T=T_crit, d=d_crit, phase=1);
+  Medium.EoS.HelmholtzDerivs f_crit = Medium.EoS.setHelmholtzDerivsThird(T=T_crit, d=d_crit, phase=1);
   Medium.EoS.HelmholtzDerivs f_tl = Medium.EoS.setHelmholtzDerivsThird(T=sat_trip.liq.T, d=sat_trip.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs f_tv = Medium.EoS.setHelmholtzDerivsThird(T=sat_trip.vap.T, d=sat_trip.vap.d, phase=1);
   Medium.EoS.HelmholtzDerivs f_IIR = Medium.EoS.setHelmholtzDerivsThird(T=sat_IIR.liq.T, d=sat_IIR.liq.d, phase=1);
@@ -97,25 +97,25 @@ algorithm
                                    + "tau*tau*delta*alpha_rttd" +Separator,
                                      fileName);
   // print fixed values
-//   Modelica.Utilities.Streams.print(String(f_crit.T) + Separator
-//                                  + String(f_crit.d) + Separator
-//                                  + String(f_crit.tau) + Separator
-//                                  + String(f_crit.delta) + Separator
-//                                  + String(f_crit.i) + Separator
-//                                  + String(f_crit.it*f_crit.tau)+Separator
-//                                  + String(f_crit.itt*f_crit.tau*f_crit.tau)+Separator
-//                                  + String(f_crit.ittt*f_crit.tau*f_crit.tau*f_crit.tau)+Separator
-//                                  + String(f_crit.r)+Separator
-//                                  + String(f_crit.rt*f_crit.tau)+Separator
-//                                  + String(f_crit.rtt*f_crit.tau*f_crit.tau)+Separator
-//                                  + String(f_crit.rttt*f_crit.tau*f_crit.tau*f_crit.tau)+Separator
-//                                  + String(f_crit.rd*f_crit.delta)+Separator
-//                                  + String(f_crit.rdd*f_crit.delta*f_crit.delta)+Separator
-//                                  + String(f_crit.rddd*f_crit.delta*f_crit.delta*f_crit.delta)+Separator
-//                                  + String(f_crit.rtd*f_crit.tau*f_crit.delta)+Separator
-//                                  + String(f_crit.rtdd*f_crit.tau*f_crit.delta*f_crit.delta)+Separator
-//                                  + String(f_crit.rttd*f_crit.tau*f_crit.tau*f_crit.delta)+Separator,
-//                                    fileName);
+   Modelica.Utilities.Streams.print(String(f_crit.T) + Separator
+                                  + String(f_crit.d) + Separator
+                                  + String(f_crit.tau) + Separator
+                                  + String(f_crit.delta) + Separator
+                                  + String(f_crit.i) + Separator
+                                  + String(f_crit.it*f_crit.tau)+Separator
+                                  + String(f_crit.itt*f_crit.tau*f_crit.tau)+Separator
+                                  + String(f_crit.ittt*f_crit.tau*f_crit.tau*f_crit.tau)+Separator
+                                  + String(f_crit.r)+Separator
+                                  + String(f_crit.rt*f_crit.tau)+Separator
+                                  + String(f_crit.rtt*f_crit.tau*f_crit.tau)+Separator
+                                  + String(f_crit.rttt*f_crit.tau*f_crit.tau*f_crit.tau)+Separator
+                                  + String(f_crit.rd*f_crit.delta)+Separator
+                                  + String(f_crit.rdd*f_crit.delta*f_crit.delta)+Separator
+                                  + String(f_crit.rddd*f_crit.delta*f_crit.delta*f_crit.delta)+Separator
+                                  + String(f_crit.rtd*f_crit.tau*f_crit.delta)+Separator
+                                  + String(f_crit.rtdd*f_crit.tau*f_crit.delta*f_crit.delta)+Separator
+                                  + String(f_crit.rttd*f_crit.tau*f_crit.tau*f_crit.delta)+Separator,
+                                    fileName);
   Modelica.Utilities.Streams.print(String(f_tl.T) + Separator
                                  + String(f_tl.d) + Separator
                                  + String(f_tl.tau) + Separator

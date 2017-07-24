@@ -27,7 +27,7 @@ protected
   Medium.SaturationProperties sat_ASHRAE = Medium.setSat_T(T=233.15); // -40°C
   Medium.SaturationProperties sat_NBP = Medium.setSat_p(p=101325); // 1.01325 bar = 1atm
 
-  //Medium.EoS.HelmholtzDerivs f_crit = Medium.EoS.setHelmholtzDerivsThird(T=T_crit, d=d_crit, phase=1);
+  Medium.EoS.HelmholtzDerivs f_crit = Medium.EoS.setHelmholtzDerivsThird(T=T_crit, d=d_crit, phase=1);
   Medium.EoS.HelmholtzDerivs f_tl = Medium.EoS.setHelmholtzDerivsThird(T=sat_trip.liq.T, d=sat_trip.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs f_tv = Medium.EoS.setHelmholtzDerivsThird(T=sat_trip.vap.T, d=sat_trip.vap.d, phase=1);
   Medium.EoS.HelmholtzDerivs f_IIR = Medium.EoS.setHelmholtzDerivsThird(T=sat_IIR.liq.T, d=sat_IIR.liq.d, phase=1);
@@ -80,25 +80,25 @@ algorithm
                                    + "alpha_rttt" +Separator,
                                      fileName);
     // print fixed values
-//     Modelica.Utilities.Streams.print(String(f_crit.T) + Separator
-//                                    + String(f_crit.d) + Separator
-//                                    + String(f_crit.tau) + Separator
-//                                    + String(f_crit.delta) + Separator
-//                                    + String(f_crit.i) + Separator
-//                                    + String(f_crit.it)+Separator
-//                                    + String(f_crit.itt)+Separator
-//                                    + String(f_crit.ittt)+Separator
-//                                    + String(f_crit.r)+Separator
-//                                    + String(f_crit.rd)+Separator
-//                                    + String(f_crit.rdd)+Separator
-//                                    + String(f_crit.rt)+Separator
-//                                    + String(f_crit.rtt)+Separator
-//                                    + String(f_crit.rtd)+Separator
-//                                    + String(f_crit.rddd)+Separator
-//                                    + String(f_crit.rtdd)+Separator
-//                                    + String(f_crit.rttd)+Separator
-//                                    + String(f_crit.rttt)+Separator,
-//                                      fileName);
+     Modelica.Utilities.Streams.print(String(f_crit.T) + Separator
+                                    + String(f_crit.d) + Separator
+                                    + String(f_crit.tau) + Separator
+                                    + String(f_crit.delta) + Separator
+                                    + String(f_crit.i) + Separator
+                                    + String(f_crit.it)+Separator
+                                    + String(f_crit.itt)+Separator
+                                    + String(f_crit.ittt)+Separator
+                                    + String(f_crit.r)+Separator
+                                    + String(f_crit.rd)+Separator
+                                    + String(f_crit.rdd)+Separator
+                                    + String(f_crit.rt)+Separator
+                                    + String(f_crit.rtt)+Separator
+                                    + String(f_crit.rtd)+Separator
+                                    + String(f_crit.rddd)+Separator
+                                    + String(f_crit.rtdd)+Separator
+                                    + String(f_crit.rttd)+Separator
+                                    + String(f_crit.rttt)+Separator,
+                                      fileName);
     Modelica.Utilities.Streams.print(String(f_tl.T) + Separator
                                    + String(f_tl.d) + Separator
                                    + String(f_tl.tau) + Separator
