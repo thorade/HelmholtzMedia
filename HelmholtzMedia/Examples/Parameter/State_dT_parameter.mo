@@ -13,8 +13,8 @@ model State_dT_parameter "calculate state record from dT input"
   // Medium.SurfaceTension sigma;
   // Medium.DynamicViscosity eta;
   // Medium.ThermalConductivity lambda;
-  // Medium.DerTemperatureByPressure dTp;
-  // Medium.DerPressureByTemperature dpT_sat;
+  Medium.DerTemperatureByPressure dTp;
+  Medium.DerPressureByTemperature dpT_sat;
   Medium.DerPressureByTemperature dpT;
   Medium.SpecificHeatCapacity cv;
   Medium.SpecificHeatCapacity cp;
@@ -27,14 +27,14 @@ model State_dT_parameter "calculate state record from dT input"
   Medium.DerEnthalpyByPressure delta_T;
 
 equation
-  state=Medium.setState_dTX(d=d, T=T, phase=1);
+  state=Medium.setState_dTX(d=d, T=T, phase=0);
 
   // x=Medium.vapourQuality(state);
   // sigma=Medium.surfaceTension(Medium.setSat_T(T=T));
   // eta=Medium.dynamicViscosity(state);
   // lambda=Medium.thermalConductivity(state);
-  //dTp=Medium.saturationTemperature_derp(p=state.p);
-  //dpT_sat=Medium.saturationPressure_derT(T=state.T);
+  dTp=Medium.saturationTemperature_derp(p=state.p);
+  dpT_sat=Medium.saturationPressure_derT(T=state.T);
   dpT=Medium.EoS.dpTd(f=f);
   cv=Medium.specificHeatCapacityCv(state=state);
   cp=Medium.specificHeatCapacityCp(state=state);
