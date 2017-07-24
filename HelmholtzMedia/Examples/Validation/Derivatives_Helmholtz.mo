@@ -80,25 +80,25 @@ algorithm
                                    + "alpha_rttt" +Separator,
                                      fileName);
     // print fixed values
-     Modelica.Utilities.Streams.print(String(f_crit.T) + Separator
-                                    + String(f_crit.d) + Separator
-                                    + String(f_crit.tau) + Separator
-                                    + String(f_crit.delta) + Separator
-                                    + String(f_crit.i) + Separator
-                                    + String(f_crit.it)+Separator
-                                    + String(f_crit.itt)+Separator
-                                    + String(f_crit.ittt)+Separator
-                                    + String(f_crit.r)+Separator
-                                    + String(f_crit.rd)+Separator
-                                    + String(f_crit.rdd)+Separator
-                                    + String(f_crit.rt)+Separator
-                                    + String(f_crit.rtt)+Separator
-                                    + String(f_crit.rtd)+Separator
-                                    + String(f_crit.rddd)+Separator
-                                    + String(f_crit.rtdd)+Separator
-                                    + String(f_crit.rttd)+Separator
-                                    + String(f_crit.rttt)+Separator,
-                                      fileName);
+    Modelica.Utilities.Streams.print(String(f_crit.T) + Separator
+                                   + String(f_crit.d) + Separator
+                                   + String(f_crit.tau) + Separator
+                                   + String(f_crit.delta) + Separator
+                                   + String(f_crit.i) + Separator
+                                   + String(f_crit.it)+Separator
+                                   + String(f_crit.itt)+Separator
+                                   + String(f_crit.ittt)+Separator
+                                   + String(f_crit.r)+Separator
+                                   + String(f_crit.rd)+Separator
+                                   + String(f_crit.rdd)+Separator
+                                   + String(f_crit.rt)+Separator
+                                   + String(f_crit.rtt)+Separator
+                                   + String(f_crit.rtd)+Separator
+                                   + String(f_crit.rddd)+Separator
+                                   + String(f_crit.rtdd)+Separator
+                                   + String(f_crit.rttd)+Separator
+                                   + String(f_crit.rttt)+Separator,
+                                     fileName);
     Modelica.Utilities.Streams.print(String(f_tl.T) + Separator
                                    + String(f_tl.d) + Separator
                                    + String(f_tl.tau) + Separator
