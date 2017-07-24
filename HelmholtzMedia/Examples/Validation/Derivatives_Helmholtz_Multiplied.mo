@@ -1,30 +1,30 @@
-within HelmholtzMedia.Examples.Validation;
+ï»¿within HelmholtzMedia.Examples.Validation;
 model Derivatives_Helmholtz_Multiplied
   // validate derivatives of Helmholtz energy (single phase state)
   // values for comparison are given by RefProp
   // go to Options, Preferences, check "Show options used for analyzing EoS"
 
-  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
-  parameter Medium.Density d=1e-3;
-  parameter Medium.Temperature T=500;
+  replaceable package Medium = HelmholtzMedia.HelmholtzFluids.Carbondioxide;
+  parameter Medium.Density d=533;
+  parameter Medium.Temperature T=304;
 
 protected
   final constant String fileName = "HelmholtzDerivs_multiplied.csv";
   final constant String Separator = ";";
 
   constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
-  constant Medium.SpecificHeatCapacity R=Modelica.Constants.R/MM
+  constant Medium.SpecificHeatCapacity R=Medium.fluidConstants[1].gasConstant/MM
     "specific gas constant";
   constant Medium.Density d_crit=MM/Medium.fluidConstants[1].criticalMolarVolume;
   constant Medium.Temperature T_crit=Medium.fluidConstants[1].criticalTemperature;
   constant Medium.Temperature T_trip=Medium.fluidConstants[1].triplePointTemperature;
 
   Medium.SaturationProperties sat_trip = Medium.setSat_T(T=T_trip);
-  Medium.SaturationProperties sat_IIR = Medium.setSat_T(T=273.15); // 0°C
-  Medium.SaturationProperties sat_ASHRAE = Medium.setSat_T(T=233.15); // -40°C
+  Medium.SaturationProperties sat_IIR = Medium.setSat_T(T=273.15); // 0Â°C
+  Medium.SaturationProperties sat_ASHRAE = Medium.setSat_T(T=233.15); // -40Â°C
   Medium.SaturationProperties sat_NBP = Medium.setSat_p(p=101325); // 1.01325 bar = 1atm
 
-  Medium.EoS.HelmholtzDerivs f_crit = Medium.EoS.setHelmholtzDerivsThird(T=T_crit, d=d_crit, phase=1);
+ // Medium.EoS.HelmholtzDerivs f_crit = Medium.EoS.setHelmholtzDerivsThird(T=T_crit, d=d_crit, phase=1);
   Medium.EoS.HelmholtzDerivs f_tl = Medium.EoS.setHelmholtzDerivsThird(T=sat_trip.liq.T, d=sat_trip.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs f_tv = Medium.EoS.setHelmholtzDerivsThird(T=sat_trip.vap.T, d=sat_trip.vap.d, phase=1);
   Medium.EoS.HelmholtzDerivs f_IIR = Medium.EoS.setHelmholtzDerivsThird(T=sat_IIR.liq.T, d=sat_IIR.liq.d, phase=1);
@@ -97,25 +97,25 @@ algorithm
                                    + "tau*tau*delta*alpha_rttd" +Separator,
                                      fileName);
   // print fixed values
-  Modelica.Utilities.Streams.print(String(f_crit.T) + Separator
-                                 + String(f_crit.d) + Separator
-                                 + String(f_crit.tau) + Separator
-                                 + String(f_crit.delta) + Separator
-                                 + String(f_crit.i) + Separator
-                                 + String(f_crit.it*f_crit.tau)+Separator
-                                 + String(f_crit.itt*f_crit.tau*f_crit.tau)+Separator
-                                 + String(f_crit.ittt*f_crit.tau*f_crit.tau*f_crit.tau)+Separator
-                                 + String(f_crit.r)+Separator
-                                 + String(f_crit.rt*f_crit.tau)+Separator
-                                 + String(f_crit.rtt*f_crit.tau*f_crit.tau)+Separator
-                                 + String(f_crit.rttt*f_crit.tau*f_crit.tau*f_crit.tau)+Separator
-                                 + String(f_crit.rd*f_crit.delta)+Separator
-                                 + String(f_crit.rdd*f_crit.delta*f_crit.delta)+Separator
-                                 + String(f_crit.rddd*f_crit.delta*f_crit.delta*f_crit.delta)+Separator
-                                 + String(f_crit.rtd*f_crit.tau*f_crit.delta)+Separator
-                                 + String(f_crit.rtdd*f_crit.tau*f_crit.delta*f_crit.delta)+Separator
-                                 + String(f_crit.rttd*f_crit.tau*f_crit.tau*f_crit.delta)+Separator,
-                                   fileName);
+//   Modelica.Utilities.Streams.print(String(f_crit.T) + Separator
+//                                  + String(f_crit.d) + Separator
+//                                  + String(f_crit.tau) + Separator
+//                                  + String(f_crit.delta) + Separator
+//                                  + String(f_crit.i) + Separator
+//                                  + String(f_crit.it*f_crit.tau)+Separator
+//                                  + String(f_crit.itt*f_crit.tau*f_crit.tau)+Separator
+//                                  + String(f_crit.ittt*f_crit.tau*f_crit.tau*f_crit.tau)+Separator
+//                                  + String(f_crit.r)+Separator
+//                                  + String(f_crit.rt*f_crit.tau)+Separator
+//                                  + String(f_crit.rtt*f_crit.tau*f_crit.tau)+Separator
+//                                  + String(f_crit.rttt*f_crit.tau*f_crit.tau*f_crit.tau)+Separator
+//                                  + String(f_crit.rd*f_crit.delta)+Separator
+//                                  + String(f_crit.rdd*f_crit.delta*f_crit.delta)+Separator
+//                                  + String(f_crit.rddd*f_crit.delta*f_crit.delta*f_crit.delta)+Separator
+//                                  + String(f_crit.rtd*f_crit.tau*f_crit.delta)+Separator
+//                                  + String(f_crit.rtdd*f_crit.tau*f_crit.delta*f_crit.delta)+Separator
+//                                  + String(f_crit.rttd*f_crit.tau*f_crit.tau*f_crit.delta)+Separator,
+//                                    fileName);
   Modelica.Utilities.Streams.print(String(f_tl.T) + Separator
                                  + String(f_tl.d) + Separator
                                  + String(f_tl.tau) + Separator

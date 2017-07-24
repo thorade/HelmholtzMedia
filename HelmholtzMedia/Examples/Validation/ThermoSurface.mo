@@ -1,7 +1,7 @@
 within HelmholtzMedia.Examples.Validation;
 model ThermoSurface "visualisation of thermodynamic surface"
 
-  package Medium = HelmholtzMedia.HelmholtzFluids.Butane;
+  replaceable package Medium = HelmholtzMedia.HelmholtzFluids.Butane;
   Medium.ThermodynamicState state = Medium.setState_pT(p=p, T=T, phase=0);
   Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(T=state.T, d=state.d, phase=1);
 

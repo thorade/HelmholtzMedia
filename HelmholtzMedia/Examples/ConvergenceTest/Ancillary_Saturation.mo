@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model Ancillary_Saturation
-  package Medium = HelmholtzFluids.Helium;
+  package Medium = HelmholtzFluids.Carbondioxide_Short;
   Medium.Temperature Tsat;
   Medium.AbsolutePressure psat;
   Medium.AbsolutePressure pmelt;

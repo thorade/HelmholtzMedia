@@ -2,7 +2,7 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_SinglePhase
   "compare analytical derivatives to numerical derivatives"
 
-  package Medium = HelmholtzFluids.Butane;
+  replaceable package Medium = HelmholtzFluids.Butane;
   // p and T always result in single-phase
   parameter Medium.Temperature T=400;
   Medium.AbsolutePressure p=101325;

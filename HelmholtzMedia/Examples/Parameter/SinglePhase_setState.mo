@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Parameter;
 model SinglePhase_setState
-  package Medium = HelmholtzFluids.Butane;
+  replaceable package Medium = HelmholtzFluids.Carbondioxide_Short;
 
   parameter Medium.AbsolutePressure p=101325;
   parameter Medium.Temperature T=298.15;

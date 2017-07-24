@@ -2,7 +2,7 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_SaturationBoundary
   "compare analytical derivatives to numerical derivatives"
 
-  package Medium = HelmholtzFluids.Butane;
+  replaceable package Medium = HelmholtzFluids.Butane;
 
   // right at T_trip and T_crit, numerical derivatives will fail
   Modelica.Blocks.Sources.Ramp T_ramp(

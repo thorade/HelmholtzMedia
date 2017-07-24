@@ -1,7 +1,7 @@
 within HelmholtzMedia.Examples.Parameter;
 model State_pT_parameter_Transport "calculate state record from pT input"
 
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.Carbondioxide;
 
   parameter Medium.AbsolutePressure p=101325;
   parameter Medium.Temperature T=298.15;

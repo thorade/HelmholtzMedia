@@ -1,17 +1,18 @@
-within HelmholtzMedia.Examples.Validation;
+ï»¿within HelmholtzMedia.Examples.Validation;
 model ReferenceState
-  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
+  replaceable package Medium =
+      HelmholtzMedia.HelmholtzFluids.Carbondioxide;
 
   input String fileName = "ReferenceState_.csv";
   input String separator = ";";
-  Medium.ReferenceState ref=Medium.ReferenceState.NBP;
+  Medium.ReferenceState ref=Medium.ReferenceState.IIR;
   output Medium.SpecificEnthalpy h_ref;
   output Medium.SpecificEntropy s_ref;
 
 protected
   Medium.SaturationProperties sat;
-  final constant Medium.Temperature T_IIR = 273.15; // 0°C;
-  final constant Medium.Temperature T_ASHRAE = 233.15; // -40°C;
+  final constant Medium.Temperature T_IIR = 273.15; // 0Â°C;
+  final constant Medium.Temperature T_ASHRAE = 233.15; // -40Â°C;
   final constant Medium.AbsolutePressure p_NBP = 101325; // 1.01325 bar = 1 atm
 
 algorithm

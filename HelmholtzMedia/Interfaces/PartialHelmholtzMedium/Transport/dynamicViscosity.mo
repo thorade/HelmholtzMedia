@@ -1,4 +1,4 @@
-within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Transport;
+﻿within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Transport;
 function dynamicViscosity "Returns dynamic Viscosity"
   input ThermodynamicState state;
   output DynamicViscosity eta;
@@ -17,7 +17,7 @@ algorithm
     // composite models
     eta := dynamicViscosity_dilute(state) + dynamicViscosity_initial(state) + dynamicViscosity_residual(state);
   end if;
-  // RefProp results are in �Pa*s where � means micro or 1E-6 but SI default is Pa*s
+  // RefProp results are in µPa*s where µ means micro or 1E-6 but SI default is Pa*s
   eta := micro*eta;
 
   annotation (Documentation(info="<html>

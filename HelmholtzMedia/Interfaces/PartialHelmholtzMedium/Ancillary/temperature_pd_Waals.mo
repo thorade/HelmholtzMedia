@@ -6,7 +6,7 @@ function temperature_pd_Waals
 
 protected
   constant MolarMass MM = fluidConstants[1].molarMass;
-  constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+  constant SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM
     "specific gas constant";
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
   constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;

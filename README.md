@@ -19,6 +19,7 @@ doi:[10.15480/882.1207][3]
 
 The following fluids have been implemented with EoS and transport properties:  
 [Butane](HelmholtzMedia/HelmholtzFluids/Butane/package.mo),
+[Carbon Dioxide](HelmholtzMedia/HelmholtzFluids/Carbondioxide/package.mo) (with two different EoS),
 [Ethanol](HelmholtzMedia/HelmholtzFluids/Ethanol/package.mo),
 [Isobutane](HelmholtzMedia/HelmholtzFluids/Isobutane/package.mo),
 [Isopentane](HelmholtzMedia/HelmholtzFluids/Isopentane/package.mo),
@@ -31,7 +32,7 @@ The following fluids have been implemented with EoS only:
 [Hexamethyldisiloxane (HMDS)](HelmholtzMedia/HelmholtzFluids/HMDS/package.mo).
 
 ## Current release
-Download the newest [tagged version](../../tags).  
+Download the newest [tagged version](https://github.com/thorade/HelmholtzMedia/tags).  
 In the future, there might be a release branch and official releases.
 
 ## License
@@ -42,8 +43,8 @@ it is available under the BSD 3-Clause license.
 Upon request, it is also available under other licenses, including the [Modelica License 2](https://www.modelica.org/licenses/ModelicaLicense2).  
 
 ## Development and contribution
-You may report feedback, issues or feature-requests using the [Issues](../../issues) button.  
-Code contributions are very welcome, especially in the form of [Pull Requests](../../pulls).
+You may report feedback, issues or feature-requests using the [Issues](https://github.com/thorade/HelmholtzMedia/issues) button.  
+Code contributions are very welcome, especially in the form of [Pull Requests](https://github.com/thorade/HelmholtzMedia/pulls).
 
 
 [1]: http://dx.doi.org/10.3384/ecp1207663 "Modelica Conference Paper: HelmholtzMedia"

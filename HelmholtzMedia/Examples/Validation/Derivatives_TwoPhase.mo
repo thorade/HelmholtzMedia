@@ -2,7 +2,7 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_TwoPhase
   "compare analytical derivatives to numerical derivatives"
 
-  package Medium = HelmholtzFluids.Helium;
+  replaceable package Medium = HelmholtzFluids.Helium;
   // choose d and T which will result in two-phase
   parameter Medium.Density d=228;
   parameter Medium.Temperature T=220;

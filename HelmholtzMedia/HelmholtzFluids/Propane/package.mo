@@ -69,11 +69,11 @@ extends Interfaces.PartialHelmholtzMedium(
       +9.337,          -5.363757;
       +7.922,         -11.762957],
     residualPoly=[
-      +0.42910051E-01,  1.00,  4.,  0.;
-       0.17313671E+01,  0.33,  1.,  0.;
-      -0.24516524E+01,  0.80,  1.,  0.;
-       0.34157466E+00,  0.43,  2.,  0.;
-      -0.46047898E+00,  0.90,  2.,  0.],
+      +0.42910051E-01,  1.00,  4.;
+       0.17313671E+01,  0.33,  1.;
+      -0.24516524E+01,  0.80,  1.;
+       0.34157466E+00,  0.43,  2.;
+      -0.46047898E+00,  0.90,  2.],
     residualBwr=[
       -0.66847295E+00,  2.46,  1.,  1.;
        0.20889705E+00,  2.09,  3.,  1.;
@@ -117,8 +117,8 @@ extends Interfaces.PartialHelmholtzMedium(
        6.16079E-3,    1,   5,   0],
     xi_0=0.194E-9,
     Gamma_0=0.0496,
-    qd_inverse=0.875350E-9,
-    T_ref=637.68) "Coefficients for the thermal conductivity";
+    qd_inverse=0.716635E-9,
+    T_ref=554.73) "Coefficients for the thermal conductivity";
 
   final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsPropane(

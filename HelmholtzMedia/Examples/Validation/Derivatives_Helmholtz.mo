@@ -1,12 +1,14 @@
-within HelmholtzMedia.Examples.Validation;
+ï»¿within HelmholtzMedia.Examples.Validation;
 model Derivatives_Helmholtz
   // validate derivatives of Helmholtz energy (single phase state)
   // values for comparison are given in IAPWS-95 (Table 6)
   // http://iapws.org/relguide/IAPWS-95.htm
 
-  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
-  parameter Medium.Density d=3;
-  parameter Medium.Temperature T=500;
+  replaceable package Medium = HelmholtzMedia.HelmholtzFluids.Carbondioxide;
+  parameter Medium.Density d=533;
+  parameter Medium.Temperature T=304;
+  Medium.ThermodynamicState state = Medium.setState_dTX(d=d, T=T, phase=1);
+  Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(T=T, d=d, phase=1);
 
 protected
   String fileName = "HelmholtzDerivs.csv";
@@ -14,24 +16,23 @@ protected
   String Separator = ";";
 
   constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
-  constant Medium.SpecificHeatCapacity R=Modelica.Constants.R/MM
+  constant Medium.SpecificHeatCapacity R=Medium.fluidConstants[1].gasConstant/MM
     "specific gas constant";
   constant Medium.Density d_crit=MM/Medium.fluidConstants[1].criticalMolarVolume;
   constant Medium.Temperature T_crit=Medium.fluidConstants[1].criticalTemperature;
   constant Medium.Temperature T_trip=Medium.fluidConstants[1].triplePointTemperature;
 
   Medium.SaturationProperties sat_trip = Medium.setSat_T(T=T_trip);
-  Medium.SaturationProperties sat_IIR = Medium.setSat_T(T=273.15); // 0°C
-  Medium.SaturationProperties sat_ASHRAE = Medium.setSat_T(T=233.15); // -40°C
+  Medium.SaturationProperties sat_IIR = Medium.setSat_T(T=273.15); // 0Â°C
+  Medium.SaturationProperties sat_ASHRAE = Medium.setSat_T(T=233.15); // -40Â°C
   Medium.SaturationProperties sat_NBP = Medium.setSat_p(p=101325); // 1.01325 bar = 1atm
 
-  Medium.EoS.HelmholtzDerivs f_crit = Medium.EoS.setHelmholtzDerivsThird(T=T_crit, d=d_crit, phase=1);
+  //Medium.EoS.HelmholtzDerivs f_crit = Medium.EoS.setHelmholtzDerivsThird(T=T_crit, d=d_crit, phase=1);
   Medium.EoS.HelmholtzDerivs f_tl = Medium.EoS.setHelmholtzDerivsThird(T=sat_trip.liq.T, d=sat_trip.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs f_tv = Medium.EoS.setHelmholtzDerivsThird(T=sat_trip.vap.T, d=sat_trip.vap.d, phase=1);
   Medium.EoS.HelmholtzDerivs f_IIR = Medium.EoS.setHelmholtzDerivsThird(T=sat_IIR.liq.T, d=sat_IIR.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs f_ASHRAE = Medium.EoS.setHelmholtzDerivsThird(T=sat_ASHRAE.liq.T, d=sat_ASHRAE.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs f_NBP = Medium.EoS.setHelmholtzDerivsThird(T=sat_NBP.liq.T, d=sat_NBP.liq.d, phase=1);
-  Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(T=T, d=d, phase=1);
   Medium.EoS.HelmholtzDerivs f_num(T=T, d=d);
 
   Real delta(unit="1")=d/d_crit "reduced density";
@@ -79,25 +80,25 @@ algorithm
                                    + "alpha_rttt" +Separator,
                                      fileName);
     // print fixed values
-    Modelica.Utilities.Streams.print(String(f_crit.T) + Separator
-                                   + String(f_crit.d) + Separator
-                                   + String(f_crit.tau) + Separator
-                                   + String(f_crit.delta) + Separator
-                                   + String(f_crit.i) + Separator
-                                   + String(f_crit.it)+Separator
-                                   + String(f_crit.itt)+Separator
-                                   + String(f_crit.ittt)+Separator
-                                   + String(f_crit.r)+Separator
-                                   + String(f_crit.rd)+Separator
-                                   + String(f_crit.rdd)+Separator
-                                   + String(f_crit.rt)+Separator
-                                   + String(f_crit.rtt)+Separator
-                                   + String(f_crit.rtd)+Separator
-                                   + String(f_crit.rddd)+Separator
-                                   + String(f_crit.rtdd)+Separator
-                                   + String(f_crit.rttd)+Separator
-                                   + String(f_crit.rttt)+Separator,
-                                     fileName);
+//     Modelica.Utilities.Streams.print(String(f_crit.T) + Separator
+//                                    + String(f_crit.d) + Separator
+//                                    + String(f_crit.tau) + Separator
+//                                    + String(f_crit.delta) + Separator
+//                                    + String(f_crit.i) + Separator
+//                                    + String(f_crit.it)+Separator
+//                                    + String(f_crit.itt)+Separator
+//                                    + String(f_crit.ittt)+Separator
+//                                    + String(f_crit.r)+Separator
+//                                    + String(f_crit.rd)+Separator
+//                                    + String(f_crit.rdd)+Separator
+//                                    + String(f_crit.rt)+Separator
+//                                    + String(f_crit.rtt)+Separator
+//                                    + String(f_crit.rtd)+Separator
+//                                    + String(f_crit.rddd)+Separator
+//                                    + String(f_crit.rtdd)+Separator
+//                                    + String(f_crit.rttd)+Separator
+//                                    + String(f_crit.rttt)+Separator,
+//                                      fileName);
     Modelica.Utilities.Streams.print(String(f_tl.T) + Separator
                                    + String(f_tl.d) + Separator
                                    + String(f_tl.tau) + Separator
