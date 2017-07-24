@@ -8,7 +8,7 @@ function setState_Ts "Return thermodynamic state as function of (T, s)"
 
 protected
   MolarMass MM = fluidConstants[1].molarMass;
-  SpecificHeatCapacity R=Modelica.Constants.R/MM "specific gas constant";
+  SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM "specific gas constant";
   Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
   Temperature T_crit=fluidConstants[1].criticalTemperature;
   Temperature T_trip=fluidConstants[1].triplePointTemperature;

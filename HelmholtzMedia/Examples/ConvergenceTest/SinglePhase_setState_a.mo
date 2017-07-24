@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model SinglePhase_setState_a
-  package Medium = HelmholtzFluids.Helium;
+  replaceable package Medium = HelmholtzFluids.Carbondioxide;
   Medium.AbsolutePressure p(start=101325);
   Medium.Temperature T(start=298.15);
 
@@ -14,8 +14,8 @@ model SinglePhase_setState_a
 Modelica.Blocks.Sources.Ramp T_sub(
     duration=4,
     startTime=0.1,
-    height=Tcrit - Tmin,
-    offset=Tmin)
+    height=Tcrit - Tmin - 3,
+    offset=Tmin + 3)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
 
 Modelica.Blocks.Sources.Ramp T_super(

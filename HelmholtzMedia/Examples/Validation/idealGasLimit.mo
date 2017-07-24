@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model idealGasLimit
-  package Medium = HelmholtzFluids.Helium;
+  replaceable package Medium = HelmholtzFluids.Helium;
 
   parameter Medium.Temperature T=298.15;
   Modelica.SIunits.SpecificVolume v;
@@ -11,7 +11,7 @@ model idealGasLimit
 //Medium.EoS.HelmholtzDerivs f0 = Medium.EoS.setHelmholtzDerivsThird(d=0, T=T, phase=1);
 
   constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
-  constant Medium.SpecificHeatCapacity R=Modelica.Constants.R/MM
+  constant Medium.SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM
     "specific gas constant";
   Real Z = (state.p*v)/(R*state.T);
 

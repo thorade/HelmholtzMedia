@@ -19,6 +19,9 @@ status
 stat
 stop
 
+# ignore Python Notebook checkpoints
+.ipynb_checkpoints/
+
 # ignore pdf files in source code folder
 HelmholtzMedia/**/*.pdf
 

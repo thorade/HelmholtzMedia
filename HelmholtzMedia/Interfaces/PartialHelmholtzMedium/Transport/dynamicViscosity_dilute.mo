@@ -33,6 +33,9 @@ algorithm
     Omega := 1.16145/T_star^0.14874 + 0.52487*exp(-0.77320*T_star) + 2.16178*exp(-2.43787*T_star);
   elseif (collisionIntegralModel == CollisionIntegralModel.CI1) then
     T_star := Modelica.Math.log(state.T/dynamicViscosityCoefficients.epsilon_kappa);
+    if abs(T_star)<1E-20 then
+      T_star := 1E-20;
+    end if;
     Omega := exp(sum(a[i, 1]*(T_star)^a[i, 2] for i in 1:size(a, 1)));
   elseif (collisionIntegralModel == CollisionIntegralModel.CI2) then
     T_star := (dynamicViscosityCoefficients.epsilon_kappa/state.T)^(1/3);

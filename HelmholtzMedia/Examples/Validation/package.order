@@ -6,12 +6,14 @@ Derivatives_SaturationBoundary
 Derivatives_TwoPhase
 ReferenceState
 CriticalState
+CriticalState_approach
 acentricFactor
 ThermoSurface
 MaxwellLoop
 idealGasLimit
 CheckDerivativesMedium
 CheckDerivativesButane
+CheckDerivativesCarbondioxide
 CheckDerivativesHelium
 CheckDerivativesWater
 TestDifferentiationMedium

@@ -1,11 +1,12 @@
 within HelmholtzMedia.Examples.Validation;
 model CriticalState
-  package Medium = HelmholtzMedia.HelmholtzFluids.Helium;
+  replaceable package Medium =
+      HelmholtzMedia.HelmholtzFluids.Carbondioxide;
   Medium.ThermodynamicState criticalState;
 
 protected
   constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
-  constant Medium.SpecificHeatCapacity R=Modelica.Constants.R/MM
+  constant Medium.SpecificHeatCapacity R=Medium.fluidConstants[1].gasConstant/MM
     "specific gas constant";
   constant Medium.Density d_crit=MM/Medium.fluidConstants[1].criticalMolarVolume;
   constant Medium.Temperature T_crit=Medium.fluidConstants[1].criticalTemperature;

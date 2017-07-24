@@ -1,10 +1,10 @@
 within HelmholtzMedia.Examples.Parameter;
 model State_dT_parameter "calculate state record from dT input"
 
-  package Medium = HelmholtzFluids.Butane;
+  package Medium = HelmholtzFluids.Carbondioxide;
 
-  parameter Medium.Density d=228;
-  parameter Medium.Temperature T=425.125-Modelica.Constants.eps;
+  parameter Medium.Density d=533;
+  parameter Medium.Temperature T=304;
 
   Medium.ThermodynamicState state;
   Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsSecond(d=state.d,T=state.T);

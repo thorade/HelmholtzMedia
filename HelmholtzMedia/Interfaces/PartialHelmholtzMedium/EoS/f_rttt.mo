@@ -10,10 +10,12 @@ protected
   final constant Integer nPoly = size(helmholtzCoefficients.residualPoly,1);
   final constant Integer nBwr = size(helmholtzCoefficients.residualBwr,1);
   final constant Integer nGauss = size(helmholtzCoefficients.residualGauss,1);
+  final constant Integer nNonAna = size(helmholtzCoefficients.residualNonAnalytical,1);
 
-  final constant Real[nPoly,4] p = helmholtzCoefficients.residualPoly;
+  final constant Real[nPoly,3] p = helmholtzCoefficients.residualPoly;
   final constant Real[nBwr,4] b = helmholtzCoefficients.residualBwr;
   final constant Real[nGauss,9] g = helmholtzCoefficients.residualGauss;
+  final constant Real[nNonAna,12] a = helmholtzCoefficients.residualNonAnalytical;
 
 algorithm
   f_residual_tau_tau :=

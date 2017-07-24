@@ -20,25 +20,27 @@ protected
   constant Real eps = Modelica.Constants.eps;
   constant Real kilo = 1e3;
   EoS.HelmholtzDerivs f;
-  Real cp0;  // ideal gas cp
+  Real cint;
   Real eta_0; // dilute contribution only
 
 algorithm
   // Modelica.Utilities.Streams.print("thermalConductivity_dilute: d = " + String(state.d) + " and T = " + String(state.T));
   tau := state.T/T_red_0;
 
-  // numerator terms, check exponent
+  // numerator terms, check last numerator exponent
   if (A_num[nDilute_num,2]>-90) then
     lambda_0 := sum(A_num[i, 1]*tau^A_num[i, 2] for i in 1:nDilute_num);
   else
+    // flagged algorithm, exclude last term from sum loop
     lambda_0 := sum(A_num[i, 1]*tau^A_num[i, 2] for i in 1:nDilute_num-1);
-    f := EoS.setHelmholtzDerivsSecond(d=state.d,T=state.T);
-    cp0 := EoS.cp0(f);
-    eta_0 := dynamicViscosity_dilute(state);
-    // Modelica.Utilities.Streams.print("flagged algorithms, cp0=" + String(cp0) + " and eta_0=" + String(eta_0));
     if (abs(A_num[nDilute_num,2]+99)<eps) then
-      Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 99");
-      assert(false, "not yet implemented");
+      // Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 99");
+      // used by CO2
+      // remember: RefProp uses molar units and g/mol, divide by MolarMass
+      f := EoS.setHelmholtzDerivsSecond(d=state.d,T=state.T);
+      cint := EoS.cp0(f)*f.MM -2.5*f.R*f.MM;
+      cint := 1.0 + A_num[nDilute_num, 1]*cint;
+      lambda_0 := lambda_0*cint;
     elseif (abs(A_num[nDilute_num,2]+98)<eps) then
       Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 98");
       assert(false, "not yet implemented");
@@ -47,14 +49,18 @@ algorithm
       assert(false, "not yet implemented");
     elseif (abs(A_num[nDilute_num,2]+96)<eps) then
       // Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 96");
+      // used by Pentane, Isopentane
       // remember: RefProp uses molar units and g/mol!
-      cp0 := cp0/f.R-2.5;
-      lambda_0 := (lambda_0*cp0+15.0/4.0)*f.R*eta_0/kilo;
+      f := EoS.setHelmholtzDerivsSecond(d=state.d,T=state.T);
+      cint := EoS.cp0(f) /f.R-2.5;
+      eta_0 := dynamicViscosity_dilute(state);
+      lambda_0 := (lambda_0*cint+15.0/4.0)*f.R*eta_0/kilo;
     end if;
   end if;
 
-  if (nDilute_den>1) then
+  if (nDilute_den>0) then
     // Modelica.Utilities.Streams.print("thermalConductivity_dilute: use denominator term");
+    // used by CO2
     denom := sum(A_den[i, 1]*tau^A_den[i, 2] for i in 1:nDilute_den);
   else
     denom := 1;

@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
 model Ancillary_StartValues
-  package Medium = HelmholtzFluids.Helium;
+  package Medium = HelmholtzFluids.Carbondioxide_Short;
   Medium.AbsolutePressure p;
   Medium.Temperature T;
   Medium.Density d;

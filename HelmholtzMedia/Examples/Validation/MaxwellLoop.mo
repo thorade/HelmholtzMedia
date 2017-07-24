@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.Validation;
 model MaxwellLoop "show Maxwell Loops"
-  package Medium = HelmholtzFluids.Butane;
+  replaceable package Medium = HelmholtzFluids.Butane;
   parameter Medium.Temperature T=298.15;
 
   Medium.Density d;
@@ -10,7 +10,7 @@ model MaxwellLoop "show Maxwell Loops"
 
 protected
   constant Medium.MolarMass MM=Medium.fluidConstants[1].molarMass;
-  constant Medium.SpecificHeatCapacity R=Modelica.Constants.R/MM
+  constant Medium.SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM
     "specific gas constant";
 
   constant Medium.Density dcrit=MM/Medium.fluidConstants[1].criticalMolarVolume;

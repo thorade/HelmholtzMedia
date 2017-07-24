@@ -13,7 +13,9 @@ partial package PartialHelmholtzMedium
     DipoleMoment(min=0, max=5),
     AbsolutePressure(min=Modelica.Constants.small, max=1e12),
     SpecificEntropy(min=-Modelica.Constants.inf, max=Modelica.Constants.inf),
-    ThermoStates = Choices.IndependentVariables.ph);
+    ThermoStates=Choices.IndependentVariables.ph,
+    redeclare record FluidConstants =
+      HelmholtzMedia.Interfaces.Types.myFluidConstants);
 
   constant HelmholtzMedia.Interfaces.Types.FluidLimits fluidLimits;
 
@@ -74,7 +76,7 @@ partial package PartialHelmholtzMedium
 
   equation
     MM = fluidConstants[1].molarMass;
-    R = Modelica.Constants.R/MM;
+    R = fluidConstants[1].gasConstant/MM;
 
     // use functions to calculate properties
     if (componentInputChoice == InputChoice.ph) then
@@ -127,7 +129,7 @@ partial package PartialHelmholtzMedium
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+    constant SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
@@ -281,7 +283,7 @@ with a Newton-Raphson approach for simultaneous equations.
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+    constant SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
@@ -435,7 +437,7 @@ protected
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+    constant SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
@@ -542,7 +544,7 @@ protected
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+    constant SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
@@ -700,7 +702,7 @@ protected
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+    constant SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
@@ -967,7 +969,7 @@ protected
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R=Modelica.Constants.R/MM
+    constant SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;

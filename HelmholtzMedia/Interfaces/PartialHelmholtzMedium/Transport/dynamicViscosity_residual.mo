@@ -94,12 +94,16 @@ algorithm
       delta_exp := delta;
     end if;
 
-    if (dynamicViscosityModel == DynamicViscosityModel.VS1) then
+    if size(g, 1) > 0 then
       // generalized RefProp algorithm, be careful with coeffs: they may differ from article
-      delta_0 := sum(g[i, 1]*tau^g[i, 2] for i in 1:size(g, 1));
-    elseif (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative) then
-      // alternative inverse form
-      delta_0 := g[1, 1]/(1 + sum(g[i, 1]*tau^g[i, 2] for i in 2:size(g, 1)));
+      if (dynamicViscosityModel == DynamicViscosityModel.VS1) then
+        delta_0 := sum(g[i, 1]*tau^g[i, 2] for i in 1:size(g, 1));
+      elseif (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative) then
+        // alternative inverse form
+        delta_0 := g[1, 1]/(1 + sum(g[i, 1]*tau^g[i, 2] for i in 2:size(g, 1)));
+      end if;
+    else
+      delta_0 := 1.0;
     end if;
     for i in 1:size(e, 1) loop
       visci := e[i, 1]*tau^e[i, 2]*delta^e[i, 3]*delta_0^e[i, 4]; // simple polynominal terms
@@ -123,7 +127,9 @@ algorithm
         xden := xden*exp(-delta_exp^de_po[i, 5]);
       end if;
     end for;
-    eta_r := eta_r + xnum/xden;
+    if xden <> 0 then
+      eta_r := eta_r + xnum/xden;
+    end if;
     // exponential terms not yet implemented!!
 
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
