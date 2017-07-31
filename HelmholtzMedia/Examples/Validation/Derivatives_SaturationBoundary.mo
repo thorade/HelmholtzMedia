@@ -2,7 +2,7 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_SaturationBoundary
   "compare analytical derivatives to numerical derivatives"
 
-  replaceable package Medium = HelmholtzFluids.Butane;
+  replaceable package Medium = HelmholtzFluids.Carbondioxide;
 
   // right at T_trip and T_crit, numerical derivatives will fail
   Modelica.Blocks.Sources.Ramp T_ramp(
@@ -12,9 +12,12 @@ model Derivatives_SaturationBoundary
     offset=Tmin + 1)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
   Medium.Temperature T=T_ramp.y;
+  Real lnpspc = log(sat.psat/pcrit);
+  Real tau1 = Tcrit/sat.Tsat-1;
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
   Medium.DerPressureByTemperature dpT=Medium.saturationPressure_derT(T=T);
   Medium.DerTemperatureByPressure dTp=Medium.saturationTemperature_derp(p=sat.psat);
+
 
 // Density derivatives
   Medium.DerDensityByTemperature ddT_liq_numerical;
@@ -65,6 +68,7 @@ model Derivatives_SaturationBoundary
 protected
   constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
   constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
+  constant Medium.AbsolutePressure pcrit=Medium.fluidConstants[1].criticalPressure;
   Medium.EoS.HelmholtzDerivs fl=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs fv=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.vap.d, phase=1);
   Medium.SaturationProperties sat_Tplus = Medium.setSat_T(T=1.0001*T);

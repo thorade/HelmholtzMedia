@@ -10,7 +10,7 @@ model MaxwellLoop "show Maxwell Loops"
 
 protected
   constant Medium.MolarMass MM=Medium.fluidConstants[1].molarMass;
-  constant Medium.SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM
+  constant Medium.SpecificHeatCapacity R=Medium.fluidConstants[1].gasConstant/MM
     "specific gas constant";
 
   constant Medium.Density dcrit=MM/Medium.fluidConstants[1].criticalMolarVolume;

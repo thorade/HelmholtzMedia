@@ -3,11 +3,11 @@ model ReferenceState
   replaceable package Medium =
       HelmholtzMedia.HelmholtzFluids.Carbondioxide;
 
-  input String fileName = "ReferenceState_.csv";
-  input String separator = ";";
+  parameter String fileName = "ReferenceState_.csv";
+  parameter String separator = ";";
   Medium.ReferenceState ref=Medium.ReferenceState.IIR;
-  output Medium.SpecificEnthalpy h_ref;
-  output Medium.SpecificEntropy s_ref;
+  Medium.SpecificEnthalpy h_ref;
+  Medium.SpecificEntropy s_ref;
 
 protected
   Medium.SaturationProperties sat;
