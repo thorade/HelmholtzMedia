@@ -2,12 +2,16 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_TwoPhase
   "compare analytical derivatives to numerical derivatives"
 
-  replaceable package Medium = HelmholtzFluids.Helium;
-  // choose d and T which will result in two-phase
-  parameter Medium.Density d=228;
-  parameter Medium.Temperature T=220;
-  Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
+  replaceable package Medium = HelmholtzFluids.R134a;
+
+  parameter Medium.Temperature T=0.7*T_crit;
+
+
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
+  Medium.Density d_liq=Medium.bubbleDensity(sat);
+  Medium.Density d_vap=Medium.dewDensity(sat);
+  Medium.Density d = 0.9*d_liq;
+  Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
 
 // Vapour mass fraction derivatives
   Real dxTv_numerical;
@@ -26,12 +30,15 @@ model Derivatives_TwoPhase
   Real dxps_analytical3;
 // Entropy derivatives
   Medium.DerEntropyByTemperature dsTd_numerical;
-  Medium.DerEntropyByTemperature dsTd_analytical;
+  Medium.DerEntropyByTemperature dsTd_analytical1;
+  Medium.DerEntropyByTemperature dsTd_analytical2;
 // Energy derivatives
   Medium.DerEnergyByTemperature duTd_numerical;
   Medium.DerEnergyByTemperature duTd_analytical1;
   Medium.DerEnergyByTemperature duTd_analytical2;
   Medium.DerEnergyByTemperature duTd_analytical3;
+  Medium.DerEnergyByDensity dudT_numerical;
+  Medium.DerEnergyByDensity dudT_analytical1;
 // Density derivatives
   Medium.DerDensityByEnthalpy ddhp_numerical;
   Medium.DerDensityByEnthalpy ddhp_analytical1;
@@ -50,6 +57,12 @@ model Derivatives_TwoPhase
   Medium.DerEnthalpyByTemperature dhTd_analytical2;
 
 protected
+  constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
+  constant Medium.SpecificHeatCapacity R=Medium.fluidConstants[1].gasConstant/MM
+    "specific gas constant";
+  constant Medium.Density d_crit=MM/Medium.fluidConstants[1].criticalMolarVolume;
+  constant Medium.Temperature T_crit=Medium.fluidConstants[1].criticalTemperature;
+
   Medium.DerPressureByTemperature dpT=(sat.vap.s - sat.liq.s)/(1.0/sat.vap.d - 1.0/sat.liq.d);
   Medium.DerTemperatureByPressure dTp=(1.0/sat.vap.d - 1.0/sat.liq.d)/(sat.vap.s - sat.liq.s);
   Medium.EoS.HelmholtzDerivs fl=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.liq.d, phase=1);
@@ -114,6 +127,8 @@ protected
       sat=sat);
 
 equation
+  assert(T<T_crit, "Temperature too high");
+  assert(d<d_liq and d>d_vap, "Selected state is single phase!");
   assert(state.phase == 2, "state not in two-phase region");
 
   Modelica.Utilities.Streams.print(" ");
@@ -158,22 +173,24 @@ equation
   Modelica.Utilities.Streams.print("Entropy");
   // check (ds/dT)@d=const
   dsTd_numerical = (T_plus.s - T_minus.s)/(T_plus.T - T_minus.T);
-  dsTd_analytical = (dsT_liq + x*(dsT_vap - dsT_liq) + dxTv_analytical1*(sat.vap.s-sat.liq.s));
-  Modelica.Utilities.Streams.print("  (ds/dT)@d=const  numerical= " + String(dsTd_numerical));
-  Modelica.Utilities.Streams.print("  (ds/dT)@d=const analytical= " + String(dsTd_analytical));
+  dsTd_analytical1 = (dsT_liq + x*(dsT_vap - dsT_liq) + dxTv_analytical1*(sat.vap.s-sat.liq.s));
+  dsTd_analytical2 = 1/T * Medium.specificHeatCapacityCv(state=state);
+  Modelica.Utilities.Streams.print("  (ds/dT)@d=const   numerical= " + String(dsTd_numerical));
+  Modelica.Utilities.Streams.print("  (ds/dT)@d=const analytical1= " + String(dsTd_analytical1));
+  Modelica.Utilities.Streams.print("  (ds/dT)@d=const analytical2= " + String(dsTd_analytical2));
 
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Internal energy");
   // check (du/dd)@T=const
-  // dudT_analytical = f.R*T/d*f.tau*f.delta*f.rtd;
-  // dudT_numerical = (d_plus.u-d_minus.u)/(d_plus.d-d_minus.d);
-  // Modelica.Utilities.Streams.print("(du/dd)@T=const analytical= " + String(dudT_analytical));
-  // Modelica.Utilities.Streams.print("(du/dd)@T=const  numerical= " + String(dudT_numerical));
+  dudT_numerical = (d_plus.u-d_minus.u)/(d_plus.d-d_minus.d);
+  dudT_analytical1 = -1/state.d^2*(sat.liq.u-sat.vap.u)/(1/sat.liq.d-1/sat.vap.d);
+  Modelica.Utilities.Streams.print("  (du/dd)@T=const   numerical= " + String(dudT_numerical));
+  Modelica.Utilities.Streams.print("  (du/dd)@T=const analytical1= " + String(dudT_analytical1));
   // check (du/dT)@d=const
   duTd_numerical = (T_plus.u - T_minus.u)/(T_plus.T - T_minus.T);
   duTd_analytical1 = Medium.specificHeatCapacityCv(state=state);
   duTd_analytical2 = (duT_liq + x*(duT_vap - duT_liq) + dxTv_analytical1*(sat.vap.u-sat.liq.u));
-  duTd_analytical3 = T*dsTd_analytical;
+  duTd_analytical3 = T*dsTd_analytical1;
   Modelica.Utilities.Streams.print("  (du/dT)@d=const   numerical= " + String(duTd_numerical));
   Modelica.Utilities.Streams.print("  (du/dT)@d=const analytical1= " + String(duTd_analytical1));
   Modelica.Utilities.Streams.print("  (du/dT)@d=const analytical2= " + String(duTd_analytical2));
