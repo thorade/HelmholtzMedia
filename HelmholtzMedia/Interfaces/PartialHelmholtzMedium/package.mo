@@ -1596,7 +1596,7 @@ protected
   redeclare function extends dewEnthalpy
   "returns specificEnthalpy from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
-  // inherits input sat and output hl
+  // inherits input sat and output hv
   algorithm
     hv := sat.vap.h;
   annotation(Inline = true);
@@ -1606,7 +1606,7 @@ protected
   redeclare function extends dewEntropy
   "returns specificEntropy from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
-  // inherits input sat and output hl
+  // inherits input sat and output sv
   algorithm
     sv := sat.vap.s;
   annotation(Inline = true);
@@ -1616,7 +1616,7 @@ protected
   redeclare function extends bubbleEntropy
   "returns specificEntropy from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
-  // inherits input sat and output hl
+  // inherits input sat and output sl
   algorithm
     sl := sat.liq.s;
   annotation(Inline = true);
@@ -1626,7 +1626,7 @@ protected
   redeclare function extends dewDensity
   "returns density from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
-  // inherits input sat and output hl
+  // inherits input sat and output dv
   algorithm
     dv := sat.vap.d;
   annotation(Inline = true);
@@ -1636,7 +1636,7 @@ protected
   redeclare function extends bubbleDensity
   "returns density from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
-  // inherits input sat and output hl
+  // inherits input sat and output dl
   algorithm
     dl := sat.liq.d;
   annotation(Inline = true);
