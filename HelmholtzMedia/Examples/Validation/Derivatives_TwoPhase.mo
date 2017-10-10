@@ -10,7 +10,7 @@ model Derivatives_TwoPhase
   Medium.SaturationProperties sat=Medium.setSat_T(T=T);
   Medium.Density d_liq=Medium.bubbleDensity(sat);
   Medium.Density d_vap=Medium.dewDensity(sat);
-  Medium.Density d = 0.9*d_liq;
+  Medium.Density d = 0.9*d_liq;  // use 0.9*d_liq or 1.1*d_vap
   Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
 
 // Vapour mass fraction derivatives
