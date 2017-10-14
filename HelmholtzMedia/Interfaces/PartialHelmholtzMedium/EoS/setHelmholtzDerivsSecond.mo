@@ -10,8 +10,8 @@ protected
   constant MolarMass MM = fluidConstants[1].molarMass;
   constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-  constant Real delta(unit="1")=d/d_crit "reduced density";
-  constant Real tau(unit="1")=T_crit/T "inverse reduced temperature";
+  Real delta(unit="1")=d/d_crit "reduced density";
+  Real tau(unit="1")=T_crit/T "inverse reduced temperature";
 
 algorithm
   f.d := d;
