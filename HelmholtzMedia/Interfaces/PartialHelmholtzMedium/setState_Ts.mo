@@ -7,11 +7,11 @@ function setState_Ts "Return thermodynamic state as function of (T, s)"
   output ThermodynamicState state "thermodynamic state record";
 
 protected
-  MolarMass MM = fluidConstants[1].molarMass;
-  SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM "specific gas constant";
-  Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-  Temperature T_crit=fluidConstants[1].criticalTemperature;
-  Temperature T_trip=fluidConstants[1].triplePointTemperature;
+  constant MolarMass MM = fluidConstants[1].molarMass;
+  constant SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM "specific gas constant";
+  constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+  constant Temperature T_crit=fluidConstants[1].criticalTemperature;
+  constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
 
   EoS.HelmholtzDerivs f(T=T);
   SaturationProperties sat;

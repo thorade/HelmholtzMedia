@@ -134,7 +134,7 @@ protected
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-    constant Real tau(unit="1")=T_crit/T "inverse reduced temperature";
+    Real tau(unit="1")=T_crit/T "inverse reduced temperature";
 
     EoS.HelmholtzDerivs fl(T=T);
     EoS.HelmholtzDerivs fv(T=T);
