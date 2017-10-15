@@ -46,7 +46,7 @@ algorithm
   <p>
 The thermal conductivity (TC) is split into three parts: ideal gas TC lamda_0, residual TC lambda_r and critical TC enhancement lambda_c.
 Sometimes the residual TC is again split into two parts.
-This allows to develop functions for each contribution seperately.
+This allows to develop functions for each contribution separately.
 The sum of ideal gas TC and residual TC is called background TC.
 Ideal gas TC depends on Temperature only and can be modelled by a quadratic function.
 Residual TC is also modeled by a polynominal.

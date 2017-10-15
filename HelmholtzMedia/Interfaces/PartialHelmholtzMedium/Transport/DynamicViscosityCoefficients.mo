@@ -14,7 +14,7 @@ record DynamicViscosityCoefficients
   constant Temperature reducingTemperature_1(min=1)=1 "reducing temperature";
   constant Real reducingViscosity_1=1 "reducing viscosity";
   constant Real[:,2] b = fill(0.0, 0, 2)
-    "coefficients for second viscosity virial coefficent B";
+    "coefficients for second viscosity virial coefficient B";
   // residual / high density viscosity contribution
   constant Real[:,1] c =  fill(0.0, 0, 1)
     "coefficients for residual viscosity contribution in VS2 model";

@@ -172,7 +172,7 @@ zero density (dilute gas) viscosity eta_0,
 initial density contribution eta_1
 and residual contribution eta_r.
 
-This allows to develop functions for each contribution seperately.
+This allows to develop functions for each contribution separately.
 The so called background viscosity is the sum of initial and residual viscosity.
 
 At the critical point and a small region around the critical point, the viscosity is enhanced.
