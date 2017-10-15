@@ -12,7 +12,7 @@ model Derivatives_Helmholtz
 
 protected
   String fileName = "HelmholtzDerivs.csv";
-  // While csv originally stood for comma-seperated-values, MS Excel uses semicolons to seperate the values
+  // While csv originally stood for comma-separated-values, MS Excel uses semicolons to separate the values
   String Separator = ";";
 
   constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
