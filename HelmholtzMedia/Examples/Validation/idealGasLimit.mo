@@ -15,8 +15,12 @@ model idealGasLimit
     "specific gas constant";
   Real Z = (state.p*v)/(R*state.T);
 
+  Medium.SpecificHeatCapacity cv = Medium.specificHeatCapacityCv(state);
   Medium.SpecificHeatCapacity cp = Medium.specificHeatCapacityCp(state);
   Medium.SpecificHeatCapacity cp0 = Medium.EoS.cp0(f);
+
+  Medium.IsentropicExponent gamma = Medium.isentropicExponent(state);
+  Medium.IsentropicExponent gamma0 = cp/cv;
 
 //Real B=f.rd*f.delta/d;
   Real B=f.rd/f.d_crit;
