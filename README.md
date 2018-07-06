@@ -6,7 +6,7 @@ This library calculates fluid properties from an equation of state (EoS) directl
 It supports EoS of the form f=f(T,d) meaning Helmholtz energy as a funtion of temperature and density.
 In addition to all state properties, this library calculates viscosity, thermal conductivity and surface tension.  
 
-A general description of the library can be found in the related publications:
+A general description of the library can be found in this [poster][4] or in the related publications:
 * Thorade, M. and Saadat, A. (2012). "HelmholtzMedia - A fluid properties library",
 _Proceedings of the 9th International Modelica Conference_,
 doi:[10.3384/ecp1207663][1]
@@ -50,3 +50,5 @@ Code contributions are very welcome, especially in the form of [Pull Requests](h
 [1]: http://dx.doi.org/10.3384/ecp1207663 "Modelica Conference Paper: HelmholtzMedia"
 [2]: http://dx.doi.org/10.1007/s12665-013-2394-z "ISI Journal Paper: Partial derivatives"
 [3]: http://dx.doi.org/10.15480/882.1207 "Dissertation"
+[4]: http://gfzpublic.gfz-potsdam.de/pubman/item/escidoc:247376:1/component/escidoc:247375/20907.pdf "Poster"
+
