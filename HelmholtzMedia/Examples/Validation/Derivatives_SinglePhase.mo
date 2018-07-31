@@ -114,7 +114,8 @@ model Derivatives_SinglePhase
   Medium.DerDensityByPressure ddpT_analytical;
   Medium.DerDensityByPressure ddpT_numerical;
 // Density wrt. ph
-  Medium.DerDensityByPressure ddph_analytical;
+  Medium.DerDensityByPressure ddph_analytical1;
+  Medium.DerDensityByPressure ddph_analytical2;
   Medium.DerDensityByPressure ddph_numerical;
   Medium.DerDensityByEnthalpy ddhp_analytical;
   Medium.DerDensityByEnthalpy ddhp_numerical;
@@ -470,9 +471,11 @@ equation
   Modelica.Utilities.Streams.print("  (d2d/dT dp) numerical2= " + String(d2dTp_numerical2));
   Modelica.Utilities.Streams.print("Density wrt. ph");
   // check (dd/dp)@h=const
-  ddph_analytical = Medium.density_derp_h(state=state);
+  ddph_analytical1 = Medium.density_derp_h(state=state);
+  ddph_analytical2 = (state.d*Medium.EoS.dpTd(f) + state.d^2*Medium.EoS.duTd(f)) / (state.d^2*Medium.EoS.dpdT(f)*Medium.EoS.duTd(f) + state.T*Medium.EoS.dpTd(f)^2);
   ddph_numerical = (pplus_hconst.d-pminus_hconst.d)/(pplus_hconst.p-pminus_hconst.p);
-  Modelica.Utilities.Streams.print("  (dd/dp)@h=const analytical= " + String(ddph_analytical));
+  Modelica.Utilities.Streams.print("  (dd/dp)@h=const analytical1= " + String(ddph_analytical1));
+  Modelica.Utilities.Streams.print("  (dd/dp)@h=const analytical2= " + String(ddph_analytical2));
   Modelica.Utilities.Streams.print("  (dd/dp)@h=const  numerical= " + String(ddph_numerical));
   // check (dd/dh)@p=const
   ddhp_analytical = Medium.density_derh_p(state=state);
