@@ -29,6 +29,7 @@ algorithm
   s_ref := Medium.bubbleEntropy(sat);
   h_ref := Medium.bubbleEnthalpy(sat);
 
+  when initial() then
   if not Modelica.Utilities.Files.exist(fileName) then
     // if file doesn't exist, create file and print header
     Modelica.Utilities.Streams.print("idealPower1" + separator
@@ -37,6 +38,7 @@ algorithm
                                     +"href" + separator,
                                      fileName);
   end if;
+  end when;
 
   when terminal() then
   Modelica.Utilities.Streams.print( String(Medium.helmholtzCoefficients.idealPower[1,1],significantDigits=15) + separator

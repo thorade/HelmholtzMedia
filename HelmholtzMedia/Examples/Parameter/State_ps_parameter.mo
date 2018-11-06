@@ -10,4 +10,6 @@ model State_ps_parameter "calculate state record from ps input"
 
 equation
   inletState=Medium.setState_psX(p=p, s=s, phase=0);
+
+  annotation (experiment(Tolerance=1e-06));
 end State_ps_parameter;

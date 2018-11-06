@@ -53,4 +53,5 @@ equation
   medium.p = p_generator.y;
   medium.h = h_generator.y;
 
+  annotation (experiment(Tolerance=1e-06));
 end BaseProps_sweep;

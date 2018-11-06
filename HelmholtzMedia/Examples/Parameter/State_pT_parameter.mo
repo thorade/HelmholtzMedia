@@ -14,4 +14,6 @@ equation
   state=Medium.setState_pT(p=p, T=T, phase=0);
   //state_ph=Medium.setState_ph(p=Medium.pressure(state), h=Medium.specificEnthalpy(state), phase=0);
   state_ps=Medium.setState_ps(p=Medium.pressure(state), s=Medium.specificEntropy(state), phase=0);
+
+  annotation (experiment(Tolerance=1e-06));
 end State_pT_parameter;

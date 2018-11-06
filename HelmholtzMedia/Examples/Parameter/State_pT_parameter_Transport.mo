@@ -46,4 +46,5 @@ equation
   beta=Medium.isobaricExpansionCoefficient(state);
   delta_T=Medium.isothermalThrottlingCoefficient(state);
 
+  annotation (experiment(Tolerance=1e-06));
 end State_pT_parameter_Transport;
