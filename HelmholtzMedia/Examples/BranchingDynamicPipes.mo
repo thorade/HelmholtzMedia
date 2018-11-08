@@ -4,7 +4,8 @@ model BranchingDynamicPipes
     redeclare package Medium =
         HelmholtzMedia.HelmholtzFluids.Carbondioxide,
     system(energyDynamics=Modelica.Fluid.Types.Dynamics.FixedInitial));
+
   annotation (experiment(
-      StopTime=2,
-      Tolerance=1e-04));
+      StopTime=1,
+      Tolerance=1e-05));
 end BranchingDynamicPipes;

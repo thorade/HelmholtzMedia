@@ -11,5 +11,8 @@ model State_ph_parameter "calculate state record from ph input"
 equation
   inletState=Medium.setState_phX(p=p, h=h, phase=0);
 
-  annotation (experiment(Tolerance=1e-06));
+  annotation (experiment(
+      StopTime=2,
+      Interval=1,
+      Tolerance=1e-07));
 end State_ph_parameter;

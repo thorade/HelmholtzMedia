@@ -11,5 +11,8 @@ model State_Ts_parameter "calculate state record from Ts input"
 equation
   inletState=Medium.setState_Ts(T=T, s=s, phase=0);
 
-  annotation (experiment(Tolerance=1e-06));
+  annotation (experiment(
+      StopTime=2,
+      Interval=1,
+      Tolerance=1e-07));
 end State_Ts_parameter;

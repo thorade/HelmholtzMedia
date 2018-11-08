@@ -22,5 +22,8 @@ equation
   sat_dl = Medium.setSat_d(d=sat.liq.d);
   sat_dv = Medium.setSat_d(d=sat.vap.d);
 
-  annotation (experiment(Tolerance=1e-06));
+  annotation (experiment(
+      StopTime=2,
+      Interval=1,
+      Tolerance=1e-07));
 end setSat_parameter;
