@@ -1,6 +1,6 @@
 within HelmholtzMedia.Examples.ConvergenceTest;
-model SinglePhase_setState_b
-  package Medium = HelmholtzFluids.Carbondioxide;
+model SinglePhase_setState_pramp_Tsine
+  package Medium = HelmholtzFluids.Butane;
   Medium.AbsolutePressure p(start=101325);
   Medium.Temperature T(start=298.15);
 
@@ -57,4 +57,4 @@ equation
   state_Ts=Medium.setState_Ts(T=Medium.temperature(state), s=Medium.specificEntropy(state), phase=0);
 
 annotation (experiment(StopTime=12));
-end SinglePhase_setState_b;
+end SinglePhase_setState_pramp_Tsine;

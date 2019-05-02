@@ -1,6 +1,6 @@
 setSat
-SinglePhase_setState_a
-SinglePhase_setState_b
+SinglePhase_setState_psine_Tramp
+SinglePhase_setState_pramp_Tsine
 SinglePhase_setState_b_Water
 TwoPhase_setState
 SinglePhase_Transport
