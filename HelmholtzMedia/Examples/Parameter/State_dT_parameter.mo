@@ -1,9 +1,9 @@
 within HelmholtzMedia.Examples.Parameter;
 model State_dT_parameter "calculate state record from dT input"
 
-  package Medium = HelmholtzFluids.Carbondioxide;
+  package Medium = HelmholtzFluids.R32;
 
-  parameter Medium.Density d=533;
+  parameter Medium.Density d=1000;
   parameter Medium.Temperature T=304;
 
   Medium.ThermodynamicState state;
