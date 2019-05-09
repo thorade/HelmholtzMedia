@@ -43,3 +43,8 @@ HelmholtzMedia/**/*.pdf
 
 # ignore PowerShell
 *.ps1
+
+# ignore some other files
+*.zip
+desktop.ini
+thumbs.db
