@@ -1,9 +1,9 @@
 ﻿within HelmholtzMedia.Examples.Validation;
 model ReferenceState
   replaceable package Medium =
-      HelmholtzMedia.HelmholtzFluids.Carbondioxide;
+      HelmholtzMedia.HelmholtzFluids.Carbondioxide_Short;
 
-  parameter String fileName = "ReferenceState_.csv";
+  parameter String fileName = "ReferenceState_" + Medium.mediumName + ".csv";
   parameter String separator = ";";
   Medium.ReferenceState ref=Medium.ReferenceState.IIR;
   Medium.SpecificEnthalpy h_ref;
