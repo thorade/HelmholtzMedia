@@ -29,7 +29,8 @@ The following fluids have been implemented with EoS and transport properties:
 
 The following fluids have been implemented with EoS only:  
 [Helium](HelmholtzMedia/HelmholtzFluids/Helium/package.mo),
-[Hexamethyldisiloxane (HMDS)](HelmholtzMedia/HelmholtzFluids/HMDS/package.mo).
+[Hexamethyldisiloxane (HMDS)](HelmholtzMedia/HelmholtzFluids/HMDS/package.mo),
+[R32](HelmholtzMedia/HelmholtzFluids/R32/package.mo).
 
 ## Current release
 Download the newest [tagged version](https://github.com/thorade/HelmholtzMedia/tags).  
