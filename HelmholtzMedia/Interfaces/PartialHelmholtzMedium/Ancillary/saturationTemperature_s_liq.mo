@@ -72,7 +72,7 @@ algorithm
             T1 := T4;
             R1 := R4;
           else
-            assert(false, "Ancillary.saturationTemperature_s (liquid side): this should not happen");
+            assert(false, "Ancillary.saturationTemperature_s (liquid side): this should not happen. Input was s=" + String(s));
           end if;
         end if;
         // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
@@ -96,7 +96,7 @@ algorithm
   elseif (s<=sl_trip) then
     T := T_trip;
   else
-    assert(false, "Ancillary.saturationTemperature_s (liquid side): this should also not happen");
+    assert(false, "Ancillary.saturationTemperature_s (liquid side): this should also not happen. Input was s=" + String(s));
   end if;
 
 end saturationTemperature_s_liq;
