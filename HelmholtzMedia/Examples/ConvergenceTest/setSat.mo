@@ -12,8 +12,8 @@ model setSat
 
   Modelica.SIunits.TemperatureDifference T_err_abs;
   Modelica.SIunits.PressureDifference p_err_abs;
-  Modelica.SIunits.Density dl_err_abs;
-  Modelica.SIunits.Density dv_err_abs;
+  Modelica.SIunits.Density dl_err_abs(min=-1e3) "Liquid density difference";
+  Modelica.SIunits.Density dv_err_abs(min=-1e3) "Vapour density difference";
 
   Modelica.Blocks.Sources.Ramp T_ramp(
     duration=8,
@@ -43,7 +43,7 @@ equation
   T_err_abs = sat_T.Tsat - sat_p.Tsat;
   p_err_abs = sat_T.psat - sat_p.psat;
   dl_err_abs = sat_T.liq.d - sat_dl.liq.d;
-  dv_err_abs = sat_T.vap.d - sat_dl.vap.d;
+  dv_err_abs = sat_T.vap.d - sat_dv.vap.d;
 
   annotation (experiment(
       StopTime=10,

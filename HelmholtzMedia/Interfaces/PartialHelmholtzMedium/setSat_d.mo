@@ -20,12 +20,11 @@ protected
   EoS.HelmholtzDerivs fv;
 
   Real RES[2] "residual function vector";
-  Real RSS "residual sum of squares";
   Real Jacobian[2,2] "Jacobian matrix";
   Real NS[2] "Newton step vector";
 
   constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
-  constant Real tolerance=1e-9 "tolerance for RSS";
+  constant Real tolerance=1e-6 "tolerance for p and T and d, needs to be smaller than simulation tolerance";
   Integer iter = 0;
   constant Integer iter_max = 200;
 
@@ -43,9 +42,8 @@ algorithm
     fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
     fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
     RES := {EoS.p(fl)-EoS.p(fv), EoS.g(fl)-EoS.g(fv)};
-    RSS := RES*RES/2;
 
-    while (RSS>tolerance) and (iter<iter_max) loop
+  while (iter<iter_max) and (iter<1 or abs(RES[1])>tolerance or abs(RES[2])>tolerance or abs(NS[1])>tolerance or abs(NS[2])>tolerance) loop
       iter := iter+1;
 
       // calculate Jacobian matrix and Newton Step vector
@@ -67,7 +65,6 @@ algorithm
       fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
       fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
       RES := {EoS.p(fl)-EoS.p(fv), EoS.g(fl)-EoS.g(fv)};
-      RSS := RES*RES/2;
     end while;
     sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
     sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
@@ -82,9 +79,8 @@ algorithm
     fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
     fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
     RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
-    RSS := RES*RES/2;
 
-    while (RSS>tolerance) and (iter<iter_max) loop
+  while (iter<iter_max) and (iter<1 or abs(RES[1])>tolerance or abs(RES[2])>tolerance or abs(NS[1])>tolerance or abs(NS[2])>tolerance) loop
       iter := iter+1;
 
       // calculate Jacobian matrix and Newton Step vector
@@ -106,7 +102,6 @@ algorithm
       fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
       fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
       RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
-      RSS := RES*RES/2;
     end while;
     sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
     sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
