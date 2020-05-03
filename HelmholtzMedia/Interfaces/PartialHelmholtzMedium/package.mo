@@ -1664,7 +1664,9 @@ protected
   output DerTemperatureByPressure dTp;
 
   algorithm
-    assert(sat.vap.s<>sat.liq.s, "liq and vap entropy identical", level=AssertionLevel.warning);
+    assert(sat.vap.s<>sat.liq.s, "vap and liq entropy identical", level=AssertionLevel.warning);
+    // vap volume is larger than liq volume, numerator is positive
+    // vap entropy is larger than liq entropy, denominator is positive
     // Clausius-Clapeyron equation
     dTp := (1.0/sat.vap.d-1.0/sat.liq.d)/max(Modelica.Constants.eps, (sat.vap.s-sat.liq.s));
   annotation(Inline = true);
