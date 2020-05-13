@@ -39,7 +39,7 @@ algorithm
   // Modelica.Utilities.Streams.print("setState_pdX: p=" + String(p) + " and d=" + String(d), "printlog.txt");
   state.phase := phase;
 
-  if (state.phase == 2) then
+  if state.phase==2 then
     assert(p <= p_crit, "setState_pdX_error: pressure is higher than critical pressure");
     sat := setSat_p(p=p);
     assert(d <= sat.liq.d, "setState_pdX_error: density is higher than saturated liquid density: this is single phase liquid");
@@ -111,7 +111,7 @@ algorithm
   T_iter := max({T_iter, T_min, fluidLimits.TMIN});
   T_iter := min({T_iter, T_max, fluidLimits.TMAX});
 
-  if (state.phase == 2) then
+  if state.phase==2 then
     // force two-phase, SaturationProperties are already known
     state.p := p;
     state.d := d;

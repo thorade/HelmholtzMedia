@@ -34,7 +34,7 @@ algorithm
   // Modelica.Utilities.Streams.print("setState_Ts: T=" + String(T) + " and s=" + String(s), "printlog.txt");
   state.phase := phase;
 
-  if (state.phase == 2) then
+  if state.phase==2 then
     assert(T >= T_trip, "setState_Ts_error: pressure is lower than triple point pressure");
     assert(T <= T_crit, "setState_TsX_error: pressure is higher than critical pressure");
     sat := setSat_T(T=T);
@@ -86,7 +86,7 @@ algorithm
 
   // Modelica.Utilities.Streams.print("phase and region determination finished, d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
 
-  if (state.phase == 2) then
+  if state.phase==2 then
     // force two-phase, SaturationProperties are already known
     state.T := T;
     state.s := s;

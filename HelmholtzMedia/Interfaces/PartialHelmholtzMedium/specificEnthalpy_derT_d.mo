@@ -21,11 +21,11 @@ protected
   DerFractionByTemperature dxTv;
 
 algorithm
-  if (state.phase == 1) then
+  if state.phase==1 then
     f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
     dhTd := EoS.dhTd(f);
 
-  elseif (state.phase == 2) then
+  elseif state.phase==2 then
     sat:=setSat_T(T=state.T);
     x := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
     dpT := (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);

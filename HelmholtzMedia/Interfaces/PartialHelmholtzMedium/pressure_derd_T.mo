@@ -7,10 +7,10 @@ protected
   EoS.HelmholtzDerivs f;
 
 algorithm
-  if (state.phase == 1) then
+  if state.phase==1 then
     f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
     dpdT := EoS.dpdT(f);
-  elseif (state.phase == 2) then
+  elseif state.phase==2 then
     dpdT := Modelica.Constants.small; // zero
   end if;
 end pressure_derd_T;
