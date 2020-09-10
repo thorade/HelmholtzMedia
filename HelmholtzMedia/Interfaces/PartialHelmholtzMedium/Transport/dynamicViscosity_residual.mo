@@ -54,6 +54,8 @@ protected
 
 algorithm
   // residual contribution
+  // initialize output
+  eta_r := 0;
 
   if (dynamicViscosityModel == DynamicViscosityModel.VS0) then
     // hardcoded models, use mediumName to distinguish further

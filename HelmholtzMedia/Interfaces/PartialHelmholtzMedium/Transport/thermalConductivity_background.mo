@@ -20,6 +20,9 @@ protected
   Real lambda_red_background=thermalConductivityCoefficients.reducingThermalConductivity_background;
 
 algorithm
+  // initialize output
+  lambda_b := 0;
+
   if (thermalConductivityModel == ThermalConductivityModel.TC0) then
     // hardcoded models, use mediumName to distinguish further
     if mediumName == "helium" then

@@ -41,6 +41,9 @@ protected
   DynamicViscosity eta_b;
 
 algorithm
+  // initialize output
+  lambda_c := 0;
+
   // critical enhancement by the simplified crossover model by Olchowy and Sengers
   if ((state.T > T_ref) or (state.d < d_crit/100)) then
     lambda_c := 0; // far away from critical point

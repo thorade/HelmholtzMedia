@@ -27,6 +27,9 @@ protected
 
 algorithm
   // inital density contribution
+  // initialize output
+  eta_1 := 0;
+
   if (dynamicViscosityModel == DynamicViscosityModel.VS0) then
     eta_1 := 0;
   elseif ((dynamicViscosityModel == DynamicViscosityModel.VS1)

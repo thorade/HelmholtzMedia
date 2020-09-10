@@ -26,6 +26,10 @@ protected
   Real eta_red_0=dynamicViscosityCoefficients.reducingViscosity_0;
 
 algorithm
+  // dilute contribution
+  // initialize output
+  eta_0 := 0;
+
   // first, calculate the collision integral Omega
   if ((collisionIntegralModel == CollisionIntegralModel.CI0)
    or (dynamicViscosityModel == DynamicViscosityModel.VS0)) then

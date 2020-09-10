@@ -24,6 +24,9 @@ protected
   Real eta_0; // dilute contribution only
 
 algorithm
+  // initialize output
+  lambda_0 := 0;
+
   // Modelica.Utilities.Streams.print("thermalConductivity_dilute: d = " + String(state.d) + " and T = " + String(state.T));
   tau := state.T/T_red_0;
 
