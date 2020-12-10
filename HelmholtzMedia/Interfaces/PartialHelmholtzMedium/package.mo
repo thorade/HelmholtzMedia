@@ -444,7 +444,7 @@ protected
   algorithm
     state.phase := phase;
 
-    if (state.phase == 0) then
+    if state.phase==0 then
       //phase unknown, check phase first
       if ((T>=T_trip) and (T<T_crit)) then
         // two-phase possible, do simple density check
@@ -465,7 +465,7 @@ protected
         // T>=T_crit
         state.phase := 1;
       end if;
-    elseif (state.phase == 2) then
+    elseif state.phase==2 then
       assert(T <= T_crit, "setState_dTX_error: Temperature is higher than critical temperature");
       sat := setSat_T(T=T);
       assert(d >= sat.vap.d, "setState_dTX_error: density is lower than saturated vapor density: this is single phase vapor");
@@ -474,7 +474,7 @@ protected
 
     state.d := d;
     state.T := T;
-    if (state.phase == 2) then
+    if state.phase==2 then
       // force two-phase
       x := (1.0/d - 1.0/sat.liq.d)/(1.0/sat.vap.d - 1.0/sat.liq.d);
       state.p := sat.psat;
@@ -751,7 +751,7 @@ protected
     // Modelica.Utilities.Streams.print("setState_phX: p=" + String(p) + " and h=" + String(h), "printlog.txt");
     state.phase := phase;
 
-    if (state.phase == 2) then
+    if state.phase==2 then
       assert(p <= p_crit, "setState_phX_error: pressure is higher than critical pressure");
       sat := setSat_p(p=p);
       assert(h >= sat.liq.h, "setState_phX_error: enthalpy is lower than saturated liquid enthalpy: this is single phase liquid");
@@ -836,7 +836,7 @@ protected
 
     // phase and region determination finished !
 
-    if (state.phase == 2) then
+    if state.phase==2 then
       // Modelica.Utilities.Streams.print("two-phase, SaturationProperties are already known", "printlog.txt");
       state.p := p;
       state.h := h;
@@ -1027,7 +1027,7 @@ protected
     // Modelica.Utilities.Streams.print("setState_psX: p=" + String(p) + " and s=" + String(s), "printlog.txt");
     state.phase := phase;
 
-    if (state.phase == 2) then
+    if state.phase==2 then
       assert(p <= p_crit, "setState_psX_error: pressure is higher than critical pressure");
       sat := setSat_p(p=p);
       assert(s >= sat.liq.s, "setState_psX_error: entropy is lower than saturated liquid entropy: this is single phase liquid");
@@ -1146,7 +1146,7 @@ protected
 
     // phase and region determination finished !
 
-    if (state.phase == 2) then
+    if state.phase==2 then
       // Modelica.Utilities.Streams.print("two-phase, SaturationProperties are already known", "printlog.txt");
       state.p := p;
       state.s := s;
@@ -1383,10 +1383,10 @@ protected
     EoS.HelmholtzDerivs f;
 
   algorithm
-    if (state.phase == 1) then
+    if state.phase==1 then
       f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
       cp := EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
-    elseif (state.phase == 2) then
+    elseif state.phase==2 then
       assert(false, "specificHeatCapacityCp warning: in the two-phase region cp is infinite", level=AssertionLevel.warning);
       cp := Modelica.Constants.inf;
     end if;
@@ -1417,11 +1417,11 @@ protected
     DerFractionByTemperature dxTv;
 
   algorithm
-    if (state.phase == 1) then
+    if state.phase==1 then
       f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
       cv := EoS.duTd(f);
 
-    elseif (state.phase == 2) then
+    elseif state.phase==2 then
       sat := setSat_T(T=state.T);
       x := vapourQuality_sat(state=state, sat=sat);
       dpT := saturationPressure_derT_sat(sat=sat);
@@ -1466,10 +1466,10 @@ protected
     DerFractionByPressure dxps;
 
   algorithm
-    if (state.phase == 1) then
+    if state.phase==1 then
       f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
       a := sqrt(EoS.dpdT(f)-EoS.dpTd(f)*EoS.dsdT(f)/EoS.dsTd(f));
-    elseif (state.phase == 2) then
+    elseif state.phase==2 then
       sat := setSat_T(T=state.T);
       x := vapourQuality_sat(state=state, sat=sat);
       dTp := saturationTemperature_derp_sat(sat=sat);
@@ -1500,10 +1500,10 @@ protected
     EoS.HelmholtzDerivs f;
 
   algorithm
-    if (state.phase == 1) then
+    if state.phase==1 then
       f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
       beta := 1.0/state.d*EoS.dpTd(f)/EoS.dpdT(f);
-    elseif (state.phase == 2) then
+    elseif state.phase==2 then
       assert(false, "isobaricExpansionCoefficient warning: in the two-phase region beta is zero", level=AssertionLevel.warning);
       beta := Modelica.Constants.small;
     end if;
@@ -1519,10 +1519,10 @@ protected
     EoS.HelmholtzDerivs f;
 
   algorithm
-    if (state.phase == 1) then
+    if state.phase==1 then
       f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
       kappa := 1.0/state.d/EoS.dpdT(f);
-    elseif (state.phase == 2) then
+    elseif state.phase==2 then
       assert(false, "isothermalCompressibility warning: in the two-phase region kappa is infinite", level=AssertionLevel.warning);
       kappa := Modelica.Constants.inf;
     end if;
@@ -1790,10 +1790,10 @@ protected
     DerFractionByPressure dxph;
 
   algorithm
-    if (state.phase == 1) then
+    if state.phase==1 then
       f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
       ddph := 1.0/(EoS.dpdT(f) - EoS.dpTd(f)*EoS.dhdT(f)/EoS.dhTd(f));
-    elseif (state.phase == 2) then
+    elseif state.phase==2 then
       sat := setSat_T(T=state.T);
       x := vapourQuality_sat(state=state, sat=sat);
       dTp := saturationTemperature_derp_sat(sat=sat);
@@ -1825,10 +1825,10 @@ protected
     SaturationProperties sat;
 
   algorithm
-    if (state.phase == 1) then
+    if state.phase==1 then
       f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
       ddhp := 1.0/(EoS.dhdT(f) - EoS.dhTd(f)*EoS.dpdT(f)/EoS.dpTd(f));
-    elseif (state.phase == 2) then
+    elseif state.phase==2 then
       sat:=setSat_T(T=state.T);
       // dvhp = (v"-v')/(h"-h')
       // ddhp = -d^2 * dvhp
@@ -1880,10 +1880,10 @@ protected
     EoS.HelmholtzDerivs f;
 
   algorithm
-    if (state.phase == 1) then
+    if state.phase==1 then
       f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
       ddpT := 1.0/EoS.dpdT(f);
-    elseif (state.phase == 2) then
+    elseif state.phase==2 then
       ddpT := Modelica.Constants.inf; // divide by zero
     end if;
   end density_derp_T;
@@ -1897,10 +1897,10 @@ protected
     EoS.HelmholtzDerivs f;
 
   algorithm
-    if (state.phase == 1) then
+    if state.phase==1 then
       f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
       ddTp := -EoS.dpTd(f)/EoS.dpdT(f);
-    elseif (state.phase == 2) then
+    elseif state.phase==2 then
       ddTp := Modelica.Constants.inf; // divide by zero
     end if;
   end density_derT_p;
