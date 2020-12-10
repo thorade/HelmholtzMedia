@@ -4,5 +4,5 @@ function cp0 "returns ideal gas heat capacity from EoS"
   output SpecificHeatCapacity cp0;
 
 algorithm
-  cp0 := f.R*(1 - f.tau*f.tau*f.itt);
+  cp0 := f.R_s*(1 - f.tau*f.tau*f.itt);
 end cp0;

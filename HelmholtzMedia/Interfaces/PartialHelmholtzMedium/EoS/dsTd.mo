@@ -4,5 +4,5 @@ function dsTd "returns entropy derivative (ds/dT)@d=const"
   output DerEntropyByTemperature dsTd;
 
 algorithm
-  dsTd := f.R/f.T*(-f.tau*f.tau*(f.itt+f.rtt));
+  dsTd := f.R_s/f.T*(-f.tau*f.tau*(f.itt+f.rtt));
 end dsTd;

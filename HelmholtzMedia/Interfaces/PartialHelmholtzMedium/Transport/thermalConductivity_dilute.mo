@@ -41,7 +41,7 @@ algorithm
       // used by CO2
       // remember: RefProp uses molar units and g/mol, divide by MolarMass
       f := EoS.setHelmholtzDerivsSecond(d=state.d,T=state.T);
-      cint := EoS.cp0(f)*f.MM -2.5*f.R*f.MM;
+      cint := EoS.cp0(f)*f.MM -2.5*f.R_s*f.MM;
       cint := 1.0 + A_num[nDilute_num, 1]*cint;
       lambda_0 := lambda_0*cint;
     elseif (abs(A_num[nDilute_num,2]+98)<eps) then
@@ -55,9 +55,9 @@ algorithm
       // used by Pentane, Isopentane
       // remember: RefProp uses molar units and g/mol!
       f := EoS.setHelmholtzDerivsSecond(d=state.d,T=state.T);
-      cint := EoS.cp0(f) /f.R-2.5;
+      cint := EoS.cp0(f) /f.R_s-2.5;
       eta_0 := dynamicViscosity_dilute(state);
-      lambda_0 := (lambda_0*cint+15.0/4.0)*f.R*eta_0/kilo;
+      lambda_0 := (lambda_0*cint+15.0/4.0)*f.R_s*eta_0/kilo;
     end if;
   end if;
 

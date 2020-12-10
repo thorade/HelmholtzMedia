@@ -4,5 +4,5 @@ function dgTd "returns Gibbs energy derivative (dg/dT)@d=const"
   output DerEnergyByTemperature dgTd;
 
 algorithm
-  dgTd := f.R*(-f.tau*(f.it+f.rt) +(f.i+f.r) +(1+f.delta*f.rd-f.delta*f.tau*f.rtd));
+  dgTd := f.R_s*(-f.tau*(f.it+f.rt) +(f.i+f.r) +(1+f.delta*f.rd-f.delta*f.tau*f.rtd));
 end dgTd;

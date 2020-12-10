@@ -4,5 +4,5 @@ function s "returns specifc entropy s from EoS"
   output SpecificEntropy s;
 
 algorithm
-  s := f.R*(f.tau*(f.it + f.rt) - f.i - f.r);
+  s := f.R_s*(f.tau*(f.it + f.rt) - f.i - f.r);
 end s;

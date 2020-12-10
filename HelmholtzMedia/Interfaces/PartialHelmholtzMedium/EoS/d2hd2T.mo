@@ -4,5 +4,5 @@ function d2hd2T "returns enthalpy derivative (d2h/dd2)@T=const"
   output Der2EnthalpyByDensity2 d2hd2T;
 
 algorithm
-  d2hd2T := f.R*f.T/f.d^2*((f.tau*f.delta*f.delta*f.rtdd) + (2*f.delta*f.delta*f.rdd + f.delta*f.delta*f.delta*f.rddd));
+  d2hd2T := f.R_s*f.T/f.d^2*((f.tau*f.delta*f.delta*f.rtdd) + (2*f.delta*f.delta*f.rdd + f.delta*f.delta*f.delta*f.rddd));
 end d2hd2T;

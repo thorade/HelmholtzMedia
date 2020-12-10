@@ -4,5 +4,5 @@ function d2pTv "returns pressure derivative (d2p/dT dv)"
   output Der2PressureByTemperatureVolume d2pTv;
 
 algorithm
-  d2pTv := -f.d*f.d*f.R*(1 + 2*f.delta*f.rd + f.delta*f.delta*f.rdd - 2*f.delta*f.tau*f.rtd - f.tau*f.delta*f.delta*f.rtdd);
+  d2pTv := -f.d*f.d*f.R_s*(1 + 2*f.delta*f.rd + f.delta*f.delta*f.rdd - 2*f.delta*f.tau*f.rtd - f.tau*f.delta*f.delta*f.rtdd);
 end d2pTv;

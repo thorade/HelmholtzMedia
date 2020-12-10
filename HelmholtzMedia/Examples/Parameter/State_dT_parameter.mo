@@ -38,7 +38,7 @@ equation
   dpT=Medium.EoS.dpTd(f=f);
   cv=Medium.specificHeatCapacityCv(state=state);
   cp=Medium.specificHeatCapacityCp(state=state);
-  cp0=f.R*(1-f.tau*f.tau*f.itt);
+  cp0=f.R_s*(1-f.tau*f.tau*f.itt);
   gamma=Medium.isentropicExponent(state);
   a=Medium.velocityOfSound(state);
   mu=Medium.jouleThomsonCoefficient(state);

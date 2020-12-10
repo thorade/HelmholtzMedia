@@ -76,24 +76,24 @@ protected
   Medium.SaturationProperties sat_pplus = Medium.setSat_p(p=1.0001*sat.psat);
   Medium.SaturationProperties sat_pminus= Medium.setSat_p(p=0.9999*sat.psat);
 // Entropy single phase derivatives
-  Medium.DerEntropyByDensity dsdT_liq=fl.R/sat.liq.d*(-(1 + fl.delta*
+  Medium.DerEntropyByDensity dsdT_liq=fl.R_s/sat.liq.d*(-(1 + fl.delta*
       fl.rd) + (0 + fl.tau*fl.delta*fl.rtd));
-  Medium.DerEntropyByTemperature dsTd_liq=fl.R/T*(-fl.tau^2*(fl.itt
+  Medium.DerEntropyByTemperature dsTd_liq=fl.R_s/T*(-fl.tau^2*(fl.itt
        + fl.rtt));
   Medium.DerEntropyByTemperature dsTp_liq=dsTd_liq - dsdT_liq*
       Medium.pressure_derT_d(state=sat.liq)/Medium.pressure_derd_T(state=sat.liq);
   Medium.DerEntropyByPressure dspT_liq=dsdT_liq/
       Medium.pressure_derd_T(state=sat.liq);
-  Medium.DerEntropyByDensity dsdT_vap=fv.R/sat.vap.d*(-(1 + fv.delta*
+  Medium.DerEntropyByDensity dsdT_vap=fv.R_s/sat.vap.d*(-(1 + fv.delta*
       fv.rd) + (0 + fv.tau*fv.delta*fv.rtd));
-  Medium.DerEntropyByTemperature dsTd_vap=fv.R/T*(-fv.tau^2*(fv.itt
+  Medium.DerEntropyByTemperature dsTd_vap=fv.R_s/T*(-fv.tau^2*(fv.itt
        + fv.rtt));
   Medium.DerEntropyByTemperature dsTp_vap=dsTd_vap - dsdT_vap*
       Medium.pressure_derT_d(state=sat.vap)/Medium.pressure_derd_T(state=sat.vap);
   Medium.DerEntropyByPressure dspT_vap=dsdT_vap/
       Medium.pressure_derd_T(state=sat.vap);
 // Internal energy single phase derivatives
-  Medium.DerEnergyByDensity dudT_liq=fl.R*T/sat.liq.d*fl.tau*fl.delta
+  Medium.DerEnergyByDensity dudT_liq=fl.R_s*T/sat.liq.d*fl.tau*fl.delta
       *fl.rtd;
   Medium.DerEnergyByTemperature duTd_liq=
       Medium.specificHeatCapacityCv(state=sat.liq);
@@ -101,7 +101,7 @@ protected
       Medium.pressure_derT_d(state=sat.liq)/Medium.pressure_derd_T(state=sat.liq);
   Medium.DerEnergyByPressure dupT_liq=dudT_liq/Medium.pressure_derd_T(
       state=sat.liq);
-  Medium.DerEnergyByDensity dudT_vap=fv.R*T/sat.vap.d*fv.tau*fv.delta
+  Medium.DerEnergyByDensity dudT_vap=fv.R_s*T/sat.vap.d*fv.tau*fv.delta
       *fv.rtd;
   Medium.DerEnergyByTemperature duTd_vap=
       Medium.specificHeatCapacityCv(state=sat.vap);

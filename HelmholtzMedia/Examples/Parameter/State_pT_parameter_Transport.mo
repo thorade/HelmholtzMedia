@@ -33,7 +33,7 @@ equation
   // derived properties
   cv=Medium.specificHeatCapacityCv(state);
   cp=Medium.specificHeatCapacityCp(state);
-  cp0=f.R*(1-f.tau*f.tau*f.itt);
+  cp0=f.R_s*(1-f.tau*f.tau*f.itt);
   gamma=Medium.isentropicExponent(state);
   a=Medium.velocityOfSound(state);
   mu=Medium.jouleThomsonCoefficient(state);

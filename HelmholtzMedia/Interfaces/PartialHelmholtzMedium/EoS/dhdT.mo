@@ -4,5 +4,5 @@ function dhdT "returns enthalpy derivative (dh/dd)@T=const"
   output DerEnthalpyByDensity dhdT;
 
 algorithm
-  dhdT := f.T*f.R/f.d*(0+f.tau*f.delta*f.rtd + f.delta*f.rd + f.delta*f.delta*f.rdd);
+  dhdT := f.T*f.R_s/f.d*(0+f.tau*f.delta*f.rtd + f.delta*f.rd + f.delta*f.delta*f.rdd);
 end dhdT;

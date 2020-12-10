@@ -78,7 +78,7 @@ equation
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("internal Energy");
   // check (du/dd)@T=const
-  dudT_analytical = f.R*T/d*f.tau*f.delta*f.rtd;
+  dudT_analytical = f.R_s*T/d*f.tau*f.delta*f.rtd;
   dudT_numerical = (d_plus.u-d_minus.u)/(d_plus.d-d_minus.d);
   Modelica.Utilities.Streams.print("  (du/dd)@T=const analytical= " + String(dudT_analytical));
   Modelica.Utilities.Streams.print("  (du/dd)@T=const  numerical= " + String(dudT_numerical));
@@ -91,13 +91,13 @@ equation
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Entropy");
   // check (ds/dd)@T=const
-  //dsdT_analytical = f.R/d*(-(1+f.delta*f.rd)+(0+f.tau*f.delta*f.rtd));
-  dsdT_analytical =  -f.R/d*(  1+f.delta*f.rd    -f.tau*f.delta*f.rtd);
+  //dsdT_analytical = f.R_s/d*(-(1+f.delta*f.rd)+(0+f.tau*f.delta*f.rtd));
+  dsdT_analytical =  -f.R_s/d*(  1+f.delta*f.rd    -f.tau*f.delta*f.rtd);
   dsdT_numerical = (d_plus.s-d_minus.s)/(d_plus.d-d_minus.d);
   Modelica.Utilities.Streams.print("  (ds/dd)@T=const analytical= " + String(dsdT_analytical));
   Modelica.Utilities.Streams.print("  (ds/dd)@T=const  numerical= " + String(dsdT_numerical));
   // check (ds/dT)@d=const
-  dsTd_analytical = f.R/T*(-f.tau^2*(f.itt+f.rtt));
+  dsTd_analytical = f.R_s/T*(-f.tau^2*(f.itt+f.rtt));
   dsTd_numerical = (T_plus.s-T_minus.s)/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("  (ds/dT)@d=const analytical= " + String(dsTd_analytical));
   Modelica.Utilities.Streams.print("  (ds/dT)@d=const  numerical= " + String(dsTd_numerical));
@@ -105,12 +105,12 @@ equation
   Modelica.Utilities.Streams.print(" ");
   Modelica.Utilities.Streams.print("Gibbs energy");
   // check (dg/dd)@T=const
-  dgdT_analytical = f.R*T/d*(1+2*f.delta*f.rd + f.delta^2*f.rdd);
+  dgdT_analytical = f.R_s*T/d*(1+2*f.delta*f.rd + f.delta^2*f.rdd);
   dgdT_numerical = ((d_plus.h-d_plus.T*d_plus.s)-(d_minus.h-d_minus.T*d_minus.s))/(d_plus.d-d_minus.d);
   Modelica.Utilities.Streams.print("  (dg/dd)@T=const analytical= " + String(dgdT_analytical));
   Modelica.Utilities.Streams.print("  (dg/dd)@T=const  numerical= " + String(dgdT_numerical));
   // check (dg/dT)@d=const
-  dgTd_analytical = f.R*(f.i+f.r + 1+f.delta*f.rd -f.tau*(f.it+f.rt) - f.tau*f.delta*f.rtd);
+  dgTd_analytical = f.R_s*(f.i+f.r + 1+f.delta*f.rd -f.tau*(f.it+f.rt) - f.tau*f.delta*f.rtd);
   dgTd_numerical = ((T_plus.h-T_plus.T*T_plus.s)-(T_minus.h-T_minus.T*T_minus.s))/(T_plus.T-T_minus.T);
   Modelica.Utilities.Streams.print("  (dg/dT)@d=const analytical= " + String(dgTd_analytical));
   Modelica.Utilities.Streams.print("  (dg/dT)@d=const  numerical= " + String(dgTd_numerical));

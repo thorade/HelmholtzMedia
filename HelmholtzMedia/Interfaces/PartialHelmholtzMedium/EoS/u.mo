@@ -4,5 +4,5 @@ function u "returns specifc internal energy u from EoS"
   output SpecificEnergy u;
 
 algorithm
-  u := f.T*f.R*(f.tau*(f.it + f.rt));
+  u := f.T*f.R_s*(f.tau*(f.it + f.rt));
 end u;

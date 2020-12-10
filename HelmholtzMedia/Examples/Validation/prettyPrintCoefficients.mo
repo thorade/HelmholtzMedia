@@ -29,7 +29,7 @@ algorithm
   Modelica.Utilities.Streams.print(String(Medium.fluidConstants[1].dipoleMoment), fileName);
 
   Modelica.Utilities.Streams.print("\n =============================================================================== \n#FEQ", fileName); // 80 characters
-  Modelica.Utilities.Streams.print(String(Modelica.Constants.R/Medium.fluidConstants[1].molarMass*kilo, significantDigits=9), fileName);
+  Modelica.Utilities.Streams.print(String(Modelica.Constants.R_s/Medium.fluidConstants[1].molarMass*kilo, significantDigits=9), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.residualPoly), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.residualBwr), fileName);
   Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(Medium.helmholtzCoefficients.residualGauss), fileName);

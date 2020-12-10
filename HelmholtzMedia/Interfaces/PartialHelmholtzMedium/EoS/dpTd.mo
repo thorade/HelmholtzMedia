@@ -4,5 +4,5 @@ function dpTd "returns pressure derivative (dp/dT)@d=const"
   output DerPressureByTemperature dpTd;
 
 algorithm
-  dpTd := f.d*f.R*(1 + f.delta*f.rd - f.delta*f.tau*f.rtd);
+  dpTd := f.d*f.R_s*(1 + f.delta*f.rd - f.delta*f.tau*f.rtd);
 end dpTd;
