@@ -2,7 +2,7 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_TwoPhase
   "compare analytical derivatives to numerical derivatives"
 
-  replaceable package Medium = HelmholtzFluids.R134a;
+  replaceable package Medium = HelmholtzFluids.R_s134a;
 
   parameter Medium.Temperature T=0.7*T_crit;
 
@@ -58,7 +58,7 @@ model Derivatives_TwoPhase
 
 protected
   constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
-  constant Medium.SpecificHeatCapacity R=Medium.fluidConstants[1].gasConstant/MM
+  constant Medium.SpecificHeatCapacity R_s=Medium.fluidConstants[1].gasConstant/MM
     "specific gas constant";
   constant Medium.Density d_crit=MM/Medium.fluidConstants[1].criticalMolarVolume;
   constant Medium.Temperature T_crit=Medium.fluidConstants[1].criticalTemperature;
@@ -81,25 +81,25 @@ protected
   Medium.ThermodynamicState p_plus_s=Medium.setState_psX(p=state.p*1.0001, s=state.s);
   Medium.ThermodynamicState p_minus_s=Medium.setState_psX(p=state.p*0.9999, s=state.s);
 // Entropy derivatives along saturation
-  Medium.DerEntropyByTemperature dsTd_liq=fl.R/T*(-fl.tau^2*(fl.itt + fl.rtt));
-  Medium.DerEntropyByDensity dsdT_liq=fl.R/sat.liq.d*(-(1 + fl.delta*fl.rd) + (0 + fl.tau*fl.delta*fl.rtd));
+  Medium.DerEntropyByTemperature dsTd_liq=fl.R_s/T*(-fl.tau^2*(fl.itt + fl.rtt));
+  Medium.DerEntropyByDensity dsdT_liq=fl.R_s/sat.liq.d*(-(1 + fl.delta*fl.rd) + (0 + fl.tau*fl.delta*fl.rtd));
   Medium.DerEntropyByTemperature dsTp_liq=dsTd_liq - dsdT_liq*Medium.pressure_derT_d(state=sat.liq)/Medium.pressure_derd_T(state=sat.liq);
   Medium.DerEntropyByPressure dspT_liq=dsdT_liq/Medium.pressure_derd_T(state=sat.liq);
   Medium.DerEntropyByTemperature dsT_liq=dsTp_liq + dspT_liq*dpT;
   Medium.DerEntropyByPressure dsp_liq=dspT_liq + dsTp_liq*Medium.saturationTemperature_derp(p=state.p);
-  Medium.DerEntropyByTemperature dsTd_vap=fv.R/T*(-fv.tau^2*(fv.itt+ fv.rtt));
-  Medium.DerEntropyByDensity dsdT_vap=fv.R/sat.vap.d*(-(1 + fv.delta*fv.rd) + (0 + fv.tau*fv.delta*fv.rtd));
+  Medium.DerEntropyByTemperature dsTd_vap=fv.R_s/T*(-fv.tau^2*(fv.itt+ fv.rtt));
+  Medium.DerEntropyByDensity dsdT_vap=fv.R_s/sat.vap.d*(-(1 + fv.delta*fv.rd) + (0 + fv.tau*fv.delta*fv.rtd));
   Medium.DerEntropyByTemperature dsTp_vap=dsTd_vap - dsdT_vap* Medium.pressure_derT_d(state=sat.vap)/Medium.pressure_derd_T(state=sat.vap);
   Medium.DerEntropyByPressure dspT_vap=dsdT_vap/Medium.pressure_derd_T(state=sat.vap);
   Medium.DerEntropyByTemperature dsT_vap=dsTp_vap + dspT_vap*dpT;
   Medium.DerEntropyByPressure dsp_vap=dspT_vap + dsTp_vap*dTp;
 // Internal energy derivatives along saturation line
-  Medium.DerEnergyByDensity dudT_liq=fl.R*T/sat.liq.d*fl.tau*fl.delta*fl.rtd;
+  Medium.DerEnergyByDensity dudT_liq=fl.R_s*T/sat.liq.d*fl.tau*fl.delta*fl.rtd;
   Medium.DerEnergyByTemperature duTd_liq= Medium.specificHeatCapacityCv(state=sat.liq);
   Medium.DerEnergyByTemperature duTp_liq=duTd_liq - dudT_liq* Medium.pressure_derT_d(state=sat.liq)/Medium.pressure_derd_T(state=sat.liq);
   Medium.DerEnergyByPressure dupT_liq=dudT_liq/Medium.pressure_derd_T(      state=sat.liq);
   Medium.DerEnergyByTemperature duT_liq=duTp_liq + dupT_liq*dpT;
-  Medium.DerEnergyByDensity dudT_vap=fv.R*T/sat.vap.d*fv.tau*fv.delta*fv.rtd;
+  Medium.DerEnergyByDensity dudT_vap=fv.R_s*T/sat.vap.d*fv.tau*fv.delta*fv.rtd;
   Medium.DerEnergyByTemperature duTd_vap= Medium.specificHeatCapacityCv(state=sat.vap);
   Medium.DerEnergyByTemperature duTp_vap=duTd_vap - dudT_vap*Medium.pressure_derT_d(state=sat.vap)/Medium.pressure_derd_T(state=sat.vap);
   Medium.DerEnergyByPressure dupT_vap=dudT_vap/Medium.pressure_derd_T(state=sat.vap);

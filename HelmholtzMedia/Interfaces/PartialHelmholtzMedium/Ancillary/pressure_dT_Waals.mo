@@ -6,7 +6,7 @@ function pressure_dT_Waals
 
 protected
   constant MolarMass MM = fluidConstants[1].molarMass;
-  constant SpecificHeatCapacity R=fluidConstants[1].gasConstant/MM
+  constant SpecificHeatCapacity R_s=fluidConstants[1].gasConstant/MM
     "specific gas constant";
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
   constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
