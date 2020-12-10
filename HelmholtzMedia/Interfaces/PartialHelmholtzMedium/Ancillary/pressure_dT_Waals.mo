@@ -12,12 +12,12 @@ protected
   constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
   // van der Waals, as described by Span (2000)
-  Real a = 27/64 * (R*R*T_crit*T_crit) /p_crit "correction for attraction";
-  Real b = (R*T_crit)/(8*p_crit) "correction for volume";
+  Real a = 27/64 * (R_s*R_s*T_crit*T_crit) /p_crit "correction for attraction";
+  Real b = (R_s*T_crit)/(8*p_crit) "correction for volume";
 
 algorithm
-  // p := R*T/(v-b) - a/v^2;
-  p := R*T/(1/d-b) - a*d^2;
+  // p := R_s*T/(v-b) - a/v^2;
+  p := R_s*T/(1/d-b) - a*d^2;
   // Modelica.Utilities.Streams.print("van der Waals finished, p=" + String(p), "printlog.txt");
 
 end pressure_dT_Waals;

@@ -23,7 +23,7 @@ protected
   MassFraction x "vapour quality";
 
   Temperature T_min=0.98*fluidLimits.TMIN;
-  Temperature T_max=2*max(fluidLimits.TMAX, p/(R*d));
+  Temperature T_max=2*max(fluidLimits.TMAX, p/(R_s*d));
   Temperature T_iter=T_crit;
   AbsolutePressure RES_min;
   AbsolutePressure RES_max;
@@ -85,7 +85,7 @@ algorithm
     elseif (p < p_trip) then
       state.phase := 1;
       // very low pressure, behaves like an ideal gas
-      T_iter := p/(d*R);
+      T_iter := p/(d*R_s);
       // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
 
     elseif (p >= p_crit) then

@@ -1131,7 +1131,7 @@ protected
             d_iter := d_crit;
           end if;
           // d_iter:= d_crit;
-          // d_iter := p/(R*T_crit);
+          // d_iter := p/(R_s*T_crit);
           // d_iter:= (d_min+d_max)/2;
 
           T_min := T_crit*0.98;

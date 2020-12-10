@@ -1,6 +1,6 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS;
 record HelmholtzDerivs "dimensionless Helmholtz energy and its derivatives"
-  extends Modelica.Icons.R_secord;
+  extends Modelica.Icons.Record;
 
   constant MolarMass MM = fluidConstants[1].molarMass;
   constant SpecificHeatCapacity R_s=fluidConstants[1].gasConstant/MM "specific gas constant";
