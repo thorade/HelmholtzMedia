@@ -34,12 +34,12 @@ Modelica.Blocks.Sources.Sine T_sine(
 
 protected
   Medium.AbsolutePressure p_melt;
-  final constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
-  final constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
-  final constant Medium.Temperature Tmax=Medium.fluidLimits.TMAX;
-  final constant Medium.AbsolutePressure pmin=Medium.fluidConstants[1].triplePointPressure;
-  final constant Medium.AbsolutePressure pcrit=Medium.fluidConstants[1].criticalPressure;
-  final constant Medium.AbsolutePressure pmax=Medium.fluidLimits.PMAX;
+  constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
+  constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
+  constant Medium.Temperature Tmax=Medium.fluidLimits.TMAX;
+  constant Medium.AbsolutePressure pmin=Medium.fluidConstants[1].triplePointPressure;
+  constant Medium.AbsolutePressure pcrit=Medium.fluidConstants[1].criticalPressure;
+  constant Medium.AbsolutePressure pmax=Medium.fluidLimits.PMAX;
 
 equation
   T = T_sine.y;
