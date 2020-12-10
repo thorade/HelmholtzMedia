@@ -7,15 +7,15 @@ function f_rdd "residual part of dimensionless Helmholtz energy"
     "residual part of dimensionless Helmholtz energy";
 
 protected
-  final constant Integer nPoly = size(helmholtzCoefficients.residualPoly,1);
-  final constant Integer nBwr = size(helmholtzCoefficients.residualBwr,1);
-  final constant Integer nGauss = size(helmholtzCoefficients.residualGauss,1);
-  final constant Integer nNonAna = size(helmholtzCoefficients.residualNonAnalytical,1);
+  constant Integer nPoly = size(helmholtzCoefficients.residualPoly,1);
+  constant Integer nBwr = size(helmholtzCoefficients.residualBwr,1);
+  constant Integer nGauss = size(helmholtzCoefficients.residualGauss,1);
+  constant Integer nNonAna = size(helmholtzCoefficients.residualNonAnalytical,1);
 
-  final constant Real[nPoly,3] p = helmholtzCoefficients.residualPoly;
-  final constant Real[nBwr,4] b = helmholtzCoefficients.residualBwr;
-  final constant Real[nGauss,9] g = helmholtzCoefficients.residualGauss;
-  final constant Real[nNonAna,12] a = helmholtzCoefficients.residualNonAnalytical;
+  constant Real[nPoly,3] p = helmholtzCoefficients.residualPoly;
+  constant Real[nBwr,4] b = helmholtzCoefficients.residualBwr;
+  constant Real[nGauss,9] g = helmholtzCoefficients.residualGauss;
+  constant Real[nNonAna,12] a = helmholtzCoefficients.residualNonAnalytical;
 
   Real[nNonAna] Psi = {exp(-a[i,9]*(delta-1)^2 -a[i,10]*(tau-1)^2) for i in 1:nNonAna} "Psi";
   Real[nNonAna] Theta = {(1-tau) + a[i,8]*((delta-1)^2)^(0.5/a[i,7]) for i in 1:nNonAna} "Theta";

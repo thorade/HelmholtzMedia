@@ -6,17 +6,17 @@ function f_i "ideal part of dimensionless Helmholtz energy"
   output Real f_ideal "ideal part of dimensionless Helmholtz energy";
 
 protected
-  final constant Integer nLog=size(helmholtzCoefficients.idealLog, 1);
-  final constant Integer nPower=size(helmholtzCoefficients.idealPower, 1);
-  final constant Integer nEinstein=size(helmholtzCoefficients.idealEinstein, 1);
-  final constant Integer nCosh=size(helmholtzCoefficients.idealCosh, 1);
-  final constant Integer nSinh=size(helmholtzCoefficients.idealSinh, 1);
+  constant Integer nLog=size(helmholtzCoefficients.idealLog, 1);
+  constant Integer nPower=size(helmholtzCoefficients.idealPower, 1);
+  constant Integer nEinstein=size(helmholtzCoefficients.idealEinstein, 1);
+  constant Integer nCosh=size(helmholtzCoefficients.idealCosh, 1);
+  constant Integer nSinh=size(helmholtzCoefficients.idealSinh, 1);
 
-  final constant Real[nLog, 2] l=helmholtzCoefficients.idealLog;
-  final constant Real[nPower, 2] p=helmholtzCoefficients.idealPower;
-  final constant Real[nEinstein, 2] e=helmholtzCoefficients.idealEinstein;
-  final constant Real[nCosh, 2] c=helmholtzCoefficients.idealCosh;
-  final constant Real[nSinh, 2] s=helmholtzCoefficients.idealSinh;
+  constant Real[nLog, 2] l=helmholtzCoefficients.idealLog;
+  constant Real[nPower, 2] p=helmholtzCoefficients.idealPower;
+  constant Real[nEinstein, 2] e=helmholtzCoefficients.idealEinstein;
+  constant Real[nCosh, 2] c=helmholtzCoefficients.idealCosh;
+  constant Real[nSinh, 2] s=helmholtzCoefficients.idealSinh;
 
 algorithm
   if (delta>0) and (tau>0) then

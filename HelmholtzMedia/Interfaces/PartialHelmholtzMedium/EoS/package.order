@@ -1,5 +1,5 @@
-HelmholtzDerivs
 HelmholtzCoefficients
+HelmholtzDerivs
 setHelmholtzDerivsZero
 setHelmholtzDerivsFirst
 setHelmholtzDerivsSecond
