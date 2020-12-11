@@ -2,10 +2,10 @@ within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS;
 record HelmholtzDerivs "dimensionless Helmholtz energy and its derivatives"
   extends Modelica.Icons.Record;
 
-  constant MolarMass MM = fluidConstants[1].molarMass;
-  constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM "specific gas constant";
-  constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-  constant Temperature T_crit=fluidConstants[1].criticalTemperature;
+  MolarMass MM = fluidConstants[1].molarMass;
+  SpecificHeatCapacity R_s=Modelica.Constants.R/MM "specific gas constant";
+  Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+  Temperature T_crit=fluidConstants[1].criticalTemperature;
 
   Density d(min=0);
   Real delta(unit="1") "reduced density";
