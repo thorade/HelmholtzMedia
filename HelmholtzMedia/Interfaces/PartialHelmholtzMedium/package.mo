@@ -292,7 +292,8 @@ protected
     Real NS[3] "Newton step vector";
 
     constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-6 "tolerance for T and d, needs to be smaller than simulation tolerance";
+    constant Real tol_rel=1e-9 "relative tolerance for convergence";
+    constant Real tol_abs=1e-2 "absolute tolerance for convergence";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -312,7 +313,7 @@ protected
     fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
     RES := {EoS.p(fl)-p, EoS.p(fv)-p, EoS.g(fl)-EoS.g(fv)};
 
-    while (iter<iter_max) and (iter<1 or abs(RES[1])>tolerance or abs(RES[2])>tolerance or abs(NS[1])>tolerance or abs(NS[2])>tolerance or abs(NS[3])>tolerance) loop
+    while (iter<iter_max) and (iter<1 or abs(RES[1]/p)>tol_rel or abs(RES[2]/p)>tol_rel or abs(NS[1])>tol_abs or abs(NS[2])>tol_abs or abs(NS[3])>tol_abs) loop
       iter := iter+1;
 
       // calculate Jacobian matrix and Newton Step vector
