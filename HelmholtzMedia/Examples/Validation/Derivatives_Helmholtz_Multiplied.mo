@@ -13,7 +13,7 @@ protected
   final constant String Separator = ";";
 
   constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
-  constant Medium.SpecificHeatCapacity R_s=Medium.fluidConstants[1].gasConstant/MM
+  constant Medium.SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
   constant Medium.Density d_crit=MM/Medium.fluidConstants[1].criticalMolarVolume;
   constant Medium.Temperature T_crit=Medium.fluidConstants[1].criticalTemperature;

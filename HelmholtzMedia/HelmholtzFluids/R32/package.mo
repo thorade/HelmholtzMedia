@@ -22,7 +22,6 @@ package R32 "R32 with IIR reference state"
     casRegistryNumber="75-10-5",
     iupacName="",
     molarMass=0.052024,
-    gasConstant=8.314471,
     hasCriticalData=true,
        criticalTemperature=351.255,
        criticalPressure=5782000,

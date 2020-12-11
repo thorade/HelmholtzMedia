@@ -22,7 +22,6 @@ extends Interfaces.PartialHelmholtzMedium(
     structureFormula="CO2",
     chemicalFormula="CO2",
     molarMass=0.0440098,
-    gasConstant=8.31451,
     hasCriticalData=true,
        criticalTemperature=304.1282,
        criticalPressure=7377300,

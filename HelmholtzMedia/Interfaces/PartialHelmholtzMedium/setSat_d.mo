@@ -6,7 +6,7 @@ function setSat_d
 
 protected
   constant MolarMass MM = fluidConstants[1].molarMass;
-  constant SpecificHeatCapacity R_s=fluidConstants[1].gasConstant/MM
+  constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
   constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;

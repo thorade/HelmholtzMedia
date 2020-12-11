@@ -13,9 +13,7 @@ partial package PartialHelmholtzMedium
     DipoleMoment(min=0, max=5),
     AbsolutePressure(min=Modelica.Constants.small, max=1e12),
     SpecificEntropy(min=-Modelica.Constants.inf, max=Modelica.Constants.inf),
-    ThermoStates=Choices.IndependentVariables.ph,
-    redeclare record FluidConstants =
-      HelmholtzMedia.Interfaces.Types.myFluidConstants);
+    ThermoStates=Choices.IndependentVariables.ph);
 
   constant HelmholtzMedia.Interfaces.Types.FluidLimits fluidLimits;
 
@@ -44,13 +42,11 @@ partial package PartialHelmholtzMedium
     SpecificEntropy s "Specific entropy of medium";
   end ThermodynamicState;
 
-
   redeclare record extends SaturationProperties
     // inherits Tsat and psat
     ThermodynamicState liq;
     ThermodynamicState vap;
   end SaturationProperties;
-
 
   redeclare model extends BaseProperties(
       p(stateSelect = if preferredMediumStates and
@@ -76,7 +72,7 @@ partial package PartialHelmholtzMedium
 
   equation
     MM = fluidConstants[1].molarMass;
-    R = fluidConstants[1].gasConstant/MM;
+    R = Modelica.Constants.R/MM;
 
     // use functions to calculate properties
     if (componentInputChoice == InputChoice.ph) then
@@ -120,7 +116,6 @@ partial package PartialHelmholtzMedium
 
   end BaseProperties;
 
-
   redeclare function setSat_T
   "iterative calculation of saturation properties from EoS with Newton-Raphson algorithm"
     // does not extend, because base class already defines an algorithm
@@ -129,7 +124,7 @@ partial package PartialHelmholtzMedium
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R_s=fluidConstants[1].gasConstant/MM
+    constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
@@ -272,7 +267,6 @@ with a Newton-Raphson approach for simultaneous equations.
 </html>"));
   end setSat_T;
 
-
   redeclare function setSat_p
   "iterative calculation of saturation properties from EoS for a given pressure"
     input AbsolutePressure p;
@@ -280,7 +274,7 @@ with a Newton-Raphson approach for simultaneous equations.
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R_s=fluidConstants[1].gasConstant/MM
+    constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
@@ -387,7 +381,6 @@ protected
 
   end setSat_p;
 
-
   redeclare function extends setBubbleState
   "returns bubble ThermodynamicState from given saturation properties"
   // inherited from: PartialTwoPhaseMedium
@@ -396,7 +389,6 @@ protected
     state := sat.liq;
   end setBubbleState;
 
-
   redeclare function extends setDewState
   "returns dew ThermodynamicState from given saturation properties"
   // inherited from: PartialTwoPhaseMedium
@@ -404,7 +396,6 @@ protected
   algorithm
     state := sat.vap;
   end setDewState;
-
 
   redeclare function extends setSmoothState
   "Return thermodynamic state so that it smoothly approximates: if x > 0 then state_a else state_b"
@@ -425,13 +416,12 @@ protected
   annotation (Inline=true);
   end setSmoothState;
 
-
   redeclare function extends setState_dTX
   "Return thermodynamic state as function of (d, T)"
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R_s=fluidConstants[1].gasConstant/MM
+    constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
@@ -492,7 +482,6 @@ protected
 
   end setState_dTX;
 
-
   redeclare function setState_Tx
   "Return thermodynamic state as function of (T, x)"
     input Temperature T "Temperature";
@@ -511,7 +500,6 @@ protected
     state.u := sat.liq.u + x*(sat.vap.u - sat.liq.u);
     state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
   end setState_Tx;
-
 
   redeclare function setState_px
   "Return thermodynamic state as function of (p, x)"
@@ -532,13 +520,12 @@ protected
     state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
   end setState_px;
 
-
   redeclare function extends setState_pTX
   "Return thermodynamic state as function of (p, T)"
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R_s=fluidConstants[1].gasConstant/MM
+    constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
@@ -690,13 +677,12 @@ protected
     state.u := EoS.u(f=f);
   end setState_pTX;
 
-
   redeclare function extends setState_phX
   "Return thermodynamic state as function of (p, h)"
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R_s=fluidConstants[1].gasConstant/MM
+    constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
@@ -957,13 +943,12 @@ protected
 
   end setState_phX;
 
-
   redeclare function extends setState_psX
   "Return thermodynamic state as function of (p, s)"
 
 protected
     constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R_s=fluidConstants[1].gasConstant/MM
+    constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
@@ -1303,7 +1288,6 @@ protected
 
   end setState_psX;
 
-
   redeclare function extends temperature
   "returns temperature from given ThermodynamicState"
   // inherited from: PartialMedium
@@ -1312,7 +1296,6 @@ protected
     T := state.T;
   annotation(Inline = true);
   end temperature;
-
 
   redeclare function extends density
   "returns density from given ThermodynamicState"
@@ -1323,7 +1306,6 @@ protected
   annotation(Inline = true);
   end density;
 
-
   redeclare function extends pressure
   "returns pressure from given ThermodynamicState"
   // inherited from: PartialMedium
@@ -1332,7 +1314,6 @@ protected
     p := state.p;
   annotation(Inline = true);
   end pressure;
-
 
   redeclare function extends specificInternalEnergy
   "returns specificEnergy from given ThermodynamicState"
@@ -1352,7 +1333,6 @@ protected
   annotation(Inline = true);
   end specificEntropy;
 
-
   redeclare function extends specificEnthalpy
   "returns specificEnthalpy from given ThermodynamicState"
   // inherited from: PartialMedium
@@ -1361,7 +1341,6 @@ protected
     h := state.h;
   annotation(Inline = true);
   end specificEnthalpy;
-
 
   redeclare function vapourQuality "returns the vapour quality"
 
@@ -1372,7 +1351,6 @@ protected
   x := vapourQuality_sat(state=state, sat=setSat_T(state.T));
   annotation (Inline=true);
   end vapourQuality;
-
 
   redeclare function extends specificHeatCapacityCp
   "returns the isobaric specific heat capcacity"
@@ -1392,7 +1370,6 @@ protected
     end if;
 
   end specificHeatCapacityCp;
-
 
   redeclare function extends specificHeatCapacityCv
   "returns the isochoric specific heat capcacity"
@@ -1442,7 +1419,6 @@ protected
 
   end specificHeatCapacityCv;
 
-
   redeclare function extends velocityOfSound
   "returns the speed or velocity of sound"
   // a^2 := (dp/dd)@s=const
@@ -1490,7 +1466,6 @@ protected
     end if;
   end velocityOfSound;
 
-
   redeclare function extends isobaricExpansionCoefficient
   "returns 1/v*(dv/dT)@p=const"
   //input state
@@ -1508,7 +1483,6 @@ protected
       beta := Modelica.Constants.small;
     end if;
   end isobaricExpansionCoefficient;
-
 
   redeclare function extends isothermalCompressibility
   "returns -1/v*(dv/dp)@T=const"
@@ -1528,7 +1502,6 @@ protected
     end if;
   end isothermalCompressibility;
 
-
   redeclare function extends isentropicExponent "returns -v/p*(dp/dv)@s=const"
   // also known as isentropic expansion coefficient
 
@@ -1537,14 +1510,12 @@ protected
     annotation(Inline = true);
   end isentropicExponent;
 
-
   redeclare function extends isentropicEnthalpy "returns isentropic enthalpy"
 
   algorithm
     h_is := specificEnthalpy(setState_ps(p=p_downstream, s=specificEntropy(refState)));
     annotation(Inline = true);
   end isentropicEnthalpy;
-
 
   redeclare replaceable function extends dynamicViscosity
   "Returns dynamic Viscosity"
@@ -1554,7 +1525,6 @@ protected
     eta := Transport.dynamicViscosity(state);
   end dynamicViscosity;
 
-
   redeclare replaceable function extends thermalConductivity
   "Return thermal conductivity"
     // inherits input state and output lambda
@@ -1562,7 +1532,6 @@ protected
     assert(state.phase <> 2, "thermalConductivity warning: property not defined in two-phase region", level=AssertionLevel.warning);
     lambda := Transport.thermalConductivity(state);
   end thermalConductivity;
-
 
   redeclare replaceable function extends surfaceTension
   "Return surface tension sigma in the two phase region"
@@ -1576,7 +1545,6 @@ protected
     sigma := Transport.surfaceTension(sat=sat);
   end surfaceTension;
 
-
   redeclare function extends bubbleEnthalpy
   "returns specificEnthalpy from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
@@ -1585,7 +1553,6 @@ protected
     hl := sat.liq.h;
   annotation(Inline = true);
   end bubbleEnthalpy;
-
 
   redeclare function extends dewEnthalpy
   "returns specificEnthalpy from given SaturationProperties"
@@ -1596,7 +1563,6 @@ protected
   annotation(Inline = true);
   end dewEnthalpy;
 
-
   redeclare function extends dewEntropy
   "returns specificEntropy from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
@@ -1605,7 +1571,6 @@ protected
     sv := sat.vap.s;
   annotation(Inline = true);
   end dewEntropy;
-
 
   redeclare function extends bubbleEntropy
   "returns specificEntropy from given SaturationProperties"
@@ -1616,7 +1581,6 @@ protected
   annotation(Inline = true);
   end bubbleEntropy;
 
-
   redeclare function extends dewDensity
   "returns density from given SaturationProperties"
   // inherited from: PartialTwoPhaseMedium
@@ -1625,7 +1589,6 @@ protected
     dv := sat.vap.d;
   annotation(Inline = true);
   end dewDensity;
-
 
   redeclare function extends bubbleDensity
   "returns density from given SaturationProperties"
@@ -1636,14 +1599,12 @@ protected
   annotation(Inline = true);
   end bubbleDensity;
 
-
   redeclare function extends saturationTemperature
 
   algorithm
     T := saturationTemperature_sat(setSat_p(p=p));
   annotation(Inline = true);
   end saturationTemperature;
-
 
   redeclare function extends saturationTemperature_derp "returns (dT/dp)@sat"
 
@@ -1656,7 +1617,6 @@ protected
     dTp := if p<p_crit then saturationTemperature_derp_sat(sat=setSat_p(p=p)) else 1.0/pressure_derT_d(state=setState_pd(p=p, d=d_crit));
   annotation(Inline = true);
   end saturationTemperature_derp;
-
 
   redeclare function saturationTemperature_derp_sat "returns (dT/dp)@sat"
   // does not extend, because base class already defines an algorithm
@@ -1672,14 +1632,12 @@ protected
   annotation(Inline = true);
   end saturationTemperature_derp_sat;
 
-
   redeclare function extends saturationPressure
 
   algorithm
     p := saturationPressure_sat(setSat_T(T=T));
   annotation(Inline = true);
   end saturationPressure;
-
 
   redeclare function extends dBubbleDensity_dPressure
   "Return bubble point density derivative"
@@ -1697,7 +1655,6 @@ protected
   annotation(Inline = true);
   end dBubbleDensity_dPressure;
 
-
   redeclare function extends dDewDensity_dPressure
   "Return dew point density derivative"
   // inherited from: PartialTwoPhaseMedium
@@ -1713,7 +1670,6 @@ protected
     ddvdp := ddpT + ddTp*dTp;
   annotation(Inline = true);
   end dDewDensity_dPressure;
-
 
   redeclare function extends dBubbleEnthalpy_dPressure
   "Return bubble point enthalpy derivative"
@@ -1731,7 +1687,6 @@ protected
   annotation(Inline = true);
   end dBubbleEnthalpy_dPressure;
 
-
   redeclare function extends dDewEnthalpy_dPressure
   "Return dew point enthalpy derivative"
   // inherited from: PartialTwoPhaseMedium
@@ -1748,7 +1703,6 @@ protected
   annotation(Inline = true);
   end dDewEnthalpy_dPressure;
 
-
   redeclare function density_ph "returns density for given p and h"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1764,7 +1718,6 @@ protected
     Inline=true,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
-
 
   redeclare function extends density_derp_h
   "returns density derivative (dd/dp)@h=const"
@@ -1814,7 +1767,6 @@ protected
     end if;
   end density_derp_h;
 
-
   redeclare function extends density_derh_p
   "returns density derivative (dd/dh)@p=const"
   //input state
@@ -1836,7 +1788,6 @@ protected
     end if;
   end density_derh_p;
 
-
   redeclare function temperature_ph "returns temperature for given p and h"
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -1852,7 +1803,6 @@ protected
     Inline=true,
     inverse(h=specificEnthalpy_pT(p=p, T=T, phase=phase)));
   end temperature_ph;
-
 
   redeclare function density_pT "Return density from p and T"
     extends Modelica.Icons.Function;
@@ -1871,7 +1821,6 @@ protected
             T=temperature_pd(p=p, d=d, phase=phase)));
   end density_pT;
 
-
   redeclare function extends density_derp_T
   "returns density derivative (dd/dp)@T=const"
   //input state and output ddpT are inherited
@@ -1888,7 +1837,6 @@ protected
     end if;
   end density_derp_T;
 
-
   redeclare function extends density_derT_p
   "returns density derivative (dd/dT)@p=const"
   //input state and output ddTp are inherited
@@ -1904,7 +1852,6 @@ protected
       ddTp := Modelica.Constants.inf; // divide by zero
     end if;
   end density_derT_p;
-
 
   redeclare function specificEnthalpy_pT
   "returns specific enthalpy for given p and T"
@@ -1923,7 +1870,6 @@ protected
     inverse(T=temperature_ph(p=p, h=h, phase=phase)));
   end specificEnthalpy_pT;
 
-
   redeclare function pressure_dT
     extends Modelica.Icons.Function;
     input Density d "Density";
@@ -1941,7 +1887,6 @@ protected
             T=temperature_pd(p=p, d=d, phase=phase)));
   end pressure_dT;
 
-
   redeclare function specificEnthalpy_dT
     extends Modelica.Icons.Function;
     input Density d "Density";
@@ -1956,7 +1901,6 @@ protected
   annotation (
     Inline=true);
   end specificEnthalpy_dT;
-
 
   redeclare function temperature_ps "returns temperature for given p and d"
     extends Modelica.Icons.Function;
@@ -1974,7 +1918,6 @@ protected
             s=specificEntropy_pT(p=p, T=T, phase=phase)));
   end temperature_ps;
 
-
   redeclare function specificEnthalpy_ps
   "returns specific enthalpy for a given p and s"
     extends Modelica.Icons.Function;
@@ -1990,5 +1933,4 @@ protected
   annotation (
     inverse(s=specificEntropy_ph(p=p, h=h, phase=phase)));
   end specificEnthalpy_ps;
-
 end PartialHelmholtzMedium;
