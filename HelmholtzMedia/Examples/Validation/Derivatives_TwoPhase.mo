@@ -2,7 +2,7 @@ within HelmholtzMedia.Examples.Validation;
 model Derivatives_TwoPhase
   "compare analytical derivatives to numerical derivatives"
 
-  replaceable package Medium = HelmholtzFluids.R_s134a;
+  replaceable package Medium = HelmholtzFluids.R134a;
 
   parameter Medium.Temperature T=0.7*T_crit;
 
