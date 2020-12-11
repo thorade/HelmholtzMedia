@@ -13,7 +13,7 @@ protected
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
 
-  EoS.HelmholtzDerivs f(T=T);
+  EoS.HelmholtzDerivs f(T=T,tau=T_crit/T);
   SaturationProperties sat;
   MassFraction x "vapour quality";
 

@@ -18,7 +18,7 @@ protected
   constant Density dv_trip = Ancillary.dewDensity_T(T_trip);
   constant Density dl_trip = Ancillary.bubbleDensity_T(T_trip);
 
-  EoS.HelmholtzDerivs f(d=d);
+  EoS.HelmholtzDerivs f(d=d, delta = d/d_crit);
   SaturationProperties sat;
   MassFraction x "vapour quality";
 

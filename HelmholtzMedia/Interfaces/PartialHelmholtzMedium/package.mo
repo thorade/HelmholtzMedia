@@ -131,8 +131,8 @@ protected
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     Real tau(unit="1")=T_crit/T "inverse reduced temperature";
 
-    EoS.HelmholtzDerivs fl(T=T);
-    EoS.HelmholtzDerivs fv(T=T);
+    EoS.HelmholtzDerivs fl(T=T,tau=tau);
+    EoS.HelmholtzDerivs fv(T=T,tau=tau);
 
     Real delta_liq(unit="1", min=0);
     Real delta_vap(unit="1", min=0);
@@ -533,7 +533,7 @@ protected
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     // constant Real Z_crit=1/(d_crit*R*T_crit/p_crit);
 
-    EoS.HelmholtzDerivs f(T=T);
+    EoS.HelmholtzDerivs f(T=T,tau=T_crit/T);
     SaturationProperties sat;
 
     Density d_min;
