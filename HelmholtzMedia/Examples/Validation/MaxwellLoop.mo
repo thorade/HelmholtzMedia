@@ -22,13 +22,13 @@ protected
   constant Medium.Temperature Tmax=Medium.fluidLimits.TMAX;
 
 public
-  Modelica.Blocks.Sources.R_samp Ramp_dvap(
+  Modelica.Blocks.Sources.Ramp Ramp_dvap(
     duration=4,
     startTime=0.1,
     height=dcrit - dmin,
     offset=dmin)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
-  Modelica.Blocks.Sources.R_samp Ramp_dliq(
+  Modelica.Blocks.Sources.Ramp Ramp_dliq(
     duration=5,
     startTime=6,
     height=dmax - dcrit,

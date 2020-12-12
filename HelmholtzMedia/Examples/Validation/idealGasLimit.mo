@@ -13,7 +13,7 @@ model idealGasLimit
   constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
   constant Medium.SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
-  Real Z = (state.p*v)/(R*state.T);
+  Real Z = (state.p*v)/(R_s*state.T);
 
   Medium.SpecificHeatCapacity cv = Medium.specificHeatCapacityCv(state);
   Medium.SpecificHeatCapacity cp = Medium.specificHeatCapacityCp(state);
