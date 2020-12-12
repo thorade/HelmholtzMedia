@@ -99,5 +99,4 @@ algorithm
                                  + String(Medium.EoS.dgTd(f))+Separator,
                                    fileName);
 
-annotation (experiment(StopTime=12));
 end ThermoSurface;
