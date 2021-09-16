@@ -4,7 +4,7 @@ model MaxwellLoop "show Maxwell Loops"
   parameter Medium.Temperature T=0.9*Tcrit;
 
   Medium.Density d;
-  Modelica.SIunits.SpecificVolume v=1/d;
+  Modelica.Units.SI.SpecificVolume v=1/d;
   Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
   Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsThird(d=d, T=T, phase=1);
   Medium.AbsolutePressure p=Medium.EoS.p(f);

@@ -23,7 +23,7 @@ model State_pT_parameter_Transport "calculate state record from pT input"
   Medium.DynamicViscosity eta;
   //Medium.PrandtlNumber Pr;
   // more derived properties
-  Modelica.SIunits.IsothermalCompressibility kappa;
+  Modelica.Units.SI.IsothermalCompressibility kappa;
   Medium.IsobaricExpansionCoefficient beta;
   Medium.DerEnthalpyByPressure delta_T;
 
