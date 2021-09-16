@@ -37,7 +37,7 @@ Download the newest [tagged version](https://github.com/thorade/HelmholtzMedia/t
 In the future, there might be a release branch and official releases.
 
 ## License
-Copyright  2009-2020 Matthis Thorade
+Copyright  2009-2021 Matthis Thorade
 
 This Modelica package is free software and the use is completely at your own risk; 
 it is available under the BSD 3-Clause license. 
