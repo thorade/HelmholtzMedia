@@ -12,39 +12,34 @@ model BaseProps_sweep
     amplitude=50,
     offset=300,
     damping=0.5,
-    freqHz=1.1,
-    startTime=2)
-    annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
+    f=1.1,
+    startTime=2) annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
   Modelica.Blocks.Sources.Sine T_generator(
     offset=298.15,
-    freqHz=1.3,
+    f=1.3,
     startTime=0,
-    amplitude=50)
-    annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
+    amplitude=50) annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
   Modelica.Blocks.Sources.Sine p_generator(
     offset=2e6,
     startTime=0,
     phase=0,
-    freqHz=1.3,
-    amplitude=1.999e6)
-    annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
+    f=1.3,
+    amplitude=1.999e6) annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
   Modelica.Blocks.Sources.ExpSine h_generator(
     damping=0.3,
-    freqHz=2,
+    f=2,
     amplitude=100e3,
     startTime=2,
     phase=1.5707963267949,
-    offset=500e3)
-    annotation (Placement(transformation(extent={{-80,-60},{-60,-40}})));
+    offset=500e3) annotation (Placement(transformation(extent={{-80,-60},{-60,-40}})));
 
   Modelica.Blocks.Sources.ExpSine s_generator(
     damping=0.3,
     startTime=2,
     phase=0,
-    freqHz=1.1,
+    f=1.1,
     amplitude=2e3,
-    offset=0)
-    annotation (Placement(transformation(extent={{-80,-100},{-60,-80}})));
+    offset=0) annotation (Placement(transformation(extent={{-80,-100},{-60,-80}})));
 
 equation
   // medium.d = d_generator.y;

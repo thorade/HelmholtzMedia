@@ -25,12 +25,11 @@ Modelica.Blocks.Sources.Ramp p_super(
     height=pmax - pcrit)
     annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
 
-Modelica.Blocks.Sources.Sine T_sine(
+  Modelica.Blocks.Sources.Sine T_sine(
     startTime=0,
     amplitude=(Tmax - Tmin)/2,
     offset=(Tmax - Tmin)/2 + Tmin,
-    freqHz=1)
-    annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
+    f=1) annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
 
 protected
   constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;

@@ -14,13 +14,12 @@ Modelica.Blocks.Sources.Ramp T_sub(
     offset=Tmin,
     startTime=0.1)
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
-Modelica.Blocks.Sources.Sine p_sine(
+  Modelica.Blocks.Sources.Sine p_sine(
     phase=0,
     amplitude=(pmax - pmin)/2,
     offset=(pmax - pmin)/2,
     startTime=0,
-    freqHz=100)
-    annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
+    f=100) annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
 
 Modelica.Blocks.Sources.Ramp T_super(
     height=Tmax - Tcrit,

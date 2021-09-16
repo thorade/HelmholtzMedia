@@ -72,7 +72,7 @@ partial package PartialHelmholtzMedium
 
   equation
     MM = fluidConstants[1].molarMass;
-    R = Modelica.Constants.R/MM;
+  R_s = Modelica.Constants.R/MM;
 
     // use functions to calculate properties
     if (componentInputChoice == InputChoice.ph) then

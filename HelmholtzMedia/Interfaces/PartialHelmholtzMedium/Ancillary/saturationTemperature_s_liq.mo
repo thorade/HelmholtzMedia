@@ -2,8 +2,8 @@ within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Ancillary;
 function saturationTemperature_s_liq
   "ancillary iterative function: calculate saturation temperature for a given entropy by iterating the ancillary function"
 
-  input Modelica.SIunits.SpecificEntropy s;
-  output Modelica.SIunits.Temperature T;
+  input Modelica.Units.SI.SpecificEntropy s;
+  output Modelica.Units.SI.Temperature T;
 
 protected
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;

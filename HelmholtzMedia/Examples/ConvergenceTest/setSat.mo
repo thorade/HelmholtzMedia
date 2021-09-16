@@ -10,10 +10,10 @@ model setSat
   Medium.DerPressureByTemperature dpT2;
   Medium.DerTemperatureByPressure dTp2;
 
-  Modelica.SIunits.TemperatureDifference T_err_abs;
-  Modelica.SIunits.PressureDifference p_err_abs;
-  Modelica.SIunits.Density dl_err_abs(min=-1e3) "Liquid density difference";
-  Modelica.SIunits.Density dv_err_abs(min=-1e3) "Vapour density difference";
+  Modelica.Units.SI.TemperatureDifference T_err_abs;
+  Modelica.Units.SI.PressureDifference p_err_abs;
+  Modelica.Units.SI.Density dl_err_abs(min=-1e3) "Liquid density difference";
+  Modelica.Units.SI.Density dv_err_abs(min=-1e3) "Vapour density difference";
 
   Modelica.Blocks.Sources.Ramp T_ramp(
     duration=8,
