@@ -10,7 +10,7 @@ model ReferenceState
   Medium.SpecificEntropy s_ref;
 
 protected
-  Modelica.Units.SI.Time startTime;
+  Modelica.SIunits.Time startTime;
   Medium.SaturationProperties sat;
   final constant Medium.Temperature T_IIR = 273.15; // 0°C;
   final constant Medium.Temperature T_ASHRAE = 233.15; // -40°C;

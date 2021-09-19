@@ -7,7 +7,7 @@ partial model CheckDerivativesMedium
    parameter Medium.Temperature T0, T1;
    final parameter Medium.SpecificEnthalpy h0 = Medium.specificEnthalpy_pT(p0,T0);
    final parameter Medium.SpecificEnthalpy h1 = Medium.specificEnthalpy_pT(p0,T1);
-  final parameter Modelica.Units.SI.Time dt=1;
+   final parameter Modelica.SIunits.Time dt=1;
    final parameter Real dpdt = (p1-p0)/dt;
    final parameter Real dhdt = (h1-h0)/dt;
 
@@ -20,8 +20,8 @@ partial model CheckDerivativesMedium
 
    Medium.Density d_p_diff = d_p - d_p_int;
    Medium.Density d_h_diff = d_h - d_h_int;
-  Modelica.Units.SI.PerUnit d_p_err=d_p_diff/d_p;
-  Modelica.Units.SI.PerUnit d_h_err=d_h_diff/d_h;
+   Modelica.SIunits.PerUnit d_p_err = d_p_diff/d_p;
+   Modelica.SIunits.PerUnit d_h_err = d_h_diff/d_h;
 
    Real ddph, ddhp;
 equation

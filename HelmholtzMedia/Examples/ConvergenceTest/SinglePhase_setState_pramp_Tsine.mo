@@ -25,11 +25,12 @@ Modelica.Blocks.Sources.Ramp p_super(
     height=pmax - pcrit)
     annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
 
-  Modelica.Blocks.Sources.Sine T_sine(
-    f=100,
+Modelica.Blocks.Sources.Sine T_sine(
+    freqHz=100,
     startTime=0,
     amplitude=(Tmax - Tmin)/2,
-    offset=(Tmax - Tmin)/2 + Tmin) annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
+    offset=(Tmax - Tmin)/2 + Tmin)
+    annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
 
 protected
   Medium.AbsolutePressure p_melt;

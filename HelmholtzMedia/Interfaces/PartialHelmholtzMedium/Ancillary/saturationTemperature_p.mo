@@ -2,8 +2,8 @@ within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Ancillary;
 function saturationTemperature_p
   "ancillary iterative function: calculate saturation temperature for a given pressure by iterating the ancillary function"
 
-  input Modelica.Units.SI.AbsolutePressure p;
-  output Modelica.Units.SI.Temperature T;
+  input Modelica.SIunits.AbsolutePressure p;
+  output Modelica.SIunits.Temperature T;
 
 protected
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;

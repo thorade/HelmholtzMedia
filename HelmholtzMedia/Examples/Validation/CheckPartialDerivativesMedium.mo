@@ -8,11 +8,12 @@ model CheckPartialDerivativesMedium
    parameter Medium.AbsolutePressure p = 1e5;
    constant Medium.SpecificEnthalpy HMIN= 250e3;
    constant Medium.SpecificEnthalpy HMAX = 350e3;
-  Modelica.Blocks.Sources.Sine h_sine(
-    f=100,
+   Modelica.Blocks.Sources.Sine h_sine(
+    freqHz=100,
     startTime=0,
     amplitude=(HMAX - HMIN)/2,
-    offset=(HMAX - HMIN)/2 + HMIN) annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
+    offset=(HMAX - HMIN)/2 + HMIN)
+    annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
    Medium.SpecificEnthalpy h = h_sine.y;
 
    // state and properties from parameter p and variable h

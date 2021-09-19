@@ -2,8 +2,8 @@ within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Ancillary;
 function saturationTemperature_d
   "ancillary iterative function: calculate saturation temperature for a given density by iterating the ancillary function"
 
-  input Modelica.Units.SI.Density d;
-  output Modelica.Units.SI.Temperature T;
+  input Modelica.SIunits.Density d;
+  output Modelica.SIunits.Temperature T;
 
 protected
   constant MolarMass MM = fluidConstants[1].molarMass;

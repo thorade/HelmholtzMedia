@@ -22,7 +22,7 @@ model State_dT_parameter "calculate state record from dT input"
   Medium.IsentropicExponent gamma;
   Medium.VelocityOfSound a;
   Medium.DerTemperatureByPressure mu;
-  Modelica.Units.SI.IsothermalCompressibility kappa;
+  Modelica.SIunits.IsothermalCompressibility kappa;
   Medium.IsobaricExpansionCoefficient beta;
   Medium.DerEnthalpyByPressure delta_T;
 
