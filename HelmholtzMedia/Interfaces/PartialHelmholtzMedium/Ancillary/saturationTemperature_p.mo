@@ -62,7 +62,7 @@ if (p<p_crit) and (p>p_trip) then
     RES_p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
   end while;
   // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_p total iteration steps " + String(iter), "printlog.txt");
-  assert(iter<iter_max, getInstaceName() + ": did not converge, input was p=" + String(p));
+  assert(iter<iter_max, "Ancillary.saturationTemperature_p did not converge, input was p=" + String(p));
 
 elseif (p<=p_trip) then
   T := T_trip;

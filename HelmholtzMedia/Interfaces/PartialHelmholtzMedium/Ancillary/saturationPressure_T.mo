@@ -17,8 +17,7 @@ protected
   constant Real eps=1e-9;
 
 algorithm
-  // assert(T <= T_crit+eps,  getInstaceName() + ": Temperature is higher than critical temperature");
-  T := min(T, T_crit+eps);
+  assert(T <= T_crit+eps, "saturationPressure error: Temperature is higher than critical temperature");
   p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation));
 
   // this is an ancillary forward function
