@@ -17,7 +17,7 @@ protected
   constant Real eps=1e-9;
 
 algorithm
-  assert(T <= T_crit+eps, "Ancillary.saturationPressure_T error: Temperature is higher than critical temperature", AssertionLevel.warning);
+  assert(T <= T_crit+eps, "Ancillary.saturationPressure_T: Temperature is higher than critical temperature", AssertionLevel.warning);
   p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation));
 
   // this is an ancillary forward function
