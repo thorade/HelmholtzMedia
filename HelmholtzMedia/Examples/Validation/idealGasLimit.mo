@@ -55,5 +55,5 @@ How to use:
 </ol>
 
 </html>"),
-experiment(StopTime=100000));
+experiment(StopTime=200));
 end idealGasLimit;
