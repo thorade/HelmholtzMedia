@@ -18,7 +18,7 @@ protected
   Integer nPressureMelting3=size(ancillaryCoefficients.pressureMelting3, 1);
   Real[nPressureMelting3,2] n3=ancillaryCoefficients.pressureMelting3;
 
-  constant Real Tr=max((T/T_reducing), Modelica.Constants.small)
+  Real Tr=max((T/T_reducing), Modelica.Constants.small)
     "reduced temperature";
   Real pr "reduced pressure";
 
