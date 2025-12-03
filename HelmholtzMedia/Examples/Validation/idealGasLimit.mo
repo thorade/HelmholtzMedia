@@ -3,7 +3,7 @@ model idealGasLimit
   replaceable package Medium = HelmholtzFluids.Helium;
 
   parameter Medium.Temperature T=298.15;
-  Modelica.SIunits.SpecificVolume v;
+  Modelica.Units.SI.SpecificVolume v;
   Medium.Density d=1/v;
 
   Medium.ThermodynamicState state = Medium.setState_dT(d=d, T=T, phase=1);

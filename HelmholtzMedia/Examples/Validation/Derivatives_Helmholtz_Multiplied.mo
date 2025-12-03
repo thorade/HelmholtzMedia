@@ -1,4 +1,4 @@
-﻿within HelmholtzMedia.Examples.Validation;
+within HelmholtzMedia.Examples.Validation;
 model Derivatives_Helmholtz_Multiplied
   // validate derivatives of Helmholtz energy (single phase state)
   // values for comparison are given by RefProp

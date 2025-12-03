@@ -1,8 +1,8 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Ancillary;
 function saturationPressure_T
   "ancillary function: calculate saturation pressure for a given Temperature"
-  input Modelica.SIunits.Temperature T;
-  output Modelica.SIunits.AbsolutePressure p;
+  input Modelica.Units.SI.Temperature T;
+  output Modelica.Units.SI.AbsolutePressure p;
 
 protected
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;

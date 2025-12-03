@@ -32,8 +32,9 @@ partial package PartialHelmholtzMedium
   "Default choice of input variables for property computations";
 
 
-  redeclare record extends ThermodynamicState(phase(start=0))
+  redeclare record extends ThermodynamicState(phase(start=0)
     // inherits phase integer
+                                                            )
     Temperature T "Temperature of medium";
     AbsolutePressure p "Absolute pressure of medium";
     Density d "Density of medium";
@@ -72,7 +73,7 @@ partial package PartialHelmholtzMedium
 
   equation
     MM = fluidConstants[1].molarMass;
-    R = Modelica.Constants.R/MM;
+    R_s = Modelica.Constants.R/MM;
 
     // use functions to calculate properties
     if (componentInputChoice == InputChoice.ph) then
@@ -122,7 +123,7 @@ partial package PartialHelmholtzMedium
     input Temperature T;
     output SaturationProperties sat;
 
-protected
+  protected
     constant MolarMass MM = fluidConstants[1].molarMass;
     constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
@@ -272,7 +273,7 @@ with a Newton-Raphson approach for simultaneous equations.
     input AbsolutePressure p;
     output SaturationProperties sat;
 
-protected
+  protected
     constant MolarMass MM = fluidConstants[1].molarMass;
     constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
@@ -420,7 +421,7 @@ protected
   redeclare function extends setState_dTX
   "Return thermodynamic state as function of (d, T)"
 
-protected
+  protected
     constant MolarMass MM = fluidConstants[1].molarMass;
     constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
@@ -489,7 +490,7 @@ protected
     input MassFraction x "Vapour quality";
     output ThermodynamicState state "Thermodynamic state record";
 
-protected
+  protected
     SaturationProperties sat=setSat_T(T=T);
 
   algorithm
@@ -508,7 +509,7 @@ protected
     input MassFraction x "Vapour quality";
     output ThermodynamicState state "Thermodynamic state record";
 
-protected
+  protected
     SaturationProperties sat=setSat_p(p=p);
 
   algorithm
@@ -524,7 +525,7 @@ protected
   redeclare function extends setState_pTX
   "Return thermodynamic state as function of (p, T)"
 
-protected
+  protected
     constant MolarMass MM = fluidConstants[1].molarMass;
     constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
@@ -681,7 +682,7 @@ protected
   redeclare function extends setState_phX
   "Return thermodynamic state as function of (p, h)"
 
-protected
+  protected
     constant MolarMass MM = fluidConstants[1].molarMass;
     constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
@@ -947,7 +948,7 @@ protected
   redeclare function extends setState_psX
   "Return thermodynamic state as function of (p, s)"
 
-protected
+  protected
     constant MolarMass MM = fluidConstants[1].molarMass;
     constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
@@ -1358,7 +1359,7 @@ protected
   //input state
   //output cp
 
-protected
+  protected
     EoS.HelmholtzDerivs f;
 
   algorithm
@@ -1377,7 +1378,7 @@ protected
   //input state
   //output cv
 
-protected
+  protected
     EoS.HelmholtzDerivs f;
 
     SaturationProperties sat;
@@ -1424,7 +1425,7 @@ protected
   "returns the speed or velocity of sound"
   // a^2 := (dp/dd)@s=const
 
-protected
+  protected
     EoS.HelmholtzDerivs f;
 
     SaturationProperties sat;
@@ -1472,7 +1473,7 @@ protected
   //input state
   //output beta
 
-protected
+  protected
     EoS.HelmholtzDerivs f;
 
   algorithm
@@ -1490,7 +1491,7 @@ protected
   //input state and
   //output kappa are inherited from PartialMedium
 
-protected
+  protected
     EoS.HelmholtzDerivs f;
 
   algorithm
@@ -1537,7 +1538,7 @@ protected
   redeclare replaceable function extends surfaceTension
   "Return surface tension sigma in the two phase region"
       // inherits input saturationProperties sat and output SurfaceTension sigma
-protected
+  protected
     Temperature T_trip=fluidConstants[1].triplePointTemperature;
     Temperature T_crit=fluidConstants[1].criticalTemperature;
   algorithm
@@ -1609,7 +1610,7 @@ protected
 
   redeclare function extends saturationTemperature_derp "returns (dT/dp)@sat"
 
-protected
+  protected
     constant MolarMass MM = fluidConstants[1].molarMass;
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
@@ -1645,7 +1646,7 @@ protected
   // inherited from: PartialTwoPhaseMedium
   // inherits input sat and output ddldp
 
-protected
+  protected
     EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.liq.T);
     DerDensityByPressure ddpT = 1.0/EoS.dpdT(f);
     DerDensityByTemperature ddTp = -EoS.dpTd(f)/EoS.dpdT(f);
@@ -1661,7 +1662,7 @@ protected
   // inherited from: PartialTwoPhaseMedium
   // inherits input sat and output ddvdp
 
-protected
+  protected
     EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.vap.T);
     DerDensityByPressure ddpT = 1.0/EoS.dpdT(f);
     DerDensityByTemperature ddTp = -EoS.dpTd(f)/EoS.dpdT(f);
@@ -1677,7 +1678,7 @@ protected
   // inherited from: PartialTwoPhaseMedium
   // inherits input sat and output dhldp
 
-protected
+  protected
     EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.liq.T);
     DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
     DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
@@ -1693,7 +1694,7 @@ protected
   // inherited from: PartialTwoPhaseMedium
   // inherits input sat and output dhvdp
 
-protected
+  protected
     EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.vap.T);
     DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
     DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
@@ -1725,7 +1726,7 @@ protected
   //input state
   //output ddph
 
-protected
+  protected
     EoS.HelmholtzDerivs f;
 
     SaturationProperties sat;
@@ -1773,7 +1774,7 @@ protected
   //input state
   //output ddhp
 
-protected
+  protected
     EoS.HelmholtzDerivs f;
     SaturationProperties sat;
 
@@ -1826,7 +1827,7 @@ protected
   "returns density derivative (dd/dp)@T=const"
   //input state and output ddpT are inherited
 
-protected
+  protected
     EoS.HelmholtzDerivs f;
 
   algorithm
@@ -1842,7 +1843,7 @@ protected
   "returns density derivative (dd/dT)@p=const"
   //input state and output ddTp are inherited
 
-protected
+  protected
     EoS.HelmholtzDerivs f;
 
   algorithm

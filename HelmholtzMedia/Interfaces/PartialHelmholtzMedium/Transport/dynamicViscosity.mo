@@ -1,4 +1,4 @@
-﻿within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Transport;
+within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Transport;
 function dynamicViscosity "Returns dynamic Viscosity"
   input ThermodynamicState state;
   output DynamicViscosity eta;
