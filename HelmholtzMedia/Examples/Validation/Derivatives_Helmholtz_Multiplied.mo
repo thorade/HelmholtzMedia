@@ -31,7 +31,7 @@ protected
   Medium.EoS.HelmholtzDerivs f_ASHRAE = Medium.EoS.setHelmholtzDerivsThird(T=sat_ASHRAE.liq.T, d=sat_ASHRAE.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs f_NBP = Medium.EoS.setHelmholtzDerivsThird(T=sat_NBP.liq.T, d=sat_NBP.liq.d, phase=1);
   Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(T=T, d=d, phase=1);
-  Medium.EoS.HelmholtzDerivs f_num(T=T, d=d);
+  Medium.EoS.HelmholtzDerivs f_num(T=T, d=d, tau=tau, delta=delta);
 
   Real delta(unit="1")=d/d_crit "reduced density";
   Real tau(unit="1")=T_crit/T "inverse reduced temperature";
