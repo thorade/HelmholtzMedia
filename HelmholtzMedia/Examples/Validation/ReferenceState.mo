@@ -34,7 +34,7 @@ algorithm
     startTime := time;
   end when;
 
-  when time > startTime then
+  when time >= startTime then
   if not Modelica.Utilities.Files.exist(fileName) then
     // if file doesn't exist, create file and print header
     Modelica.Utilities.Streams.print("idealPower1" + separator
