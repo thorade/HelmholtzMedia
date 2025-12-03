@@ -37,7 +37,7 @@ Download the newest [tagged version](https://github.com/thorade/HelmholtzMedia/t
 In the future, there might be a release branch and official releases.
 
 ## License
-Copyright  2009-2021 Matthis Thorade
+Copyright  2009-2025 Matthis Thorade
 
 This Modelica package is free software and the use is completely at your own risk; 
 it is available under the BSD 3-Clause license. 
@@ -52,4 +52,3 @@ Code contributions are very welcome, especially in the form of [Pull Requests](h
 [2]: http://dx.doi.org/10.1007/s12665-013-2394-z "ISI Journal Paper: Partial derivatives"
 [3]: http://dx.doi.org/10.15480/882.1207 "Dissertation"
 [4]: http://gfzpublic.gfz-potsdam.de/pubman/item/escidoc:247376:1/component/escidoc:247375/20907.pdf "Poster"
-
