@@ -43,17 +43,17 @@ package R134a "R134a with IIR reference state"
     normalBoilingPoint=247.076,
     meltingPoint=247.076063) "Fluid Constants";
 
-  final constant EoSLimits
+  constant EoSLimits
   fluidLimitsR134a(
     TMIN=fluidConstantsR134a.triplePointTemperature,
     TMAX=455,
     DMIN=Modelica.Constants.eps,
-    DMAX=1592,
+    DMAX=1689,
     PMIN=Modelica.Constants.small,
     PMAX=70e6,
-    HMIN=0,
-    HMAX=600e3,
-    SMIN=0,
+    HMIN=61e3,
+    HMAX=588e3,
+    SMIN=250,
     SMAX=5330) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
