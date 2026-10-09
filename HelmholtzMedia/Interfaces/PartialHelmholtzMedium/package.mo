@@ -872,6 +872,10 @@ with a Newton-Raphson approach for simultaneous equations.
         RSS := RES*RES/2;
         // Modelica.Utilities.Streams.print("iter=" + String(iter) + " d_iter=" + String(d_iter) + " T_iter=" + String(T_iter) + " RES_p=" + String(RES[1]) + " RES_h=" + String(RES[2]) + " RSS=" + String(RSS), "printlog.txt");
 
+        // the previous line-search attempt is the full Newton step just evaluated
+        lambda_ls := lambda;
+        RSS_ls := RSS;
+
         // if RSS is not decreasing fast enough, the full Newton step is not used
         // instead, the linesearching / backtracking loop tries to find lambda such that RSS decreases
         while useLineSearch and (lambda>=lambda_min) and not (RSS<=(RSS_old+alpha*lambda*slope)) loop
@@ -1215,6 +1219,10 @@ with a Newton-Raphson approach for simultaneous equations.
         RES := {EoS.p(f)-p, EoS.s(f)-s};
         RSS := RES*RES/2;
         // Modelica.Utilities.Streams.print("iter=" + String(iter) + " d_iter=" + String(d_iter) + " T_iter=" + String(T_iter) + " RES_p=" + String(RES[1]) + " RES_s=" + String(RES[2]) + " RSS=" + String(RSS), "printlog.txt");
+
+        // the previous line-search attempt is the full Newton step just evaluated
+        lambda_ls := lambda;
+        RSS_ls := RSS;
 
         // if RSS is not decreasing fast enough, the full Newton step is not used
         // instead, the linesearching / backtracking loop tries to find lambda such that RSS decreases
