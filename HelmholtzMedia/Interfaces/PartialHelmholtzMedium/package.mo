@@ -301,7 +301,6 @@ with a Newton-Raphson approach for simultaneous equations.
 
     constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
     constant Real tol_rel=1e-9 "relative tolerance for convergence";
-    constant Real tol_abs=1e-2 "absolute tolerance for convergence";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -348,25 +347,22 @@ with a Newton-Raphson approach for simultaneous equations.
       fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
       RES := {EoS.p(fl)-p, EoS.p(fv)-p, EoS.g(fl)-EoS.g(fv)};
 
-      // convergence test, evaluated where RES and NS both have a value
-      converged := abs(RES[1]/p)<=tol_rel and abs(RES[2]/p)<=tol_rel
-               and abs(NS[1])<=tol_abs and abs(NS[2])<=tol_abs and abs(NS[3])<=tol_abs;
+      // convergence test
+      // residuals only: near the critical point the Jacobian is almost singular, so the Newton step is not a reliable measure;
+      // for the (almost incompressible) liquid at low p, abs(RES[1]/p)<=tol_rel is not reachable, so the liquid
+      // pressure residual may alternatively be measured as density error; the Gibbs residual is scaled by R_s*T
+      converged := (abs(RES[1]/p)<=tol_rel or abs(RES[1]/EoS.dpdT(fl))<=tol_rel*sat.liq.d)
+               and abs(RES[2]/p)<=tol_rel
+               and abs(RES[3])<=tol_rel*R_s*sat.Tsat;
     end while;
     // if verbose then Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt"); end if;
     // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
-    assert(iter<iter_max, "setSat_p did not converge, input was p=" + String(p) +
+    assert(converged, "setSat_p did not converge, input was p=" + String(p) +
                           "; the remaining residuals are RES_pl=" + String(RES[1]) +
                           " and RES_pv=" + String(RES[2]) +
                           " and RES_g=" + String(RES[3]));
 
-    // check bounds, more strict
-    sat.liq.d := max(sat.liq.d, d_crit);
-    sat.liq.d := min(sat.liq.d, dl_trip);
-    sat.vap.d := max(sat.vap.d, dv_trip);
-    sat.vap.d := min(sat.vap.d, d_crit);
-    sat.Tsat  := max(sat.Tsat,  T_trip);
-    sat.Tsat  := min(sat.Tsat,  T_crit);
-
+    // no clamping to the triple-point/critical constants here: clamping T and d separately gives an inconsistent state
     sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
     sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
 
