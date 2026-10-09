@@ -12,6 +12,7 @@ Derivatives_SaturationBoundary
 Derivatives_SinglePhase
 Derivatives_TwoPhase
 idealGasLimit
+LimitsProbe
 MaxwellLoop
 prettyPrintCoefficients
 ReferenceState

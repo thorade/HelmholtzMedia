@@ -49,12 +49,12 @@ package R32 "R32 with IIR reference state"
     TMIN=fluidConstantsR32.triplePointTemperature,
     TMAX=435 "upper temperature limit",
     DMIN=Modelica.Constants.eps,
-    DMAX=1429.3 "=maximum density*molecular weight",
+    DMAX=1491,
     PMIN=Modelica.Constants.small,
     PMAX=70e6,
-    HMIN=0 "How to get this data?",
-    HMAX=600e3 "How to get this data?",
-    SMIN=0 "How to get this data?",
+    HMIN=-167e3,
+    HMAX=571e3,
+    SMIN=-1100,
     SMAX=8070) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients

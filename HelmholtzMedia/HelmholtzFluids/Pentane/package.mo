@@ -51,9 +51,9 @@ package Pentane "Pentane"
     DMAX=808.066,
     PMIN=Modelica.Constants.small,
     PMAX=100e6,
-    HMIN=-200e3,
-    HMAX=+1500e3,
-    SMIN=-1000,
+    HMIN=-94e3,
+    HMAX=1352e3,
+    SMIN=-620,
     SMAX=8160) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients

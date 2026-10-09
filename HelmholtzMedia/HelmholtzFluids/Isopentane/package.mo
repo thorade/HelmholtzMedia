@@ -51,9 +51,9 @@ package Isopentane "Isopentane"
     DMAX=960,
     PMIN=Modelica.Constants.small,
     PMAX=1000e6,
-    HMIN=-725e3,
-    HMAX=+700e3,
-    SMIN=-3036,
+    HMIN=-401e3,
+    HMAX=1629e3,
+    SMIN=-2870,
     SMAX=6430) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients

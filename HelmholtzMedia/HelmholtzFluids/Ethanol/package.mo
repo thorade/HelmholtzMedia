@@ -48,12 +48,12 @@ extends Interfaces.PartialHelmholtzMedium(
     TMIN=250,
     TMAX=650,
     DMIN=Modelica.Constants.eps,
-    DMAX=893.73,
+    DMAX=946,
     PMIN=Modelica.Constants.small,
     PMAX=280e6,
-    HMIN=-100e3,
-    HMAX=+1300e3,
-    SMIN=-465,
+    HMIN=114e3,
+    HMAX=1959e3,
+    SMIN=350,
     SMAX=11920) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients

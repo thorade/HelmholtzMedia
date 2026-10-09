@@ -51,9 +51,9 @@ package Isobutane "Isobutane"
     DMAX=800,
     PMIN=Modelica.Constants.small,
     PMAX=35e6,
-    HMIN=-725e3,
-    HMAX=+700e3,
-    SMIN=-3036,
+    HMIN=-140e3,
+    HMAX=1262e3,
+    SMIN=-940,
     SMAX=9170) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
