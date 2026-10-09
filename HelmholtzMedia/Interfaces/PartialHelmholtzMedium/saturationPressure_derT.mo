@@ -11,5 +11,4 @@ protected
 
 algorithm
   dpT := if T< T_crit then saturationPressure_derT_sat(sat=setSat_T(T=T)) else pressure_derT_d(state=setState_dT(T=T, d=d_crit));
-annotation(Inline = true);
 end saturationPressure_derT;

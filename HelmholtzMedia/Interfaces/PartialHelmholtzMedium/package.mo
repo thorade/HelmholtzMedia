@@ -1649,7 +1649,6 @@ with a Newton-Raphson approach for simultaneous equations.
 
   algorithm
     dTp := if p<p_crit then saturationTemperature_derp_sat(sat=setSat_p(p=p)) else 1.0/pressure_derT_d(state=setState_pd(p=p, d=d_crit));
-  annotation(Inline = true);
   end saturationTemperature_derp;
 
   redeclare function saturationTemperature_derp_sat "returns (dT/dp)@sat"
