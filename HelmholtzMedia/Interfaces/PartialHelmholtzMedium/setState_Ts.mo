@@ -20,14 +20,16 @@ protected
   Density d_min=fluidLimits.DMIN;
   Density d_max=2*fluidLimits.DMAX; // extrapolation to higher densities should return reasonable values
   Density d_iter=d_crit;
+  Density d_old "d_iter of the previous iteration step";
   SpecificEntropy RES_s;
   SpecificEntropy RES_min;
   SpecificEntropy RES_max;
   DerEntropyByDensity dsdT "(ds/dd)@T=const";
   Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
-  constant Real tolerance=1e-9 "relative tolerance for RES_s (in J/kgK)";
+  constant Real tolerance=1e-9 "relative tolerance for RES_s, relative to max(abs(s), R_s)";
   Integer iter = 0;
   constant Integer iter_max = 200;
+  Boolean converged = false "true once residual or Newton step is within tolerance";
 
 algorithm
   // Modelica.Utilities.Streams.print(" ", "printlog.txt");
@@ -120,8 +122,9 @@ algorithm
       RES_min := RES_s;
     end if;
 
-    while ((abs(RES_s/s) > tolerance) and (iter<iter_max)) loop
+    while (iter<iter_max) and not converged loop
       iter := iter+1;
+      d_old := d_iter;
       // gamma := iter/(iter+1);
 
       // calculate missing parts of f, then calculate gradient with respect to density
@@ -155,10 +158,13 @@ algorithm
         RES_min := RES_s;
       end if;
 
+      // convergence test: residual scaled by max(abs(s), R_s), because s can be zero depending on the reference state,
+      // or density step at machine precision
+      converged := abs(RES_s)<=tolerance*max(abs(s), R_s) or abs(d_iter-d_old)<=1e-12*d_iter;
     end while;
     // Modelica.Utilities.Streams.print("setState_Ts total iteration steps " + String(iter), "printlog.txt");
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");
-    assert(iter<iter_max, "setState_Ts did not converge, input was T=" + String(T) + " and s=" + String(s));
+    assert(converged, "setState_Ts did not converge, input was T=" + String(T) + " and s=" + String(s));
 
     state.T := T;
     state.s :=s;
