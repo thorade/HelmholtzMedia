@@ -1749,7 +1749,6 @@ with a Newton-Raphson approach for simultaneous equations.
     d := density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
 
   annotation (
-    Inline=true,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
 
@@ -1834,7 +1833,6 @@ with a Newton-Raphson approach for simultaneous equations.
     T := temperature_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
 
   annotation (
-    Inline=true,
     inverse(h=specificEnthalpy_pT(p=p, T=T, phase=phase)));
   end temperature_ph;
 
@@ -1850,7 +1848,6 @@ with a Newton-Raphson approach for simultaneous equations.
     d := density_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
 
   annotation (
-    Inline=true,
     inverse(p=pressure_dT(d=d, T=T, phase=phase),
             T=temperature_pd(p=p, d=d, phase=phase)));
   end density_pT;
@@ -1900,7 +1897,6 @@ with a Newton-Raphson approach for simultaneous equations.
     h := specificEnthalpy_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
 
   annotation (
-    Inline=true,
     inverse(T=temperature_ph(p=p, h=h, phase=phase)));
   end specificEnthalpy_pT;
 
@@ -1916,7 +1912,6 @@ with a Newton-Raphson approach for simultaneous equations.
     p := pressure_dT_state(d=d, T=T, state=setState_dT(d=d, T=T, phase=phase));
 
   annotation (
-    Inline=true,
     inverse(d=density_pT(p=p, T=T, phase=phase),
             T=temperature_pd(p=p, d=d, phase=phase)));
   end pressure_dT;
