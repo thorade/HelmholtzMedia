@@ -14,7 +14,7 @@ package R134a "R134a with IIR reference state"
     SpecificEnthalpy(min=fluidLimitsR134a.HMIN, max=fluidLimitsR134a.HMAX, start=(fluidLimitsR134a.HMIN+fluidLimitsR134a.HMAX)/2),
     SpecificEntropy(min=fluidLimitsR134a.SMIN, max=fluidLimitsR134a.SMAX, start=(fluidLimitsR134a.SMIN+fluidLimitsR134a.SMAX)/2));
 
-  final constant FluidConstants
+  constant FluidConstants
   fluidConstantsR134a(
     chemicalFormula="C2H2F4",
     structureFormula="",
@@ -25,8 +25,8 @@ package R134a "R134a with IIR reference state"
        criticalTemperature=374.21,
        criticalPressure=4059280,
        criticalMolarVolume=0.102032/511.899952,
-       HCRIT0=390096.681354104,
-       SCRIT0=1563.25213836167,
+       HCRIT0=390109.614316582,
+       SCRIT0=1563.35726543122,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=2.058,
