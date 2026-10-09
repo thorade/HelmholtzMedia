@@ -16,7 +16,8 @@ protected
 
 algorithm
   criticalState := Medium.setState_dTX(d=d_crit, T=T_crit, phase=1);
-  assert(abs(criticalState.h-HCRIT0)<eps, "HCRIT0 is wrong, should be equal to criticalState.h=" + String(criticalState.h,significantDigits=15));
-  assert(abs(criticalState.s-SCRIT0)<eps, "SCRIT0 is wrong, should be equal to criticalState.s=" + String(criticalState.s,significantDigits=15));
+  assert(abs(criticalState.h-HCRIT0)<eps and abs(criticalState.s-SCRIT0)<eps,
+    "HCRIT0 and/or SCRIT0 are wrong, should be HCRIT0=" + String(criticalState.h,significantDigits=15)
+    + " and SCRIT0=" + String(criticalState.s,significantDigits=15));
 
 end CriticalState;
