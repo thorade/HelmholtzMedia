@@ -148,7 +148,8 @@ partial package PartialHelmholtzMedium
 
     Real RES[2] "residual function vector";
     Real Jacobian[2,2] "Jacobian matrix";
-    Real NS[2] = fill(Modelica.Constants.inf, 2) "Newton step vector";
+    Real NS[2] "Newton step vector";
+    Boolean converged = false "true once residuals and Newton step are within tolerance";
 
     constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
     constant Real tolerance=1e-7 "tolerance for p and d, needs to be smaller than simulation tolerance";
@@ -179,7 +180,7 @@ partial package PartialHelmholtzMedium
     // residual vector
     RES := {(J_vap-J_liq), (K_vap-K_liq)};
 
-    while (iter<iter_max) and (iter<1 or abs(RES[1])>tolerance or abs(RES[2])>tolerance or abs(NS[1])>tolerance or abs(NS[2])>tolerance) loop
+    while (iter<iter_max) and not converged loop
       iter := iter+1;
 
       // calculate gradients of J and K, set up Jacobian matrix, get Newton step
@@ -217,6 +218,10 @@ partial package PartialHelmholtzMedium
       K_vap := delta_vap*fv.rd + fv.r + log(delta_vap);
       // residual vector
       RES := {(J_vap-J_liq), (K_vap-K_liq)};
+
+      // convergence test, evaluated where RES and NS both have a value
+      converged := abs(RES[1])<=tolerance and abs(RES[2])<=tolerance
+               and abs(NS[1])<=tolerance and abs(NS[2])<=tolerance;
 
     end while;
     // Modelica.Utilities.Streams.print("setSat_T total iteration steps " + String(iter), "printlog.txt");
@@ -290,7 +295,8 @@ with a Newton-Raphson approach for simultaneous equations.
 
     Real RES[3] "residual function vector";
     Real Jacobian[3,3] "Jacobian matrix";
-    Real NS[3] = fill(Modelica.Constants.inf, 3) "Newton step vector";
+    Real NS[3] "Newton step vector";
+    Boolean converged = false "true once residuals and Newton step are within tolerance";
 
     constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
     constant Real tol_rel=1e-9 "relative tolerance for convergence";
@@ -314,7 +320,7 @@ with a Newton-Raphson approach for simultaneous equations.
     fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
     RES := {EoS.p(fl)-p, EoS.p(fv)-p, EoS.g(fl)-EoS.g(fv)};
 
-    while (iter<iter_max) and (iter<1 or abs(RES[1]/p)>tol_rel or abs(RES[2]/p)>tol_rel or abs(NS[1])>tol_abs or abs(NS[2])>tol_abs or abs(NS[3])>tol_abs) loop
+    while (iter<iter_max) and not converged loop
       iter := iter+1;
 
       // calculate Jacobian matrix and Newton Step vector
@@ -340,6 +346,10 @@ with a Newton-Raphson approach for simultaneous equations.
       fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
       fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
       RES := {EoS.p(fl)-p, EoS.p(fv)-p, EoS.g(fl)-EoS.g(fv)};
+
+      // convergence test, evaluated where RES and NS both have a value
+      converged := abs(RES[1]/p)<=tol_rel and abs(RES[2]/p)<=tol_rel
+               and abs(NS[1])<=tol_abs and abs(NS[2])<=tol_abs and abs(NS[3])<=tol_abs;
     end while;
     // if verbose then Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt"); end if;
     // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
