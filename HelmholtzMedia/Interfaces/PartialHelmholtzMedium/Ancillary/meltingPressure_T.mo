@@ -32,6 +32,8 @@ algorithm
     p_melt := p_reducing*pr;
   elseif (pressureMeltingModel == PressureMeltingModel.ML2) then
     p_melt := p_reducing*exp(pr);
+  else
+    assert(false, "Ancillary.meltingPressure_T: this should not happen, check PressureMeltingModel");
   end if;
 
   if (pr<1e-9) then
