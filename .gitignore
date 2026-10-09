@@ -48,3 +48,6 @@ HelmholtzMedia/**/*.pdf
 *.zip
 desktop.ini
 thumbs.db
+
+# ignore local Dymola test runs (Python driver scripts and their results)
+_dymola_runs/
