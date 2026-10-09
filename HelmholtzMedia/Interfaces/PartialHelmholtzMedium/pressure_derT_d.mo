@@ -14,5 +14,7 @@ algorithm
   elseif state.phase==2 then
     sat := setSat_T(T=state.T);
     dpTd := (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);
+  else
+    assert(false, "pressure_derT_d error: phase is neither 1 nor 2");
   end if;
 end pressure_derT_d;

@@ -16,5 +16,7 @@ algorithm
     // dhdT = -1/d^2 * dhvT
     sat:=setSat_T(T=state.T);
     dhdT := -1/state.d^2*(sat.liq.h-sat.vap.h)/(1/sat.liq.d-1/sat.vap.d);
+  else
+    assert(false, "specificEnthalpy_derd_T error: phase is neither 1 nor 2");
   end if;
 end specificEnthalpy_derd_T;

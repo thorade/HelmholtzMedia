@@ -42,6 +42,8 @@ algorithm
     dxTv :=(x*dvT_vap + (1 - x)*dvT_liq)/(1/sat.liq.d - 1/sat.vap.d);
 
     dhTd := dhT_liq + dxTv*(sat.vap.h-sat.liq.h) + x*(dhT_vap-dhT_liq);
+  else
+    assert(false, "specificEnthalpy_derT_d error: phase is neither 1 nor 2");
   end if;
 
 end specificEnthalpy_derT_d;
