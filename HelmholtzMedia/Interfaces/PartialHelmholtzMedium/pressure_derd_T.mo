@@ -12,5 +12,7 @@ algorithm
     dpdT := EoS.dpdT(f);
   elseif state.phase==2 then
     dpdT := Modelica.Constants.small; // zero
+  else
+    assert(false, "pressure_derd_T error: phase is neither 1 nor 2");
   end if;
 end pressure_derd_T;
