@@ -585,7 +585,7 @@ with a Newton-Raphson approach for simultaneous equations.
         d_iter := Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
       else
         // Modelica.Utilities.Streams.print("two-phase region", "printlog.txt");
-        assert(p <> sat.psat, "setState_pTX_error: pressure equals saturation pressure");
+        assert(false, "setState_pTX_error: pressure equals saturation pressure");
       end if;
     else
       // Modelica.Utilities.Streams.print("single-phase super-critical region", "printlog.txt");
