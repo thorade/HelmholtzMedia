@@ -19,9 +19,10 @@ protected
   EoS.HelmholtzDerivs fl;
   EoS.HelmholtzDerivs fv;
 
-  Real RES[2] = fill(Modelica.Constants.inf, 2) "residual function vector";
+  Real RES[2] "residual function vector";
   Real Jacobian[2,2] "Jacobian matrix";
-  Real NS[2] = fill(Modelica.Constants.inf, 2) "Newton step vector";
+  Real NS[2] "Newton step vector";
+  Boolean converged = false "true once residuals and Newton step are within tolerance";
 
   constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
   constant Real tolerance=1e-6 "tolerance for p and T and d, needs to be smaller than simulation tolerance";
@@ -43,7 +44,7 @@ algorithm
     fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
     RES := {EoS.p(fl)-EoS.p(fv), EoS.g(fl)-EoS.g(fv)};
 
-  while (iter<iter_max) and (iter<1 or abs(RES[1])>tolerance or abs(RES[2])>tolerance or abs(NS[1])>tolerance or abs(NS[2])>tolerance) loop
+  while (iter<iter_max) and not converged loop
       iter := iter+1;
 
       // calculate Jacobian matrix and Newton Step vector
@@ -65,7 +66,14 @@ algorithm
       fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
       fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
       RES := {EoS.p(fl)-EoS.p(fv), EoS.g(fl)-EoS.g(fv)};
+
+      // convergence test, evaluated where RES and NS both have a value
+      converged := abs(RES[1])<=tolerance and abs(RES[2])<=tolerance
+               and abs(NS[1])<=tolerance and abs(NS[2])<=tolerance;
     end while;
+    assert(iter<iter_max, "setSat_d did not converge, input was d=" + String(d)+
+                          "; the remaining residuals are RES[1]=" + String(RES[1]) +
+                          " and RES[2]=" + String(RES[2]));
     sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
     sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
     sat.psat := sat.liq.p;
@@ -80,7 +88,7 @@ algorithm
     fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
     RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
 
-  while (iter<iter_max) and (iter<1 or abs(RES[1])>tolerance or abs(RES[2])>tolerance or abs(NS[1])>tolerance or abs(NS[2])>tolerance) loop
+  while (iter<iter_max) and not converged loop
       iter := iter+1;
 
       // calculate Jacobian matrix and Newton Step vector
@@ -102,7 +110,14 @@ algorithm
       fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
       fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
       RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
+
+      // convergence test, evaluated where RES and NS both have a value
+      converged := abs(RES[1])<=tolerance and abs(RES[2])<=tolerance
+               and abs(NS[1])<=tolerance and abs(NS[2])<=tolerance;
     end while;
+    assert(iter<iter_max, "setSat_d did not converge, input was d=" + String(d)+
+                          "; the remaining residuals are RES[1]=" + String(RES[1]) +
+                          " and RES[2]=" + String(RES[2]));
     sat.liq  := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
     sat.vap  := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
     sat.psat := sat.liq.p;
@@ -121,8 +136,5 @@ algorithm
     sat.vap := setState_dTX(d=d_crit, T=T_crit, phase=1);
   end if;
   // Modelica.Utilities.Streams.print("setSat_d total iteration steps " + String(iter), "printlog.txt");
-  assert(iter<iter_max, "setSat_d did not converge, input was d=" + String(d)+
-                        "; the remaining residuals are RES[1]=" + String(RES[1]) +
-                        " and RES[2]=" + String(RES[2]));
 
 end setSat_d;
