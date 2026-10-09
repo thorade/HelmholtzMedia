@@ -19,9 +19,9 @@ protected
   EoS.HelmholtzDerivs fl;
   EoS.HelmholtzDerivs fv;
 
-  Real RES[2] "residual function vector";
+  Real RES[2] = fill(Modelica.Constants.inf, 2) "residual function vector";
   Real Jacobian[2,2] "Jacobian matrix";
-  Real NS[2] "Newton step vector";
+  Real NS[2] = fill(Modelica.Constants.inf, 2) "Newton step vector";
 
   constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
   constant Real tolerance=1e-6 "tolerance for p and T and d, needs to be smaller than simulation tolerance";

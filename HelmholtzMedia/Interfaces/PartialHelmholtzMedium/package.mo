@@ -148,7 +148,7 @@ partial package PartialHelmholtzMedium
 
     Real RES[2] "residual function vector";
     Real Jacobian[2,2] "Jacobian matrix";
-    Real NS[2] "Newton step vector";
+    Real NS[2] = fill(Modelica.Constants.inf, 2) "Newton step vector";
 
     constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
     constant Real tolerance=1e-7 "tolerance for p and d, needs to be smaller than simulation tolerance";
@@ -290,7 +290,7 @@ with a Newton-Raphson approach for simultaneous equations.
 
     Real RES[3] "residual function vector";
     Real Jacobian[3,3] "Jacobian matrix";
-    Real NS[3] "Newton step vector";
+    Real NS[3] = fill(Modelica.Constants.inf, 3) "Newton step vector";
 
     constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
     constant Real tol_rel=1e-9 "relative tolerance for convergence";
