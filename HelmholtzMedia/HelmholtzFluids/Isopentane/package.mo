@@ -10,7 +10,7 @@ package Isopentane "Isopentane"
     fluidLimits=fluidLimitsIsopentane,
     Density(min=fluidLimitsIsopentane.DMIN, max=fluidLimitsIsopentane.DMAX, start=fluidConstantsIsopentane.molarMass/fluidConstantsIsopentane.criticalMolarVolume),
     Temperature(min=fluidLimitsIsopentane.TMIN, max=fluidLimitsIsopentane.TMAX, start=298.15),
-    AbsolutePressure(min=0, max=35e6, start=101325),
+    AbsolutePressure(min=0, max=fluidLimitsIsopentane.PMAX, start=101325),
     SpecificEnthalpy(min=fluidLimitsIsopentane.HMIN, max=fluidLimitsIsopentane.HMAX, start=(fluidLimitsIsopentane.HMIN+fluidLimitsIsopentane.HMAX)/2),
     SpecificEntropy(min=fluidLimitsIsopentane.SMIN, max=fluidLimitsIsopentane.SMAX, start=(fluidLimitsIsopentane.SMIN+fluidLimitsIsopentane.SMAX)/2));
 
@@ -43,18 +43,18 @@ package Isopentane "Isopentane"
     normalBoilingPoint=300.98,
     meltingPoint=112.662) "Fluid Constants";
 
-  final constant FluidLimits
+  final constant EoSLimits
   fluidLimitsIsopentane(
     TMIN=fluidConstantsIsopentane.triplePointTemperature,
     TMAX=500,
-    DMIN=Modelica.Constants.small,
+    DMIN=Modelica.Constants.eps,
     DMAX=960,
     PMIN=Modelica.Constants.small,
     PMAX=1000e6,
     HMIN=-725e3,
     HMAX=+700e3,
     SMIN=-3036,
-    SMAX=9283) "Helmholtz EoS Limits";
+    SMAX=6430) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsIsopentane(

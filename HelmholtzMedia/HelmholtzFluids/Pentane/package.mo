@@ -10,7 +10,7 @@ package Pentane "Pentane"
     fluidLimits=fluidLimitsPentane,
     Density(min=fluidLimitsPentane.DMIN, max=fluidLimitsPentane.DMAX, start=fluidConstantsPentane.molarMass/fluidConstantsPentane.criticalMolarVolume),
     Temperature(min=fluidLimitsPentane.TMIN, max=fluidLimitsPentane.TMAX, start=298.15),
-    AbsolutePressure(min=Modelica.Constants.small, max=100e6, start=101325),
+    AbsolutePressure(min=Modelica.Constants.small, max=fluidLimitsPentane.PMAX, start=101325),
     SpecificEnthalpy(min=fluidLimitsPentane.HMIN, max=fluidLimitsPentane.HMAX, start=(fluidLimitsPentane.HMIN+fluidLimitsPentane.HMAX)/2),
     SpecificEntropy(min=fluidLimitsPentane.SMIN, max=fluidLimitsPentane.SMAX, start=(fluidLimitsPentane.SMIN+fluidLimitsPentane.SMAX)/2));
 
@@ -43,18 +43,18 @@ package Pentane "Pentane"
     normalBoilingPoint=309.21,
     meltingPoint=143.47) "Fluid Constants";
 
-  final constant FluidLimits
+  final constant EoSLimits
   fluidLimitsPentane(
     TMIN=fluidConstantsPentane.triplePointTemperature,
     TMAX=600,
-    DMIN=Modelica.Constants.small,
+    DMIN=Modelica.Constants.eps,
     DMAX=808.066,
     PMIN=Modelica.Constants.small,
     PMAX=100e6,
     HMIN=-200e3,
     HMAX=+1500e3,
     SMIN=-1000,
-    SMAX=5000) "Helmholtz EoS Limits";
+    SMAX=8160) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsPentane(

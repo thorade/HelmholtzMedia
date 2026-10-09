@@ -10,7 +10,7 @@ extends Interfaces.PartialHelmholtzMedium(
   fluidLimits=fluidLimitsPropane,
   Density(min=fluidLimitsPropane.DMIN, max=fluidLimitsPropane.DMAX, start=fluidConstantsPropane.molarMass/fluidConstantsPropane.criticalMolarVolume),
   Temperature(min=fluidLimitsPropane.TMIN, max=fluidLimitsPropane.TMAX, start=298.15),
-  AbsolutePressure(min=0, max=1000e6, start=101325),
+  AbsolutePressure(min=0, max=fluidLimitsPropane.PMAX, start=101325),
   SpecificEnthalpy(min=fluidLimitsPropane.HMIN, max=fluidLimitsPropane.HMAX, start=(fluidLimitsPropane.HMIN+fluidLimitsPropane.HMAX)/2),
   SpecificEntropy(min=fluidLimitsPropane.SMIN, max=fluidLimitsPropane.SMAX, start=(fluidLimitsPropane.SMIN+fluidLimitsPropane.SMAX)/2));
 
@@ -43,18 +43,18 @@ extends Interfaces.PartialHelmholtzMedium(
     normalBoilingPoint=231.036,
     meltingPoint=85.525) "Fluid Constants";
 
-  final constant FluidLimits
+  final constant EoSLimits
   fluidLimitsPropane(
     TMIN=fluidConstantsPropane.triplePointTemperature,
     TMAX=650,
-    DMIN=Modelica.Constants.small,
+    DMIN=Modelica.Constants.eps,
     DMAX=909,
     PMIN=Modelica.Constants.small,
     PMAX=1000e6,
     HMIN=-200e3,
     HMAX=+2400e3,
     SMIN=-1400,
-    SMAX=9800) "Helmholtz EoS Limits";
+    SMAX=11430) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsPropane(

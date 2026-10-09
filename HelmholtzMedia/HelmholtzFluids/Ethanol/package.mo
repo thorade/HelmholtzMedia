@@ -10,7 +10,7 @@ extends Interfaces.PartialHelmholtzMedium(
   fluidLimits=fluidLimitsEthanol,
   Density(min=fluidLimitsEthanol.DMIN, max=fluidLimitsEthanol.DMAX),
   Temperature(min=fluidLimitsEthanol.TMIN, max=fluidLimitsEthanol.TMAX, start=298.15),
-  AbsolutePressure(min=0, max=280e6, start=101325),
+  AbsolutePressure(min=0, max=fluidLimitsEthanol.PMAX, start=101325),
   SpecificEnthalpy(min=fluidLimitsEthanol.HMIN, max=fluidLimitsEthanol.HMAX, start=(fluidLimitsEthanol.HMIN+fluidLimitsEthanol.HMAX)/2),
   SpecificEntropy(min=fluidLimitsEthanol.SMIN, max=fluidLimitsEthanol.SMAX, start=(fluidLimitsEthanol.SMIN+fluidLimitsEthanol.SMAX)/2));
 
@@ -43,18 +43,18 @@ extends Interfaces.PartialHelmholtzMedium(
     normalBoilingPoint=351.39,
     meltingPoint=159) "Fluid Constants";
 
-  final constant FluidLimits
+  final constant EoSLimits
   fluidLimitsEthanol(
     TMIN=250,
     TMAX=650,
-    DMIN=Modelica.Constants.small,
+    DMIN=Modelica.Constants.eps,
     DMAX=893.73,
     PMIN=Modelica.Constants.small,
     PMAX=280e6,
     HMIN=-100e3,
     HMAX=+1300e3,
     SMIN=-465,
-    SMAX=8100) "Helmholtz EoS Limits";
+    SMAX=11920) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsEthanol(

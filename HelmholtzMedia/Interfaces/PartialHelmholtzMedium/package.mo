@@ -10,12 +10,13 @@ partial package PartialHelmholtzMedium
     onePhase=false,
     singleState=false,
     smoothModel=true,
-    DipoleMoment(min=0, max=5),
+    redeclare replaceable record FluidConstants =
+      Modelica.Media.Interfaces.Types.TwoPhase.FluidConstants(dipoleMoment(min=0, max=5)),
     AbsolutePressure(min=Modelica.Constants.small, max=1e12),
     SpecificEntropy(min=-Modelica.Constants.inf, max=Modelica.Constants.inf),
     ThermoStates=Choices.IndependentVariables.ph);
 
-  constant HelmholtzMedia.Interfaces.Types.FluidLimits fluidLimits;
+  constant HelmholtzMedia.Interfaces.Types.EoSLimits fluidLimits;
 
   constant EoS.HelmholtzCoefficients helmholtzCoefficients;
 

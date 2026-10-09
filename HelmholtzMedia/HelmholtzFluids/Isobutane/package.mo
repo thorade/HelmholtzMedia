@@ -10,7 +10,7 @@ package Isobutane "Isobutane"
     fluidLimits=fluidLimitsIsobutane,
     Density(min=fluidLimitsIsobutane.DMIN, max=fluidLimitsIsobutane.DMAX, start=fluidConstantsIsobutane.molarMass/fluidConstantsIsobutane.criticalMolarVolume),
     Temperature(min=fluidLimitsIsobutane.TMIN, max=fluidLimitsIsobutane.TMAX, start=298.15),
-    AbsolutePressure(min=0, max=35e6, start=101325),
+    AbsolutePressure(min=0, max=fluidLimitsIsobutane.PMAX, start=101325),
     SpecificEnthalpy(min=fluidLimitsIsobutane.HMIN, max=fluidLimitsIsobutane.HMAX, start=(fluidLimitsIsobutane.HMIN+fluidLimitsIsobutane.HMAX)/2),
     SpecificEntropy(min=fluidLimitsIsobutane.SMIN, max=fluidLimitsIsobutane.SMAX, start=(fluidLimitsIsobutane.SMIN+fluidLimitsIsobutane.SMAX)/2));
 
@@ -43,18 +43,18 @@ package Isobutane "Isobutane"
     normalBoilingPoint=261.401,
     meltingPoint=113.73) "Fluid Constants";
 
-  final constant FluidLimits
+  final constant EoSLimits
   fluidLimitsIsobutane(
     TMIN=fluidConstantsIsobutane.triplePointTemperature,
     TMAX=575,
-    DMIN=Modelica.Constants.small,
+    DMIN=Modelica.Constants.eps,
     DMAX=800,
     PMIN=Modelica.Constants.small,
     PMAX=35e6,
     HMIN=-725e3,
     HMAX=+700e3,
     SMIN=-3036,
-    SMAX=9283) "Helmholtz EoS Limits";
+    SMAX=9170) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsIsobutane(
