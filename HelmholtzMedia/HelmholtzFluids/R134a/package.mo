@@ -10,7 +10,7 @@ package R134a "R134a with IIR reference state"
     fluidLimits=fluidLimitsR134a,
     Density(min=fluidLimitsR134a.DMIN, max=fluidLimitsR134a.DMAX, start=fluidConstantsR134a.molarMass/fluidConstantsR134a.criticalMolarVolume),
     Temperature(min=fluidLimitsR134a.TMIN, max=fluidLimitsR134a.TMAX, start=298.15),
-    AbsolutePressure(min=0, max=70e6, start=101325),
+    AbsolutePressure(min=0, max=fluidLimitsR134a.PMAX, start=101325),
     SpecificEnthalpy(min=fluidLimitsR134a.HMIN, max=fluidLimitsR134a.HMAX, start=(fluidLimitsR134a.HMIN+fluidLimitsR134a.HMAX)/2),
     SpecificEntropy(min=fluidLimitsR134a.SMIN, max=fluidLimitsR134a.SMAX, start=(fluidLimitsR134a.SMIN+fluidLimitsR134a.SMAX)/2));
 
@@ -43,18 +43,18 @@ package R134a "R134a with IIR reference state"
     normalBoilingPoint=247.076,
     meltingPoint=247.076063) "Fluid Constants";
 
-  final constant FluidLimits
+  final constant EoSLimits
   fluidLimitsR134a(
     TMIN=fluidConstantsR134a.triplePointTemperature,
     TMAX=455,
-    DMIN=Modelica.Constants.small,
+    DMIN=Modelica.Constants.eps,
     DMAX=1592,
     PMIN=Modelica.Constants.small,
     PMAX=70e6,
     HMIN=0,
     HMAX=600e3,
     SMIN=0,
-    SMAX=1e12) "Helmholtz EoS Limits";
+    SMAX=5330) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsR134a(

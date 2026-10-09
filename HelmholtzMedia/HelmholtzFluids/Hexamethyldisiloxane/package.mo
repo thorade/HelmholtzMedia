@@ -10,7 +10,7 @@ extends Interfaces.PartialHelmholtzMedium(
   fluidLimits=fluidLimitsMM,
   Density(min=fluidLimitsMM.DMIN, max=fluidLimitsMM.DMAX, start=fluidConstantsMM.molarMass/fluidConstantsMM.criticalMolarVolume),
   Temperature(min=fluidLimitsMM.TMIN, max=fluidLimitsMM.TMAX, start=298.15),
-  AbsolutePressure(min=0, max=200e6, start=101325),
+  AbsolutePressure(min=0, max=fluidLimitsMM.PMAX, start=101325),
   SpecificEnthalpy(min=fluidLimitsMM.HMIN, max=fluidLimitsMM.HMAX, start=0),
   SpecificEntropy(min=fluidLimitsMM.SMIN, max=fluidLimitsMM.SMAX, start=0));
 
@@ -29,7 +29,7 @@ extends Interfaces.PartialHelmholtzMedium(
        SCRIT0=806.289339866737,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=false,
-       dipoleMoment=-1,
+       dipoleMoment=0,
     hasFundamentalEquation=true,
     hasLiquidHeatCapacity=true,
     hasSolidHeatCapacity=false,
@@ -43,18 +43,18 @@ extends Interfaces.PartialHelmholtzMedium(
     normalBoilingPoint=373.401,
     meltingPoint=204.93) "Fluid Constants";
 
-  final constant FluidLimits
+  final constant EoSLimits
   fluidLimitsMM(
     TMIN=273,
     TMAX=673,
-    DMIN=Modelica.Constants.small,
+    DMIN=Modelica.Constants.eps,
     DMAX=844,
     PMIN=Modelica.Constants.small,
     PMAX=30e6,
     HMIN=-100e3,
     HMAX=+1300e3,
     SMIN=-465,
-    SMAX=8100) "Helmholtz EoS Limits";
+    SMAX=3630) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsMM(

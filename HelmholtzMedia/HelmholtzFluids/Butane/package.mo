@@ -11,7 +11,7 @@ extends Interfaces.PartialHelmholtzMedium(
   final fluidLimits=fluidLimitsButane,
   Density(min=fluidLimitsButane.DMIN, max=fluidLimitsButane.DMAX, start=fluidConstantsButane.molarMass/fluidConstantsButane.criticalMolarVolume),
   Temperature(min=fluidLimitsButane.TMIN, max=fluidLimitsButane.TMAX, start=298.15),
-  AbsolutePressure(min=0, max=200e6, start=101325),
+  AbsolutePressure(min=0, max=fluidLimitsButane.PMAX, start=101325),
   SpecificEnthalpy(min=fluidLimitsButane.HMIN, max=fluidLimitsButane.HMAX, start=(fluidLimitsButane.HMIN+fluidLimitsButane.HMAX)/2),
   SpecificEntropy(min=fluidLimitsButane.SMIN, max=fluidLimitsButane.SMAX, start=(fluidLimitsButane.SMIN+fluidLimitsButane.SMAX)/2));
 
@@ -44,18 +44,18 @@ extends Interfaces.PartialHelmholtzMedium(
     normalBoilingPoint=272.660,
     meltingPoint=134.912) "Fluid Constants";
 
-  final constant FluidLimits
+  final constant EoSLimits
   fluidLimitsButane(
     TMIN=fluidConstantsButane.triplePointTemperature,
     TMAX=575,
-    DMIN=Modelica.Constants.small,
+    DMIN=Modelica.Constants.eps,
     DMAX=800,
     PMIN=Modelica.Constants.small,
     PMAX=200e6,
     HMIN=-100e3,
     HMAX=+1300e3,
     SMIN=-465,
-    SMAX=8100) "Helmholtz EoS Limits";
+    SMAX=9220) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsButane(

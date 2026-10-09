@@ -11,7 +11,7 @@ package R32 "R32 with IIR reference state"
     fluidLimits=fluidLimitsR32,
     Density(min=fluidLimitsR32.DMIN, max=fluidLimitsR32.DMAX, start=fluidConstantsR32.molarMass/fluidConstantsR32.criticalMolarVolume),
     Temperature(min=fluidLimitsR32.TMIN, max=fluidLimitsR32.TMAX, start=298.15),
-    AbsolutePressure(min=0, max=70e6, start=101325),
+    AbsolutePressure(min=0, max=fluidLimitsR32.PMAX, start=101325),
     SpecificEnthalpy(min=fluidLimitsR32.HMIN, max=fluidLimitsR32.HMAX, start=(fluidLimitsR32.HMIN+fluidLimitsR32.HMAX)/2),
     SpecificEntropy(min=fluidLimitsR32.SMIN, max=fluidLimitsR32.SMAX, start=(fluidLimitsR32.SMIN+fluidLimitsR32.SMAX)/2));
 
@@ -44,18 +44,18 @@ package R32 "R32 with IIR reference state"
     normalBoilingPoint=221.499,
     meltingPoint=221.499 "Search <normal boiling point temperature>") "Fluid Constants";
 
-  final constant FluidLimits
+  final constant EoSLimits
   fluidLimitsR32(
     TMIN=fluidConstantsR32.triplePointTemperature,
     TMAX=435 "upper temperature limit",
-    DMIN=Modelica.Constants.small,
+    DMIN=Modelica.Constants.eps,
     DMAX=1429.3 "=maximum density*molecular weight",
     PMIN=Modelica.Constants.small,
     PMAX=70e6,
     HMIN=0 "How to get this data?",
     HMAX=600e3 "How to get this data?",
     SMIN=0 "How to get this data?",
-    SMAX=1e12 "How to get this data?") "Helmholtz EoS Limits";
+    SMAX=8070) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsR32(

@@ -11,7 +11,7 @@ extends Interfaces.PartialHelmholtzMedium(
   final ancillaryCoefficients=ancillaryCoefficientsCarbondioxide,
   Density(min=fluidLimitsCarbondioxide.DMIN, max=fluidLimitsCarbondioxide.DMAX, start=fluidConstantsCarbondioxide.molarMass/fluidConstantsCarbondioxide.criticalMolarVolume),
   Temperature(min=fluidLimitsCarbondioxide.TMIN, max=fluidLimitsCarbondioxide.TMAX, start=298.15),
-  AbsolutePressure(min=0, max=801e6, start=101325),
+  AbsolutePressure(min=0, max=fluidLimitsCarbondioxide.PMAX, start=101325),
   SpecificEnthalpy(min=fluidLimitsCarbondioxide.HMIN, max=fluidLimitsCarbondioxide.HMAX, start=(fluidLimitsCarbondioxide.HMIN+fluidLimitsCarbondioxide.HMAX)/2),
   SpecificEntropy(min=fluidLimitsCarbondioxide.SMIN, max=fluidLimitsCarbondioxide.SMAX, start=(fluidLimitsCarbondioxide.SMIN+fluidLimitsCarbondioxide.SMAX)/2));
 
@@ -44,18 +44,18 @@ extends Interfaces.PartialHelmholtzMedium(
     normalBoilingPoint=194.686,
     meltingPoint=216.592) "Fluid Constants";
 
-  final constant FluidLimits
+  final constant EoSLimits
   fluidLimitsCarbondioxide(
     TMIN=fluidConstantsCarbondioxide.triplePointTemperature,
     TMAX=2000,
-    DMIN=Modelica.Constants.small,
+    DMIN=Modelica.Constants.eps,
     DMAX=1638.9,
     PMIN=Modelica.Constants.small,
     PMAX=800e6,
     HMIN=-100e3,
     HMAX=+1300e3,
     SMIN=0.52129,
-    SMAX=Modelica.Constants.inf) "Helmholtz EoS Limits";
+    SMAX=11470) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsCarbondioxide(
