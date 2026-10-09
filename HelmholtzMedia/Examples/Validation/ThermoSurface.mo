@@ -50,10 +50,12 @@ protected
   Medium.AbsolutePressure p_melt(start=101325) = Medium.Ancillary.meltingPressure_T(T);
   Medium.AbsolutePressure p(start=101325);
 
-algorithm
-  T := T_sub.y + T_super.y;
-  p := min({p_melt, p_sub.y + p_super.y});
+equation
+  T = T_sub.y + T_super.y;
+  p = min(p_melt, p_sub.y + p_super.y);
 
+algorithm
+  // only file output here; T and p are computed in equations above to avoid an algebraic loop
   when initial() then
     if not appendToFile then
       // remove old file
@@ -99,4 +101,5 @@ algorithm
                                  + String(Medium.EoS.dgTd(f))+Separator,
                                    fileName);
 
+  annotation (experiment(StopTime=12));
 end ThermoSurface;

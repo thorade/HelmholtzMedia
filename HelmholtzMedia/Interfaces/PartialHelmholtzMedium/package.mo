@@ -551,6 +551,7 @@ with a Newton-Raphson approach for simultaneous equations.
     Density d_min;
     Density d_max;
     Density d_iter;
+    Density d_old "d_iter of the previous iteration step";
     AbsolutePressure RES_p;
     AbsolutePressure RES_min;
     AbsolutePressure RES_max;
@@ -559,6 +560,7 @@ with a Newton-Raphson approach for simultaneous equations.
     constant Real tolerance=1e-9 "relativ tolerance for RES_p";
     Integer iter = 0;
     constant Integer iter_max=200;
+    Boolean converged = false "true once residual or Newton step is within tolerance";
 
   algorithm
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");
@@ -613,10 +615,16 @@ with a Newton-Raphson approach for simultaneous equations.
 
     // Modelica.Utilities.Streams.print("initialize bisection", "printlog.txt");
     // min
-    f.d := d_min;
-    f.delta := f.d/d_crit;
-    f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
-    RES_min := EoS.p(f) - p;
+    if (d_min <= fluidLimits.DMIN) then
+      // ideal-gas limit: p(d->0,T)=0, so RES_min=-p exactly;
+      // avoids evaluating the EoS at d=fluidLimits.DMIN (Modelica.Constants.small), which returns NaN
+      RES_min := -p;
+    else
+      f.d := d_min;
+      f.delta := f.d/d_crit;
+      f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+      RES_min := EoS.p(f) - p;
+    end if;
     // max
     f.d := d_max;
     f.delta := f.d/d_crit;
@@ -639,8 +647,9 @@ with a Newton-Raphson approach for simultaneous equations.
       RES_min := RES_p;
     end if;
 
-    while ((abs(RES_p/p) > tolerance) and (iter<iter_max)) loop
+    while (iter<iter_max) and not converged loop
       iter := iter+1;
+      d_old := d_iter;
       // gamma := iter/(iter+1);
 
       // calculate gradient with respect to density
@@ -654,8 +663,8 @@ with a Newton-Raphson approach for simultaneous equations.
       // calculate better d_iter using Newton
       d_iter := d_iter - gamma/dpdT*RES_p;
 
-      // check bounds, if out of bounds use bisection
-      if (d_iter<d_min) or (d_iter>d_max) then
+      // check bounds, if out of bounds (or NaN) use bisection
+      if (d_iter<d_min) or (d_iter>d_max) or (d_iter<>d_iter) then
         // Modelica.Utilities.Streams.print("d_iter out of bounds, fallback to bisection method, step=" + String(iter) + ", d_iter=" + String(d_iter) + ", input was p=" + String(p) + " and T=" + String(T), "printlog.txt");
         d_iter := (d_min+d_max)/2;
       end if;
@@ -676,6 +685,11 @@ with a Newton-Raphson approach for simultaneous equations.
         RES_min := RES_p;
       end if;
       // Modelica.Utilities.Streams.print("d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
+
+      // convergence test: relative residual within tolerance, or density step at machine precision
+      // (in compressed liquid at very low p, e.g. near the triple point, abs(RES_p/p)<=tolerance is not reachable,
+      //  and Newton approaches the root from one side only, so the bracket d_min..d_max does not collapse)
+      converged := abs(RES_p/p)<=tolerance or abs(d_iter-d_old)<=1e-12*d_iter;
     end while;
     // Modelica.Utilities.Streams.print("setState_pT required " + String(iter) + " iterations to find d=" + String(d_iter) + " for input T=" + String(T) + " and p=" + String(p), "printlog.txt");
     assert(iter<iter_max, "setState_pTX did not converge, input was p=" + String(p) + " and T=" + String(T));
