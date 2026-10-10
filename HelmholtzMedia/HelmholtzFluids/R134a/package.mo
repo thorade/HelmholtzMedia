@@ -22,11 +22,11 @@ package R134a "R134a with IIR reference state"
     iupacName="",
     molarMass=0.102032,
     hasCriticalData=true,
-       criticalTemperature=374.18,
-       criticalPressure=4056290,
-       criticalMolarVolume=0.102032/508,
-       HCRIT0=390078.339662165,
-       SCRIT0=1563.35726543122,
+       criticalTemperature=374.21,
+       criticalPressure=4059280,
+       criticalMolarVolume=0.102032/511.899952,
+       HCRIT0=389651.845672935,
+       SCRIT0=1562.20442405346,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=2.058,
@@ -58,6 +58,8 @@ package R134a "R134a with IIR reference state"
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsR134a(
+    T_reducing=374.18,
+    d_reducing=508,
     idealLog=[
       -1.629789E+0,     1.00E0],
     idealPower=[
@@ -189,6 +191,8 @@ package R134a "R134a with IIR reference state"
   annotation (Documentation(info="<html>
 These are the coefficients for R134a.
 The reference state is set to IIR.
+The critical constants are those of REFPROP, i.e. the critical point of the EoS;
+the EoS itself is reduced with T=374.18 K and d=508 kg/m3 as given by Tillner-Roth and Baehr.
 
 <dl>
 <dt> Tillner-Roth, R. and Baehr, H.D.,</dt>
