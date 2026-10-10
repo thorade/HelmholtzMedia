@@ -759,7 +759,9 @@ with a Newton-Raphson approach for simultaneous equations.
     Real grad[2] "gradient vector";
     Real slope;
 
-    constant Real tolerance=1e-9 "tolerance for RSS";
+    constant Real tolerance=1e-18 "tolerance for RSS of the scaled residuals";
+    constant SpecificEnthalpy h_scale=R_s*T_crit "scale for the enthalpy residual";
+    Boolean converged = false "true once residuals or Newton step are within tolerance";
     Integer iter = 0;
     Integer iter_max = 200;
     Real lambda(min=1e-3,max=1) = 1 "convergence speed, default=1";
@@ -879,20 +881,19 @@ with a Newton-Raphson approach for simultaneous equations.
     else
       // Modelica.Utilities.Streams.print("single-phase, use 2D Newton-Raphson, start with d_iter=" + String(d_iter) + " (d_min=" + String(d_min) + " and d_max=" + String(d_max) + ") and T_iter=" + String(T_iter)+ " (T_min=" + String(T_min) + " and T_max=" + String(T_max) + ")", "printlog.txt");
       f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
-      RES := {EoS.p(f)-p, EoS.h(f)-h};
+      RES := {(EoS.p(f)-p)/p, (EoS.h(f)-h)/h_scale};
       RSS := RES*RES/2;
 
-      while ((RSS>tolerance) and (iter<iter_max)) loop
+      while (iter<iter_max) and not converged loop
         iter := iter+1;
 
         // calculate Jacobian matrix, Newton Step vector, gradient and slope
-        Jacobian := [EoS.dpdT(f), EoS.dpTd(f);
-                     EoS.dhdT(f), EoS.dhTd(f)];
+        Jacobian := [EoS.dpdT(f)/p, EoS.dpTd(f)/p;
+                     EoS.dhdT(f)/h_scale, EoS.dhTd(f)/h_scale];
         NS := -Modelica.Math.Matrices.solve(Jacobian,RES) "-J^(-1)*F";
         grad := RES*Jacobian "F*J";
-        slope := grad*NS;
+        slope := -RES*RES "= grad*NS for the Newton direction, computed exactly to avoid a wrong sign from roundoff";
         // Modelica.Utilities.Streams.print("  Jacobian=" + Modelica.Math.Matrices.toString(Jacobian) + "  NS=" + Modelica.Math.Vectors.toString(NS) + "  grad=" + Modelica.Math.Vectors.toString(grad) + "  slope=" + String(slope), "printlog.txt");
-        assert(slope<0,"roundoff problem, input was p=" + String(p) + " and h=" + String(h));
 
         // store old d_iter, T_iter and RSS
         d_iter_old := d_iter;
@@ -911,7 +912,7 @@ with a Newton-Raphson approach for simultaneous equations.
 
         // calculate new residual vector and residual sum of squares
         f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
-        RES := {EoS.p(f)-p, EoS.h(f)-h};
+        RES := {(EoS.p(f)-p)/p, (EoS.h(f)-h)/h_scale};
         RSS := RES*RES/2;
         // Modelica.Utilities.Streams.print("iter=" + String(iter) + " d_iter=" + String(d_iter) + " T_iter=" + String(T_iter) + " RES_p=" + String(RES[1]) + " RES_h=" + String(RES[2]) + " RSS=" + String(RSS), "printlog.txt");
 
@@ -968,7 +969,7 @@ with a Newton-Raphson approach for simultaneous equations.
 
           // calculate new residual vector and residual sum of squares
           f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
-          RES := {EoS.p(f)-p, EoS.h(f)-h};
+          RES := {(EoS.p(f)-p)/p, (EoS.h(f)-h)/h_scale};
           RSS := RES*RES/2;
           // Modelica.Utilities.Streams.print("    linesearch attempt " + String(iterLineSearch) + ": lambda= " + String(lambda) + " d_iter=" + String(d_iter) + " T_iter= " + String(T_iter) + " RSS= " + String(RSS), "printlog.txt");
 
@@ -978,9 +979,13 @@ with a Newton-Raphson approach for simultaneous equations.
         lambda_temp := 1;
         lambda := 1;
 
+        // convergence test on the scaled residuals (relative p, and h relative to h_scale),
+        // or full Newton step at machine precision (for liquid at low p the relative p residual is not reachable);
+        // NS is used instead of the change of d_iter and T_iter, which is zero if the iterate is clipped at a bound
+        converged := RSS<=tolerance or (abs(NS[1])<=1e-12*d_iter and abs(NS[2])<=1e-12*T_iter);
       end while;
       // Modelica.Utilities.Streams.print("setState_ph total iteration steps " + String(iter), "printlog.txt");
-      assert(iter<iter_max, "setState_phX did not converge, input was p=" + String(p) + " and h=" + String(h));
+      assert(converged, "setState_phX did not converge, input was p=" + String(p) + " and h=" + String(h));
 
       state.p := p;
       state.h := h;
@@ -1036,7 +1041,9 @@ with a Newton-Raphson approach for simultaneous equations.
     Real[2] xy_med;
     Real[2,2] Jacobian_med "Jacobian matrix";
 
-    constant Real tolerance=1e-7 "tolerance for RSS";
+    constant Real tolerance=1e-18 "tolerance for RSS of the scaled residuals";
+    constant SpecificEntropy s_scale=R_s "scale for the entropy residual";
+    Boolean converged = false "true once residuals or Newton step are within tolerance";
     Integer iter = 0;
     Integer iter_max = 200;
     Real lambda(min=1e-3,max=1) = 1 "convergence speed, default=1";
@@ -1192,20 +1199,19 @@ with a Newton-Raphson approach for simultaneous equations.
     else
       // Modelica.Utilities.Streams.print("single-phase, use 2D Newton-Raphson, start with d_iter=" + String(d_iter) + " (d_min=" + String(d_min) + " and d_max=" + String(d_max) + ") and T_iter=" + String(T_iter)+ " (T_min=" + String(T_min) + " and T_max=" + String(T_max) + ")", "printlog.txt");
       f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
-      RES := {EoS.p(f)-p, EoS.s(f)-s};
+      RES := {(EoS.p(f)-p)/p, (EoS.s(f)-s)/s_scale};
       RSS := RES*RES/2;
 
-      while ((RSS>tolerance) and (iter<iter_max)) loop
+      while (iter<iter_max) and not converged loop
         iter := iter+1;
 
         // calculate Jacobian matrix, Newton Step vector, gradient and slope
-        Jacobian := [EoS.dpdT(f), EoS.dpTd(f);
-                     EoS.dsdT(f), EoS.dsTd(f)];
+        Jacobian := [EoS.dpdT(f)/p, EoS.dpTd(f)/p;
+                     EoS.dsdT(f)/s_scale, EoS.dsTd(f)/s_scale];
         NS := -Modelica.Math.Matrices.solve(Jacobian,RES) "-J^(-1)*F";
         grad := RES*Jacobian "F*J";
-        slope := grad*NS;
+        slope := -RES*RES "= grad*NS for the Newton direction, computed exactly to avoid a wrong sign from roundoff";
         // Modelica.Utilities.Streams.print("  Jacobian=" + Modelica.Math.Matrices.toString(Jacobian) + "  NS=" + Modelica.Math.Vectors.toString(NS) + "  grad=" + Modelica.Math.Vectors.toString(grad) + "  slope=" + String(slope), "printlog.txt");
-        assert(slope<0,"roundoff problem, input was p=" + String(p) + " and s=" + String(s), level=AssertionLevel.warning);
 
         // store old d_iter, T_iter and RSS
         d_iter_old := d_iter;
@@ -1259,7 +1265,7 @@ with a Newton-Raphson approach for simultaneous equations.
 
         // calculate new residual vector and residual sum of squares
         f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
-        RES := {EoS.p(f)-p, EoS.s(f)-s};
+        RES := {(EoS.p(f)-p)/p, (EoS.s(f)-s)/s_scale};
         RSS := RES*RES/2;
         // Modelica.Utilities.Streams.print("iter=" + String(iter) + " d_iter=" + String(d_iter) + " T_iter=" + String(T_iter) + " RES_p=" + String(RES[1]) + " RES_s=" + String(RES[2]) + " RSS=" + String(RSS), "printlog.txt");
 
@@ -1317,7 +1323,7 @@ with a Newton-Raphson approach for simultaneous equations.
 
           // calculate new residual vector and residual sum of squares
           f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
-          RES := {EoS.p(f)-p, EoS.s(f)-s};
+          RES := {(EoS.p(f)-p)/p, (EoS.s(f)-s)/s_scale};
           RSS := RES*RES/2;
           // Modelica.Utilities.Streams.print("    linesearch attempt " + String(iterLineSearch) + ": lambda= " + String(lambda) + " d_iter=" + String(d_iter) + " T_iter= " + String(T_iter) + " RSS= " + String(RSS), "printlog.txt");
 
@@ -1327,9 +1333,13 @@ with a Newton-Raphson approach for simultaneous equations.
         lambda_temp := 1;
         lambda := 1;
 
+        // convergence test on the scaled residuals (relative p, and s relative to s_scale),
+        // or full Newton step at machine precision (for liquid at low p the relative p residual is not reachable);
+        // NS is used instead of the change of d_iter and T_iter, which is zero if the iterate is clipped at a bound
+        converged := RSS<=tolerance or (abs(NS[1])<=1e-12*d_iter and abs(NS[2])<=1e-12*T_iter);
       end while;
       // Modelica.Utilities.Streams.print("setState_ps total iteration steps " + String(iter), "printlog.txt");
-      assert(iter<iter_max, "setState_psX did not converge, input was p=" + String(p) + " and s=" + String(s) + ", remaining residual is RES_p=" +String(RES[1]) + " and RES_s=" + String(RES[2]));
+      assert(converged, "setState_psX did not converge, input was p=" + String(p) + " and s=" + String(s) + ", remaining residual is RES_p=" +String(RES[1]) + " and RES_s=" + String(RES[2]));
 
       state.p := p;
       state.s := s;
