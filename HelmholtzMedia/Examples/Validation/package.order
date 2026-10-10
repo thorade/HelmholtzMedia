@@ -5,6 +5,7 @@ CheckDerivativesHelium
 CheckDerivativesMedium
 CheckDerivativesWater
 CheckPartialDerivativesMedium
+CriticalPointEoS
 CriticalState
 CriticalState_approach
 Derivatives_Helmholtz_Multiplied
