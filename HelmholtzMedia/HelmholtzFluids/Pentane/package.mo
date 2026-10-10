@@ -39,7 +39,7 @@ package Pentane "Pentane"
     hasAcentricFactor=true,
        acentricFactor=0.251,
     triplePointTemperature=143.47,
-    triplePointPressure=0.000076322,
+    triplePointPressure=0.076322,
     normalBoilingPoint=309.21,
     meltingPoint=143.47) "Fluid Constants";
 
