@@ -125,137 +125,68 @@ partial package PartialHelmholtzMedium
     output SaturationProperties sat;
 
   protected
-    constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
-    "specific gas constant";
-    constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+    constant Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     constant Density d_reducing=helmholtzCoefficients.d_reducing "reducing density of the EoS";
-    constant Temperature T_reducing=helmholtzCoefficients.T_reducing "reducing temperature of the EoS";
     constant Real delta_crit=d_crit/d_reducing "critical density, reduced with the EoS reducing density";
-    Temperature T_anc "temperature at which the ancillary equations are evaluated";
-    Real tau(unit="1")=T_reducing/T "inverse reduced temperature";
-
-    EoS.HelmholtzDerivs fl(T=T,tau=tau);
-    EoS.HelmholtzDerivs fv(T=T,tau=tau);
+    constant Real x_continuation=0.1 "continuation starts at T=T_crit*(1-x_continuation)";
 
     Real delta_liq(unit="1", min=0);
     Real delta_vap(unit="1", min=0);
-    Real J_liq;
-    Real J_liq_delta;
-    Real J_vap;
-    Real J_vap_delta;
-    Real K_liq;
-    Real K_liq_delta;
-    Real K_vap;
-    Real K_vap_delta;
+    Real RES[2] "residuals of J and K";
+    Boolean converged=false;
 
-    Real RES[2] "residual function vector";
-    Real Jacobian[2,2] "Jacobian matrix";
-    Real NS[2] "Newton step vector";
-    Boolean converged = false "true once residuals are within tolerance";
-
-    Real lambda(min=0, max=1) = 1 "step length, reduced if a full step would leave the bounds";
-    constant Real delta_liq_max = 1.1*fluidLimits.DMAX/d_reducing "upper bound for reduced liquid density";
-    constant Real delta_vap_min = fluidLimits.DMIN/d_reducing "lower bound for reduced vapour density";
-    constant Real tolerance=1e-9 "tolerance for the residuals of J (relative) and K (absolute)";
-    Integer iter = 0;
-    constant Integer iter_max = 200;
+    Real x "distance from the critical point, 1-T/T_crit";
+    Real x_k "distance from the critical point of the current continuation step";
+    Temperature T_k "temperature of the current continuation step";
+    Real x_0=1 "distance from the critical point, second to last continuation step";
+    Real delta_liq_0=1;
+    Real delta_vap_0=1;
+    Real x_1=1 "distance from the critical point, last continuation step";
+    Real delta_liq_1=1;
+    Real delta_vap_1=1;
+    Real beta_liq=0.35 "local critical exponent of the liquid branch";
+    Real beta_vap=0.35 "local critical exponent of the vapour branch";
+    Integer n_steps=0;
 
   algorithm
     // Modelica.Utilities.Streams.print("setSat_T: T="+String(T),"printlog.txt");
     sat.Tsat := T;
 
   if ((T>=T_trip) and (T<T_crit*(1-1e-7))) then
-    // guess values for reduced density delta: Akasaka (2008) requires the liquid guess above
-    // and the vapour guess below the solution; below TMIN the ancillary equations are extrapolated
-    // and not reliable, therefore safe (but less accurate) guesses are used there
-    if (T>T_crit*(1-1e-2)) then
-      // close to the critical point, evaluate the ancillary equations in reduced variables, so that their critical point
-      // coincides with the critical point of the EoS (they may be fitted to slightly different critical values)
-      T_anc := T*ancillaryCoefficients.T_crit/T_crit;
-      delta_liq := 1.02*Ancillary.bubbleDensity_T(T=T_anc)*d_crit/ancillaryCoefficients.d_crit/d_reducing;
-      delta_vap := 0.98*Ancillary.dewDensity_T(T=T_anc)*d_crit/ancillaryCoefficients.d_crit/d_reducing;
-    elseif (T>=fluidLimits.TMIN) then
-      delta_liq := 1.02*Ancillary.bubbleDensity_T(T=T)/d_reducing;
-      delta_vap := 0.98*Ancillary.dewDensity_T(T=T)/d_reducing;
-    else
-      delta_liq := delta_liq_max;
-      delta_vap := 0.01*Ancillary.dewDensity_T(T=T)/d_reducing;
+    (delta_liq, delta_vap) := setSat_T_start(T=T);
+    (converged, delta_liq, delta_vap, RES) := setSat_T_Newton(T=T, delta_liq_start=delta_liq, delta_vap_start=delta_vap);
+
+    x := 1 - T/T_crit;
+    if not converged and (x<x_continuation) then
+      // close to the critical point: continuation in decades of x, starting at x_continuation where the start values
+      // from the ancillary equations are reliable; each step is predicted from the previous ones with the local
+      // critical exponent, (delta-delta_crit) ~ x^beta
+      x_k := x_continuation;
+      converged := true;
+      while converged and (n_steps==0 or x_1>x) loop
+        T_k := if (x_k<=x) then T else T_crit*(1-x_k);
+        if (n_steps==0) then
+          (delta_liq, delta_vap) := setSat_T_start(T=T_k);
+        else
+          if (n_steps>=2) then
+            beta_liq := min(max(log((delta_liq_0-delta_crit)/(delta_liq_1-delta_crit))/log(x_0/x_1), 0.25), 0.55);
+            beta_vap := min(max(log((delta_crit-delta_vap_0)/(delta_crit-delta_vap_1))/log(x_0/x_1), 0.25), 0.55);
+          else
+            beta_liq := 0.35;
+            beta_vap := 0.35;
+          end if;
+          delta_liq := delta_crit + (delta_liq_1-delta_crit)*(x_k/x_1)^beta_liq;
+          delta_vap := delta_crit - (delta_crit-delta_vap_1)*(x_k/x_1)^beta_vap;
+        end if;
+        (converged, delta_liq, delta_vap, RES) := setSat_T_Newton(T=T_k, delta_liq_start=delta_liq, delta_vap_start=delta_vap);
+        n_steps := n_steps+1;
+        x_0 := x_1; delta_liq_0 := delta_liq_1; delta_vap_0 := delta_vap_1;
+        x_1 := max(x_k, x); delta_liq_1 := delta_liq; delta_vap_1 := delta_vap;
+        x_k := max(x_k/10, x);
+      end while;
     end if;
-    delta_liq := min(max(delta_liq, delta_crit), delta_liq_max);
-    delta_vap := min(max(delta_vap, delta_vap_min), delta_crit);
-
-    // set necessary parts of fl and fv
-    fl.r   := EoS.f_r(tau=tau, delta=delta_liq);
-    fv.r   := EoS.f_r(tau=tau, delta=delta_vap);
-    fl.rd  := EoS.f_rd(tau=tau, delta=delta_liq);
-    fv.rd  := EoS.f_rd(tau=tau, delta=delta_vap);
-
-    // dimensionless pressure
-    J_liq := delta_liq*(1 + delta_liq*fl.rd);
-    J_vap := delta_vap*(1 + delta_vap*fv.rd);
-    // dimensionless Gibbs energy
-    K_liq := delta_liq*fl.rd + fl.r + log(delta_liq);
-    K_vap := delta_vap*fv.rd + fv.r + log(delta_vap);
-    // residual vector
-    RES := {(J_vap-J_liq), (K_vap-K_liq)};
-
-    while (iter<iter_max) and not converged loop
-      iter := iter+1;
-
-      // calculate gradients of J and K, set up Jacobian matrix, get Newton step
-      fl.rdd := EoS.f_rdd(tau=tau, delta=delta_liq);
-      fv.rdd := EoS.f_rdd(tau=tau, delta=delta_vap);
-      J_liq_delta := 1 + 2*delta_liq*fl.rd + delta_liq*delta_liq*fl.rdd;
-      J_vap_delta := 1 + 2*delta_vap*fv.rd + delta_vap*delta_vap*fv.rdd;
-      K_liq_delta := 2*fl.rd + delta_liq*fl.rdd + 1/delta_liq;
-      K_vap_delta := 2*fv.rd + delta_vap*fv.rdd + 1/delta_vap;
-      Jacobian := [-J_liq_delta, J_vap_delta;
-                   -K_liq_delta, K_vap_delta];
-      NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
-
-      // calculate better values for reduced density delta;
-      // if a full step would leave the bounds (liquid and vapour must stay on their side of the critical density),
-      // go only halfway to the bound instead of clipping, which would change the step direction
-      lambda := 1;
-      if (delta_liq+NS[1] < delta_crit) then
-        lambda := min(lambda, 0.5*(delta_liq-delta_crit)/(-NS[1]));
-      elseif (delta_liq+NS[1] > delta_liq_max) then
-        lambda := min(lambda, 0.5*(delta_liq_max-delta_liq)/NS[1]);
-      end if;
-      if (delta_vap+NS[2] > delta_crit) then
-        lambda := min(lambda, 0.5*(delta_crit-delta_vap)/NS[2]);
-      elseif (delta_vap+NS[2] < delta_vap_min) then
-        lambda := min(lambda, 0.5*(delta_vap-delta_vap_min)/(-NS[2]));
-      end if;
-      delta_liq := delta_liq + lambda*NS[1];
-      delta_vap := delta_vap + lambda*NS[2];
-
-      // update fl and fv
-      fl.r   := EoS.f_r(tau=tau, delta=delta_liq);
-      fv.r   := EoS.f_r(tau=tau, delta=delta_vap);
-      fl.rd  := EoS.f_rd(tau=tau, delta=delta_liq);
-      fv.rd  := EoS.f_rd(tau=tau, delta=delta_vap);
-
-      // dimensionless pressure
-      J_liq := delta_liq*(1 + delta_liq*fl.rd);
-      J_vap := delta_vap*(1 + delta_vap*fv.rd);
-      // dimensionless Gibbs energy
-      K_liq := delta_liq*fl.rd + fl.r + log(delta_liq);
-      K_vap := delta_vap*fv.rd + fv.r + log(delta_vap);
-      // residual vector
-      RES := {(J_vap-J_liq), (K_vap-K_liq)};
-
-      // convergence test on the residuals only (Akasaka 2008), the Newton step is unreliable near the critical point;
-      // J is a dimensionless pressure, its residual is relative to J_vap, or for the (almost incompressible) liquid
-      // at low pressure alternatively measured as density error
-      converged := (abs(RES[1])<=tolerance*J_vap or abs(RES[1]/J_liq_delta)<=tolerance*delta_liq)
-               and abs(RES[2])<=tolerance;
-
-    end while;
-    // Modelica.Utilities.Streams.print("setSat_T total iteration steps " + String(iter), "printlog.txt");
     assert(converged, "setSat_T did not converge, input was T=" + String(T) +
                           "; the remaining residuals are RES_J=" + String(RES[1]) +
                           " and RES_K=" + String(RES[2]));
@@ -294,7 +225,9 @@ partial package PartialHelmholtzMedium
 <html>
 This function iteratively determines the saturation state  for a given temperature
 by varying the density of saturated liquid and saturated vapor
-with a Newton-Raphson approach for simultaneous equations.
+with a Newton-Raphson approach for simultaneous equations (see setSat_T_Newton).
+If this fails close to the critical point, the solution is approached by continuation in decades of (1-T/T_crit),
+starting at T=0.9*T_crit, where each step is predicted with the local critical exponent.
 
 <dl>
 <dt> Ryo Akasaka:</dt>
@@ -336,6 +269,10 @@ with a Newton-Raphson approach for simultaneous equations.
     Integer iter = 0;
     constant Integer iter_max = 200;
     Temperature T_anc "temperature at which the ancillary equations are evaluated";
+    SaturationProperties sat_T "fallback: saturation state from setSat_T";
+    Temperature T_iter "fallback: temperature iterate";
+    DerPressureByTemperature dpT "fallback: slope of the vapour pressure curve";
+    Boolean fallback=false "true if the fallback via setSat_T was used";
 
   algorithm
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");
@@ -397,6 +334,25 @@ with a Newton-Raphson approach for simultaneous equations.
                and abs(RES[2]/p)<=tol_rel
                and abs(RES[3])<=tol_rel*R_s*sat.Tsat;
     end while;
+
+    if not converged then
+      // fallback, mainly close to the critical point: solve psat(T)=p by Newton's method in T, using the robust setSat_T;
+      // the slope of the vapour pressure curve is given by Clausius-Clapeyron (on the critical isochore by dp/dT@d)
+      fallback := true;
+      T_iter := Ancillary.saturationTemperature_p(p=p*ancillaryCoefficients.p_crit/p_crit)*T_crit/ancillaryCoefficients.T_crit;
+      iter := 0;
+      while (iter<iter_max) and not converged loop
+        iter := iter+1;
+        sat_T := setSat_T(T=T_iter);
+        converged := abs(sat_T.psat-p)<=tol_rel*p;
+        if not converged then
+          dpT := if (sat_T.liq.d>sat_T.vap.d) then (sat_T.vap.s-sat_T.liq.s)/(1/sat_T.vap.d-1/sat_T.liq.d)
+                 else pressure_derT_d(state=sat_T.liq);
+          T_iter := min(T_iter - (sat_T.psat-p)/dpT, T_crit);
+        end if;
+      end while;
+      RES := {sat_T.liq.p-p, sat_T.vap.p-p, sat_T.liq.h-sat_T.liq.T*sat_T.liq.s-(sat_T.vap.h-sat_T.vap.T*sat_T.vap.s)};
+    end if;
     // if verbose then Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt"); end if;
     // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
     assert(converged, "setSat_p did not converge, input was p=" + String(p) +
@@ -404,9 +360,14 @@ with a Newton-Raphson approach for simultaneous equations.
                           " and RES_pv=" + String(RES[2]) +
                           " and RES_g=" + String(RES[3]));
 
-    // no clamping to the triple-point/critical constants here: clamping T and d separately gives an inconsistent state
-    sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
-    sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
+    if fallback then
+      sat := sat_T;
+      sat.psat := p;
+    else
+      // no clamping to the triple-point/critical constants here: clamping T and d separately gives an inconsistent state
+      sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
+      sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);
+    end if;
 
   elseif (p>=p_crit) then
     // assert(p <= p_crit, "setSat_p error: pressure is higher than critical pressure", level=AssertionLevel.warning);
