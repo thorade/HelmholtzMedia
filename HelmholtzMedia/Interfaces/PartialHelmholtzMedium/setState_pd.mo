@@ -25,6 +25,7 @@ protected
   Temperature T_min=0.98*fluidLimits.TMIN;
   Temperature T_max=2*max(fluidLimits.TMAX, p/(R_s*d));
   Temperature T_iter=T_crit;
+  Temperature T_old "T_iter of the previous iteration step";
   AbsolutePressure RES_min;
   AbsolutePressure RES_max;
   AbsolutePressure RES_p;
@@ -33,6 +34,7 @@ protected
   constant Real tolerance=1e-9 "relative tolerance for RES_p";
   Integer iter = 0;
   constant Integer iter_max = 200;
+  Boolean converged = false "true once residual or Newton step is within tolerance";
 
 algorithm
   // Modelica.Utilities.Streams.print(" ", "printlog.txt");
@@ -151,8 +153,9 @@ algorithm
       RES_min := RES_p;
     end if;
 
-    while ((abs(RES_p/p) > tolerance) and (iter<iter_max)) loop
+    while (iter<iter_max) and not converged loop
       iter := iter+1;
+      T_old := T_iter;
       // gamma := iter/(iter+1);
 
       // calculate gradients with respect to temperature
@@ -188,9 +191,12 @@ algorithm
         RES_min := RES_p;
       end if;
 
+      // convergence test: relative residual within tolerance, or temperature step at machine precision
+      // (in compressed liquid at low p, abs(RES_p/p)<=tolerance is not reachable)
+      converged := abs(RES_p/p)<=tolerance or abs(T_iter-T_old)<=1e-12*T_iter;
     end while;
     // Modelica.Utilities.Streams.print("setState_pd required " + String(iter) + " iterations to find T=" + String(T_iter,significantDigits=6) + " for input p=" + String(p) + " and d=" + String(d), "printlog.txt");
-    assert(iter<iter_max, "setState_pdX did not converge (RES_p=" + String(RES_p) + "), input was p=" + String(p) + " and d=" + String(d));
+    assert(converged, "setState_pdX did not converge (RES_p=" + String(RES_p) + "), input was p=" + String(p) + " and d=" + String(d));
 
     state.p := p;
     state.d := d;

@@ -6,12 +6,15 @@ model LimitsProbe "check that fluidLimits enclose the EoS states at the corners 
   Medium.SaturationProperties sat "saturation at TMIN, solved in the algorithm";
   Medium.ThermodynamicState hot_pmax "(TMAX, PMAX), solved in the algorithm";
   Medium.ThermodynamicState cold_pmax "(TMIN, PMAX), solved in the algorithm";
+  Medium.SaturationProperties sat_trip "saturation at the triple point temperature, solved in the algorithm";
 protected
   constant Medium.Temperature TMIN = Medium.fluidLimits.TMIN;
   constant Medium.Temperature TMAX = Medium.fluidLimits.TMAX;
   constant Medium.Density DMIN = Medium.fluidLimits.DMIN;
   constant Medium.Density DMAX = Medium.fluidLimits.DMAX;
   constant Medium.AbsolutePressure PMAX = Medium.fluidLimits.PMAX;
+  constant Medium.Temperature T_trip = Medium.fluidConstants[1].triplePointTemperature;
+  constant Medium.AbsolutePressure p_trip = Medium.fluidConstants[1].triplePointPressure;
   final constant String fileName = "limits.txt";
 algorithm
   when initial() then
@@ -27,6 +30,13 @@ algorithm
       + " HMAX=" + String(Medium.fluidLimits.HMAX, significantDigits=6)
       + " DMAX=" + String(DMAX, significantDigits=6)
       + " PMAX=" + String(PMAX, significantDigits=6), fileName);
+    sat_trip := Medium.setSat_T(T=T_trip);
+    Modelica.Utilities.Streams.print("p_trip_EoS=" + String(sat_trip.psat, significantDigits=6)
+      + " p_trip=" + String(p_trip, significantDigits=6), fileName);
+    // only checked if the triple point lies within the validity range of the EoS (T_trip >= TMIN),
+    // otherwise the EoS is extrapolated there (e.g. Ethanol, Hexamethyldisiloxane)
+    assert(T_trip < TMIN or abs(p_trip/sat_trip.psat - 1) < 0.05,
+      "triplePointPressure differs by more than 5 % from the EoS, saturation pressure at T_trip is " + String(sat_trip.psat, significantDigits=6));
     sat := Medium.setSat_T(T=TMIN);
     Modelica.Utilities.Streams.print("h_liq_TMIN=" + String(sat.liq.h, significantDigits=6)
       + " s_liq_TMIN=" + String(sat.liq.s, significantDigits=6)
@@ -63,6 +73,7 @@ and checks that the limits SMIN, SMAX, HMIN, HMAX and DMAX enclose these states:
 <li>HMIN &le; min(h of saturated liquid at TMIN, h(TMIN, PMAX))</li>
 <li>HMAX &ge; max(h(TMAX, DMIN), h(TMAX, PMAX)), because above the inversion temperature h increases with p</li>
 <li>DMAX &ge; max(d of saturated liquid at TMIN, d(TMIN, PMAX))</li>
+<li>triplePointPressure agrees within 5 % with the saturation pressure of the EoS at triplePointTemperature (only if triplePointTemperature &ge; TMIN)</li>
 </ul>
 <p>Note that (TMIN, PMAX) lies in the solid region, so the EoS is extrapolated there and the resulting limits are conservative.
 All values are also written to <code>limits.txt</code>, use <code>redeclare package Medium</code> to check other fluids.</p>

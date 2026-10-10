@@ -39,7 +39,7 @@ extends Interfaces.PartialHelmholtzMedium(
     hasAcentricFactor=true,
        acentricFactor=0.1521,
     triplePointTemperature=85.525,
-    triplePointPressure=0.653,
+    triplePointPressure=1.7205e-4,
     normalBoilingPoint=231.036,
     meltingPoint=85.525) "Fluid Constants";
 

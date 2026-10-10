@@ -150,10 +150,12 @@ partial package PartialHelmholtzMedium
     Real RES[2] "residual function vector";
     Real Jacobian[2,2] "Jacobian matrix";
     Real NS[2] "Newton step vector";
-    Boolean converged = false "true once residuals and Newton step are within tolerance";
+    Boolean converged = false "true once residuals are within tolerance";
 
-    constant Real lambda(min=0.1,max=1) = 1 "convergence speed, default=1";
-    constant Real tolerance=1e-7 "tolerance for p and d, needs to be smaller than simulation tolerance";
+    Real lambda(min=0, max=1) = 1 "step length, reduced if a full step would leave the bounds";
+    constant Real delta_liq_max = 1.1*fluidLimits.DMAX/d_crit "upper bound for reduced liquid density";
+    constant Real delta_vap_min = fluidLimits.DMIN/d_crit "lower bound for reduced vapour density";
+    constant Real tolerance=1e-9 "tolerance for the residuals of J (relative) and K (absolute)";
     Integer iter = 0;
     constant Integer iter_max = 200;
 
@@ -161,10 +163,19 @@ partial package PartialHelmholtzMedium
     // Modelica.Utilities.Streams.print("setSat_T: T="+String(T),"printlog.txt");
     sat.Tsat := T;
 
-  if ((T>=T_trip) and (T<T_crit)) then
-    // calculate guess values for reduced density delta
-    delta_liq := 1.02*Ancillary.bubbleDensity_T(T=T)/d_crit;
-    delta_vap := 0.98*Ancillary.dewDensity_T(T=T)/d_crit;
+  if ((T>=T_trip) and (T<T_crit*(1-1e-7))) then
+    // guess values for reduced density delta: Akasaka (2008) requires the liquid guess above
+    // and the vapour guess below the solution; below TMIN the ancillary equations are extrapolated
+    // and not reliable, therefore safe (but less accurate) guesses are used there
+    if (T>=fluidLimits.TMIN) then
+      delta_liq := 1.02*Ancillary.bubbleDensity_T(T=T)/d_crit;
+      delta_vap := 0.98*Ancillary.dewDensity_T(T=T)/d_crit;
+    else
+      delta_liq := delta_liq_max;
+      delta_vap := 0.01*Ancillary.dewDensity_T(T=T)/d_crit;
+    end if;
+    delta_liq := min(max(delta_liq, 1), delta_liq_max);
+    delta_vap := min(max(delta_vap, delta_vap_min), 1);
 
     // set necessary parts of fl and fv
     fl.r   := EoS.f_r(tau=tau, delta=delta_liq);
@@ -195,15 +206,22 @@ partial package PartialHelmholtzMedium
                    -K_liq_delta, K_vap_delta];
       NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
 
-      // calculate better values for reduced density delta
+      // calculate better values for reduced density delta;
+      // if a full step would leave the bounds (liquid and vapour must stay on their side of the critical density),
+      // go only halfway to the bound instead of clipping, which would change the step direction
+      lambda := 1;
+      if (delta_liq+NS[1] < 1) then
+        lambda := min(lambda, 0.5*(delta_liq-1)/(-NS[1]));
+      elseif (delta_liq+NS[1] > delta_liq_max) then
+        lambda := min(lambda, 0.5*(delta_liq_max-delta_liq)/NS[1]);
+      end if;
+      if (delta_vap+NS[2] > 1) then
+        lambda := min(lambda, 0.5*(1-delta_vap)/NS[2]);
+      elseif (delta_vap+NS[2] < delta_vap_min) then
+        lambda := min(lambda, 0.5*(delta_vap-delta_vap_min)/(-NS[2]));
+      end if;
       delta_liq := delta_liq + lambda*NS[1];
       delta_vap := delta_vap + lambda*NS[2];
-
-      // check bounds
-      delta_liq := max(delta_liq, 1);
-      delta_liq := min(delta_liq, Modelica.Constants.inf);
-      delta_vap := max(delta_vap, Modelica.Constants.small);
-      delta_vap := min(delta_vap, 1);
 
       // update fl and fv
       fl.r   := EoS.f_r(tau=tau, delta=delta_liq);
@@ -220,13 +238,15 @@ partial package PartialHelmholtzMedium
       // residual vector
       RES := {(J_vap-J_liq), (K_vap-K_liq)};
 
-      // convergence test, evaluated where RES and NS both have a value
-      converged := abs(RES[1])<=tolerance and abs(RES[2])<=tolerance
-               and abs(NS[1])<=tolerance and abs(NS[2])<=tolerance;
+      // convergence test on the residuals only (Akasaka 2008), the Newton step is unreliable near the critical point;
+      // J is a dimensionless pressure, its residual is relative to J_vap, or for the (almost incompressible) liquid
+      // at low pressure alternatively measured as density error
+      converged := (abs(RES[1])<=tolerance*J_vap or abs(RES[1]/J_liq_delta)<=tolerance*delta_liq)
+               and abs(RES[2])<=tolerance;
 
     end while;
     // Modelica.Utilities.Streams.print("setSat_T total iteration steps " + String(iter), "printlog.txt");
-    assert(iter<iter_max, "setSat_T did not converge, input was T=" + String(T) +
+    assert(converged, "setSat_T did not converge, input was T=" + String(T) +
                           "; the remaining residuals are RES_J=" + String(RES[1]) +
                           " and RES_K=" + String(RES[2]));
 
@@ -234,7 +254,9 @@ partial package PartialHelmholtzMedium
     sat.vap := setState_dTX(d=delta_vap*d_crit, T=T, phase=1);
     sat.psat := (sat.liq.p+sat.vap.p)/2;
 
-  elseif (T>=T_crit) then
+  elseif (T>=T_crit*(1-1e-7)) then
+    // supercritical, and the narrow band T_crit*(1-1e-7) <= T < T_crit, where the two roots are indistinguishable
+    // and the Jacobian is singular; furthermore the critical point of the EoS and the critical constants differ at this level
     // assert(T <= T_crit, "setSat_T error: Temperature is higher than critical temperature", level=AssertionLevel.warning);
     // above critical temperature, no stable two-phase state exists
     // anyway, it is possible to extend the vapour-pressure curve into this region
