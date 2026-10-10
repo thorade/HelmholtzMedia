@@ -25,11 +25,11 @@ extends Interfaces.PartialHelmholtzMedium(
     triplePointTemperature=2.1768,
     normalBoilingPoint=4.2226,
     hasCriticalData=true,
-       criticalTemperature=5.1953,
-       criticalPressure=227610,
-       criticalMolarVolume=1.0/17.3837e3,
-       HCRIT0=11229.8787045649,
-       SCRIT0=2054.83801830546,
+       criticalTemperature=5.19529996623,
+       criticalPressure=227613.820999,
+       criticalMolarVolume=0.004002602/69.5800390798,
+       HCRIT0=11229.8771569789,
+       SCRIT0=2054.8377367767,
     hasAcentricFactor=true,
        acentricFactor=-0.385,
     hasIdealGasHeatCapacity=false,
@@ -59,6 +59,8 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsHelium(
+    T_reducing=5.1953,
+    d_reducing=0.004002602*17.3837e3,
     useLineSearch=true,
     idealLog=[
           1.5,          1],
@@ -136,6 +138,9 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsHelium(
+    T_crit=5.1953,
+    p_crit=227610,
+    d_crit=0.004002602*17.3837e3,
     pressureMeltingModel=PressureMeltingModel.ML1,
     T_reducing=10,
     p_reducing=1000e3,

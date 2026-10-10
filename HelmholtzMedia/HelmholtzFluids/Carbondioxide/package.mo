@@ -23,11 +23,11 @@ extends Interfaces.PartialHelmholtzMedium(
     chemicalFormula="CO2",
     molarMass=0.0440098,
     hasCriticalData=true,
-       criticalTemperature=304.1282,
-       criticalPressure=7377300,
-       criticalMolarVolume=0.0440098/467.6,
-       HCRIT0=332243.75741805,
-       SCRIT0=1433.61716769624,
+       criticalTemperature=304.128199997,
+       criticalPressure=7377256.31159,
+       criticalMolarVolume=0.0440098/467.599976816,
+       HCRIT0=332243.762600033,
+       SCRIT0=1433.61718473865,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.0,
@@ -59,6 +59,8 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsCarbondioxide(
+    T_reducing=304.1282,
+    d_reducing=467.6,
     idealLog=[
       +2.50000,         1.],
     idealPower=[
@@ -186,6 +188,9 @@ final constant Transport.DynamicViscosityCoefficients
 
 final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsCarbondioxide(
+    T_crit=304.1282,
+    p_crit=7377300,
+    d_crit=467.6,
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -7.0602087,   1.0;

@@ -22,11 +22,11 @@ extends Interfaces.PartialHelmholtzMedium(
     iupacName="",
     molarMass=0.04606844,
     hasCriticalData=true,
-       criticalTemperature=513.9,
-       criticalPressure=6148000,
-       criticalMolarVolume=0.04606844/276,
-       HCRIT0=1191835.59356919,
-       SCRIT0=3412.96595125041,
+       criticalTemperature=515.369670626,
+       criticalPressure=6297733.05,
+       criticalMolarVolume=0.04606844/214.832637396,
+       HCRIT0=1251176.9765614,
+       SCRIT0=3527.08084761766,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=1.6909,
@@ -58,6 +58,8 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsEthanol(
+    T_reducing=513.9,
+    d_reducing=276,
     idealLog=[
       +5.41129,         1],
     idealPower=[
@@ -176,6 +178,9 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsEthanol(
+    T_crit=513.9,
+    p_crit=6148000,
+    d_crit=276,
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -0.81829E+01,   1.0;

@@ -62,14 +62,20 @@ algorithm
     Modelica.Utilities.Streams.print("T_crit=" + String(T_crit, significantDigits=15) + " d_crit=" + String(d_crit, significantDigits=15)
       + " p_crit=" + String(p_crit, significantDigits=15), fileName);
     Modelica.Utilities.Streams.print("T_rel=" + String(T_c/T_crit-1) + " d_rel=" + String(d_c/d_crit-1) + " p_rel=" + String(p_c/p_crit-1), fileName);
+    assert(abs(T_c/T_crit-1) < 1e-9 and abs(d_c/d_crit-1) < 1e-7 and abs(p_c/p_crit-1) < 1e-9,
+      "critical constants differ from the critical point of the EoS, should be criticalTemperature=" + String(T_c, significantDigits=12)
+      + ", criticalPressure=" + String(p_c, significantDigits=12) + ", critical density=" + String(d_c, significantDigits=12));
   end when;
 
   annotation (Documentation(info="<html>
-<p>The critical constants in <code>fluidConstants</code> are the published values, which are also used as reducing
-parameters of the EoS. The critical point of the EoS itself, where (dp/dd)@T = (d2p/dd2)@T = 0, differs slightly
-from these values. Between the two, no two-phase solution of the EoS exists.</p>
+<p>The critical constants in <code>fluidConstants</code> must be the critical point of the EoS itself,
+where (dp/dd)@T = (d2p/dd2)@T = 0, because they are used for all region checks (two-phase or not).
+They can differ from published critical values and from the reducing parameters of the EoS
+(<code>helmholtzCoefficients.T_reducing</code>, <code>d_reducing</code>) and of the ancillary equations
+(<code>ancillaryCoefficients.T_crit</code>, <code>p_crit</code>, <code>d_crit</code>).</p>
 <p>This model determines the critical point of the EoS by two nested bisections: for a given temperature, the inflection
 density with (d2p/dd2)@T = 0, and the temperature at which (dp/dd)@T at the inflection density is zero.
-The results are written to <code>criticalpoint.txt</code>.</p>
+The results are written to <code>criticalpoint.txt</code>, and an assert checks that they agree with the critical constants
+(relative tolerance 1e-9 for temperature and pressure, 1e-7 for density).</p>
 </html>"));
 end CriticalPointEoS;

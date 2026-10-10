@@ -23,8 +23,8 @@ package Isobutane "Isobutane"
     molarMass=0.0581222,
     hasCriticalData=true,
        criticalTemperature=407.81,
-       criticalPressure=3629000,
-       criticalMolarVolume=1/3879.756788,
+       criticalPressure=3628995.92151,
+       criticalMolarVolume=0.0581222/225.499999983,
        HCRIT0=633936.60841362,
        SCRIT0=2225.89365493432,
     hasIdealGasHeatCapacity=false,
@@ -58,6 +58,8 @@ package Isobutane "Isobutane"
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsIsobutane(
+    T_reducing=407.81,
+    d_reducing=0.0581222*3879.756788,
     idealLog=[
       +3.05956619,         1.],
     idealPower=[
@@ -184,6 +186,9 @@ package Isobutane "Isobutane"
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsIsobutane(
+    T_crit=407.81,
+    p_crit=3629000,
+    d_crit=0.0581222*3879.756788,
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -6.85093103,         1.0;

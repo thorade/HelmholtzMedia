@@ -23,11 +23,11 @@ package R32 "R32 with IIR reference state"
     iupacName="",
     molarMass=0.052024,
     hasCriticalData=true,
-       criticalTemperature=351.255,
-       criticalPressure=5782000,
-       criticalMolarVolume=0.052024/424.435723 "Denominator=critical density*molecular weight",
-       HCRIT0=280920.88957833,
-       SCRIT0=910.447833188578,
+       criticalTemperature=351.255000449,
+       criticalPressure=5788581.7687,
+       criticalMolarVolume=0.052024/424.435691726 "Denominator=critical density*molecular weight",
+       HCRIT0=280920.897922713,
+       SCRIT0=910.447856571056,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=1.978,
@@ -59,6 +59,8 @@ package R32 "R32 with IIR reference state"
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsR32(
+    T_reducing=351.255,
+    d_reducing=424.435723,
     idealLog=[
        3.004486E+0,     1.00E0] "CPP <c(i), power of T>-1",
     idealPower=[
@@ -181,6 +183,9 @@ package R32 "R32 with IIR reference state"
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsR32(
+    T_crit=351.255,
+    p_crit=5782000,
+    d_crit=424.435723,
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -0.74883E+01,   1.0;
