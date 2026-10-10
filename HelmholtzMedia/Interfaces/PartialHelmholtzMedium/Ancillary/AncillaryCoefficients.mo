@@ -2,6 +2,10 @@ within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Ancillary;
 record AncillaryCoefficients
   "Coefficients for anciallry equations (psat, dliq, dvap)"
 
+  constant Temperature T_crit=fluidConstants[1].criticalTemperature "critical temperature used by the ancillary equations (psat, dliq, dvap)";
+  constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure "critical pressure used by the ancillary equations (psat, dliq, dvap)";
+  constant Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume "critical density used by the ancillary equations (psat, dliq, dvap)";
+
   constant PressureSaturationModel pressureSaturationModel=PressureSaturationModel.PS5;
   constant Real[:,2] pressureSaturation = fill(0.0, 0, 2)
     "vapor pressure coefficients";

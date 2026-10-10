@@ -5,10 +5,10 @@ function saturationPressure_T
   output Modelica.Units.SI.AbsolutePressure p;
 
 protected
-  constant Temperature T_crit=fluidConstants[1].criticalTemperature;
+  constant Temperature T_crit=ancillaryCoefficients.T_crit;
   Real tau=T_crit/T "inverse reduced temperature";
   Real T_theta=max((1 - T/T_crit), Modelica.Constants.small);
-  constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+  constant AbsolutePressure p_crit=ancillaryCoefficients.p_crit;
 
   Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
   Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];

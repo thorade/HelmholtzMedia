@@ -9,10 +9,10 @@ protected
   constant MolarMass MM = fluidConstants[1].molarMass;
   constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
-  constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+  constant Density d_crit=ancillaryCoefficients.d_crit;
 
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
-  constant Temperature T_crit=fluidConstants[1].criticalTemperature;
+  constant Temperature T_crit=ancillaryCoefficients.T_crit;
 
   constant Density dv_trip = Ancillary.dewDensity_T(T_trip);
   constant Density dl_trip = Ancillary.bubbleDensity_T(T_trip);

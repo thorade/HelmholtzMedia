@@ -11,9 +11,11 @@ protected
   constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM "specific gas constant";
   constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
+  constant Density d_reducing=helmholtzCoefficients.d_reducing "reducing density of the EoS";
+  constant Temperature T_reducing=helmholtzCoefficients.T_reducing "reducing temperature of the EoS";
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
 
-  EoS.HelmholtzDerivs f(T=T,tau=T_crit/T);
+  EoS.HelmholtzDerivs f(T=T,tau=T_reducing/T);
   SaturationProperties sat;
   MassFraction x "vapour quality";
 
