@@ -24,7 +24,7 @@ extends Interfaces.PartialHelmholtzMedium(
     molarMass=0.0581222,
     hasCriticalData=true,
        criticalTemperature=425.125,
-       criticalPressure=3796000,
+       criticalPressure=3795995.7341,
        criticalMolarVolume=0.0581222/228,
        HCRIT0=693906.703523301,
        SCRIT0=2363.08788895611,
@@ -59,6 +59,8 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsButane(
+    T_reducing=425.125,
+    d_reducing=228,
     idealLog=[
       +3.24680487,         1.],
     idealPower=[
@@ -184,6 +186,9 @@ final constant Transport.DynamicViscosityCoefficients
 
 final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsButane(
+    T_crit=425.125,
+    p_crit=3796000,
+    d_crit=228,
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -0.71897E+01,   1.0;

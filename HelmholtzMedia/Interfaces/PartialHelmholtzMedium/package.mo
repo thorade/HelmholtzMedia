@@ -134,6 +134,7 @@ partial package PartialHelmholtzMedium
     constant Density d_reducing=helmholtzCoefficients.d_reducing "reducing density of the EoS";
     constant Temperature T_reducing=helmholtzCoefficients.T_reducing "reducing temperature of the EoS";
     constant Real delta_crit=d_crit/d_reducing "critical density, reduced with the EoS reducing density";
+    Temperature T_anc "temperature at which the ancillary equations are evaluated";
     Real tau(unit="1")=T_reducing/T "inverse reduced temperature";
 
     EoS.HelmholtzDerivs fl(T=T,tau=tau);
@@ -170,7 +171,13 @@ partial package PartialHelmholtzMedium
     // guess values for reduced density delta: Akasaka (2008) requires the liquid guess above
     // and the vapour guess below the solution; below TMIN the ancillary equations are extrapolated
     // and not reliable, therefore safe (but less accurate) guesses are used there
-    if (T>=fluidLimits.TMIN) then
+    if (T>T_crit*(1-1e-2)) then
+      // close to the critical point, evaluate the ancillary equations in reduced variables, so that their critical point
+      // coincides with the critical point of the EoS (they may be fitted to slightly different critical values)
+      T_anc := T*ancillaryCoefficients.T_crit/T_crit;
+      delta_liq := 1.02*Ancillary.bubbleDensity_T(T=T_anc)*d_crit/ancillaryCoefficients.d_crit/d_reducing;
+      delta_vap := 0.98*Ancillary.dewDensity_T(T=T_anc)*d_crit/ancillaryCoefficients.d_crit/d_reducing;
+    elseif (T>=fluidLimits.TMIN) then
       delta_liq := 1.02*Ancillary.bubbleDensity_T(T=T)/d_reducing;
       delta_vap := 0.98*Ancillary.dewDensity_T(T=T)/d_reducing;
     else
@@ -328,6 +335,7 @@ with a Newton-Raphson approach for simultaneous equations.
     constant Real tol_rel=1e-9 "relative tolerance for convergence";
     Integer iter = 0;
     constant Integer iter_max = 200;
+    Temperature T_anc "temperature at which the ancillary equations are evaluated";
 
   algorithm
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");
@@ -336,9 +344,18 @@ with a Newton-Raphson approach for simultaneous equations.
 
   if ((p>p_trip) and (p<p_crit)) then
     // calculate start values, density should be outside of two-phase dome
-    sat.Tsat := Ancillary.saturationTemperature_p(p=p);
-    sat.liq.d := 1.02*Ancillary.bubbleDensity_T(T=sat.Tsat);
-    sat.vap.d := 0.98*Ancillary.dewDensity_T(T=sat.Tsat);
+    if (p>0.9*p_crit) then
+      // close to the critical point, evaluate the ancillary equations in reduced variables, so that their critical point
+      // coincides with the critical point of the EoS (they may be fitted to slightly different critical values)
+      T_anc := Ancillary.saturationTemperature_p(p=p*ancillaryCoefficients.p_crit/p_crit);
+      sat.Tsat := T_anc*T_crit/ancillaryCoefficients.T_crit;
+      sat.liq.d := 1.02*Ancillary.bubbleDensity_T(T=T_anc)*d_crit/ancillaryCoefficients.d_crit;
+      sat.vap.d := 0.98*Ancillary.dewDensity_T(T=T_anc)*d_crit/ancillaryCoefficients.d_crit;
+    else
+      sat.Tsat := Ancillary.saturationTemperature_p(p=p);
+      sat.liq.d := 1.02*Ancillary.bubbleDensity_T(T=sat.Tsat);
+      sat.vap.d := 0.98*Ancillary.dewDensity_T(T=sat.Tsat);
+    end if;
 
     // calculate residuals: RES=calc-input
     fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);

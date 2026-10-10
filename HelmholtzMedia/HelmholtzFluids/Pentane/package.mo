@@ -22,11 +22,11 @@ package Pentane "Pentane"
     iupacName="",
     molarMass=0.07214878,
     hasCriticalData=true,
-       criticalTemperature=469.7,
-       criticalPressure=3370000,
-       criticalMolarVolume=1/3215.5776,
-       HCRIT0=802974.308379876,
-       SCRIT0=2579.64649877997,
+       criticalTemperature=469.658953489,
+       criticalPressure=3368837.45285,
+       criticalMolarVolume=0.07214878/235.198492693,
+       HCRIT0=801409.250559569,
+       SCRIT0=2576.33383416681,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.07,
@@ -58,6 +58,8 @@ package Pentane "Pentane"
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsPentane(
+    T_reducing=469.7,
+    d_reducing=0.07214878*3215.5776,
     idealLog=[
       3,    1],
     idealPower=[
@@ -142,6 +144,9 @@ package Pentane "Pentane"
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsPentane(
+    T_crit=469.7,
+    p_crit=3370000,
+    d_crit=0.07214878*3215.5776,
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
      -0.73918E+01,   1.0;

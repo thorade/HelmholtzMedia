@@ -12,11 +12,11 @@ package Carbondioxide_Short "Carbondioxide short FES"
     chemicalFormula="CO2",
     molarMass=0.0440098,
     hasCriticalData=true,
-       criticalTemperature=304.1282,
-       criticalPressure=7377300,
-       criticalMolarVolume=0.0440098/467.6,
-       HCRIT0=333883.683079582,
-       SCRIT0=1439.01955690505,
+       criticalTemperature=304.307293794,
+       criticalPressure=7400132.63572,
+       criticalMolarVolume=0.0440098/446.620950521,
+       HCRIT0=339319.196058064,
+       SCRIT0=1456.66572857782,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.0,
@@ -35,6 +35,8 @@ package Carbondioxide_Short "Carbondioxide short FES"
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsCarbondioxide_Short(
+    T_reducing=304.1282,
+    d_reducing=467.6,
     idealLog=[
       +2.50000,         1.],
     idealPower=[

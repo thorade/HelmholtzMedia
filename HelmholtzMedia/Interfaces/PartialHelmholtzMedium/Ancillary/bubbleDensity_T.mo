@@ -23,7 +23,7 @@ algorithm
     delta   := sum(n[i]*T_theta^theta[i] for i in 1:nDliq);
     delta   := 1 + delta; // DL1 or DL2
   elseif (densityLiquidModel == DensityLiquidModel.DL2) then
-    T_theta := max((1 - T/T_crit)^(1/3), Modelica.Constants.small); // even
+    T_theta := max(1 - T/T_crit, Modelica.Constants.small)^(1/3); // even
     delta   := sum(n[i]*T_theta^theta[i] for i in 1:nDliq);
     delta   := 1 + delta; // DL1 or DL2
 
@@ -32,7 +32,7 @@ algorithm
     delta   := sum(n[i]*T_theta^theta[i] for i in 1:nDliq);
     delta   := exp(delta);   // DL3 or DL4
   elseif (densityLiquidModel == DensityLiquidModel.DL4) then
-    T_theta := max((1 - T/T_crit)^(1/3), Modelica.Constants.small); // even
+    T_theta := max(1 - T/T_crit, Modelica.Constants.small)^(1/3); // even
     delta   := sum(n[i]*T_theta^theta[i] for i in 1:nDliq);
     delta   := exp(delta);   // DL3 or DL4
 
@@ -41,7 +41,7 @@ algorithm
     delta   := sum(n[i]*T_theta^theta[i] for i in 1:nDliq);
     delta   := exp(tau*delta);   // DL5 or DL6
   elseif (densityLiquidModel == DensityLiquidModel.DL6) then
-    T_theta := max((1 - T/T_crit)^(1/3), Modelica.Constants.small); // even
+    T_theta := max(1 - T/T_crit, Modelica.Constants.small)^(1/3); // even
     delta   := sum(n[i]*T_theta^theta[i] for i in 1:nDliq);
     delta   := exp(tau*delta);   // DL5 or DL6
 

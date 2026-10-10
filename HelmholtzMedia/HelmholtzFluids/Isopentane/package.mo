@@ -22,11 +22,11 @@ package Isopentane "Isopentane"
     iupacName="",
     molarMass=0.07214878,
     hasCriticalData=true,
-       criticalTemperature=460.35,
-       criticalPressure=3378000,
-       criticalMolarVolume=1/3271,
-       HCRIT0=503558.182350172,
-       SCRIT0=1282.74379604818,
+       criticalTemperature=460.349794711,
+       criticalPressure=3378213.41228,
+       criticalMolarVolume=0.07214878/235.997472099,
+       HCRIT0=503558.112200856,
+       SCRIT0=1282.74374351642,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.11,
@@ -58,6 +58,8 @@ package Isopentane "Isopentane"
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsIsopentane(
+    T_reducing=460.35,
+    d_reducing=0.07214878*3271,
     idealLog=[
       +3.0000000000,    1],
     idealPower=[
@@ -139,6 +141,9 @@ package Isopentane "Isopentane"
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsIsopentane(
+    T_crit=460.35,
+    p_crit=3378000,
+    d_crit=0.07214878*3271,
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -0.72392E+01,       1.0;

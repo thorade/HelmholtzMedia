@@ -28,15 +28,27 @@ protected
   constant Real tolerance=1e-6 "tolerance for p and T and d, needs to be smaller than simulation tolerance";
   Integer iter = 0;
   constant Integer iter_max = 200;
+  Temperature T_anc "temperature at which the ancillary equations are evaluated";
+  Real d_scale "scale factor for the densities from the ancillary equations";
 
 algorithm
   // Modelica.Utilities.Streams.print(" ", "printlog.txt");
   // Modelica.Utilities.Streams.print("setSat_d: d="+String(d),"printlog.txt");
 
-  sat.Tsat := Ancillary.saturationTemperature_d(d=d);
+  T_anc := Ancillary.saturationTemperature_d(d=d*ancillaryCoefficients.d_crit/d_crit);
+  if (T_anc>ancillaryCoefficients.T_crit*(1-1e-2)) then
+    // close to the critical point, evaluate the ancillary equations in reduced variables, so that their critical point
+    // coincides with the critical point of the EoS (they may be fitted to slightly different critical values)
+    sat.Tsat := T_anc*T_crit/ancillaryCoefficients.T_crit;
+    d_scale := d_crit/ancillaryCoefficients.d_crit;
+  else
+    T_anc := Ancillary.saturationTemperature_d(d=d);
+    sat.Tsat := T_anc;
+    d_scale := 1;
+  end if;
   if (d<d_crit) and (d>dv_trip) then
     // Modelica.Utilities.Streams.print("d<d_crit: input is on vapour side: find d_liq and T_sat", "printlog.txt");
-    sat.liq.d := 1.02*Ancillary.bubbleDensity_T(sat.Tsat);
+    sat.liq.d := 1.02*d_scale*Ancillary.bubbleDensity_T(T_anc);
     sat.vap.d := d; // d_vap is a constant
 
     // calculate residuals: liq-vap (=var-const)
@@ -80,7 +92,7 @@ algorithm
 
   elseif (d>d_crit) and (d<dl_trip) then
     // Modelica.Utilities.Streams.print("d>d_crit: input is on liquid side: find d_vap and T_sat", "printlog.txt");
-    sat.vap.d := 0.98*Ancillary.dewDensity_T(sat.Tsat);
+    sat.vap.d := 0.98*d_scale*Ancillary.dewDensity_T(T_anc);
     sat.liq.d := d; // d_liq is a constant
 
     // calculate residuals: vap-liq (=var-const)

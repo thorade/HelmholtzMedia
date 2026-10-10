@@ -22,11 +22,11 @@ package R134a "R134a with IIR reference state"
     iupacName="",
     molarMass=0.102032,
     hasCriticalData=true,
-       criticalTemperature=374.21,
-       criticalPressure=4059280,
-       criticalMolarVolume=0.102032/511.899952,
-       HCRIT0=389651.845672935,
-       SCRIT0=1562.20442405346,
+       criticalTemperature=374.211966585,
+       criticalPressure=4059272.28156,
+       criticalMolarVolume=0.102032/511.945113274,
+       HCRIT0=389649.204765136,
+       SCRIT0=1562.19650632898,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=2.058,
@@ -166,6 +166,9 @@ package R134a "R134a with IIR reference state"
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsR134a(
+    T_crit=374.21,
+    p_crit=4059280,
+    d_crit=511.899952,
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
       -0.77513E+01,   1.0;
@@ -191,8 +194,8 @@ package R134a "R134a with IIR reference state"
   annotation (Documentation(info="<html>
 These are the coefficients for R134a.
 The reference state is set to IIR.
-The critical constants are those of REFPROP, i.e. the critical point of the EoS;
-the EoS itself is reduced with T=374.18 K and d=508 kg/m3 as given by Tillner-Roth and Baehr.
+The EoS is reduced with T=374.18 K and d=508 kg/m3 as given by Tillner-Roth and Baehr;
+the ancillary equations use the REFPROP critical point 374.21 K, 4.05928 MPa, 511.899952 kg/m3.
 
 <dl>
 <dt> Tillner-Roth, R. and Baehr, H.D.,</dt>
