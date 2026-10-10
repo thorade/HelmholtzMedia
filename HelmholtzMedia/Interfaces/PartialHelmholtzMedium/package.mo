@@ -131,7 +131,10 @@ partial package PartialHelmholtzMedium
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real tau(unit="1")=T_crit/T "inverse reduced temperature";
+    constant Density d_reducing=helmholtzCoefficients.d_reducing "reducing density of the EoS";
+    constant Temperature T_reducing=helmholtzCoefficients.T_reducing "reducing temperature of the EoS";
+    constant Real delta_crit=d_crit/d_reducing "critical density, reduced with the EoS reducing density";
+    Real tau(unit="1")=T_reducing/T "inverse reduced temperature";
 
     EoS.HelmholtzDerivs fl(T=T,tau=tau);
     EoS.HelmholtzDerivs fv(T=T,tau=tau);
@@ -153,8 +156,8 @@ partial package PartialHelmholtzMedium
     Boolean converged = false "true once residuals are within tolerance";
 
     Real lambda(min=0, max=1) = 1 "step length, reduced if a full step would leave the bounds";
-    constant Real delta_liq_max = 1.1*fluidLimits.DMAX/d_crit "upper bound for reduced liquid density";
-    constant Real delta_vap_min = fluidLimits.DMIN/d_crit "lower bound for reduced vapour density";
+    constant Real delta_liq_max = 1.1*fluidLimits.DMAX/d_reducing "upper bound for reduced liquid density";
+    constant Real delta_vap_min = fluidLimits.DMIN/d_reducing "lower bound for reduced vapour density";
     constant Real tolerance=1e-9 "tolerance for the residuals of J (relative) and K (absolute)";
     Integer iter = 0;
     constant Integer iter_max = 200;
@@ -168,14 +171,14 @@ partial package PartialHelmholtzMedium
     // and the vapour guess below the solution; below TMIN the ancillary equations are extrapolated
     // and not reliable, therefore safe (but less accurate) guesses are used there
     if (T>=fluidLimits.TMIN) then
-      delta_liq := 1.02*Ancillary.bubbleDensity_T(T=T)/d_crit;
-      delta_vap := 0.98*Ancillary.dewDensity_T(T=T)/d_crit;
+      delta_liq := 1.02*Ancillary.bubbleDensity_T(T=T)/d_reducing;
+      delta_vap := 0.98*Ancillary.dewDensity_T(T=T)/d_reducing;
     else
       delta_liq := delta_liq_max;
-      delta_vap := 0.01*Ancillary.dewDensity_T(T=T)/d_crit;
+      delta_vap := 0.01*Ancillary.dewDensity_T(T=T)/d_reducing;
     end if;
-    delta_liq := min(max(delta_liq, 1), delta_liq_max);
-    delta_vap := min(max(delta_vap, delta_vap_min), 1);
+    delta_liq := min(max(delta_liq, delta_crit), delta_liq_max);
+    delta_vap := min(max(delta_vap, delta_vap_min), delta_crit);
 
     // set necessary parts of fl and fv
     fl.r   := EoS.f_r(tau=tau, delta=delta_liq);
@@ -210,13 +213,13 @@ partial package PartialHelmholtzMedium
       // if a full step would leave the bounds (liquid and vapour must stay on their side of the critical density),
       // go only halfway to the bound instead of clipping, which would change the step direction
       lambda := 1;
-      if (delta_liq+NS[1] < 1) then
-        lambda := min(lambda, 0.5*(delta_liq-1)/(-NS[1]));
+      if (delta_liq+NS[1] < delta_crit) then
+        lambda := min(lambda, 0.5*(delta_liq-delta_crit)/(-NS[1]));
       elseif (delta_liq+NS[1] > delta_liq_max) then
         lambda := min(lambda, 0.5*(delta_liq_max-delta_liq)/NS[1]);
       end if;
-      if (delta_vap+NS[2] > 1) then
-        lambda := min(lambda, 0.5*(1-delta_vap)/NS[2]);
+      if (delta_vap+NS[2] > delta_crit) then
+        lambda := min(lambda, 0.5*(delta_crit-delta_vap)/NS[2]);
       elseif (delta_vap+NS[2] < delta_vap_min) then
         lambda := min(lambda, 0.5*(delta_vap-delta_vap_min)/(-NS[2]));
       end if;
@@ -250,8 +253,8 @@ partial package PartialHelmholtzMedium
                           "; the remaining residuals are RES_J=" + String(RES[1]) +
                           " and RES_K=" + String(RES[2]));
 
-    sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
-    sat.vap := setState_dTX(d=delta_vap*d_crit, T=T, phase=1);
+    sat.liq := setState_dTX(d=delta_liq*d_reducing, T=T, phase=1);
+    sat.vap := setState_dTX(d=delta_vap*d_reducing, T=T, phase=1);
     sat.psat := (sat.liq.p+sat.vap.p)/2;
 
   elseif (T>=T_crit*(1-1e-7)) then
@@ -272,11 +275,11 @@ partial package PartialHelmholtzMedium
     // anyway, during initialization (at time=0) T=0 may happen
     // density values are extrapolated linearly, fantasy values are returned
     sat.Tsat := max(T, Modelica.Constants.small);
-    delta_liq := (T_trip/sat.Tsat)*Ancillary.bubbleDensity_T(T=T_trip)/d_crit;
-    delta_vap := (sat.Tsat/T_trip)*Ancillary.dewDensity_T(T=T_trip)/d_crit;
+    delta_liq := (T_trip/sat.Tsat)*Ancillary.bubbleDensity_T(T=T_trip)/d_reducing;
+    delta_vap := (sat.Tsat/T_trip)*Ancillary.dewDensity_T(T=T_trip)/d_reducing;
 
-    sat.liq := setState_dTX(d=delta_liq*d_crit, T=T, phase=1);
-    sat.vap := setState_dTX(d=delta_vap*d_crit, T=T, phase=1);
+    sat.liq := setState_dTX(d=delta_liq*d_reducing, T=T, phase=1);
+    sat.vap := setState_dTX(d=delta_vap*d_reducing, T=T, phase=1);
     sat.psat := (sat.liq.p+sat.vap.p)/2;
   end if;
 
@@ -560,11 +563,13 @@ with a Newton-Raphson approach for simultaneous equations.
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
+    constant Density d_reducing=helmholtzCoefficients.d_reducing "reducing density of the EoS";
+    constant Temperature T_reducing=helmholtzCoefficients.T_reducing "reducing temperature of the EoS";
     constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     // constant Real Z_crit=1/(d_crit*R*T_crit/p_crit);
 
-    EoS.HelmholtzDerivs f(T=T,tau=T_crit/T);
+    EoS.HelmholtzDerivs f(T=T,tau=T_reducing/T);
     SaturationProperties sat;
 
     Density d_min;
@@ -640,18 +645,18 @@ with a Newton-Raphson approach for simultaneous equations.
       RES_min := -p;
     else
       f.d := d_min;
-      f.delta := f.d/d_crit;
+      f.delta := f.d/d_reducing;
       f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
       RES_min := EoS.p(f) - p;
     end if;
     // max
     f.d := d_max;
-    f.delta := f.d/d_crit;
+    f.delta := f.d/d_reducing;
     f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
     RES_max := EoS.p(f) - p;
     // iter
     f.d := d_iter;
-    f.delta := f.d/d_crit;
+    f.delta := f.d/d_reducing;
     f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
     RES_p := EoS.p(f) - p;
 
@@ -690,7 +695,7 @@ with a Newton-Raphson approach for simultaneous equations.
 
       // set necessary parts of f, then calculate new RES_p
       f.d := d_iter;
-      f.delta := f.d/d_crit;
+      f.delta := f.d/d_reducing;
       f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
       RES_p := EoS.p(f) - p;
 

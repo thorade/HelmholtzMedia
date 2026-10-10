@@ -33,8 +33,8 @@ protected
   Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(T=T, d=d, phase=1);
   Medium.EoS.HelmholtzDerivs f_num(T=T, d=d, tau=tau, delta=delta);
 
-  Real delta(unit="1")=d/d_crit "reduced density";
-  Real tau(unit="1")=T_crit/T "inverse reduced temperature";
+  Real delta(unit="1")=d/Medium.helmholtzCoefficients.d_reducing "reduced density";
+  Real tau(unit="1")=Medium.helmholtzCoefficients.T_reducing/T "inverse reduced temperature";
   Real eps= 1e-6;
 
 algorithm

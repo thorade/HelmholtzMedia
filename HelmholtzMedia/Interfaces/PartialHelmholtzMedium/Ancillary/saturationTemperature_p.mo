@@ -7,11 +7,11 @@ function saturationTemperature_p
 
 protected
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
-  constant Temperature T_crit=fluidConstants[1].criticalTemperature;
+  constant Temperature T_crit=ancillaryCoefficients.T_crit;
   Real tau "inverse reduced temperature";
   Real T_theta;
   constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
-  constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+  constant AbsolutePressure p_crit=ancillaryCoefficients.p_crit;
 
   Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
   Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];

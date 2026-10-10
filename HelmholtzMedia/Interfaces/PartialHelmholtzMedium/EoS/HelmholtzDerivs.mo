@@ -4,8 +4,8 @@ record HelmholtzDerivs "dimensionless Helmholtz energy and its derivatives"
 
   MolarMass MM = fluidConstants[1].molarMass;
   SpecificHeatCapacity R_s=Modelica.Constants.R/MM "specific gas constant";
-  Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-  Temperature T_crit=fluidConstants[1].criticalTemperature;
+  Density d_reducing=helmholtzCoefficients.d_reducing "reducing density of the EoS";
+  Temperature T_reducing=helmholtzCoefficients.T_reducing "reducing temperature of the EoS";
 
   Density d(min=0);
   Real delta(unit="1") "reduced density";

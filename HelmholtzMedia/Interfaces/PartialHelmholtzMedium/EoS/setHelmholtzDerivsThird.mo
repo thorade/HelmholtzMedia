@@ -9,8 +9,8 @@ function setHelmholtzDerivsThird
 algorithm
   f.d := d;
   f.T := T;
-  f.delta := d/f.d_crit;
-  f.tau := f.T_crit/T;
+  f.delta := d/f.d_reducing;
+  f.tau := f.T_reducing/T;
 
   f.i    := f_i(tau=f.tau, delta=f.delta);
   f.it   := f_it(tau=f.tau, delta=f.delta);

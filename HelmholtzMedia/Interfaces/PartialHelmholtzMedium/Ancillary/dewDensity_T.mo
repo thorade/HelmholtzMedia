@@ -7,9 +7,9 @@ function dewDensity_T
 
 protected
   DensityVaporModel densityVaporModel=ancillaryCoefficients.densityVaporModel;
-  Density d_crit=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume;
+  Density d_crit=ancillaryCoefficients.d_crit;
   Real delta "reduced density";
-  Temperature T_crit=fluidConstants[1].criticalTemperature;
+  Temperature T_crit=ancillaryCoefficients.T_crit;
   Real T_theta;
   Real tau=T_crit/T "inverse reduced temperature";
 

@@ -2,6 +2,10 @@ within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.EoS;
 record HelmholtzCoefficients
   "Coefficients for Helmholtz energy equations of state"
 
+  //reducing parameters: tau=T_reducing/T, delta=d/d_reducing; usually, but not always, equal to the critical values
+  constant Temperature T_reducing=fluidConstants[1].criticalTemperature "reducing temperature of the EoS";
+  constant Density d_reducing=fluidConstants[1].molarMass/fluidConstants[1].criticalMolarVolume "reducing density of the EoS";
+
   //ideal gas part: substance specific coefficients
   constant Real[:,2] idealLog = fill(0.0, 0, 2);
   constant Real[:,2] idealPower = fill(0.0, 0, 2) "first two coeffs determine reference state";
