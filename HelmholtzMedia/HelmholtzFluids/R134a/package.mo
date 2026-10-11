@@ -25,8 +25,8 @@ package R134a "R134a with IIR reference state"
        criticalTemperature=374.211966585,
        criticalPressure=4059272.28156,
        criticalMolarVolume=0.102032/511.945113274,
-       HCRIT0=389649.204765136,
-       SCRIT0=1562.19650632898,
+       HCRIT0=389636.045793748,
+       SCRIT0=1562.09058647229,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=2.058,
@@ -63,8 +63,8 @@ package R134a "R134a with IIR reference state"
     idealLog=[
       -1.629789E+0,     1.00E0],
     idealPower=[
-      -1.020846726749488,     0.00E0;
-       9.047573551047574,     1.00E0;
+      -1.0195469175719192,     0.00E0;
+       9.047141988660542,     1.00E0;
       -9.723916E+0,    -0.50E0;
       -3.927170E+0,    -0.75E0],
     idealEinstein=fill(0.0, 0, 2),
