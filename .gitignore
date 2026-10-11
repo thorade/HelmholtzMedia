@@ -20,8 +20,10 @@ status
 stat
 stop
 
-# ignore Python Notebook checkpoints
+# ignore directories
 .ipynb_checkpoints/
+_dymola_runs/
+literature/
 
 # ignore pdf files in source code folder
 HelmholtzMedia/**/*.pdf
@@ -48,6 +50,3 @@ HelmholtzMedia/**/*.pdf
 *.zip
 desktop.ini
 thumbs.db
-
-# ignore local Dymola test runs (Python driver scripts and their results)
-_dymola_runs/
