@@ -1147,7 +1147,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           // Modelica.Utilities.Streams.print("s>s_crit, single-phase super-critical vapour-like region", "printlog.txt");
           state_ref := setState_pd(p=p, d=d_crit);
           if (s>state_ref.s) then
-            d_min := fluidLimits.DMIN*0.99;
+            d_min := fluidLimits.DMIN;
             d_max := d_crit;
             d_iter := 0.95*d_crit;
           elseif (s<state_ref.s) then
