@@ -25,8 +25,8 @@ package Isobutane "Isobutane"
        criticalTemperature=407.81,
        criticalPressure=3628995.92151,
        criticalMolarVolume=0.0581222/225.499999983,
-       HCRIT0=633936.60841362,
-       SCRIT0=2225.89365493432,
+       HCRIT0=633936.83408897,
+       SCRIT0=2225.89478331045,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.132,
@@ -63,8 +63,8 @@ package Isobutane "Isobutane"
     idealLog=[
       +3.05956619,         1.],
     idealPower=[
-      -5.999509386714626,        0.;
-       5.018945809864503,         1.],
+      -5.999517274616909,        0.;
+       5.018949678284714,         1.],
     idealEinstein=[
       +4.94641014,        -0.9512779015;
        4.09475197,        -2.3878958853;
@@ -220,6 +220,7 @@ package Isobutane "Isobutane"
 
   annotation (Documentation(info="<html>
 These are the coefficients for Isobutane.
+The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, s = 1 kJ/(kg K)), the REFPROP default.
 
 <dl>
 <dt> B&uuml;cker, D. and Wagner, W.</dt>

@@ -193,7 +193,7 @@ package R134a "R134a with IIR reference state"
 
   annotation (Documentation(info="<html>
 These are the coefficients for R134a.
-The reference state is set to IIR.
+The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, s = 1 kJ/(kg K)), the REFPROP default.
 The EoS is reduced with T=374.18 K and d=508 kg/m3 as given by Tillner-Roth and Baehr;
 the ancillary equations use the REFPROP critical point 374.21 K, 4.05928 MPa, 511.899952 kg/m3.
 

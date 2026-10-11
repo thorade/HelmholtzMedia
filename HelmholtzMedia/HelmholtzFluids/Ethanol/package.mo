@@ -25,8 +25,8 @@ extends Interfaces.PartialHelmholtzMedium(
        criticalTemperature=514.709284881,
        criticalPressure=6267907.51014,
        criticalMolarVolume=0.04606844/273.217468213,
-       HCRIT0=1160028.2858263555,
-       SCRIT0=3324.177290416762,
+       HCRIT0=758708.687380538,
+       SCRIT0=1680.2329679611,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=1.6909,
@@ -51,10 +51,10 @@ extends Interfaces.PartialHelmholtzMedium(
     DMAX=1031,
     PMIN=Modelica.Constants.small,
     PMAX=280e6,
-    HMIN=-40e3,
-    HMAX=1888e3,
-    SMIN=-530,
-    SMAX=11810) "Helmholtz EoS Limits";
+    HMIN=-442e3,
+    HMAX=1487e3,
+    SMIN=-2180,
+    SMAX=10170) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsEthanol(
@@ -63,8 +63,8 @@ extends Interfaces.PartialHelmholtzMedium(
     idealLog=[
       3.43069,          1],
     idealPower=[
-     -12.7531,          0;
-      9.39094,          1],
+     -3.644399430821064,          0;
+      5.07080732963899,          1],
     idealEinstein=[
       2.14326,  -420.4/514.71;
       5.09206,  -1334/514.71;
@@ -223,7 +223,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
   annotation (Documentation(info="<html>
 These are the coefficients for Ethanol.
-The reference state is set to IIR.
+The reference state is set to NBP (saturated liquid at 101325 Pa: h = 0, s = 0), the REFPROP default.
 
 <dl>
 <dt> Schroeder, J. A., Penoncello, S. G., and Schroeder, J. S.</dt>

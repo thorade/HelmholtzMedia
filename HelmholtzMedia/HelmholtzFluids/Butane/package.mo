@@ -26,8 +26,8 @@ extends Interfaces.PartialHelmholtzMedium(
        criticalTemperature=425.125,
        criticalPressure=3795995.7341,
        criticalMolarVolume=0.0581222/228,
-       HCRIT0=693906.703523301,
-       SCRIT0=2363.08788895611,
+       HCRIT0=693906.889457498,
+       SCRIT0=2363.0895352963,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.05,
@@ -64,8 +64,8 @@ extends Interfaces.PartialHelmholtzMedium(
     idealLog=[
       +3.24680487,         1.],
     idealPower=[
-      -5.42495597,         0;
-      4.919495781,         1],
+      -5.424967478731015,         0;
+      4.919498838387512,         1],
     idealEinstein=[
       +5.54913289,        -0.7748404445;
       +11.4648996,        -3.3406025522;
@@ -221,6 +221,7 @@ final constant Ancillary.AncillaryCoefficients
 
   annotation (Documentation(info="<html>
 These are the coefficients for Butane.
+The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, s = 1 kJ/(kg K)), the REFPROP default.
 
 <dl>
 <dt> B&uuml;cker, D. and Wagner, W.</dt>

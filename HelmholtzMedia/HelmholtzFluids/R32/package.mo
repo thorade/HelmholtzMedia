@@ -26,8 +26,8 @@ package R32 "R32 with IIR reference state"
        criticalTemperature=351.255000449,
        criticalPressure=5788581.7687,
        criticalMolarVolume=0.052024/424.435691726 "Denominator=critical density*molecular weight",
-       HCRIT0=280920.897922713,
-       SCRIT0=910.447856571056,
+       HCRIT0=414146.698495652,
+       SCRIT0=1648.64125564321,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=1.978,
@@ -52,10 +52,10 @@ package R32 "R32 with IIR reference state"
     DMAX=1491,
     PMIN=Modelica.Constants.small,
     PMAX=70e6,
-    HMIN=-167e3,
-    HMAX=571e3,
-    SMIN=-1100,
-    SMAX=8070) "Helmholtz EoS Limits";
+    HMIN=-34e3,
+    HMAX=705e3,
+    SMIN=-370,
+    SMAX=8810) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsR32(
@@ -64,8 +64,8 @@ package R32 "R32 with IIR reference state"
     idealLog=[
        3.004486E+0,     1.00E0] "CPP <c(i), power of T>-1",
     idealPower=[
-      -3.639189999198519,     0.00E0;
-       3.979895667072291,     1.00E0] "PH0 <aj, ti for [ai*tau**ti] terms> Different R134a and R32",
+      -8.258102267741458,     0.00E0;
+       6.353101349786038,     1.00E0] "PH0 <aj, ti for [ai*tau**ti] terms> Different R134a and R32",
     idealEinstein=[
        1.160761, -798.0/351.255;
        2.645151, -4185.0/351.255;
@@ -211,7 +211,7 @@ package R32 "R32 with IIR reference state"
 
   annotation (Documentation(info="<html>
 These are the coefficients for R32.
-The reference state is set to IIR.
+The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, s = 1 kJ/(kg K)), the REFPROP default.
 
 <dl>
 <dt> Tillner-Roth, R. and Yokozeki, A.</dt>
