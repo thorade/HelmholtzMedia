@@ -28,8 +28,8 @@ extends Interfaces.PartialHelmholtzMedium(
        criticalTemperature=5.19529996623,
        criticalPressure=227613.820999,
        criticalMolarVolume=0.004002602/69.5800390798,
-       HCRIT0=11229.8771569789,
-       SCRIT0=2054.8377367767,
+       HCRIT0=11229.8708955458,
+       SCRIT0=2054.83647058596,
     hasAcentricFactor=true,
        acentricFactor=-0.385,
     hasIdealGasHeatCapacity=false,
@@ -65,8 +65,8 @@ extends Interfaces.PartialHelmholtzMedium(
     idealLog=[
           1.5,          1],
     idealPower=[
-        0.159269591430361000,  0;
-        0.476532113807410000,  1],
+        0.1592702009775866,  0;
+        0.4765315336159452,  1],
     idealEinstein=fill(0.0, 0, 2),
     idealCosh=fill(0.0, 0, 2),
     idealSinh=fill(0.0, 0, 2),
@@ -174,6 +174,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
   annotation (Documentation(info="<html>
 These are the coefficients for Helium.
+The reference state is set to NBP (saturated liquid at 101325 Pa: h = 0, s = 0), the REFPROP default.
 
 <dl>
 <dt> Ortiz-Vega, D.O., Hall, K.R., Arp, V.D., and Lemmon, E.W.</dt>

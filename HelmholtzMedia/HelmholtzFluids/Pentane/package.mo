@@ -25,8 +25,8 @@ package Pentane "Pentane"
        criticalTemperature=469.658953489,
        criticalPressure=3368837.45285,
        criticalMolarVolume=0.07214878/235.198492693,
-       HCRIT0=801409.250559569,
-       SCRIT0=2576.33383416681,
+       HCRIT0=518912.42832061,
+       SCRIT0=1293.27662026794,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.07,
@@ -51,10 +51,10 @@ package Pentane "Pentane"
     DMAX=808.066,
     PMIN=Modelica.Constants.small,
     PMAX=100e6,
-    HMIN=-94e3,
-    HMAX=1352e3,
-    SMIN=-620,
-    SMAX=8160) "Helmholtz EoS Limits";
+    HMIN=-377e3,
+    HMAX=1070e3,
+    SMIN=-1910,
+    SMAX=6880) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsPentane(
@@ -63,8 +63,8 @@ package Pentane "Pentane"
     idealLog=[
       3,    1],
     idealPower=[
-      7.840639316,     0;
-      -84.68310031,    1],
+      18.97437301646663,     0;
+      -89.90210651760844,    1],
     idealEinstein=fill(0.0, 0, 2),
     idealCosh=[
       21.836,   1.789520971],
@@ -182,6 +182,7 @@ package Pentane "Pentane"
 
   annotation (Documentation(info="<html>
 These are the coefficients for Pentane.
+The reference state is set to NBP (saturated liquid at 101325 Pa: h = 0, s = 0), the REFPROP default.
 
 <dl>
 <dt> Span, R. and Wagner, W. </dt>

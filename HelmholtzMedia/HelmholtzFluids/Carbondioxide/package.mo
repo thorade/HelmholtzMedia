@@ -26,8 +26,8 @@ extends Interfaces.PartialHelmholtzMedium(
        criticalTemperature=304.128199997,
        criticalPressure=7377256.31159,
        criticalMolarVolume=0.0440098/467.599976816,
-       HCRIT0=332243.762600033,
-       SCRIT0=1433.61718473865,
+       HCRIT0=332244.902338798,
+       SCRIT0=1433.62288343247,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.0,
@@ -64,8 +64,8 @@ extends Interfaces.PartialHelmholtzMedium(
     idealLog=[
       +2.50000,         1.],
     idealPower=[
-      -6.124871062444266,         0;
-       5.115596317997826,         1],
+      -6.124901226555505,         0;
+       5.115616154442619,         1],
     idealEinstein=[
       +1.994270420,       -3.15163;
       +0.621052475,       -6.11190;
@@ -222,6 +222,7 @@ final constant Ancillary.AncillaryCoefficients
 
   annotation (Documentation(info="<html>
 These are the coefficients for Carbondioxide.
+The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, s = 1 kJ/(kg K)), the REFPROP default.
 
 <dl>
 <dt> Span, R. and Wagner, W.</dt>

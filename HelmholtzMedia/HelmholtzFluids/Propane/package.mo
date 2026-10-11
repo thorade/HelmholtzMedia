@@ -25,8 +25,8 @@ extends Interfaces.PartialHelmholtzMedium(
        criticalTemperature=369.890008951,
        criticalPressure=4251160.5311,
        criticalMolarVolume=0.04409562/220.478127492,
-       HCRIT0=555234.800563587,
-       SCRIT0=2051.62321369751,
+       HCRIT0=555235.032337166,
+       SCRIT0=2051.62437288959,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.084,
@@ -63,8 +63,8 @@ extends Interfaces.PartialHelmholtzMedium(
     idealLog=[
       +3.0,         1.],
     idealPower=[
-      -4.970583,        0.;
-      +4.293520,        1.],
+      -4.97058914775676,        0.;
+      4.293523323170354,        1.],
     idealEinstein=[
       +3.043,          -1.062478;
       +5.874,          -3.344237;
@@ -216,6 +216,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
   annotation (Documentation(info="<html>
 These are the coefficients for Propane.
+The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, s = 1 kJ/(kg K)), the REFPROP default.
 
 <dl>
 <dt> Lemmon, Eric W.; McLinden, M. O. and Wagner, W.</dt>

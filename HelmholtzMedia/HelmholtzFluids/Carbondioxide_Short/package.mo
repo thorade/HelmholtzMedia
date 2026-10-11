@@ -15,8 +15,8 @@ package Carbondioxide_Short "Carbondioxide short FES"
        criticalTemperature=304.307293794,
        criticalPressure=7400132.63572,
        criticalMolarVolume=0.0440098/446.620950521,
-       HCRIT0=339319.196058064,
-       SCRIT0=1456.66572857782,
+       HCRIT0=339320.335796829,
+       SCRIT0=1456.67142727164,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.0,
@@ -40,8 +40,8 @@ package Carbondioxide_Short "Carbondioxide short FES"
     idealLog=[
       +2.50000,         1.],
     idealPower=[
-      -6.123243569570599,         0;
-       5.114633389652261,         1],
+      -6.123273733681842,         0;
+       5.114653226097055,         1],
     idealEinstein=[
       +1.994270420,       -3.15163;
       +0.621052475,       -6.11190;
@@ -69,6 +69,7 @@ package Carbondioxide_Short "Carbondioxide short FES"
   annotation (Documentation(info="<html>
   These are the coefficients for Carbondioxide, 
   using a shorter and faster but less accurate equation of state.
+The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, s = 1 kJ/(kg K)), the REFPROP default.
 
 <dl>
 <dt> Span, R. and Wagner, W.</dt>

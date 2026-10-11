@@ -25,8 +25,8 @@ extends Interfaces.PartialHelmholtzMedium(
        criticalTemperature=518.699977927,
        criticalPressure=1939390.2238,
        criticalMolarVolume=0.16237752/304.40441094,
-       HCRIT0=364988.962714632,
-       SCRIT0=806.289357797122,
+       HCRIT0=364988.881639025,
+       SCRIT0=806.28914111888,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=false,
        dipoleMoment=0,
@@ -63,8 +63,8 @@ extends Interfaces.PartialHelmholtzMedium(
     idealLog=[
       +51.894/8.314472-1,           1],
     idealPower=[
-      +27.190399518670160,                       0;
-      -7.3982398876225090,                       1;
+      27.19040375029367,                       0;
+      -7.398242940193033,                       1;
       -741.34e-3/8.314472 /2 *518.69997204^1,   -1;
       +416.10e-6/8.314472 /6 *518.69997204^2,   -2;
       -70.000e-9/8.314472 /12*518.69997204^3,   -3],
@@ -153,6 +153,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
   annotation (Documentation(info="<html>
 These are the coefficients for MM.
+The reference state is set to NBP (saturated liquid at 101325 Pa: h = 0, s = 0), the REFPROP default.
 
 <dl>
 <dt> Colonna, P., Nannan, N.R., Guardone, A., Lemmon, E.W.</dt>

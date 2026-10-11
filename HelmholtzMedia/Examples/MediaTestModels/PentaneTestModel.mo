@@ -6,7 +6,7 @@ model PentaneTestModel "Test HelmholtzMedia.HelmholtzFluids.Pentane"
     fixedMassFlowRate(use_T_ambient=false),
     volume(use_T_start=false),
     ambient(use_T_ambient=false),
-    h_start=200000,
+    h_start=-82.5e3,
     p_start=1000000);
 
   annotation (experiment(StopTime=1000));

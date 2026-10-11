@@ -25,8 +25,8 @@ package Isopentane "Isopentane"
        criticalTemperature=460.349794711,
        criticalPressure=3378213.41228,
        criticalMolarVolume=0.07214878/235.997472099,
-       HCRIT0=503558.112200856,
-       SCRIT0=1282.74374351642,
+       HCRIT0=503558.03741608,
+       SCRIT0=1282.74349568269,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.11,
@@ -63,8 +63,8 @@ package Isopentane "Isopentane"
     idealLog=[
       +3.0000000000,    1],
     idealPower=[
-      +2.5822330405,    0;
-       1.1609103419,    1],
+      2.582235191078096,    0;
+       1.160908932222227,    1],
     idealEinstein=[
       +7.4056000000,   -0.9601390247;
        9.5772000000,   -2.4090366026;
@@ -179,6 +179,7 @@ package Isopentane "Isopentane"
 
   annotation (Documentation(info="<html>
 These are the coefficients for Isopentane.
+The reference state is set to NBP (saturated liquid at 101325 Pa: h = 0, s = 0), the REFPROP default.
 
 <dl>
 <dt> Lemmon, E. W. and Span, R</dt>
