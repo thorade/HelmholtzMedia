@@ -15,6 +15,7 @@ algorithm
     eta := dynamicViscosity_residual(state);
   else
     // composite models
+    assert(size(dynamicViscosityCoefficients.CET, 1) > 0, "dynamicViscosity: no viscosity correlation available for " + mediumName);
     eta := dynamicViscosity_dilute(state) + dynamicViscosity_initial(state) + dynamicViscosity_residual(state);
   end if;
   // RefProp results are in µPa*s where µ means micro or 1E-6 but SI default is Pa*s

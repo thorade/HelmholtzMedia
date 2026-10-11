@@ -14,6 +14,7 @@ algorithm
     lambda :=thermalConductivity_background(state);
   else
     // composite models
+    assert(size(thermalConductivityCoefficients.lambda_0_num_coeffs, 1) > 0, "thermalConductivity: no thermal conductivity correlation available for " + mediumName);
     lambda :=thermalConductivity_dilute(state) + thermalConductivity_background(state) + thermalConductivity_critical(state);
   end if;
 
