@@ -758,6 +758,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Integer iterLineSearch = 0;
     Real RSS_ls;
     Real lambda_ls;
+    Integer attempt = 0 "second attempt with start values on the liquid branch, if the first converged to an unstable root";
+    Boolean stable = false;
     constant Real lambda_min = 0.01 "minimum for convergence speed";
     Real lambda_temp = 1 "temporary variable for convergence speed";
     constant Real alpha(min=0,max=1)=1e-4;
@@ -868,6 +870,25 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
     else
       // Modelica.Utilities.Streams.print("single-phase, use 2D Newton-Raphson, start with d_iter=" + String(d_iter) + " (d_min=" + String(d_min) + " and d_max=" + String(d_max) + ") and T_iter=" + String(T_iter)+ " (T_min=" + String(T_min) + " and T_max=" + String(T_max) + ")", "printlog.txt");
+      while (attempt<2) and not stable loop
+      attempt := attempt+1;
+      if (attempt==2) then
+        // the first attempt did not converge (e.g. Newton cycling far from the solution, since the start density 0.85*DMAX
+        // can be far above the liquid density), or it converged to an unstable or metastable root of the van der Waals loop,
+        // which exists slightly above p_crit; restart on the liquid branch (close to the saturated liquid with the same h)
+        // or on the vapour-like side, respectively
+        if (h<=h_crit) then
+          T_iter := min(Ancillary.saturationTemperature_h_liq(h=h), T_crit);
+          d_iter := min(max(1.05*Ancillary.bubbleDensity_T(T=T_iter), 1.1*d_crit), d_max);
+        else
+          T_iter := 1.05*T_crit;
+          d_iter := 0.5*d_crit;
+        end if;
+        iter := 0;
+        iter_max := 200;
+        converged := false;
+        lambda := 1;
+      end if;
       f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
       RES := {(EoS.p(f)-p)/p, (EoS.h(f)-h)/h_scale};
       RSS := RES*RES/2;
@@ -912,7 +933,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         // instead, the linesearching / backtracking loop tries to find lambda such that RSS decreases
         while useLineSearch and (lambda>=lambda_min) and not (RSS<=(RSS_old+alpha*lambda*slope)) loop
           iterLineSearch := iterLineSearch+1;
-          iter_max := iter_max+1;
+          iter_max := min(iter_max+1, 1000) "line search steps extend the iteration budget, but bounded";
 
           // decrease lambda
           if (iterLineSearch<2) then
@@ -971,6 +992,11 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         // or full Newton step at machine precision (for liquid at low p the relative p residual is not reachable);
         // NS is used instead of the change of d_iter and T_iter, which is zero if the iterate is clipped at a bound
         converged := RSS<=tolerance or (abs(NS[1])<=1e-12*d_iter and abs(NS[2])<=1e-12*T_iter);
+      end while;
+      // accepted is a converged, mechanically stable root; for p>=p_crit and T<T_crit it must also be compressed liquid,
+      // i.e. denser than the saturated liquid (0.98 allows for the ancillary equation); otherwise Newton found the
+      // metastable (supersaturated) vapour root of the van der Waals loop, which can be denser than d_crit
+      stable := converged and (EoS.dpdT(f)>0) and ((p<p_crit) or (T_iter>=T_crit) or (d_iter>=0.98*Ancillary.bubbleDensity_T(T=T_iter)));
       end while;
       // Modelica.Utilities.Streams.print("setState_ph total iteration steps " + String(iter), "printlog.txt");
       assert(converged, "setState_phX did not converge, input was p=" + String(p) + " and h=" + String(h));
@@ -1040,6 +1066,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Integer iterLineSearch = 0;
     Real RSS_ls;
     Real lambda_ls;
+    Integer attempt = 0 "second attempt with start values on the liquid branch, if the first converged to an unstable root";
+    Boolean stable = false;
     constant Real lambda_min = 0.01 "minimum for convergence speed";
     Real lambda_temp = 1 "temporary variable for convergence speed";
     constant Real alpha(min=0,max=1)=1e-4;
@@ -1186,6 +1214,25 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       state.h := sat.liq.h + x*(sat.vap.h - sat.liq.h);
     else
       // Modelica.Utilities.Streams.print("single-phase, use 2D Newton-Raphson, start with d_iter=" + String(d_iter) + " (d_min=" + String(d_min) + " and d_max=" + String(d_max) + ") and T_iter=" + String(T_iter)+ " (T_min=" + String(T_min) + " and T_max=" + String(T_max) + ")", "printlog.txt");
+      while (attempt<2) and not stable loop
+      attempt := attempt+1;
+      if (attempt==2) then
+        // the first attempt did not converge (e.g. Newton cycling far from the solution, since the start density 0.85*DMAX
+        // can be far above the liquid density), or it converged to an unstable or metastable root of the van der Waals loop,
+        // which exists slightly above p_crit; restart on the liquid branch (close to the saturated liquid with the same s)
+        // or on the vapour-like side, respectively
+        if (s<=s_crit) then
+          T_iter := min(Ancillary.saturationTemperature_s_liq(s=s), T_crit);
+          d_iter := min(max(1.05*Ancillary.bubbleDensity_T(T=T_iter), 1.1*d_crit), d_max);
+        else
+          T_iter := 1.05*T_crit;
+          d_iter := 0.5*d_crit;
+        end if;
+        iter := 0;
+        iter_max := 200;
+        converged := false;
+        lambda := 1;
+      end if;
       f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
       RES := {(EoS.p(f)-p)/p, (EoS.s(f)-s)/s_scale};
       RSS := RES*RES/2;
@@ -1265,7 +1312,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         // instead, the linesearching / backtracking loop tries to find lambda such that RSS decreases
         while useLineSearch and (lambda>=lambda_min) and not (RSS<=(RSS_old+alpha*lambda*slope)) loop
           iterLineSearch := iterLineSearch+1;
-          iter_max := iter_max+1;
+          iter_max := min(iter_max+1, 1000) "line search steps extend the iteration budget, but bounded";
 
           // decrease lambda
           if (iterLineSearch<2) then
@@ -1325,6 +1372,11 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         // or full Newton step at machine precision (for liquid at low p the relative p residual is not reachable);
         // NS is used instead of the change of d_iter and T_iter, which is zero if the iterate is clipped at a bound
         converged := RSS<=tolerance or (abs(NS[1])<=1e-12*d_iter and abs(NS[2])<=1e-12*T_iter);
+      end while;
+      // accepted is a converged, mechanically stable root; for p>=p_crit and T<T_crit it must also be compressed liquid,
+      // i.e. denser than the saturated liquid (0.98 allows for the ancillary equation); otherwise Newton found the
+      // metastable (supersaturated) vapour root of the van der Waals loop, which can be denser than d_crit
+      stable := converged and (EoS.dpdT(f)>0) and ((p<p_crit) or (T_iter>=T_crit) or (d_iter>=0.98*Ancillary.bubbleDensity_T(T=T_iter)));
       end while;
       // Modelica.Utilities.Streams.print("setState_ps total iteration steps " + String(iter), "printlog.txt");
       assert(converged, "setState_psX did not converge, input was p=" + String(p) + " and s=" + String(s) + ", remaining residual is RES_p=" +String(RES[1]) + " and RES_s=" + String(RES[2]));

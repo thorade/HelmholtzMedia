@@ -19,6 +19,36 @@ protected
 
   Real lambda_red_background=thermalConductivityCoefficients.reducingThermalConductivity_background;
 
+  // helium (Hands and Arp 1981), only used for TC0
+  Temperature T;
+  Density d;
+  Real lambda_0;
+  Real lambda_e;
+  Real lambda_c;
+  constant Real c[11]={1.862970530e-4, -7.275964435e-7, -1.427549651e-4, 3.290833592e-5, -5.213335363e-8, 4.492659933e-8,
+                       -5.924416513e-9, 7.087321137e-6, -6.013335678e-6, 8.067145814e-7, 3.995125013e-7};
+  constant Real x0=0.392;
+  constant Real E1=2.8461;
+  constant Real E2=0.27156;
+  constant Real beta=0.3554;
+  constant Real gamma=1.1743;
+  constant Real delta_He=4.304;
+  constant Real rhoc_He=69.158;
+  constant Real Tc_He=5.18992;
+  constant Real pc_He=2.2746e5;
+  Real DeltaT;
+  Real DeltaRho;
+  EoS.HelmholtzDerivs f;
+  Real dpdT_d;
+  Real K_T;
+  Real K_Tprime;
+  Real K_Tbar;
+  Real W;
+  Real x;
+  Real y;
+  Real h;
+  Real dhdx;
+
 algorithm
   // initialize output
   lambda_b := 0;
@@ -26,6 +56,39 @@ algorithm
   if (thermalConductivityModel == ThermalConductivityModel.TC0) then
     // hardcoded models, use mediumName to distinguish further
     if mediumName == "helium" then
+      // Hands and Arp (1981) as implemented in REFPROP 10 (TC7 in HELIUM.FLD); d in kg/m3, lambda in W/(m K)
+      T := state.T;
+      d := state.d;
+      lambda_0 := 2.7870034e-3*T^0.7034007057*exp(3.739232544/T - 2.620316969e1/T^2 + 5.982252246e1/T^3 - 4.926397634e1/T^4);
+      lambda_e := (c[1] + c[2]*T + c[3]*T^(1/3) + c[4]*T^(2/3))*d
+                + (c[5] + c[6]*T^(1/3) + c[7]*T^(2/3))*d^3
+                + (c[8] + c[9]*T^(1/3) + c[10]*T^(2/3) + c[11]/T)*d^2*log(d/68.0);
+      lambda_c := 0;
+      if (T > 3.5) and (T < 12) then
+        DeltaT := abs(1 - T/Tc_He);
+        DeltaRho := max(abs(1 - d/rhoc_He), 1e-12);
+        f := EoS.setHelmholtzDerivsSecond(T=T, d=d, phase=1);
+        dpdT_d := EoS.dpTd(f);
+        K_T := 1/(d*EoS.dpdT(f));
+        W := (DeltaT/0.2)^2 + (DeltaRho/0.25)^2;
+        if (W > 1) then
+          K_Tbar := K_T;
+        else
+          // scaling variable x = DeltaT/DeltaRho^(1/beta), as in the REFPROP 10 implementation
+          x := DeltaT/DeltaRho^(1/beta);
+          y := 1 + E2*(1 + x/x0)^(2*beta);
+          h := E1*(1 + x/x0)*y^((gamma - 1)/(2*beta));
+          dhdx := E1/x0*y^((gamma - 1)/(2*beta))*(1 + (gamma - 1)*E2*(1 + x/x0)^(2*beta)/y);
+          K_Tprime := 1/(DeltaRho^(delta_He - 1)*(delta_He*h - x/beta*dhdx)*(d/rhoc_He)^2*pc_He);
+          K_Tbar := W*K_T + (1 - W)*K_Tprime;
+        end if;
+        // the factors 3.4685233e-17 and 3.726229668 are taken from REFPROP (converted to SI units)
+        lambda_c := 3.4685233e-17*3.726229668*sqrt(K_Tbar)*T^2/d/dynamicViscosity(state)*dpdT_d^2
+                    *exp(-18.66*DeltaT^2 - 4.25*DeltaRho^4);
+      end if;
+      lambda_b := lambda_0 + lambda_e + lambda_c;
+    else
+      assert(false, "thermalConductivity: no hardcoded TC0 model for " + mediumName);
     end if;
   elseif (thermalConductivityModel == ThermalConductivityModel.TC1) then
     tau := state.T/T_red_background;

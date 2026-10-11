@@ -120,7 +120,8 @@ extends Interfaces.PartialHelmholtzMedium(
 
   final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsMM(
-    coeffs=fill(0.0, 0, 2)) "Coefficients for the surface tension";
+    coeffs=[
+      0.04576,    1.272]) "Coefficients for the surface tension (Mulero and Cachadina 2014)";
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsMM(
@@ -153,6 +154,7 @@ extends Interfaces.PartialHelmholtzMedium(
 
   annotation (Documentation(info="<html>
 These are the coefficients for MM.
+No viscosity or thermal conductivity correlation is available (REFPROP uses ECS with nitrogen as reference fluid); calling them raises an error.
 The reference state is set to NBP (saturated liquid at 101325 Pa: h = 0, s = 0), the REFPROP default.
 
 <dl>
@@ -160,6 +162,11 @@ The reference state is set to NBP (saturated liquid at 101325 Pa: h = 0, s = 0),
 <dd> <b>Multiparameter Equations of State for Selected Siloxanes</b><br />
      Fluid Phase Equilibria, 244:193-211, (2006)<br />
      DOI: <a href=\"http://dx.doi.org/10.1016/j.fluid.2006.04.015\">10.1016/j.fluid.2006.04.015</a>
+</dd>
+<dt> Mulero, A. and Cachadi&ntilde;a, I.</dt>
+<dd> <b>Recommended Correlations for the Surface Tension of Several Fluids Included in the REFPROP Program</b><br />
+     J. Phys. Chem. Ref. Data, 43:023104, 2014.<br />
+     DOI: <a href=\"https://doi.org/10.1063/1.4878755\">10.1063/1.4878755</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
