@@ -25,9 +25,10 @@ protected
   Density R1 "residual of T1";
   Density R2 "residual of T2";
   Density R3 "residual of T3";
-  Density R4= Modelica.Constants.inf "residual of T4";
+  Density R4 "residual of T4";
 
   constant Real tolerance=1e-6 "relative tolerance for RES_d";
+  Boolean converged=false;
   Integer iter=0;
   constant Integer iter_max = 200;
 
@@ -39,7 +40,7 @@ algorithm
     R1 := Ancillary.dewDensity_T(T1)-d;
     R2 := d_crit-d;
     if (R1*R2<0) then
-      while (abs(R4/d)>tolerance) and (iter<iter_max) and (abs(T1-T2)>tolerance) loop
+      while (iter<iter_max) and not converged loop
         iter:=iter+1;
         T3 := (T1+T2)/2;
         R3 := Ancillary.dewDensity_T(T3)-d;
@@ -64,8 +65,9 @@ algorithm
           end if;
         end if;
         // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
+        converged := abs(R4/d)<=tolerance or abs(T1-T2)<=tolerance;
       end while;
-      assert(iter<iter_max, "saturationTemperature_d_vap did not converge, input was d_vap=" + String(d));
+      assert(converged, "saturationTemperature_d_vap did not converge, input was d_vap=" + String(d));
       // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_d_vap total iteration steps " + String(iter) + " for d_vap=" + String(d), "printlog.txt");
       // Modelica.Utilities.Streams.print(" ", "printlog.txt");
       T := T4;
@@ -84,7 +86,7 @@ algorithm
     R1 := Ancillary.bubbleDensity_T(T1)-d;
     R2 := d_crit-d;
     if (R1*R2<0) then
-      while (abs(R4/d)>tolerance) and (iter<iter_max) and (abs(T1-T2)>tolerance) loop
+      while (iter<iter_max) and not converged loop
         iter:=iter+1;
         T3 := (T1+T2)/2;
         R3 := Ancillary.bubbleDensity_T(T3)-d;
@@ -110,8 +112,9 @@ algorithm
           end if;
         end if;
         // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
+        converged := abs(R4/d)<=tolerance or abs(T1-T2)<=tolerance;
       end while;
-      assert(iter<iter_max, "saturationTemperature_d_liq did not converge, remaining residuum is R4=" + String(R4) + ", input was d_liq=" + String(d));
+      assert(converged, "saturationTemperature_d_liq did not converge, remaining residuum is R4=" + String(R4) + ", input was d_liq=" + String(d));
       // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_d_liq total iteration steps " + String(iter) + " for d_liq=" + String(d), "printlog.txt");
       // Modelica.Utilities.Streams.print(" ", "printlog.txt");
       T := T4;

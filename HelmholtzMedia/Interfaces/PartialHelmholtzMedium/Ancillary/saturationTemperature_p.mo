@@ -21,6 +21,7 @@ protected
   Real dpdT;
   constant Real gamma(min=0,max=1) = 1 "convergence speed, default=1";
   constant Real tolerance=1e-6 "relative tolerance for RES_p";
+  Boolean converged=false;
   Integer iter=0;
   constant Integer iter_max = 200;
 
@@ -35,8 +36,9 @@ if (p<p_crit) and (p>p_trip) then
   tau := T_crit/T;
   T_theta := max((1 - T/T_crit), Modelica.Constants.small);
   RES_p   := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
+  converged := abs(RES_p/p)<=tolerance;
 
-  while ((abs(RES_p/p)>tolerance) and (iter<iter_max)) loop
+  while (iter<iter_max) and not converged loop
     iter:=iter + 1;
 
     // calculate gradient of RES_p (= gradient of Wagner equation)
@@ -60,9 +62,10 @@ if (p<p_crit) and (p>p_trip) then
     tau := T_crit/T;
     T_theta := max((1 - T/T_crit), Modelica.Constants.small);
     RES_p := p_crit*exp(tau*sum(n[i]*T_theta^theta[i] for i in 1:nPressureSaturation)) - p;
+    converged := abs(RES_p/p)<=tolerance;
   end while;
   // Modelica.Utilities.Streams.print("Ancillary.saturationTemperature_p total iteration steps " + String(iter), "printlog.txt");
-  assert(iter<iter_max, "Ancillary.saturationTemperature_p did not converge, input was p=" + String(p));
+  assert(converged, "Ancillary.saturationTemperature_p did not converge, input was p=" + String(p));
 
 elseif (p<=p_trip) then
   T := T_trip;

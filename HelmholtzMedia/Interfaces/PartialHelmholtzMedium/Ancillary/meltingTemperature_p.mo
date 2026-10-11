@@ -11,7 +11,7 @@ protected
   constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
   constant AbsolutePressure p_max=fluidLimits.PMAX;
 
-  Temperature T1=0.98*T_trip "low temperature";
+  Temperature T1=T_trip "low temperature (no extrapolation of the melting curve below the triple point)";
   Temperature T2=T_max "high temperature";
   Temperature T3 "intermediate temperature";
   Temperature T4 "new temperature";
@@ -19,9 +19,10 @@ protected
   Real R1 "residual of T1";
   Real R2 "residual of T2";
   Real R3 "residual of T3";
-  Real R4= Modelica.Constants.inf "residual of T4";
+  Real R4 "residual of T4";
 
   constant Real tolerance=1e-6 "relative tolerance for RES_p";
+  Boolean converged=false;
   Integer iter=0;
   constant Integer iter_max = 200;
 
@@ -32,7 +33,7 @@ algorithm
     R1 := Ancillary.meltingPressure_T(T1)-p;
     R2 := Ancillary.meltingPressure_T(T2)-p;
     if (R1*R2<0) then
-      while (abs(R4/p)>tolerance) and (iter<iter_max) and (abs(T1-T2)>tolerance) loop
+      while (iter<iter_max) and not converged loop
         iter:=iter+1;
         T3 := (T1+T2)/2;
         R3 := Ancillary.meltingPressure_T(T3)-p;
@@ -56,9 +57,9 @@ algorithm
             assert(false, "Ancillary.meltingTemperature_p: this should not happen");
           end if;
         end if;
-        // Modelica.Utilities.Streams.print("Ridders' method: new brackets T1=" + String(T1) + " and T2=" + String(T2), "printlog.txt");
+        converged := abs(R4/p)<=tolerance or abs(T1-T2)<=tolerance;
       end while;
-      assert(iter<iter_max, "meltingTemperature_p did not converge, input was p=" + String(p));
+      assert(converged, "meltingTemperature_p did not converge, input was p=" + String(p));
       // Modelica.Utilities.Streams.print("Ancillary.meltingTemperature_p total iteration steps " + String(iter) + " for p=" + String(p), "printlog.txt");
       // Modelica.Utilities.Streams.print(" ", "printlog.txt");
       T := T4;
