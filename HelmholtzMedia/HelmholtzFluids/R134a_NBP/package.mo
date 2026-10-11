@@ -2,7 +2,7 @@ within HelmholtzMedia.HelmholtzFluids;
 package R134a_NBP "R134a with NBP reference state"
   extends HelmholtzMedia.HelmholtzFluids.R134a(
     fluidLimitsR134a(SMIN=-620, HMIN=-105e3, HMAX=423e3),
-    fluidConstantsR134a(HCRIT0=224042.196998686, SCRIT0=693.915481655595),
+    fluidConstantsR134a(HCRIT0=223825.762309361, SCRIT0=693.041526619274),
     helmholtzCoefficients=helmholtzCoefficientsR134a_NBP);
 
   final constant EoS.HelmholtzCoefficients
@@ -12,8 +12,8 @@ package R134a_NBP "R134a with NBP reference state"
     idealLog=[
       -1.629789E+0,     1.00E0],
     idealPower=[
-       9.63437581475882623335,     0.00E0;
-       3.61631654246604716326,     1.00E0;
+       9.645100666665819,     0.00E0;
+       3.609218337872204,     1.00E0;
       -9.723916E+0,    -0.50E0;
       -3.927170E+0,    -0.75E0],
     idealEinstein=fill(0.0, 0, 2),

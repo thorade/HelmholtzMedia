@@ -2,7 +2,7 @@ within HelmholtzMedia.HelmholtzFluids;
 package R134a_ASHRAE "R134a with ASHRAE reference state"
   extends HelmholtzMedia.HelmholtzFluids.R134a(
     fluidLimitsR134a(SMIN=-550, HMIN=-87e3, HMAX=440e3),
-    fluidConstantsR134a(HCRIT0=241515.405516486, SCRIT0=766.580436109951),
+    fluidConstantsR134a(HCRIT0=241491.936244432, SCRIT0=766.479922919039),
     helmholtzCoefficients=helmholtzCoefficientsR134a_ASHRAE);
 
   final constant EoS.HelmholtzCoefficients
@@ -12,8 +12,8 @@ package R134a_ASHRAE "R134a with ASHRAE reference state"
     idealLog=[
       -1.629789E+0,     1.00E0],
     idealPower=[
-       8.7426584575E+0,     0.00E0;
-       4.1893689E+0,     1.00E0;
+       8.743891918081417,     0.00E0;
+       4.188599200395781,     1.00E0;
       -9.723916E+0,    -0.50E0;
       -3.927170E+0,    -0.75E0],
     idealEinstein=fill(0.0, 0, 2),
