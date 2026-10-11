@@ -273,6 +273,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Temperature T_iter "fallback: temperature iterate";
     DerPressureByTemperature dpT "fallback: slope of the vapour pressure curve";
     Boolean fallback=false "true if the fallback via setSat_T was used";
+    Boolean trivial=false "true if the iteration ran into the trivial solution d_liq=d_vap";
 
   algorithm
     // Modelica.Utilities.Streams.print(" ", "printlog.txt");
@@ -299,7 +300,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
     RES := {EoS.p(fl)-p, EoS.p(fv)-p, EoS.g(fl)-EoS.g(fv)};
 
-    while (iter<iter_max) and not converged loop
+    while (iter<iter_max) and not converged and not trivial loop
       iter := iter+1;
 
       // calculate Jacobian matrix and Newton Step vector
@@ -333,6 +334,10 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       converged := (abs(RES[1]/p)<=tol_rel or abs(RES[1]/EoS.dpdT(fl))<=tol_rel*sat.liq.d)
                and abs(RES[2]/p)<=tol_rel
                and abs(RES[3])<=tol_rel*R_s*sat.Tsat;
+      // close to the critical point, the residuals also vanish for the trivial solution d_liq=d_vap (at T>=T_crit),
+      // which is not a saturation state; continue with the fallback below
+      trivial := converged and not ((sat.liq.d>sat.vap.d*(1+1e-9)) and (sat.Tsat<T_crit));
+      converged := converged and not trivial;
     end while;
 
     if not converged then
