@@ -22,11 +22,11 @@ extends Interfaces.PartialHelmholtzMedium(
     iupacName="",
     molarMass=0.04606844,
     hasCriticalData=true,
-       criticalTemperature=515.369670626,
-       criticalPressure=6297733.05,
-       criticalMolarVolume=0.04606844/214.832637396,
-       HCRIT0=1251176.9765614,
-       SCRIT0=3527.08084761766,
+       criticalTemperature=514.709284881,
+       criticalPressure=6267907.51014,
+       criticalMolarVolume=0.04606844/273.217468213,
+       HCRIT0=1160028.2858263555,
+       SCRIT0=3324.177290416762,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=1.6909,
@@ -37,94 +37,104 @@ extends Interfaces.PartialHelmholtzMedium(
     hasAccurateConductivityData=true,
     hasVapourPressureCurve=true,
     hasAcentricFactor=true,
-       acentricFactor=0.644,
+       acentricFactor=0.646,
     triplePointTemperature=159,
-    triplePointPressure=0.00043,
-    normalBoilingPoint=351.39,
+    triplePointPressure=7.184e-4,
+    normalBoilingPoint=351.57,
     meltingPoint=159) "Fluid Constants";
 
   final constant EoSLimits
   fluidLimitsEthanol(
-    TMIN=250,
+    TMIN=fluidConstantsEthanol.triplePointTemperature,
     TMAX=650,
     DMIN=Modelica.Constants.eps,
-    DMAX=946,
+    DMAX=1031,
     PMIN=Modelica.Constants.small,
     PMAX=280e6,
-    HMIN=114e3,
-    HMAX=1959e3,
-    SMIN=350,
-    SMAX=11920) "Helmholtz EoS Limits";
+    HMIN=-40e3,
+    HMAX=1888e3,
+    SMIN=-530,
+    SMAX=11810) "Helmholtz EoS Limits";
 
   final constant EoS.HelmholtzCoefficients
   helmholtzCoefficientsEthanol(
-    T_reducing=513.9,
-    d_reducing=276,
+    T_reducing=514.71,
+    d_reducing=0.04606844*5930,
     idealLog=[
-      +5.41129,         1],
+      3.43069,          1],
     idealPower=[
-      -12.899375,        0;
-      +8.6222292,        1],
+     -12.7531,          0;
+      9.39094,          1],
     idealEinstein=[
-      +1.95989, -694/513.9;
-      +7.60084, -1549/513.9;
-      +3.89583, -2911/513.9;
-      +4.23238, -4659/513.9],
+      2.14326,  -420.4/514.71;
+      5.09206,  -1334/514.71;
+      6.60138,  -1958/514.71;
+      5.70777,  -4420/514.71],
     residualPoly=[
-      +0.114008942201E+2,  -0.5,   1;
-      -0.395227128302E+2,   0.0,   1;
-       0.413063408370E+2,   0.5,   1;
-      -0.188892923721E+2,   1.5,   1;
-       0.472310314140E+1,   2.0,   1;
-      -0.778322827052E-2,   5.0,   1;
-       0.171707850032E+0,  -0.5,   2;
-      -0.153758307602E+1,   1.0,   2;
-       0.142405508571E+1,   2.0,   2;
-       0.132732097050E+0,   0.0,   3;
-      -0.114231649761E+0,   2.5,   3;
-       0.327686088736E-5,   6.0,   6;
-       0.495699527725E-3,   2.0,   7;
-      -0.701090149558E-4,   2.0,   8;
-      -0.225019381648E-5,   4.0,   8],
+      0.058200796,    1.00,   4;
+      0.94391227,     1.04,   1;
+     -0.80941908,     2.72,   1;
+      0.55359038,     1.174,  2;
+     -1.4269032,      1.329,  2;
+      0.13448717,     0.195,  3],
     residualBwr=[
-      -0.255406026981E+0,   5.0,   1,   2;
-      -0.632036870646E-1,   3.0,   3,   2;
-      -0.314882729522E-1,   7.0,   3,   2;
-       0.256187828185E-1,   5.5,   6,   2;
-      -0.308694499382E-1,   4.0,   7,   2;
-       0.722046283076E-2,   1.0,   8,   2;
-       0.299286406225E-2,  22.0,   2,   4;
-       0.972795913095E-3,  23.0,   7,   4],
-     residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
+      0.42671978,     2.43,   1,   1;
+     -1.1700261,      1.274,  1,   1;
+     -0.92405872,     4.16,   1,   2;
+      0.34891808,     3.30,   3,   1;
+     -0.91327720,     4.177,  3,   2;
+      0.022629481,    2.50,   2,   1;
+     -0.15513423,     0.81,   2,   2;
+      0.21055146,     2.02,   6,   1;
+     -0.21997690,     1.606,  6,   1;
+     -0.0065857238,   0.86,   8,   1],
+    residualGauss=[
+      0.75564749,     2.50,   1,   2,   2,   -1.075,   -1.207,   1.194,   0.779;
+      0.10694110,     3.72,   1,   2,   2,   -0.463,   -0.0895,  1.986,   0.805;
+     -0.069533844,    1.19,   2,   2,   2,   -0.876,   -0.581,   1.583,   1.869;
+     -0.24947395,     3.25,   3,   2,   2,   -1.108,   -0.947,   0.756,   0.694;
+      0.027177891,    3.00,   3,   2,   2,   -0.741,   -2.356,   0.495,   1.312;
+     -0.0009053953,   2.00,   2,   2,   2,   -4.032,   -27.01,   1.002,   2.054;
+     -0.12310953,     2.00,   2,   2,   2,   -2.453,   -4.542,   1.077,   0.441;
+     -0.08977971,     1.00,   2,   2,   2,   -2.300,   -1.287,   1.493,   0.793;
+     -0.39512601,     1.00,   1,   2,   2,   -3.143,   -3.090,   1.542,   0.313]) "Coefficients of the Helmholtz EoS";
 
   final constant Transport.ThermalConductivityCoefficients
   thermalConductivityCoefficientsEthanol(
     thermalConductivityModel=ThermalConductivityModel.TC1,
     thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
-    reducingTemperature_0=513.9,
-    reducingThermalConductivity_0=1,
+    reducingTemperature_0=514.71,
+    reducingThermalConductivity_0=1e-3,
     lambda_0_num_coeffs=[
-     0.123120E-01,    0;
-    -0.153612E-01,    1;
-     0.426611E-01,    2],
-    reducingTemperature_background=513.9,
-    reducingMolarVolume_background=1/5991,
+     -2.09575,     0;
+      19.9045,     1;
+     -53.964,      2;
+      82.1223,     3;
+     -1.98864,     4;
+     -0.495513,    5],
+    lambda_0_den_coeffs=[
+      0.172230,    0;
+     -0.078273,    1;
+      1.0,         2],
+    reducingTemperature_background=514.71,
+    reducingMolarVolume_background=1/5930,
     reducingThermalConductivity_background=1,
     lambda_b_coeffs=[
-     0.266894E-1,        0.0,   1.0,   0.0;
-     0.0,                1.0,   1.0,   0.0;
-    -0.482953E-01,       0.0,   2.0,   0.0;
-     0.414022E-01,       1.0,   2.0,   0.0;
-     0.172939E-01,       0.0,   3.0,   0.0;
-    -0.977825E-02,       1.0,   3.0,   0.0;
-     0.0,                0.0,   4.0,   0.0;
-     0.0,                1.0,   4.0,   0.0;
-     0.0,                0.0,   5.0,   0.0;
-     0.0,                1.0,   5.0,   0.0],
-    xi_0=0.194E-9,
-    Gamma_0=0.0496,
-    qd_inverse=0.875350E-9,
-    T_ref=637.68) "Coefficients for the thermal conductivity";
+      0.0267222,   0,   1,   0;
+      0.148279,    0,   2,   0;
+     -0.130429,    0,   3,   0;
+      0.0346232,   0,   4,   0;
+     -0.00244293,  0,   5,   0;
+      0.0177166,   1,   1,   0;
+     -0.0893088,   1,   2,   0;
+      0.0684664,   1,   3,   0;
+     -0.0145702,   1,   4,   0;
+      0.000809189, 1,   5,   0],
+    R0=1.02,
+    xi_0=0.164296E-9,
+    Gamma_0=0.05885,
+    qd_inverse=0.53E-9,
+    T_ref=772.06) "Coefficients for the thermal conductivity";
 
   final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsEthanol(
@@ -174,46 +184,66 @@ extends Interfaces.PartialHelmholtzMedium(
   final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsEthanol(
     coeffs=[
-      0.065,    1.26]) "Coefficients for the surface tension";
+      0.0628594,   1.04726;
+     -29.4208,     4.34139;
+      29.4913,     4.34996]) "Coefficients for the surface tension";
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsEthanol(
-    T_crit=513.9,
-    p_crit=6148000,
-    d_crit=276,
+    T_crit=514.71,
+    p_crit=6268000,
+    d_crit=0.04606844*5930,
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
-      -0.81829E+01,   1.0;
-      -0.62767E+00,   1.5;
-      -0.33289E+01,   3.0;
-      -0.35278E+01,   5.6;
-       0.93103E+01,   7.0],
+     -9.1043,     1.0;
+      4.7263,     1.5;
+     -9.7145,     2.0;
+      4.1536,     2.55;
+     -2.0739,     4.0],
     densityLiquidModel=DensityLiquidModel.DL1,
     densityLiquid=[
-       0.11818E+01,   0.098;
-      -0.36120E+01,   0.22;
-       0.54325E+01,   0.35;
-      -0.47789E+00,   0.7;
-      -0.17766E-01,   2.0],
+      11.632,     0.66;
+     -218.66,     1.5;
+      826.94,     1.9;
+     -1351.2,     2.3;
+      1051.7,     2.7;
+     -318.09,     3.1],
     densityVaporModel=DensityVaporModel.DV3,
     densityVapor=[
-      -0.93315E+00,   0.09;
-      -0.40761E+02,   1.07;
-       0.63250E+02,   1.3;
-      -0.45195E+02,   1.7;
-       0.15114E+01,   4.0;
-      -0.56666E+02,   5.0])
+      160.386,    0.49;
+     -302.488,    0.55;
+      504.347,    0.84;
+     -735.211,    1.1;
+      868.411,    1.5;
+     -528.497,    1.7;
+     -55.7818,    6.0;
+     -124.911,    13.0])
   "Coefficients for the ancillary equations (PS5, DL1, DV3)";
 
 
   annotation (Documentation(info="<html>
 These are the coefficients for Ethanol.
+The reference state is set to IIR.
 
 <dl>
-<dt> Dillon, H. E. and Penoncello, S. G.</dt>
-<dd> <b>A Fundamental Equation for Calculation of the Thermodynamic Properties of Ethanol</b><br />
-     International Journal of Thermophysics 25, 321-335 (2004)<br />
-     DOI: <a href=\"http://dx.doi.org/10.1023/B:IJOT.0000028470.49774.14\">10.1023/B:IJOT.0000028470.49774.14</a>
+<dt> Schroeder, J. A., Penoncello, S. G., and Schroeder, J. S.</dt>
+<dd> <b>A Fundamental Equation of State for Ethanol</b><br />
+     J. Phys. Chem. Ref. Data 43, 043102 (2014)<br />
+     DOI: <a href=\"http://dx.doi.org/10.1063/1.4895394\">10.1063/1.4895394</a>
+</dd>
+<dt> Kiselev, S. B., Ely, J. F., Abdulagatov, I. M., and Huber, M. L.</dt>
+<dd> <b>Generalized SAFT-DFT/DMT Model for the Thermodynamic, Interfacial, and Transport Properties of Associating Fluids: Application for n-Alkanols</b><br />
+     Ind. Eng. Chem. Res. 44, 6916-6927 (2005)<br />
+     DOI: <a href=\"http://dx.doi.org/10.1021/ie050010e\">10.1021/ie050010e</a>
+</dd>
+<dt> Assael, M. J., Sykioti, E. A., Huber, M. L., and Perkins, R. A.</dt>
+<dd> <b>Reference Correlation of the Thermal Conductivity of Ethanol from the Triple Point to 600 K and up to 245 MPa</b><br />
+     J. Phys. Chem. Ref. Data 42, 023102 (2013)<br />
+     DOI: <a href=\"http://dx.doi.org/10.1063/1.4797368\">10.1063/1.4797368</a>
+</dd>
+<dt> Mulero, A., Cachadi&ntilde;a, I., and Sanjuan, E. L.</dt>
+<dd> <b>Surface Tension of Alcohols. Data Selection and Recommended Correlations</b><br />
+     J. Phys. Chem. Ref. Data 44, 033104 (2015)
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
