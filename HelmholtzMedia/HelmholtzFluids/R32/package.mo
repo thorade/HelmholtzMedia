@@ -120,60 +120,44 @@ package R32 "R32 with IIR reference state"
      0.766378E-02,  1,   5,   0],
     xi_0=1.94E-10 "<xi0 (amplitude) [m]>",
     Gamma_0=0.0496 "<gam0 (amplitude) [-]>",
-    qd_inverse=5.285356E-10,
+    qd_inverse=5.582925E-10,
     T_ref=526.8825) "Coefficients for the thermal conductivity";
 
-    // To be continued
   final constant Transport.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsR32(
-    dynamicViscosityModel=DynamicViscosityModel.VS1_alternative,
+    dynamicViscosityModel=DynamicViscosityModel.VS1,
     collisionIntegralModel=CollisionIntegralModel.CI1,
-    sigma=0.4098 "<Lennard-Jones coefficient sigma [nm]>",
-    epsilon_kappa=289.65 "<Lennard-Jones coefficient epsilon/kappa [K]>",
+    sigma=0.411 "Lennard-Jones size parameter [nm]",
+    epsilon_kappa=290.0 "Lennard-Jones energy parameter [K]",
+    reducingTemperature_0=351.255,
     CET=[
-     0.141824E0, 0.5] "Find VS1, FEQ propane.fld <Chapman-Enskog term>",
-    a=[
-      0.25104574E+0,  0;
-     -0.47271238E+0,  1;
-      0.060836515,  3] "<coeff, power of Tstar>",
+      0.577885,    0;
+      10.2498,     1;
+     -4.95882,     2;
+      14.1485,     3;
+     -0.816434,    4] "dilute gas, numerator <coeff, power of T/T_red>",
+    CET_den=[
+      0.896478,    0;
+     -0.595706,    1;
+      1.0,         2] "dilute gas, denominator <coeff, power of T/T_red>",
     b=[
-     -19.572881E+0,       0.0;
-      219.73999E+0,      -0.25;
-     -1015.3226E+0,      -0.5;
-      2471.01251E+0,     -0.75;
-     -3375.1717E+0,      -1.0;
-      2491.6597E+0,      -1.25;
-     -787.26086E+0,      -1.5;
-      14.085455E+0,      -2.5;
-     -0.34664158E+0,     -5.5] "<coeff, power in T* = T/(eps/k)>",
-    reducingTemperature_residual=369.82,
-    reducingMolarVolume_residual=1/5000,
-    reducingViscosity_residual=1 "<reducing parameters for T, rho, eta>",
-    g=[
-     0,      0.00;
-     0,      1.00;
-     0,      2.00] "<reducing parameters for T, rho, eta>, next rows",
+     -19.572881,    0.0;
+      219.73999,   -0.25;
+     -1015.3226,   -0.5;
+      2471.0125,   -0.75;
+     -3375.1717,   -1.0;
+      2491.6597,   -1.25;
+     -787.26086,   -1.5;
+      14.085455,   -2.5;
+     -0.34664158,  -5.5] "second viscosity virial coefficient <coeff, power of T/(eps/k)>",
+    reducingTemperature_residual=351.255,
+    reducingMolarVolume_residual=1/8150.0846,
     e=[
-      0.250053938863E+1,   0.0,    0.00,  0.00,  0;
-      0.215175430074E+1,   0.5,    0.00,  0.00,  0;
-      0.359873030195E+2,   0.0,    2.00,  0.00,  0;
-     -0.180512188564E+3,  -1.0,    2.00,  0.00,  0;
-      0.877124888223E+2,  -2.0,    2.00,  0.00,  0;
-     -0.105773052525E+3,   0.0,    3.00,  0.00,  0;
-      0.205319740877E+3,  -1.0,    3.00,  0.00,  0;
-     -0.129210932610E+3,  -2.0,    3.00,  0.00,  0;
-      0.589491587759E+2,   0.0,    4.00,  0.00,  0;
-     -0.129740033100E+3,  -1.0,    4.00,  0.00,  0;
-      0.766280419971E+2,  -2.0,    4.00,  0.00,  0;
-     -0.959407868475E+1,   0.0,    5.00,  0.00,  0;
-      0.210726986598E+2,  -1.0,    5.00,  0.00,  0;
-     -0.143971968187E+2,  -2.0,    5.00,  0.00,  0;
-     -0.161688405374E+4,   0.0,    1.00, -1.00,  0],
-    nu_po=[
-     0.161688405374E+4,     0.00,  1.00,  0.00,  0],
-    de_po=[
-     1.00,                   0.00,  0.00,  1.00,  0;
-    -1.00,                   0.00,  1.00,  0.00,  0])
+      1.24655,       0.5,   2/3,    0,  0;
+      8.85264,       0.5,   5/3,    0,  0;
+      0.587282,     -0.5,  14/3,    0,  0;
+      2.81507E-06,  -0.5,  44/3,    0,  0;
+      4.4106,       -1.5,   8/3,    0,  0] "higher-order term <coeff, power of T/T_red, power of d/d_red, -, ->")
   "Coefficients for the dynamic viscosity";
 
   final constant Transport.SurfaceTensionCoefficients
@@ -219,10 +203,20 @@ The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, 
      J. Phys. Chem. Ref. Data, 26:1273-1328, 1997.<br />
      DOI: <a href=\"http://dx.doi.org/10.1063/1.556002\">10.1063/1.556002</a>
 </dd>
-<dt> Huber, M.L., Laesecke, A., and Perkins, R.A.</dt>
-<dd> <b>Model for the Viscosity and Thermal Conductivity of Refrigerants, Including a New Correlation for the Viscosity of R134a</b><br />
-     Ind. Eng. Chem. Res., 42:3163-3178, 2003.<br />
-     DOI: <a href=\"http://dx.doi.org/10.1021/ie0300880\">10.1021/ie0300880</a>
+<dt> Velliadou, D., Antoniadis, K.D., Assael, M.J. and Huber, M.L.</dt>
+<dd> <b>Reference Correlation for the Viscosity of Difluoromethane (R-32) from the Triple Point to 425 K and up to 70 MPa</b><br />
+     Int. J. Thermophys., 43:129, 2022.<br />
+     DOI: <a href=\"https://doi.org/10.1007/s10765-022-03050-9\">10.1007/s10765-022-03050-9</a>
+</dd>
+<dt> Perkins, R.A. and Huber, M.L.</dt>
+<dd> <b>Thermal conductivity correlation for R-32</b> (2005, unpublished), as implemented in REFPROP 10,
+     with the simplified critical enhancement of Olchowy and Sengers (1989).<br />
+     Data: DOI <a href=\"https://doi.org/10.1021/je010001m\">10.1021/je010001m</a>
+</dd>
+<dt> Mulero, A., Cachadi&ntilde;a, I. and Parra, M.I.</dt>
+<dd> <b>Recommended Correlations for the Surface Tension of Common Fluids</b><br />
+     J. Phys. Chem. Ref. Data, 41:043105, 2012.<br />
+     DOI: <a href=\"https://doi.org/10.1063/1.4768782\">10.1063/1.4768782</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />

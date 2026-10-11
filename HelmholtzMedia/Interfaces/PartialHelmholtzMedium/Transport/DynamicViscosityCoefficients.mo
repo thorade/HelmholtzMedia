@@ -8,6 +8,8 @@ record DynamicViscosityCoefficients
   constant Real[:,2] a = fill(0.0, 0, 2) "coefficients for collision integral";
   // zero density dependence, via Chapman-Enskog-Theory
   constant Real[:,2] CET = fill(0.0, 0, 2);
+  constant Real[:,2] CET_den = fill(0.0, 0, 2)
+    "optional denominator: if not empty, eta_0 = sum(CET[i,1]*tau^CET[i,2]) / sum(CET_den[j,1]*tau^CET_den[j,2])";
   constant Temperature reducingTemperature_0(min=1)=1 "reducing temperature";
   constant Real reducingViscosity_0=1 "reducing viscosity";
   // initial density dependence, via Rainwater-Friend-Theory

@@ -20,6 +20,7 @@ protected
 
   Real[size(dynamicViscosityCoefficients.a, 1),2] a=dynamicViscosityCoefficients.a;
   Real[size(dynamicViscosityCoefficients.CET, 1),2] CET=dynamicViscosityCoefficients.CET; // Chapman-Enskog-Term
+  Real[size(dynamicViscosityCoefficients.CET_den, 1),2] CET_den=dynamicViscosityCoefficients.CET_den;
   Real Omega=0 "reduced effective cross section / Omega collision integral";
   Real sigma=dynamicViscosityCoefficients.sigma;
 
@@ -55,10 +56,16 @@ algorithm
   elseif ((dynamicViscosityModel == DynamicViscosityModel.VS1)
       or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
     tau := state.T/T_red_0;
-    // first term is the Chapman-Enskog-Term
-    eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);
-    // possibly further empirical terms
-    eta_0 := eta_0 + sum(CET[i, 1]*(tau)^CET[i, 2] for i in 2:size(CET, 1));
+    if size(CET_den, 1) > 0 then
+      // empirical rational function, e.g. Velliadou et al. (2022) for R32
+      eta_0 := sum(CET[i, 1]*tau^CET[i, 2] for i in 1:size(CET, 1))
+              /sum(CET_den[i, 1]*tau^CET_den[i, 2] for i in 1:size(CET_den, 1));
+    else
+      // first term is the Chapman-Enskog-Term
+      eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);
+      // possibly further empirical terms
+      eta_0 := eta_0 + sum(CET[i, 1]*(tau)^CET[i, 2] for i in 2:size(CET, 1));
+    end if;
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
     eta_0 := CET[1, 1]*state.T^CET[1,2]/(sigma^2*Omega);
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
