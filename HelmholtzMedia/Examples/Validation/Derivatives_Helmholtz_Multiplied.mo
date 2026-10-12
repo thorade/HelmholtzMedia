@@ -24,36 +24,41 @@ protected
   Medium.SaturationProperties sat_ASHRAE = Medium.setSat_T(T=233.15); // -40°C
   Medium.SaturationProperties sat_NBP = Medium.setSat_p(p=101325); // 1.01325 bar = 1atm
 
-  Medium.EoS.HelmholtzDerivs f_crit = Medium.EoS.setHelmholtzDerivsThird(T=T_crit, d=d_crit, phase=1);
-  Medium.EoS.HelmholtzDerivs f_tl = Medium.EoS.setHelmholtzDerivsThird(T=sat_trip.liq.T, d=sat_trip.liq.d, phase=1);
-  Medium.EoS.HelmholtzDerivs f_tv = Medium.EoS.setHelmholtzDerivsThird(T=sat_trip.vap.T, d=sat_trip.vap.d, phase=1);
-  Medium.EoS.HelmholtzDerivs f_IIR = Medium.EoS.setHelmholtzDerivsThird(T=sat_IIR.liq.T, d=sat_IIR.liq.d, phase=1);
-  Medium.EoS.HelmholtzDerivs f_ASHRAE = Medium.EoS.setHelmholtzDerivsThird(T=sat_ASHRAE.liq.T, d=sat_ASHRAE.liq.d, phase=1);
-  Medium.EoS.HelmholtzDerivs f_NBP = Medium.EoS.setHelmholtzDerivsThird(T=sat_NBP.liq.T, d=sat_NBP.liq.d, phase=1);
-  Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(T=T, d=d, phase=1);
+  Medium.EoS.HelmholtzDerivs f_crit = Medium.EoS.setHelmholtzDerivs(T=T_crit, d=d_crit, phase=1, order=3);
+  Medium.EoS.HelmholtzDerivs f_tl = Medium.EoS.setHelmholtzDerivs(T=sat_trip.liq.T, d=sat_trip.liq.d, phase=1, order=3);
+  Medium.EoS.HelmholtzDerivs f_tv = Medium.EoS.setHelmholtzDerivs(T=sat_trip.vap.T, d=sat_trip.vap.d, phase=1, order=3);
+  Medium.EoS.HelmholtzDerivs f_IIR = Medium.EoS.setHelmholtzDerivs(T=sat_IIR.liq.T, d=sat_IIR.liq.d, phase=1, order=3);
+  Medium.EoS.HelmholtzDerivs f_ASHRAE = Medium.EoS.setHelmholtzDerivs(T=sat_ASHRAE.liq.T, d=sat_ASHRAE.liq.d, phase=1, order=3);
+  Medium.EoS.HelmholtzDerivs f_NBP = Medium.EoS.setHelmholtzDerivs(T=sat_NBP.liq.T, d=sat_NBP.liq.d, phase=1, order=3);
+  Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivs(T=T, d=d, phase=1, order=3);
   Medium.EoS.HelmholtzDerivs f_num(T=T, d=d, tau=tau, delta=delta);
 
   Real delta(unit="1")=d/Medium.helmholtzCoefficients.d_reducing "reduced density";
   Real tau(unit="1")=Medium.helmholtzCoefficients.T_reducing/T "inverse reduced temperature";
   Real eps= 1e-6;
+  Medium.EoS.HelmholtzDerivs f_tp = Medium.EoS.setHelmholtzDerivs(T=Medium.helmholtzCoefficients.T_reducing/(tau+eps), d=d, order=2) "at tau+eps";
+  Medium.EoS.HelmholtzDerivs f_tm = Medium.EoS.setHelmholtzDerivs(T=Medium.helmholtzCoefficients.T_reducing/(tau-eps), d=d, order=2) "at tau-eps";
+  Medium.EoS.HelmholtzDerivs f_dp = Medium.EoS.setHelmholtzDerivs(T=T, d=(delta+eps)*Medium.helmholtzCoefficients.d_reducing, order=2) "at delta+eps";
+  Medium.EoS.HelmholtzDerivs f_dm = Medium.EoS.setHelmholtzDerivs(T=T, d=(delta-eps)*Medium.helmholtzCoefficients.d_reducing, order=2) "at delta-eps";
 
 algorithm
   // numerical derivative, for comparison, last two line of csv file should be identical
-  f_num.i    := Medium.EoS.f_i(tau=tau, delta=delta);
-  f_num.it   := (Medium.EoS.f_i(tau=tau+eps, delta=delta)-Medium.EoS.f_i(tau=tau-eps, delta=delta))/(2*eps);
-  f_num.itt  := (Medium.EoS.f_it(tau=tau+eps, delta=delta)-Medium.EoS.f_it(tau=tau-eps, delta=delta))/(2*eps);
-  f_num.ittt  := (Medium.EoS.f_itt(tau=tau+eps, delta=delta)-Medium.EoS.f_itt(tau=tau-eps, delta=delta))/(2*eps);
+  // derivatives of the next lower order, evaluated at tau+-eps and delta+-eps
+  f_num.i    := f.i;
+  f_num.it   := (f_tp.i - f_tm.i)/(2*eps);
+  f_num.itt  := (f_tp.it - f_tm.it)/(2*eps);
+  f_num.ittt := (f_tp.itt - f_tm.itt)/(2*eps);
 
-  f_num.r    := Medium.EoS.f_r(tau=tau, delta=delta);
-  f_num.rt   := (Medium.EoS.f_r(tau=tau+eps, delta=delta)-Medium.EoS.f_r(tau=tau-eps, delta=delta))/(2*eps);
-  f_num.rtt  := (Medium.EoS.f_rt(tau=tau+eps, delta=delta)-Medium.EoS.f_rt(tau=tau-eps, delta=delta))/(2*eps);
-  f_num.rttt  := (Medium.EoS.f_rtt(tau=tau+eps, delta=delta)-Medium.EoS.f_rtt(tau=tau-eps, delta=delta))/(2*eps);
-  f_num.rtd  := (Medium.EoS.f_rt(tau=tau, delta=delta+eps)-Medium.EoS.f_rt(tau=tau, delta=delta-eps))/(2*eps);
-  f_num.rttd := (Medium.EoS.f_rtt(tau=tau, delta=delta+eps)-Medium.EoS.f_rtt(tau=tau, delta=delta-eps))/(2*eps);
-  f_num.rtdd :=(Medium.EoS.f_rtd(tau=tau, delta=delta+eps)-Medium.EoS.f_rtd(tau=tau, delta=delta-eps))/(2*eps);
-  f_num.rd   := (Medium.EoS.f_r(tau=tau, delta=delta+eps)-Medium.EoS.f_r(tau=tau, delta=delta-eps))/(2*eps);
-  f_num.rdd  := (Medium.EoS.f_rd(tau=tau, delta=delta+eps)-Medium.EoS.f_rd(tau=tau, delta=delta-eps))/(2*eps);
-  f_num.rddd := (Medium.EoS.f_rdd(tau=tau, delta=delta+eps)-Medium.EoS.f_rdd(tau=tau, delta=delta-eps))/(2*eps);
+  f_num.r    := f.r;
+  f_num.rt   := (f_tp.r - f_tm.r)/(2*eps);
+  f_num.rtt  := (f_tp.rt - f_tm.rt)/(2*eps);
+  f_num.rttt := (f_tp.rtt - f_tm.rtt)/(2*eps);
+  f_num.rtd  := (f_dp.rt - f_dm.rt)/(2*eps);
+  f_num.rttd := (f_dp.rtt - f_dm.rtt)/(2*eps);
+  f_num.rtdd := (f_dp.rtd - f_dm.rtd)/(2*eps);
+  f_num.rd   := (f_dp.r - f_dm.r)/(2*eps);
+  f_num.rdd  := (f_dp.rd - f_dm.rd)/(2*eps);
+  f_num.rddd := (f_dp.rdd - f_dm.rdd)/(2*eps);
 
   when initial() then
   if not Modelica.Utilities.Files.exist(fileName) then

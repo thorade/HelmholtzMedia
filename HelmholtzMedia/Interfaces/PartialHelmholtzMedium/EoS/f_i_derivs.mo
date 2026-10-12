@@ -112,7 +112,7 @@ algorithm
 <p>
 Ideal part of the dimensionless Helmholtz energy and its tau-derivatives up to <code>order</code>,
 computed in a single loop over all terms (log(tau) and the exponential or hyperbolic functions once per term).
-The results agree with the separate functions f_i, f_it, f_itt and f_ittt to rounding precision.
+The derivatives were verified symbolically (sympy).
 </p>
 </html>"));
 end f_i_derivs;

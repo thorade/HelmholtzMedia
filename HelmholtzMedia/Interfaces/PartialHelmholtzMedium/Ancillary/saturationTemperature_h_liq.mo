@@ -14,8 +14,8 @@ protected
   // the bracket ends at 0.99*T_crit: closer to the critical point the ancillary liquid density
   // (fitted to slightly different critical values) is not accurate enough for a monotonic enthalpy
   constant Temperature T_hi=0.99*T_crit;
-  constant EoS.HelmholtzDerivs fl_trip = EoS.setHelmholtzDerivsFirst(d=Ancillary.bubbleDensity_T(T_trip), T=T_trip);
-  constant EoS.HelmholtzDerivs fl_hi = EoS.setHelmholtzDerivsFirst(d=Ancillary.bubbleDensity_T(T_hi), T=T_hi);
+  constant EoS.HelmholtzDerivs fl_trip = EoS.setHelmholtzDerivs(d=Ancillary.bubbleDensity_T(T_trip), T=T_trip, order=1);
+  constant EoS.HelmholtzDerivs fl_hi = EoS.setHelmholtzDerivs(d=Ancillary.bubbleDensity_T(T_hi), T=T_hi, order=1);
   constant SpecificEnthalpy hl_trip = EoS.h(fl_trip);
   constant SpecificEnthalpy hl_hi = EoS.h(fl_hi);
 
@@ -44,11 +44,11 @@ algorithm
     while (iter<iter_max) and not converged loop
       iter:=iter+1;
       T3 := (T1+T2)/2;
-      f3 := EoS.setHelmholtzDerivsFirst(d=Ancillary.bubbleDensity_T(T3), T=T3);
+      f3 := EoS.setHelmholtzDerivs(d=Ancillary.bubbleDensity_T(T3), T=T3, order=1);
       R3 := EoS.h(f3)-h;
       // calculate better T from Ridders' method
       T4  := T3 + (T3 - T1)*sign(R1-R2)*R3/sqrt(R3*R3 - R1*R2);
-      f4 := EoS.setHelmholtzDerivsFirst(d=Ancillary.bubbleDensity_T(T4), T=T4);
+      f4 := EoS.setHelmholtzDerivs(d=Ancillary.bubbleDensity_T(T4), T=T4, order=1);
       R4 := EoS.h(f4)-h;
       if (R4*R3<=0) then
         T1 := T3;

@@ -296,8 +296,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     end if;
 
     // calculate residuals: RES=calc-input
-    fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
-    fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
+    fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
+    fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
     RES := {EoS.p(fl)-p, EoS.p(fv)-p, EoS.g(fl)-EoS.g(fv)};
 
     while (iter<iter_max) and not converged and not trivial loop
@@ -323,8 +323,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       sat.Tsat  := min(sat.Tsat,  1.02*T_crit);
 
       // calculate new residuals: RES=calc-input
-      fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
-      fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
+      fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
+      fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
       RES := {EoS.p(fl)-p, EoS.p(fv)-p, EoS.g(fl)-EoS.g(fv)};
 
       // convergence test
@@ -490,7 +490,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
     else
       // force single-phase
-      f := EoS.setHelmholtzDerivsFirst(d=d,T=T);
+      f := EoS.setHelmholtzDerivs(d=d,T=T, order=1);
       state.p := EoS.p(f=f);
       state.s := EoS.s(f=f);
       state.h := EoS.h(f=f);
@@ -627,20 +627,14 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       // avoids evaluating the EoS at d=fluidLimits.DMIN (Modelica.Constants.small), which returns NaN
       RES_min := -p;
     else
-      f.d := d_min;
-      f.delta := f.d/d_reducing;
-      f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+      f := EoS.setHelmholtzDerivs(d=d_min, T=T, order=1, includeIdeal=false);
       RES_min := EoS.p(f) - p;
     end if;
     // max
-    f.d := d_max;
-    f.delta := f.d/d_reducing;
-    f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+    f := EoS.setHelmholtzDerivs(d=d_max, T=T, order=1, includeIdeal=false);
     RES_max := EoS.p(f) - p;
     // iter
-    f.d := d_iter;
-    f.delta := f.d/d_reducing;
-    f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+    f := EoS.setHelmholtzDerivs(d=d_iter, T=T, order=2, includeIdeal=false);
     RES_p := EoS.p(f) - p;
 
     assert((RES_min*RES_max<0), "setState_pTX: d_min and d_max did not bracket the root", level=AssertionLevel.warning);
@@ -659,8 +653,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       d_old := d_iter;
       // gamma := iter/(iter+1);
 
-      // calculate gradient with respect to density
-      f.rdd := EoS.f_rdd(delta=f.delta, tau=f.tau);
+      // calculate gradient with respect to density (f contains the second derivatives of the residual part)
       dpdT := EoS.dpdT(f);
 
       // print for Newton debugging
@@ -677,9 +670,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       end if;
 
       // set necessary parts of f, then calculate new RES_p
-      f.d := d_iter;
-      f.delta := f.d/d_reducing;
-      f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+      f := EoS.setHelmholtzDerivs(d=d_iter, T=T, order=2, includeIdeal=false);
       RES_p := EoS.p(f) - p;
 
       // thighten the bounds
@@ -704,7 +695,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     state.p := p;
     state.T := T;
     state.d := d_iter;
-    f := EoS.setHelmholtzDerivsFirst(d=state.d, T=state.T);
+    f := EoS.setHelmholtzDerivs(d=state.d, T=state.T, order=1);
     state.s := EoS.s(f=f);
     state.h := EoS.h(f=f);
     state.u := EoS.u(f=f);
@@ -790,11 +781,11 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           sat.Tsat := Ancillary.saturationTemperature_p(p=p);
 
           sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
-          f := EoS.setHelmholtzDerivsFirst(d=sat.liq.d, T=sat.Tsat, phase=1);
+          f := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=1);
           sat.liq.h := EoS.h(f);
 
           sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
-          f := EoS.setHelmholtzDerivsFirst(d=sat.vap.d, T=sat.Tsat, phase=1);
+          f := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=1);
           sat.vap.h := EoS.h(f);
 
           if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02*sat.vap.h))) then
@@ -889,7 +880,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         converged := false;
         lambda := 1;
       end if;
-      f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
+      f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
       RES := {(EoS.p(f)-p)/p, (EoS.h(f)-h)/h_scale};
       RSS := RES*RES/2;
 
@@ -920,7 +911,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         T_iter := min(T_iter, T_max);
 
         // calculate new residual vector and residual sum of squares
-        f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
+        f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
         RES := {(EoS.p(f)-p)/p, (EoS.h(f)-h)/h_scale};
         RSS := RES*RES/2;
         // Modelica.Utilities.Streams.print("iter=" + String(iter) + " d_iter=" + String(d_iter) + " T_iter=" + String(T_iter) + " RES_p=" + String(RES[1]) + " RES_h=" + String(RES[2]) + " RSS=" + String(RSS), "printlog.txt");
@@ -977,7 +968,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           T_iter := min(T_iter, T_max);
 
           // calculate new residual vector and residual sum of squares
-          f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
+          f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
           RES := {(EoS.p(f)-p)/p, (EoS.h(f)-h)/h_scale};
           RSS := RES*RES/2;
           // Modelica.Utilities.Streams.print("    linesearch attempt " + String(iterLineSearch) + ": lambda= " + String(lambda) + " d_iter=" + String(d_iter) + " T_iter= " + String(T_iter) + " RSS= " + String(RSS), "printlog.txt");
@@ -1100,11 +1091,11 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           sat.Tsat := Ancillary.saturationTemperature_p(p=p);
 
           sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
-          f := EoS.setHelmholtzDerivsFirst(d=sat.liq.d, T=sat.Tsat, phase=1);
+          f := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=1);
           sat.liq.s := EoS.s(f);
 
           sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
-          f := EoS.setHelmholtzDerivsFirst(d=sat.vap.d, T=sat.Tsat, phase=1);
+          f := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=1);
           sat.vap.s := EoS.s(f);
 
           if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
@@ -1233,7 +1224,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         converged := false;
         lambda := 1;
       end if;
-      f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
+      f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
       RES := {(EoS.p(f)-p)/p, (EoS.s(f)-s)/s_scale};
       RSS := RES*RES/2;
 
@@ -1264,7 +1255,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       xy_med[1] := min(d_iter, d_max);
       xy_med[2] := max(T_iter, T_min);
       xy_med[2] := min(T_iter, T_max);
-      f_med := EoS.setHelmholtzDerivsSecond(d=xy_med[1], T=xy_med[2], phase=1);
+      f_med := EoS.setHelmholtzDerivs(d=xy_med[1], T=xy_med[2], phase=1, order=2);
       RES_med := {EoS.p(f_med)-p, EoS.s(f_med)-s};
       Jacobian_med := [EoS.dpdT(f_med), EoS.dpTd(f_med);
                        EoS.dsdT(f_med), EoS.dsTd(f_med)];
@@ -1299,7 +1290,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       end if;*/
 
         // calculate new residual vector and residual sum of squares
-        f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
+        f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
         RES := {(EoS.p(f)-p)/p, (EoS.s(f)-s)/s_scale};
         RSS := RES*RES/2;
         // Modelica.Utilities.Streams.print("iter=" + String(iter) + " d_iter=" + String(d_iter) + " T_iter=" + String(T_iter) + " RES_p=" + String(RES[1]) + " RES_s=" + String(RES[2]) + " RSS=" + String(RSS), "printlog.txt");
@@ -1357,7 +1348,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           T_iter := min(T_iter, T_max);
 
           // calculate new residual vector and residual sum of squares
-          f := EoS.setHelmholtzDerivsSecond(d=d_iter, T=T_iter, phase=1);
+          f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
           RES := {(EoS.p(f)-p)/p, (EoS.s(f)-s)/s_scale};
           RSS := RES*RES/2;
           // Modelica.Utilities.Streams.print("    linesearch attempt " + String(iterLineSearch) + ": lambda= " + String(lambda) + " d_iter=" + String(d_iter) + " T_iter= " + String(T_iter) + " RSS= " + String(RSS), "printlog.txt");
@@ -1465,7 +1456,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
       cp := EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
     elseif state.phase==2 then
       assert(false, "specificHeatCapacityCp warning: in the two-phase region cp is infinite", level=AssertionLevel.warning);
@@ -1498,7 +1489,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
       cv := EoS.duTd(f);
 
     elseif state.phase==2 then
@@ -1506,8 +1497,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       x := vapourQuality_sat(state=state, sat=sat);
       dpT := saturationPressure_derT_sat(sat=sat);
 
-      fl := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.liq.d, phase=1);
-      fv := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.vap.d, phase=1);
+      fl := EoS.setHelmholtzDerivs(T=state.T, d=sat.liq.d, phase=1, order=2);
+      fv := EoS.setHelmholtzDerivs(T=state.T, d=sat.vap.d, phase=1, order=2);
 
       duT_liq := EoS.duTd(fl)-EoS.dudT(fl)*EoS.dpTd(fl)/EoS.dpdT(fl) + EoS.dudT(fl)/EoS.dpdT(fl)*dpT;
       duT_vap := EoS.duTd(fv)-EoS.dudT(fv)*EoS.dpTd(fv)/EoS.dpdT(fv) + EoS.dudT(fv)/EoS.dpdT(fv)*dpT;
@@ -1546,15 +1537,15 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
       a := sqrt(EoS.dpdT(f)-EoS.dpTd(f)*EoS.dsdT(f)/EoS.dsTd(f));
     elseif state.phase==2 then
       sat := setSat_T(T=state.T);
       x := vapourQuality_sat(state=state, sat=sat);
       dTp := saturationTemperature_derp_sat(sat=sat);
 
-      fl := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.liq.d, phase=1);
-      fv := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.vap.d, phase=1);
+      fl := EoS.setHelmholtzDerivs(T=state.T, d=sat.liq.d, phase=1, order=2);
+      fv := EoS.setHelmholtzDerivs(T=state.T, d=sat.vap.d, phase=1, order=2);
 
       dsp_liq := EoS.dsdT(fl)/EoS.dpdT(fl) + (EoS.dsTd(fl)-EoS.dsdT(fl)*EoS.dpTd(fl)/EoS.dpdT(fl))*dTp;
       dsp_vap := EoS.dsdT(fv)/EoS.dpdT(fv) + (EoS.dsTd(fv)-EoS.dsdT(fv)*EoS.dpTd(fv)/EoS.dpdT(fv))*dTp;
@@ -1579,7 +1570,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      f:=EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
       beta := 1.0/state.d*EoS.dpTd(f)/EoS.dpdT(f);
     elseif state.phase==2 then
       assert(false, "isobaricExpansionCoefficient warning: in the two-phase region beta is zero", level=AssertionLevel.warning);
@@ -1597,7 +1588,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f:=EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      f:=EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
       kappa := 1.0/state.d/EoS.dpdT(f);
     elseif state.phase==2 then
       assert(false, "isothermalCompressibility warning: in the two-phase region kappa is infinite", level=AssertionLevel.warning);
@@ -1747,7 +1738,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   // inherits input sat and output ddldp
 
   protected
-    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.liq.T);
+    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.liq.T, order=2);
     DerDensityByPressure ddpT = 1.0/EoS.dpdT(f);
     DerDensityByTemperature ddTp = -EoS.dpTd(f)/EoS.dpdT(f);
     DerTemperatureByPressure dTp = saturationTemperature_derp(p=sat.psat);
@@ -1763,7 +1754,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   // inherits input sat and output ddvdp
 
   protected
-    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.vap.T);
+    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.vap.T, order=2);
     DerDensityByPressure ddpT = 1.0/EoS.dpdT(f);
     DerDensityByTemperature ddTp = -EoS.dpTd(f)/EoS.dpdT(f);
     DerTemperatureByPressure dTp = saturationTemperature_derp(p=sat.psat);
@@ -1779,7 +1770,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   // inherits input sat and output dhldp
 
   protected
-    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.liq.T);
+    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.liq.T, order=2);
     DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
     DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
     DerTemperatureByPressure dTp = saturationTemperature_derp(p=sat.psat);
@@ -1795,7 +1786,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   // inherits input sat and output dhvdp
 
   protected
-    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.vap.T);
+    EoS.HelmholtzDerivs f = EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.vap.T, order=2);
     DerEnthalpyByPressure dhpT = EoS.dhdT(f)/EoS.dpdT(f);
     DerEnthalpyByTemperature dhTp = EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
     DerTemperatureByPressure dTp = saturationTemperature_derp(p=sat.psat);
@@ -1845,15 +1836,15 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
+      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase, order=2);
       ddph := 1.0/(EoS.dpdT(f) - EoS.dpTd(f)*EoS.dhdT(f)/EoS.dhTd(f));
     elseif state.phase==2 then
       sat := setSat_T(T=state.T);
       x := vapourQuality_sat(state=state, sat=sat);
       dTp := saturationTemperature_derp_sat(sat=sat);
 
-      fl := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.liq.d, phase=1);
-      fv := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.vap.d, phase=1);
+      fl := EoS.setHelmholtzDerivs(T=state.T, d=sat.liq.d, phase=1, order=2);
+      fv := EoS.setHelmholtzDerivs(T=state.T, d=sat.vap.d, phase=1, order=2);
 
       dhp_liq := EoS.dhdT(fl)/EoS.dpdT(fl) + (EoS.dhTd(fl)-EoS.dhdT(fl)*EoS.dpTd(fl)/EoS.dpdT(fl))*dTp;
       dhp_vap := EoS.dhdT(fv)/EoS.dpdT(fv) + (EoS.dhTd(fv)-EoS.dhdT(fv)*EoS.dpTd(fv)/EoS.dpdT(fv))*dTp;
@@ -1879,7 +1870,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
+      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase, order=2);
       ddhp := 1.0/(EoS.dhdT(f) - EoS.dhTd(f)*EoS.dpdT(f)/EoS.dpTd(f));
     elseif state.phase==2 then
       sat:=setSat_T(T=state.T);
@@ -1929,7 +1920,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
       ddpT := 1.0/EoS.dpdT(f);
     elseif state.phase==2 then
       ddpT := Modelica.Constants.inf; // divide by zero
@@ -1945,7 +1936,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
       ddTp := -EoS.dpTd(f)/EoS.dpdT(f);
     elseif state.phase==2 then
       ddTp := Modelica.Constants.inf; // divide by zero

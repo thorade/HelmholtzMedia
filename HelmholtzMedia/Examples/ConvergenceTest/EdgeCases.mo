@@ -112,10 +112,13 @@ protected
     output Boolean ok = true;
   protected
     Medium.ThermodynamicState st = Medium.setState_pd(p=p, d=d);
-    Medium.AbsolutePressure p_check = Medium.pressure(Medium.setState_dT(d=d, T=st.T, phase=1));
+    Medium.ThermodynamicState st_check = Medium.setState_dT(d=d, T=st.T, phase=1);
+    Medium.AbsolutePressure p_check = Medium.pressure(st_check);
   algorithm
     Modelica.Utilities.Streams.print(name + ": T=" + String(st.T, significantDigits=12) + " p/p_in-1=" + String(p_check/p-1), fileName);
-    if not (abs(p_check/p-1)<=tol_p or abs(p_check-p)<=p_floor) then
+    // for a compressed liquid at very low p, p is a tiny difference of large terms and only resolved to about p_floor;
+    // as in liquidOk, the deviation is then also accepted when it corresponds to a density error within tol_p
+    if not (abs(p_check/p-1)<=tol_p or abs((p_check-p)/Medium.pressure_derd_T(st_check))<=tol_p*d or abs(p_check-p)<=p_floor) then
       report(name + ": setState_pd, p/p_in-1=" + String(p_check/p-1));
       ok := false;
     end if;

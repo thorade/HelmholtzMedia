@@ -8,7 +8,7 @@ model State_pT_parameter_Transport "calculate state record from pT input"
   Medium.ThermodynamicState state;
   // pT always results in single phase states
 
-  Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsSecond(d=state.d,T=state.T);
+  Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivs(d=state.d,T=state.T, order=2);
 
   // order of properties as in RefProp
   // derived properties

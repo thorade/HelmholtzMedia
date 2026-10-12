@@ -7,7 +7,7 @@ model State_dT_parameter "calculate state record from dT input"
   parameter Medium.Temperature T=304;
 
   Medium.ThermodynamicState state;
-  Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsSecond(d=state.d,T=state.T);
+  Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivs(d=state.d,T=state.T, order=2);
 
   // Medium.MassFraction x;
   // Medium.SurfaceTension sigma;

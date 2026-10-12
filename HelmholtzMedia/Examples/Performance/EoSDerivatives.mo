@@ -2,7 +2,7 @@ within HelmholtzMedia.Examples.Performance;
 model EoSDerivatives "Performance test: repeated evaluation of the Helmholtz energy derivatives"
   extends Modelica.Icons.Example;
   replaceable package Medium = HelmholtzMedia.HelmholtzFluids.Propane;
-  parameter Integer level=2 "0: setHelmholtzDerivsZero, 1: First, 2: Second, 3: Third";
+  parameter Integer level=2 "order of the derivatives passed to setHelmholtzDerivs (0 to 3)";
   parameter Integer nT=50 "number of temperatures";
   parameter Integer nd=50 "number of densities";
   parameter Integer nRepeat=20 "number of repetitions of the whole grid";
@@ -36,16 +36,16 @@ protected
         for j in 1:nd loop
           d := d_min*(d_max/d_min)^((j - 1)/(nd - 1));
           if level == 0 then
-            f := Medium.EoS.setHelmholtzDerivsZero(d=d, T=T);
+            f := Medium.EoS.setHelmholtzDerivs(d=d, T=T, order=0);
             checksum := checksum + f.i + f.r;
           elseif level == 1 then
-            f := Medium.EoS.setHelmholtzDerivsFirst(d=d, T=T);
+            f := Medium.EoS.setHelmholtzDerivs(d=d, T=T, order=1);
             checksum := checksum + f.i + f.it + f.r + f.rt + f.rd;
           elseif level == 2 then
-            f := Medium.EoS.setHelmholtzDerivsSecond(d=d, T=T);
+            f := Medium.EoS.setHelmholtzDerivs(d=d, T=T, order=2);
             checksum := checksum + f.i + f.it + f.itt + f.r + f.rt + f.rtt + f.rtd + f.rd + f.rdd;
           else
-            f := Medium.EoS.setHelmholtzDerivsThird(d=d, T=T);
+            f := Medium.EoS.setHelmholtzDerivs(d=d, T=T, order=3);
             checksum := checksum + f.i + f.it + f.itt + f.ittt + f.r + f.rt + f.rtt + f.rttt + f.rtd + f.rttd + f.rtdd + f.rd + f.rdd + f.rddd;
           end if;
           nCalls := nCalls + 1;

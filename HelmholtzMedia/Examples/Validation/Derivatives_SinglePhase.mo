@@ -9,7 +9,7 @@ model Derivatives_SinglePhase
   Medium.ThermodynamicState state=Medium.setState_pTX(p=p, T=T);
   //Medium.Density d=Medium.bubbleDensity(sat=Medium.setSat_T(T));
   //Medium.ThermodynamicState state=Medium.setState_dTX(d=d, T=T);
-  Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivsThird(T=state.T, d=state.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f=Medium.EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase, order=3);
 
 // Pressure wrt. dT
   Medium.DerPressureByDensity dpdT_analytical1;
@@ -166,44 +166,44 @@ protected
   Real eps= 1e-5;
 
   Medium.ThermodynamicState    dplus_Tconst=Medium.setState_dTX(d=state.d+eps*state.d, T=state.T);
-  Medium.EoS.HelmholtzDerivs f_dplus_Tconst=Medium.EoS.setHelmholtzDerivsThird(T=state.T, d=dplus_Tconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_dplus_Tconst=Medium.EoS.setHelmholtzDerivs(T=state.T, d=dplus_Tconst.d, phase=state.phase, order=3);
   Medium.ThermodynamicState    dminus_Tconst=Medium.setState_dTX(d=state.d-eps*state.d, T=state.T);
-  Medium.EoS.HelmholtzDerivs f_dminus_Tconst=Medium.EoS.setHelmholtzDerivsThird(T=state.T, d=dminus_Tconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_dminus_Tconst=Medium.EoS.setHelmholtzDerivs(T=state.T, d=dminus_Tconst.d, phase=state.phase, order=3);
 
   Medium.ThermodynamicState    Tplus_dconst=Medium.setState_dTX(d=state.d, T=state.T+eps*state.T);
-  Medium.EoS.HelmholtzDerivs f_Tplus_dconst=Medium.EoS.setHelmholtzDerivsThird(T=Tplus_dconst.T, d=state.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_Tplus_dconst=Medium.EoS.setHelmholtzDerivs(T=Tplus_dconst.T, d=state.d, phase=state.phase, order=3);
   Medium.ThermodynamicState    Tminus_dconst=Medium.setState_dTX(d=state.d, T=state.T-eps*state.T);
-  Medium.EoS.HelmholtzDerivs f_Tminus_dconst=Medium.EoS.setHelmholtzDerivsThird(T=Tminus_dconst.T, d=state.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_Tminus_dconst=Medium.EoS.setHelmholtzDerivs(T=Tminus_dconst.T, d=state.d, phase=state.phase, order=3);
 
   Medium.ThermodynamicState    pplus_Tconst=Medium.setState_pTX(p=state.p+eps*state.p, T=state.T);
-  Medium.EoS.HelmholtzDerivs f_pplus_Tconst=Medium.EoS.setHelmholtzDerivsThird(T=pplus_Tconst.T, d=pplus_Tconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_pplus_Tconst=Medium.EoS.setHelmholtzDerivs(T=pplus_Tconst.T, d=pplus_Tconst.d, phase=state.phase, order=3);
   Medium.ThermodynamicState    pminus_Tconst=Medium.setState_pTX(p=state.p-eps*state.p, T=state.T);
-  Medium.EoS.HelmholtzDerivs f_pminus_Tconst=Medium.EoS.setHelmholtzDerivsThird(T=pminus_Tconst.T, d=pminus_Tconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_pminus_Tconst=Medium.EoS.setHelmholtzDerivs(T=pminus_Tconst.T, d=pminus_Tconst.d, phase=state.phase, order=3);
 
   Medium.ThermodynamicState    Tplus_pconst=Medium.setState_pTX(p=state.p, T=state.T+eps*state.T);
-  Medium.EoS.HelmholtzDerivs f_Tplus_pconst=Medium.EoS.setHelmholtzDerivsThird(T=Tplus_pconst.T, d=Tplus_pconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_Tplus_pconst=Medium.EoS.setHelmholtzDerivs(T=Tplus_pconst.T, d=Tplus_pconst.d, phase=state.phase, order=3);
   Medium.ThermodynamicState    Tminus_pconst=Medium.setState_pTX(p=state.p, T=state.T-eps*state.T);
-  Medium.EoS.HelmholtzDerivs f_Tminus_pconst=Medium.EoS.setHelmholtzDerivsThird(T=Tminus_pconst.T, d=Tminus_pconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_Tminus_pconst=Medium.EoS.setHelmholtzDerivs(T=Tminus_pconst.T, d=Tminus_pconst.d, phase=state.phase, order=3);
 
   Medium.ThermodynamicState    dplus_pconst=Medium.setState_pd(p=state.p, d=state.d+eps*state.d);
-  Medium.EoS.HelmholtzDerivs f_dplus_pconst=Medium.EoS.setHelmholtzDerivsThird(T=dplus_pconst.T, d=dplus_pconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_dplus_pconst=Medium.EoS.setHelmholtzDerivs(T=dplus_pconst.T, d=dplus_pconst.d, phase=state.phase, order=3);
   Medium.ThermodynamicState    dminus_pconst=Medium.setState_pd(p=state.p, d=state.d-eps*state.d);
-  Medium.EoS.HelmholtzDerivs f_dminus_pconst=Medium.EoS.setHelmholtzDerivsThird(T=dminus_pconst.T, d=dminus_pconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_dminus_pconst=Medium.EoS.setHelmholtzDerivs(T=dminus_pconst.T, d=dminus_pconst.d, phase=state.phase, order=3);
 
   Medium.ThermodynamicState    pplus_dconst=Medium.setState_pd(p=state.p+eps*state.p, d=state.d);
-  Medium.EoS.HelmholtzDerivs f_pplus_dconst=Medium.EoS.setHelmholtzDerivsThird(T=pplus_dconst.T, d=pplus_dconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_pplus_dconst=Medium.EoS.setHelmholtzDerivs(T=pplus_dconst.T, d=pplus_dconst.d, phase=state.phase, order=3);
   Medium.ThermodynamicState    pminus_dconst=Medium.setState_pd(p=state.p-eps*state.p, d=state.d);
-  Medium.EoS.HelmholtzDerivs f_pminus_dconst=Medium.EoS.setHelmholtzDerivsThird(T=pminus_dconst.T, d=pminus_dconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_pminus_dconst=Medium.EoS.setHelmholtzDerivs(T=pminus_dconst.T, d=pminus_dconst.d, phase=state.phase, order=3);
 
   Medium.ThermodynamicState    hplus_pconst=Medium.setState_ph(p=state.p, h=state.h+abs(eps*state.h));
-  Medium.EoS.HelmholtzDerivs f_hplus_pconst=Medium.EoS.setHelmholtzDerivsThird(T=dplus_pconst.T, d=dplus_pconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_hplus_pconst=Medium.EoS.setHelmholtzDerivs(T=dplus_pconst.T, d=dplus_pconst.d, phase=state.phase, order=3);
   Medium.ThermodynamicState    hminus_pconst=Medium.setState_ph(p=state.p, h=state.h-abs(eps*state.h));
-  Medium.EoS.HelmholtzDerivs f_hminus_pconst=Medium.EoS.setHelmholtzDerivsThird(T=dminus_pconst.T, d=dminus_pconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_hminus_pconst=Medium.EoS.setHelmholtzDerivs(T=dminus_pconst.T, d=dminus_pconst.d, phase=state.phase, order=3);
 
   Medium.ThermodynamicState    pplus_hconst=Medium.setState_ph(p=state.p+eps*state.p, h=state.h);
-  Medium.EoS.HelmholtzDerivs f_pplus_hconst=Medium.EoS.setHelmholtzDerivsThird(T=pplus_dconst.T, d=pplus_dconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_pplus_hconst=Medium.EoS.setHelmholtzDerivs(T=pplus_dconst.T, d=pplus_dconst.d, phase=state.phase, order=3);
   Medium.ThermodynamicState    pminus_hconst=Medium.setState_ph(p=state.p-eps*state.p, h=state.h);
-  Medium.EoS.HelmholtzDerivs f_pminus_hconst=Medium.EoS.setHelmholtzDerivsThird(T=pminus_dconst.T, d=pminus_dconst.d, phase=state.phase);
+  Medium.EoS.HelmholtzDerivs f_pminus_hconst=Medium.EoS.setHelmholtzDerivs(T=pminus_dconst.T, d=pminus_dconst.d, phase=state.phase, order=3);
 
 equation
   Modelica.Utilities.Streams.print("====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|====|"); // 80 characters

@@ -67,7 +67,7 @@ algorithm
       if (T > 3.5) and (T < 12) then
         DeltaT := abs(1 - T/Tc_He);
         DeltaRho := max(abs(1 - d/rhoc_He), 1e-12);
-        f := EoS.setHelmholtzDerivsSecond(T=T, d=d, phase=1);
+        f := EoS.setHelmholtzDerivs(T=T, d=d, phase=1, order=2);
         dpdT_d := EoS.dpTd(f);
         K_T := 1/(d*EoS.dpdT(f));
         W := (DeltaT/0.2)^2 + (DeltaRho/0.25)^2;

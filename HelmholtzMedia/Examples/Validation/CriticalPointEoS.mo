@@ -20,7 +20,7 @@ protected
   algorithm
     for i in 1:100 loop
       d := (d_lo + d_hi)/2;
-      if Medium.EoS.d2pd2T(Medium.EoS.setHelmholtzDerivsThird(d=d, T=T)) < 0 then
+      if Medium.EoS.d2pd2T(Medium.EoS.setHelmholtzDerivs(d=d, T=T, order=3)) < 0 then
         d_lo := d;
       else
         d_hi := d;
@@ -37,13 +37,13 @@ protected
     Medium.Temperature T_hi = 1.01*T_crit "dp/dd > 0 everywhere";
     Medium.EoS.HelmholtzDerivs f;
   algorithm
-    assert(Medium.EoS.dpdT(Medium.EoS.setHelmholtzDerivsThird(d=inflectionDensity(T_lo), T=T_lo)) < 0
-       and Medium.EoS.dpdT(Medium.EoS.setHelmholtzDerivsThird(d=inflectionDensity(T_hi), T=T_hi)) > 0,
+    assert(Medium.EoS.dpdT(Medium.EoS.setHelmholtzDerivs(d=inflectionDensity(T_lo), T=T_lo, order=3)) < 0
+       and Medium.EoS.dpdT(Medium.EoS.setHelmholtzDerivs(d=inflectionDensity(T_hi), T=T_hi, order=3)) > 0,
        "CriticalPointEoS: 0.99*T_crit and 1.01*T_crit do not bracket the critical point of the EoS");
     for i in 1:100 loop
       T := (T_lo + T_hi)/2;
       d := inflectionDensity(T);
-      f := Medium.EoS.setHelmholtzDerivsThird(d=d, T=T);
+      f := Medium.EoS.setHelmholtzDerivs(d=d, T=T, order=3);
       if Medium.EoS.dpdT(f) < 0 then
         T_lo := T;
       else

@@ -52,8 +52,8 @@ algorithm
     sat.vap.d := d; // d_vap is a constant
 
     // calculate residuals: liq-vap (=var-const)
-    fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
-    fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
+    fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
+    fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
     RES := {EoS.p(fl)-EoS.p(fv), EoS.g(fl)-EoS.g(fv)};
 
   while (iter<iter_max) and not converged loop
@@ -75,8 +75,8 @@ algorithm
       sat.Tsat  := min(sat.Tsat,  1.02*T_crit);
 
       // calculate new residuals: liq-vap
-      fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
-      fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
+      fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
+      fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
       RES := {EoS.p(fl)-EoS.p(fv), EoS.g(fl)-EoS.g(fv)};
 
       // convergence test, evaluated where RES and NS both have a value
@@ -96,8 +96,8 @@ algorithm
     sat.liq.d := d; // d_liq is a constant
 
     // calculate residuals: vap-liq (=var-const)
-    fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
-    fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
+    fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
+    fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
     RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
 
   while (iter<iter_max) and not converged loop
@@ -119,8 +119,8 @@ algorithm
       sat.Tsat  := min(sat.Tsat,  1.02*T_crit);
 
       // calculate new residuals: vap-liq
-      fv := EoS.setHelmholtzDerivsSecond(d=sat.vap.d, T=sat.Tsat, phase=1);
-      fl := EoS.setHelmholtzDerivsSecond(d=sat.liq.d, T=sat.Tsat, phase=1);
+      fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
+      fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
       RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
 
       // convergence test, evaluated where RES and NS both have a value

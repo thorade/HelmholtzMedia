@@ -9,7 +9,7 @@ protected
 
 algorithm
   if state.phase==1 then
-    f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
+    f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase, order=2);
     mu := 1.0/(EoS.dpTd(f)-EoS.dpdT(f)*EoS.dhTd(f)/EoS.dhdT(f));
   elseif state.phase==2 then
     mu := saturationTemperature_derp_sat(sat=setSat_T(T=state.T));

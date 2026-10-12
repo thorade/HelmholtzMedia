@@ -25,6 +25,8 @@ protected
   constant Real[nBwr,4] b = helmholtzCoefficients.residualBwr;
   constant Real[nGauss,9] g = helmholtzCoefficients.residualGauss;
   constant Real[nNonAna,12] a = helmholtzCoefficients.residualNonAnalytical;
+  constant Real gaussExponentDeviation = sum(abs(g[i,4] - 2) + abs(g[i,5] - 2) for i in 1:nGauss)
+    "zero if all Gaussian terms use the exponent 2 (evaluated at translation, no cost at run time)";
 
   Real del "reduced density, protected against zero";
   Real lnd "log(delta)";
@@ -40,35 +42,67 @@ protected
   Real Rd "2*eta*(2*delta^2-eps*delta) (Gaussian terms)";
   Real Rt "2*beta*(2*tau^2-gamma*tau) (Gaussian terms)";
 
-  // non-analytical terms (only first and second derivatives, as in f_rd ... f_rtd)
-  Real Psi;
+  // non-analytical terms
+  Real u "delta-1";
+  Real v "tau-1";
+  Real e "exponent of |delta-1|";
+  Real h "|delta-1|^(1/beta)";
+  Real h1 "dh/ddelta";
+  Real h2 "d2h/ddelta2";
+  Real h3 "d3h/ddelta3";
+  Real q "|delta-1|^(2*a)";
+  Real q1 "dq/ddelta";
+  Real q2 "d2q/ddelta2";
+  Real q3 "d3q/ddelta3";
   Real Theta;
-  Real Dis;
-  Real Disb;
-  Real Psi_d;
   Real Theta_d;
-  Real Dis_d;
-  Real Disb_d;
-  Real Psi_dd;
   Real Theta_dd;
-  Real Dis_dd;
-  Real Disb_dd;
-  Real Psi_t;
+  Real Dis "distance function Delta";
+  Real Dis_d;
   Real Dis_t;
-  Real Disb_t;
-  Real Psi_tt;
-  Real Disb_tt;
-  Real Psi_td;
+  Real Dis_dd;
   Real Dis_td;
-  Real Disb_td;
+  Real Dis_ddd;
+  Real Dis_tdd;
+  Real Psi;
+  Real F "Delta^b";
+  Real f1;
+  Real f2;
+  Real f3;
+  Real F_d;
+  Real F_t;
+  Real F_dd;
+  Real F_tt;
+  Real F_td;
+  Real F_ddd;
+  Real F_ttt;
+  Real F_tdd;
+  Real F_ttd;
+  Real p1;
+  Real p2;
+  Real p3;
+  Real s1;
+  Real s2;
+  Real s3;
+  Real G_d "derivatives of G = F*Psi, divided by Psi";
+  Real G_t;
+  Real G_dd;
+  Real G_tt;
+  Real G_td;
   Real na_r=0;
   Real na_rd=0;
   Real na_rdd=0;
   Real na_rt=0;
   Real na_rtt=0;
   Real na_rtd=0;
+  Real na_rttt=0;
+  Real na_rttd=0;
+  Real na_rtdd=0;
+  Real na_rddd=0;
 
 algorithm
+  assert(gaussExponentDeviation == 0,
+    "f_r_derivs: only Gaussian terms with exponent 2 (columns 4 and 5 of residualGauss) are implemented");
   // The sums are accumulated as delta^m*tau^n*(d^(m+n) f_r / ddelta^m dtau^n), which for each term is
   // the term value k times factors D_m (delta part) and T_n (tau part); the powers delta^d*tau^t are computed
   // once per term as exp(d*log(delta) + t*log(tau)). The division by delta^m*tau^n follows at the end.
@@ -182,37 +216,88 @@ algorithm
   rttd := rttd/(del*tau^2);
   rtdd := rtdd/(del^2*tau);
 
-  // non-analytical terms (Span and Wagner 1996), third derivatives not implemented (as in f_rttt ... f_rddd)
+  // non-analytical terms n*Delta^b*delta*Psi (Span and Wagner 1996), with
+  //   Delta = Theta^2 + B*((delta-1)^2)^a,  Theta = (1-tau) + A*((delta-1)^2)^(1/(2*beta)),  Psi = exp(-C*(delta-1)^2 - D*(tau-1)^2).
+  // The derivatives of the building blocks are combined with the chain rule (F = Delta^b) and the Leibniz rule (G = F*Psi).
+  // In the derivatives of |delta-1|^e the exponents e = 1/beta and e = 2*a are larger than 3 for all known coefficient sets,
+  // so these derivatives vanish at delta = 1. At the critical point (Delta = 0) the derivatives of Delta^b diverge; they are set to zero there.
+  u := delta - 1;
+  v := tau - 1;
   for i in 1:nNonAna loop
-    Psi := exp(-a[i,9]*(delta-1)^2 -a[i,10]*(tau-1)^2);
-    Theta := (1-tau) + a[i,8]*((delta-1)^2)^(0.5/a[i,7]);
-    Dis := Theta^2 +a[i,11]*((delta-1)^2)^a[i,12];
-    Disb := Dis^a[i,6];
-    na_r := na_r + a[i,1]*Disb*delta*Psi;
+    // h = |u|^(1/beta) and q = |u|^(2*a), with derivatives w.r.t. delta
+    if u <> 0 then
+      e := 1/a[i,7];
+      h := abs(u)^e;
+      h1 := e*h/u;
+      h2 := (e - 1)*h1/u;
+      h3 := (e - 2)*h2/u;
+      e := 2*a[i,12];
+      q := abs(u)^e;
+      q1 := e*q/u;
+      q2 := (e - 1)*q1/u;
+      q3 := (e - 2)*q2/u;
+    else
+      h := 0;
+      h1 := 0;
+      h2 := 0;
+      h3 := 0;
+      q := 0;
+      q1 := 0;
+      q2 := 0;
+      q3 := 0;
+    end if;
+    Theta := -v + a[i,8]*h;
+    Dis := Theta^2 + a[i,11]*q;
+    F := if Dis > 0 then Dis^a[i,6] else 0;
+    Psi := exp(-a[i,9]*u^2 - a[i,10]*v^2);
+    k := a[i,1]*Psi;
+    na_r := na_r + k*delta*F;
     if order >= 1 then
-      Psi_d := -a[i,9]*(2*delta-2)*Psi;
-      Theta_d := if (delta-1)<>0 then (a[i,8]*(2*delta-2)*((delta-1)^2)^(0.5/a[i,7])) / (2*a[i,7]*(delta-1)^2) else 0;
-      Dis_d := if (delta-1)<>0 then (2*a[i,11]*a[i,12]*((delta-1)^2)^a[i,12]) / (delta-1) +2*Theta*Theta_d else 0;
-      Disb_d := if Dis<>0 then a[i,6]*Dis^(a[i,6]-1)*Dis_d else 0;
-      Psi_t := -a[i,10]*(2*tau-2)*Psi;
+      Theta_d := a[i,8]*h1;
+      Dis_d := 2*Theta*Theta_d + a[i,11]*q1;
       Dis_t := -2*Theta;
-      Disb_t := if Dis<>0 then a[i,6]*Dis^(a[i,6]-1)*Dis_t else 0;
-      na_rd := na_rd + a[i,1]*(delta*Disb*Psi_d + delta*Psi*Disb_d + Disb*Psi);
-      na_rt := na_rt + a[i,1]*delta*(Disb*Psi_t + Psi*Disb_t);
+      f1 := if Dis > 0 then a[i,6]*F/Dis else 0 "dF/dDelta";
+      p1 := -2*a[i,9]*u "Psi_delta/Psi";
+      s1 := -2*a[i,10]*v "Psi_tau/Psi";
+      F_d := f1*Dis_d;
+      F_t := f1*Dis_t;
+      G_d := F_d + F*p1;
+      G_t := F_t + F*s1;
+      na_rd := na_rd + k*(F + delta*G_d);
+      na_rt := na_rt + k*delta*G_t;
       if order >= 2 then
-        Psi_dd := 2*a[i,9]*(2*a[i,9]*(delta-1)^2-1)*Psi;
-        Theta_dd := if (delta-1)<>0 then (a[i,8]*(1/a[i,7]-1)*((delta-1)^2)^(0.5/a[i,7])) / (a[i,7]*(delta-1)^2) else 0;
-        Dis_dd := if (delta-1)<>0 then 2*Theta*Theta_dd + 2*Theta_d^2 + (2*((delta-1)^2)^a[i,12]) / (delta-1)^2 *(2*a[i,11]*a[i,12]^2-a[i,11]*a[i,12]) else 0;
-        Disb_dd := if (delta-1)<>0 then a[i,6]*(a[i,6]*Dis_d^2 + Dis*Dis_dd - Dis_d^2)*Dis^(a[i,6]-2) else 0;
-        Psi_tt := 2*a[i,10]*(2*a[i,10]*(tau-1)^2-1)*Psi;
-        Disb_tt := if Dis<>0 then a[i,6]*(a[i,6]*Dis_t^2 + Dis*2 - Dis_t^2)*Dis^(a[i,6]-2)
-                   else a[i,6]*(a[i,6]*Dis_t^2 + Dis*2 - Dis_t^2)*Modelica.Constants.inf;
-        Psi_td := a[i,9]*a[i,10]*(2*delta-2)*(2*tau-2)*Psi;
+        Theta_dd := a[i,8]*h2;
+        Dis_dd := 2*Theta_d^2 + 2*Theta*Theta_dd + a[i,11]*q2;
         Dis_td := -2*Theta_d;
-        Disb_td := if Dis<>0 then a[i,6]/Dis^3*((a[i,6]-1)*Dis^(a[i,6]+1)*Dis_d*Dis_t + Dis^(a[i,6]+2)*Dis_td) else 0;
-        na_rdd := na_rdd + a[i,1]*(delta*Disb*Psi_dd + delta*Psi*Disb_dd + 2*delta*Disb_d*Psi_d + 2*Disb*Psi_d + 2*Psi*Disb_d);
-        na_rtt := na_rtt + a[i,1]*delta*(Disb*Psi_tt + Psi*Disb_tt + 2*Disb_t*Psi_t);
-        na_rtd := na_rtd + a[i,1]*(delta*Disb*Psi_td + delta*Psi*Disb_td + delta*Disb_d*Psi_t + delta*Disb_t*Psi_d + Disb*Psi_t + Psi*Disb_t);
+        // Dis_tt = 2
+        f2 := if Dis > 0 then (a[i,6] - 1)*f1/Dis else 0 "d2F/dDelta2";
+        p2 := p1^2 - 2*a[i,9];
+        s2 := s1^2 - 2*a[i,10];
+        F_dd := f2*Dis_d^2 + f1*Dis_dd;
+        F_tt := f2*Dis_t^2 + 2*f1;
+        F_td := f2*Dis_d*Dis_t + f1*Dis_td;
+        G_dd := F_dd + 2*F_d*p1 + F*p2;
+        G_tt := F_tt + 2*F_t*s1 + F*s2;
+        G_td := F_td + F_d*s1 + F_t*p1 + F*p1*s1;
+        na_rdd := na_rdd + k*(2*G_d + delta*G_dd);
+        na_rtt := na_rtt + k*delta*G_tt;
+        na_rtd := na_rtd + k*(G_t + delta*G_td);
+        if order >= 3 then
+          Dis_ddd := 6*Theta_d*Theta_dd + 2*Theta*a[i,8]*h3 + a[i,11]*q3;
+          Dis_tdd := -2*Theta_dd;
+          // Dis_ttt = Dis_ttd = 0
+          f3 := if Dis > 0 then (a[i,6] - 2)*f2/Dis else 0 "d3F/dDelta3";
+          p3 := p1^3 - 6*a[i,9]*p1;
+          s3 := s1^3 - 6*a[i,10]*s1;
+          F_ddd := f3*Dis_d^3 + 3*f2*Dis_d*Dis_dd + f1*Dis_ddd;
+          F_ttt := f3*Dis_t^3 + 6*f2*Dis_t;
+          F_tdd := f3*Dis_d^2*Dis_t + f2*(Dis_dd*Dis_t + 2*Dis_td*Dis_d) + f1*Dis_tdd;
+          F_ttd := f3*Dis_d*Dis_t^2 + f2*(2*Dis_d + 2*Dis_td*Dis_t);
+          na_rddd := na_rddd + k*(3*G_dd + delta*(F_ddd + 3*F_dd*p1 + 3*F_d*p2 + F*p3));
+          na_rttt := na_rttt + k*delta*(F_ttt + 3*F_tt*s1 + 3*F_t*s2 + F*s3);
+          na_rttd := na_rttd + k*(G_tt + delta*(F_ttd + F_tt*p1 + 2*(F_td + F_t*p1)*s1 + (F_d + F*p1)*s2));
+          na_rtdd := na_rtdd + k*(2*G_td + delta*(F_tdd + F_dd*s1 + 2*(F_td + F_d*s1)*p1 + (F_t + F*s1)*p2));
+        end if;
       end if;
     end if;
   end for;
@@ -222,19 +307,28 @@ algorithm
   rt := rt + na_rt;
   rtt := rtt + na_rtt;
   rtd := rtd + na_rtd;
+  rttt := rttt + na_rttt;
+  rttd := rttd + na_rttd;
+  rtdd := rtdd + na_rtdd;
+  rddd := rddd + na_rddd;
 
   annotation (Documentation(info="<html>
 <p>
 Residual part of the dimensionless Helmholtz energy and all its derivatives up to <code>order</code>,
-computed in a single loop over all terms. Compared to the separate functions f_r, f_rd, f_rdd, ...,
-each term is evaluated only once: the powers delta^d*tau^t and the exponential factors are computed
-with one call of exp per term (two for the exponential terms), and all derivatives follow from
-multiplying the term value with factors that depend only on d, t, c, eta, beta, gamma and epsilon.
-The results agree with the separate functions to rounding precision.
+computed in a single loop over all terms. Each term is evaluated only once: the powers delta^d*tau^t and the
+exponential factors are computed with one call of exp per term (two for the exponential terms), and all derivatives
+follow from multiplying the term value with factors D_m and T_n that depend only on d, t, c, eta, beta, gamma and epsilon.
+This factored form also avoids the cancellation of fully expanded derivative expressions.
 </p>
 <p>
-The Gaussian terms are implemented with the exponent 2 (columns 4 and 5 of residualGauss), as in the separate functions.
-For the non-analytical terms only derivatives up to second order are included, again as in the separate functions.
+The Gaussian terms are implemented with the exponent 2 only (columns 4 and 5 of residualGauss); an assert checks this.
+The non-analytical terms (Span and Wagner 1996, used for carbon dioxide) are included up to third order.
+</p>
+<p>
+The factors of the polynomial, exponential and Gaussian terms were verified symbolically (sympy);
+the non-analytical terms were verified against high-precision numerical differentiation (mpmath, 60 digits) and
+against <a href=\"https://github.com/usnistgov/teqp\">teqp</a> (automatic differentiation),
+see Examples.Validation.HelmholtzDerivsNonAnalytical.
 </p>
 </html>"));
 end f_r_derivs;

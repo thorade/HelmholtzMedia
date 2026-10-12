@@ -65,8 +65,8 @@ protected
 
   Medium.DerPressureByTemperature dpT=(sat.vap.s - sat.liq.s)/(1.0/sat.vap.d - 1.0/sat.liq.d);
   Medium.DerTemperatureByPressure dTp=(1.0/sat.vap.d - 1.0/sat.liq.d)/(sat.vap.s - sat.liq.s);
-  Medium.EoS.HelmholtzDerivs fl=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.liq.d, phase=1);
-  Medium.EoS.HelmholtzDerivs fv=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.vap.d, phase=1);
+  Medium.EoS.HelmholtzDerivs fl=Medium.EoS.setHelmholtzDerivs(T=T, d=sat.liq.d, phase=1, order=2);
+  Medium.EoS.HelmholtzDerivs fv=Medium.EoS.setHelmholtzDerivs(T=T, d=sat.vap.d, phase=1, order=2);
   Medium.MassFraction x=Medium.vapourQuality(state=state);
   Medium.ThermodynamicState d_plus=Medium.setState_dTX(d=d*1.0001, T=T);
   Medium.ThermodynamicState d_minus=Medium.setState_dTX(d=d*0.9999, T=T);
