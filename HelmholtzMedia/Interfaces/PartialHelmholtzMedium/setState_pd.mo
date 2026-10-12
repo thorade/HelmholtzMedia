@@ -80,9 +80,13 @@ algorithm
         state.phase := 1;
         T_min := 0.99*sat.Tsat;
         T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
-      else
+      elseif (sat.liq.d > sat.vap.d) then
         // Modelica.Utilities.Streams.print("two-phase region, all properties can be calculated from sat record", "printlog.txt");
         state.phase := 2;
+      else
+        // liquid and vapour density coincide (at the critical point within roundoff): single phase, no vapour quality defined
+        state.phase := 1;
+        T_iter := sat.Tsat;
       end if;
 
     elseif (p < p_trip) then

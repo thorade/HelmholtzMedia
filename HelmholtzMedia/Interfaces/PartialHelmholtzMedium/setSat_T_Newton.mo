@@ -91,6 +91,12 @@ algorithm
       end if;
     end while;
 
+    if not accepted then
+      // no step reduces the residual any further; close to the critical point this happens when the residuals
+      // are at roundoff level, before the step criterion is met: this is the best attainable solution
+      converged := abs(RES[1])<=1e-13*J_vap and abs(RES[2])<=1e-13;
+    end if;
+
     if accepted then
       delta_liq := delta_liq_new;
       delta_vap := delta_vap_new;

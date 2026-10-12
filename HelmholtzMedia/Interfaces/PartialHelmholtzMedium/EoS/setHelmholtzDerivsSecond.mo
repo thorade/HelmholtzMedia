@@ -12,16 +12,8 @@ algorithm
   f.delta := d/f.d_reducing;
   f.tau := f.T_reducing/T;
 
-  f.i   := f_i(tau=f.tau, delta=f.delta);
-  f.it  := f_it(tau=f.tau, delta=f.delta);
-  f.itt := f_itt(tau=f.tau, delta=f.delta);
-
-  f.r   := f_r(tau=f.tau, delta=f.delta);
-  f.rt  := f_rt(tau=f.tau, delta=f.delta);
-  f.rtt := f_rtt(tau=f.tau, delta=f.delta);
-  f.rtd := f_rtd(tau=f.tau, delta=f.delta);
-  f.rd  := f_rd(tau=f.tau, delta=f.delta);
-  f.rdd := f_rdd(tau=f.tau, delta=f.delta);
+  (f.i, f.it, f.itt, f.ittt) := f_i_derivs(delta=f.delta, tau=f.tau, order=2);
+  (f.r, f.rd, f.rdd, f.rt, f.rtt, f.rtd, f.rttt, f.rttd, f.rtdd, f.rddd) := f_r_derivs(delta=f.delta, tau=f.tau, order=2);
 
   assert(phase==1, "This function will return valid values for single phase input only!");
 
