@@ -77,26 +77,28 @@ partial package PartialHelmholtzMedium
     R_s = Modelica.Constants.R/MM;
 
     // use functions to calculate properties
+    // The *_state functions carry the derivative annotations (e.g. der(d) for the mass balance) and receive the
+    // state as a visible argument, so that Dymola merges the identical setState calls into one. (The setState call
+    // hidden inside density_ph etc. is not merged.) One property per input choice keeps the wrapper function
+    // (temperature_ph, specificEnthalpy_pT, pressure_dT), whose inverse annotation is needed when that property
+    // is given instead of the input variable (e.g. p and T fixed at a boundary with input choice ph).
+    // The state must not be a separate variable: index reduction would then require its derivative.
     if (componentInputChoice == InputChoice.ph) then
-      // state = setState_ph(p=p, h=h);
-      d = density_ph(p=p, h=h);
+      d = density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h));
       T = temperature_ph(p=p, h=h);
-      s = specificEntropy_ph(p=p, h=h);
+      s = specificEntropy_ph_state(p=p, h=h, state=setState_ph(p=p, h=h));
     elseif (componentInputChoice == InputChoice.ps) then
-      // state = setState_ps(p=p, s=s);
       d = density_ps(p=p, s=s);
       T = temperature_ps(p=p, s=s);
       h = specificEnthalpy_ps(p=p, s=s);
     elseif (componentInputChoice == InputChoice.pT) then
-      // state = setState_pT(p=p, T=T);
-      d = density_pT(p=p, T=T);
+      d = density_pT_state(p=p, T=T, state=setState_pT(p=p, T=T));
       h = specificEnthalpy_pT(p=p, T=T);
-      s = specificEntropy_pT(p=p, T=T);
+      s = specificEntropy(setState_pT(p=p, T=T));
     elseif (componentInputChoice == InputChoice.dT) then
-      // state = setState_dT(d=d, T=T);
       p = pressure_dT(d=d, T=T);
-      h = specificEnthalpy_dT(d=d, T=T);
-      s = specificEntropy_dT(d=d, T=T);
+      h = specificEnthalpy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T));
+      s = specificEntropy(setState_dT(d=d, T=T));
     else
       assert(false, "Invalid choice for basePropertiesInput");
     end if;
