@@ -5,8 +5,8 @@ model CriticalState_approach
   Medium.ThermodynamicState state_sup;
   Medium.ThermodynamicState state_sub;
 
-  Medium.EoS.HelmholtzDerivs f_sup = Medium.EoS.setHelmholtzDerivsThird(T=state_sup.T, d=state_sup.d, phase=state_sup.phase);
-  Medium.EoS.HelmholtzDerivs f_sub = Medium.EoS.setHelmholtzDerivsThird(T=state_sub.T, d=state_sub.d, phase=state_sub.phase);
+  Medium.EoS.HelmholtzDerivs f_sup = Medium.EoS.setHelmholtzDerivs(T=state_sup.T, d=state_sup.d, phase=state_sup.phase, order=3);
+  Medium.EoS.HelmholtzDerivs f_sub = Medium.EoS.setHelmholtzDerivs(T=state_sub.T, d=state_sub.d, phase=state_sub.phase, order=3);
 
 Modelica.Blocks.Sources.Ramp ramp(          duration=1,
     height=-1,

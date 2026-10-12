@@ -3,7 +3,7 @@ model ThermoSurface "visualisation of thermodynamic surface"
 
   replaceable package Medium = HelmholtzMedia.HelmholtzFluids.Butane;
   Medium.ThermodynamicState state = Medium.setState_pT(p=p, T=T, phase=0);
-  Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(T=state.T, d=state.d, phase=1);
+  Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=3);
 
 Modelica.Blocks.Sources.Ramp p_sub(
     height=pcrit - pmin,

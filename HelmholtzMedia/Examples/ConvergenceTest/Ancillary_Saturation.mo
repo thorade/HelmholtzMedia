@@ -26,7 +26,7 @@ model Ancillary_Saturation
 protected
   constant Medium.Temperature T_trip=Medium.fluidConstants[1].triplePointTemperature;
   constant Medium.Temperature T_crit=Medium.fluidConstants[1].criticalTemperature;
-  Medium.EoS.HelmholtzDerivs fliq=Medium.EoS.setHelmholtzDerivsFirst(d=dliq, T=Tsat);
+  Medium.EoS.HelmholtzDerivs fliq=Medium.EoS.setHelmholtzDerivs(d=dliq, T=Tsat, order=1);
 
 equation
   // forward

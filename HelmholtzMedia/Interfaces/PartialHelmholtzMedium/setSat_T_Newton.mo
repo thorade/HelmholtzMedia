@@ -19,10 +19,9 @@ protected
   constant Real tolerance_step=1e-7 "tolerance for the Newton step, relative to the density gap delta_liq-delta_vap";
   constant Integer iter_max=100;
   constant Integer backtrack_max=30;
-  Real tau(unit="1")=helmholtzCoefficients.T_reducing/T "inverse reduced temperature";
 
-  Real r_liq; Real rd_liq; Real rdd_liq;
-  Real r_vap; Real rd_vap; Real rdd_vap;
+  EoS.HelmholtzDerivs fl "residual part at the liquid density";
+  EoS.HelmholtzDerivs fv "residual part at the vapour density";
   Real J_liq; Real J_vap; Real K_liq; Real K_vap;
   Real J_liq_delta; Real J_vap_delta; Real K_liq_delta; Real K_vap_delta;
   Real Jacobian[2,2] "Jacobian matrix";
@@ -38,20 +37,17 @@ algorithm
   delta_liq := min(max(delta_liq_start, delta_crit*(1+1e-12)), delta_liq_max);
   delta_vap := min(max(delta_vap_start, delta_vap_min), delta_crit*(1-1e-12));
 
-  r_liq := EoS.f_r(tau=tau, delta=delta_liq);
-  rd_liq := EoS.f_rd(tau=tau, delta=delta_liq);
-  rdd_liq := EoS.f_rdd(tau=tau, delta=delta_liq);
-  r_vap := EoS.f_r(tau=tau, delta=delta_vap);
-  rd_vap := EoS.f_rd(tau=tau, delta=delta_vap);
-  rdd_vap := EoS.f_rdd(tau=tau, delta=delta_vap);
-  J_liq := delta_liq*(1 + delta_liq*rd_liq);
-  J_vap := delta_vap*(1 + delta_vap*rd_vap);
-  K_liq := delta_liq*rd_liq + r_liq + log(delta_liq);
-  K_vap := delta_vap*rd_vap + r_vap + log(delta_vap);
-  J_liq_delta := 1 + 2*delta_liq*rd_liq + delta_liq*delta_liq*rdd_liq;
-  J_vap_delta := 1 + 2*delta_vap*rd_vap + delta_vap*delta_vap*rdd_vap;
-  K_liq_delta := 2*rd_liq + delta_liq*rdd_liq + 1/delta_liq;
-  K_vap_delta := 2*rd_vap + delta_vap*rdd_vap + 1/delta_vap;
+  // the ideal part is not needed: at equal temperature its tau-part cancels in K_vap-K_liq, and log(delta) is written explicitly
+  fl := EoS.setHelmholtzDerivs(d=delta_liq*d_reducing, T=T, order=2, includeIdeal=false);
+  fv := EoS.setHelmholtzDerivs(d=delta_vap*d_reducing, T=T, order=2, includeIdeal=false);
+  J_liq := delta_liq*(1 + delta_liq*fl.rd);
+  J_vap := delta_vap*(1 + delta_vap*fv.rd);
+  K_liq := delta_liq*fl.rd + fl.r + log(delta_liq);
+  K_vap := delta_vap*fv.rd + fv.r + log(delta_vap);
+  J_liq_delta := 1 + 2*delta_liq*fl.rd + delta_liq*delta_liq*fl.rdd;
+  J_vap_delta := 1 + 2*delta_vap*fv.rd + delta_vap*delta_vap*fv.rdd;
+  K_liq_delta := 2*fl.rd + delta_liq*fl.rdd + 1/delta_liq;
+  K_vap_delta := 2*fv.rd + delta_vap*fv.rdd + 1/delta_vap;
   RES := {J_vap-J_liq, K_vap-K_liq};
 
   accepted := true;
@@ -71,18 +67,14 @@ algorithm
       delta_liq_new := delta_liq + lambda*NS[1];
       delta_vap_new := delta_vap + lambda*NS[2];
       if (delta_liq_new>delta_crit) and (delta_liq_new<delta_liq_max) and (delta_vap_new>delta_vap_min) and (delta_vap_new<delta_crit) then
-        r_liq := EoS.f_r(tau=tau, delta=delta_liq_new);
-        rd_liq := EoS.f_rd(tau=tau, delta=delta_liq_new);
-        rdd_liq := EoS.f_rdd(tau=tau, delta=delta_liq_new);
-        r_vap := EoS.f_r(tau=tau, delta=delta_vap_new);
-        rd_vap := EoS.f_rd(tau=tau, delta=delta_vap_new);
-        rdd_vap := EoS.f_rdd(tau=tau, delta=delta_vap_new);
-        J_liq_delta := 1 + 2*delta_liq_new*rd_liq + delta_liq_new*delta_liq_new*rdd_liq;
-        J_vap_delta := 1 + 2*delta_vap_new*rd_vap + delta_vap_new*delta_vap_new*rdd_vap;
-        J_liq := delta_liq_new*(1 + delta_liq_new*rd_liq);
-        J_vap := delta_vap_new*(1 + delta_vap_new*rd_vap);
-        K_liq := delta_liq_new*rd_liq + r_liq + log(delta_liq_new);
-        K_vap := delta_vap_new*rd_vap + r_vap + log(delta_vap_new);
+        fl := EoS.setHelmholtzDerivs(d=delta_liq_new*d_reducing, T=T, order=2, includeIdeal=false);
+        fv := EoS.setHelmholtzDerivs(d=delta_vap_new*d_reducing, T=T, order=2, includeIdeal=false);
+        J_liq_delta := 1 + 2*delta_liq_new*fl.rd + delta_liq_new*delta_liq_new*fl.rdd;
+        J_vap_delta := 1 + 2*delta_vap_new*fv.rd + delta_vap_new*delta_vap_new*fv.rdd;
+        J_liq := delta_liq_new*(1 + delta_liq_new*fl.rd);
+        J_vap := delta_vap_new*(1 + delta_vap_new*fv.rd);
+        K_liq := delta_liq_new*fl.rd + fl.r + log(delta_liq_new);
+        K_vap := delta_vap_new*fv.rd + fv.r + log(delta_vap_new);
         RES_new := {J_vap-J_liq, K_vap-K_liq};
         accepted := (J_liq_delta>0) and (J_vap_delta>0) and (RES_new*RES_new <= RES*RES);
       end if;
@@ -101,8 +93,8 @@ algorithm
       delta_liq := delta_liq_new;
       delta_vap := delta_vap_new;
       RES := RES_new;
-      K_liq_delta := 2*rd_liq + delta_liq*rdd_liq + 1/delta_liq;
-      K_vap_delta := 2*rd_vap + delta_vap*rdd_vap + 1/delta_vap;
+      K_liq_delta := 2*fl.rd + delta_liq*fl.rdd + 1/delta_liq;
+      K_vap_delta := 2*fv.rd + delta_vap*fv.rdd + 1/delta_vap;
       // residuals: J relative to J_vap, or for the (almost incompressible) liquid at low pressure measured as density error;
       // close to the critical point small residuals do not imply an accurate solution, therefore the Newton step
       // must also be small compared to the density gap

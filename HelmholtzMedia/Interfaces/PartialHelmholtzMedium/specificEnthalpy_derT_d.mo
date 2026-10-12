@@ -22,7 +22,7 @@ protected
 
 algorithm
   if state.phase==1 then
-    f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=state.phase);
+    f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase, order=2);
     dhTd := EoS.dhTd(f);
 
   elseif state.phase==2 then
@@ -30,8 +30,8 @@ algorithm
     x := (1/state.d - 1/sat.liq.d)/(1/sat.vap.d - 1/sat.liq.d);
     dpT := (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);
 
-    fl := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.liq.d, phase=1);
-    fv := EoS.setHelmholtzDerivsSecond(T=state.T, d=sat.vap.d, phase=1);
+    fl := EoS.setHelmholtzDerivs(T=state.T, d=sat.liq.d, phase=1, order=2);
+    fv := EoS.setHelmholtzDerivs(T=state.T, d=sat.vap.d, phase=1, order=2);
 
     dhT_liq := EoS.dhTd(fl)-EoS.dhdT(fl)*EoS.dpTd(fl)/EoS.dpdT(fl) + EoS.dhdT(fl)/EoS.dpdT(fl)*dpT;
     dhT_vap := EoS.dhTd(fv)-EoS.dhdT(fv)*EoS.dpTd(fv)/EoS.dpdT(fv) + EoS.dhdT(fv)/EoS.dpdT(fv)*dpT;

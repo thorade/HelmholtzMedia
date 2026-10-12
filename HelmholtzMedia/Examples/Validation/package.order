@@ -13,7 +13,7 @@ Derivatives_SaturationBoundary
 Derivatives_SinglePhase
 Derivatives_TwoPhase
 EoSHelium
-HelmholtzDerivsSinglePass
+HelmholtzDerivsNonAnalytical
 idealGasLimit
 LimitsProbe
 MaxwellLoop

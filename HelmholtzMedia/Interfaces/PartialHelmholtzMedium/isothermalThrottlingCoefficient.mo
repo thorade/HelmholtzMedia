@@ -9,7 +9,7 @@ protected
 
 algorithm
   if state.phase==1 then
-    f := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
+    f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
     delta_T := EoS.dhdT(f)/EoS.dpdT(f);
   elseif state.phase==2 then
     assert(false, "isothermalThrottlingCoefficient warning: in the two-phase region delta_T is infinite", level=AssertionLevel.warning);

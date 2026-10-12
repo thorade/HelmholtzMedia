@@ -53,11 +53,11 @@ algorithm
       else
         // do a simple check first, quite often this is sufficient
         sat.liq.d := Ancillary.bubbleDensity_T(T=T);
-        f := EoS.setHelmholtzDerivsFirst(T=T, d=sat.liq.d);
+        f := EoS.setHelmholtzDerivs(T=T, d=sat.liq.d, order=1);
         sat.liq.s := EoS.s(f);
 
         sat.vap.d := Ancillary.dewDensity_T(T=T);
-        f := EoS.setHelmholtzDerivsFirst(T=T, d=sat.vap.d);
+        f := EoS.setHelmholtzDerivs(T=T, d=sat.vap.d, order=1);
         sat.vap.s := EoS.s(f);
 
         if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
@@ -104,13 +104,13 @@ algorithm
 
     // Modelica.Utilities.Streams.print("initialize bisection", "printlog.txt");
     // min
-    f := EoS.setHelmholtzDerivsFirst(T=T, d=d_min);
+    f := EoS.setHelmholtzDerivs(T=T, d=d_min, order=1);
     RES_min := EoS.s(f) - s;
     // max
-    f := EoS.setHelmholtzDerivsFirst(T=T, d=d_max);
+    f := EoS.setHelmholtzDerivs(T=T, d=d_max, order=1);
     RES_max := EoS.s(f) - s;
     // iter
-    f := EoS.setHelmholtzDerivsFirst(T=T, d=d_iter);
+    f := EoS.setHelmholtzDerivs(T=T, d=d_iter, order=2);
     RES_s := EoS.s(f) - s;
 
     //assert((RES_min*RES_max<0), "setState_Ts: d_min and d_max did not bracket the root, input was T=" + String(T) + " and s=" + String(s));
@@ -129,8 +129,7 @@ algorithm
       d_old := d_iter;
       // gamma := iter/(iter+1);
 
-      // calculate missing parts of f, then calculate gradient with respect to density
-      f.rtd := EoS.f_rtd(delta=f.delta, tau=f.tau);
+      // calculate gradient with respect to density (f contains the second derivatives)
       dsdT := EoS.dsdT(f);
 
       // print for debugging
@@ -147,7 +146,7 @@ algorithm
       end if;
 
       // calculate new RES_s
-      f := EoS.setHelmholtzDerivsFirst(T=T, d=d_iter);
+      f := EoS.setHelmholtzDerivs(T=T, d=d_iter, order=2);
       RES_s := EoS.s(f) - s;
 
       // thighten the bounds

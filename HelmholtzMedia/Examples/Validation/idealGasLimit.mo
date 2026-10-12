@@ -7,8 +7,8 @@ model idealGasLimit
   Medium.Density d=1/v;
 
   Medium.ThermodynamicState state = Medium.setState_dT(d=d, T=T, phase=1);
-  Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivsThird(d=d, T=T, phase=1);
-//Medium.EoS.HelmholtzDerivs f0 = Medium.EoS.setHelmholtzDerivsThird(d=0, T=T, phase=1);
+  Medium.EoS.HelmholtzDerivs f = Medium.EoS.setHelmholtzDerivs(d=d, T=T, phase=1, order=3);
+//Medium.EoS.HelmholtzDerivs f0 = Medium.EoS.setHelmholtzDerivs(d=0, T=T, phase=1, order=3);
 
   constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
   constant Medium.SpecificHeatCapacity R_s=Modelica.Constants.R/MM

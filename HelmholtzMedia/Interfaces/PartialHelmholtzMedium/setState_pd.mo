@@ -130,19 +130,13 @@ algorithm
 
     // Modelica.Utilities.Streams.print("initialize bisection", "printlog.txt");
     // min
-    f.T := T_min;
-    f.tau := T_reducing/f.T;
-    f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+    f := EoS.setHelmholtzDerivs(d=d, T=T_min, order=1, includeIdeal=false);
     RES_min := EoS.p(f) - p;
     // max
-    f.T := T_max;
-    f.tau := T_reducing/f.T;
-    f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+    f := EoS.setHelmholtzDerivs(d=d, T=T_max, order=1, includeIdeal=false);
     RES_max := EoS.p(f) - p;
     // iter
-    f.T := T_iter;
-    f.tau := T_reducing/f.T;
-    f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+    f := EoS.setHelmholtzDerivs(d=d, T=T_iter, order=2, includeIdeal=false);
     RES_p := EoS.p(f) - p;
 
     assert((RES_min*RES_max<0), "setState_pd: T_min=" + String(T_min) + " and T_max=" + String(T_max) + " did not bracket the root, input was p=" + String(p) + " and d=" + String(d), level=AssertionLevel.warning);
@@ -161,8 +155,7 @@ algorithm
       T_old := T_iter;
       // gamma := iter/(iter+1);
 
-      // calculate gradients with respect to temperature
-      f.rtd := EoS.f_rtd(delta=f.delta, tau=f.tau);
+      // calculate gradients with respect to temperature (f contains the second derivatives of the residual part)
       dpTd := EoS.dpTd(f);
 
       // print for debugging
@@ -179,9 +172,7 @@ algorithm
       end if;
 
       // calculate new RES_p
-      f.T := T_iter;
-      f.tau := T_reducing/f.T;
-      f.rd  := EoS.f_rd(delta=f.delta, tau=f.tau);
+      f := EoS.setHelmholtzDerivs(d=d, T=T_iter, order=2, includeIdeal=false);
       RES_p := EoS.p(f) - p;
 
       // thighten the bounds
@@ -204,7 +195,7 @@ algorithm
     state.p := p;
     state.d := d;
     state.T := T_iter;
-    f := EoS.setHelmholtzDerivsFirst(d=state.d, T=state.T);
+    f := EoS.setHelmholtzDerivs(d=state.d, T=state.T, order=1);
     state.h := EoS.h(f);
     state.u := EoS.u(f);
     state.s := EoS.s(f);

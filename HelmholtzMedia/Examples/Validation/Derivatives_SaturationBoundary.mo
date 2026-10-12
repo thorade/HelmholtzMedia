@@ -69,8 +69,8 @@ protected
   constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
   constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
   constant Medium.AbsolutePressure pcrit=Medium.fluidConstants[1].criticalPressure;
-  Medium.EoS.HelmholtzDerivs fl=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.liq.d, phase=1);
-  Medium.EoS.HelmholtzDerivs fv=Medium.EoS.setHelmholtzDerivsSecond(T=T, d=sat.vap.d, phase=1);
+  Medium.EoS.HelmholtzDerivs fl=Medium.EoS.setHelmholtzDerivs(T=T, d=sat.liq.d, phase=1, order=2);
+  Medium.EoS.HelmholtzDerivs fv=Medium.EoS.setHelmholtzDerivs(T=T, d=sat.vap.d, phase=1, order=2);
   Medium.SaturationProperties sat_Tplus = Medium.setSat_T(T=1.0001*T);
   Medium.SaturationProperties sat_Tminus= Medium.setSat_T(T=0.9999*T);
   Medium.SaturationProperties sat_pplus = Medium.setSat_p(p=1.0001*sat.psat);

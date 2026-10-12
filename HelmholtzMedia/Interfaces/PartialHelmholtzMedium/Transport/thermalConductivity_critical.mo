@@ -50,8 +50,8 @@ algorithm
   else
     // use critical values from EoS to calculate chi, Omega and lambda_c
     // watch out: algorithm for chi and chi_ref are different (chi_ref is multiplied with T_ref/state.T)
-    f     := EoS.setHelmholtzDerivsSecond(T=state.T, d=state.d, phase=1);
-    f_ref := EoS.setHelmholtzDerivsSecond(T=T_ref,   d=state.d, phase=1);
+    f     := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
+    f_ref := EoS.setHelmholtzDerivs(T=T_ref,   d=state.d, phase=1, order=2);
     ddpT     := 1.0/EoS.dpdT(f);
     ddpT_ref := 1.0/EoS.dpdT(f_ref);
     chi     := p_crit/d_crit^2*state.d*ddpT;
