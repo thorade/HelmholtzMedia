@@ -60,7 +60,12 @@ These are the coefficients for R134a.
 <dt> Perkins, R.A., Laesecke, A., Howley, J., Ramires, M.L.V., Gurova, A.N., and Cusco, L.</dt>
 <dd> <b>Experimental thermal conductivity values for the IUPAC round-robin sample of 1,1,1,2-tetrafluoroethane (R134a)</b><br />
      NISTIR, 2000.
-</dd><dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
+</dd><dt> Mulero, A., Cachadi&ntilde;a, I. and Parra, M.I.</dt>
+<dd> <b>Recommended Correlations for the Surface Tension of Common Fluids</b><br />
+     J. Phys. Chem. Ref. Data, 41:043105, 2012.<br />
+     DOI: <a href=\"https://doi.org/10.1063/1.4768782\">10.1063/1.4768782</a>
+</dd>
+<dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
      National Institute of Standards and Technology, Standard Reference Data Program. Gaithersburg<br />
      URL: <a href=\"http://www.nist.gov/srd/nist23.cfm\">http://www.nist.gov/srd/nist23.cfm</a>

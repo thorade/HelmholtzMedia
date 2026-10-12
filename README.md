@@ -18,20 +18,7 @@ doi:[10.1007/s12665-013-2394-z][2]
 _Dissertation (TU Hamburg-Harburg)_,
 doi:[10.15480/882.1207][3]
 
-The following fluids have been implemented with EoS and transport properties:  
-[Butane](HelmholtzMedia/HelmholtzFluids/Butane/package.mo),
-[Carbon Dioxide](HelmholtzMedia/HelmholtzFluids/Carbondioxide/package.mo) (with two different EoS),
-[Ethanol](HelmholtzMedia/HelmholtzFluids/Ethanol/package.mo),
-[Helium](HelmholtzMedia/HelmholtzFluids/Helium/package.mo),
-[Isobutane](HelmholtzMedia/HelmholtzFluids/Isobutane/package.mo),
-[Isopentane](HelmholtzMedia/HelmholtzFluids/Isopentane/package.mo),
-[Pentane](HelmholtzMedia/HelmholtzFluids/Pentane/package.mo),
-[Propane](HelmholtzMedia/HelmholtzFluids/Propane/package.mo),
-[R134a](HelmholtzMedia/HelmholtzFluids/R134a/package.mo) (with three reference states),
-[R32](HelmholtzMedia/HelmholtzFluids/R32/package.mo).
-
-The following fluid has been implemented with EoS only:  
-[Hexamethyldisiloxane (HMDS)](HelmholtzMedia/HelmholtzFluids/Hexamethyldisiloxane/package.mo) (with surface tension).
+The available fluids, their reference states and the cited references for the equation of state, viscosity, thermal conductivity and surface tension are listed in [Fluids.md](Fluids.md).
 
 ## Current release
 Download the newest [tagged version](https://github.com/thorade/HelmholtzMedia/tags).  

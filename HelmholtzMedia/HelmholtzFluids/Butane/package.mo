@@ -182,7 +182,7 @@ final constant Transport.DynamicViscosityCoefficients
   final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsButane(
     coeffs=[
-      0.05418,    1.26]) "Coefficients for the surface tension";
+      0.05138,   1.209]) "Coefficients for the surface tension (Mulero et al. 2012)";
 
 final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsButane(
@@ -238,6 +238,11 @@ The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, 
 <dd> <b>Measurement and Correlation of the Thermal Conductivity of Butane from 135 K to 600 K at Pressures to 70 MPa</b><br />
      Journal of Chemical &amp; Engineering Data 47.5, S. 1263-1271. (2002)<br />
      DOI: <a href=\"http://dx.doi.org/10.1021/je0101202\">10.1021/je0101202</a>
+</dd>
+<dt> Mulero, A., Cachadi&ntilde;a, I. and Parra, M.I.</dt>
+<dd> <b>Recommended Correlations for the Surface Tension of Common Fluids</b><br />
+     J. Phys. Chem. Ref. Data, 41:043105, 2012.<br />
+     DOI: <a href=\"https://doi.org/10.1063/1.4768782\">10.1063/1.4768782</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />

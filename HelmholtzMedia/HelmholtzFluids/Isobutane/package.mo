@@ -134,7 +134,7 @@ package Isobutane "Isobutane"
     dynamicViscosityModel=DynamicViscosityModel.VS1,
     collisionIntegralModel=CollisionIntegralModel.CI1,
     sigma=0.46445,
-    epsilon_kappa=280.51,
+    epsilon_kappa=307.55,
     CET=[
      0.1628213, 0.5],
     a=[
@@ -181,8 +181,8 @@ package Isobutane "Isobutane"
   final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsIsobutane(
     coeffs=[
-       0.05756,     1.290;
-      -0.009554,    2.290]) "Coefficients for the surface tension";
+      0.06121,   1.304;
+      -0.01639,   2.102]) "Coefficients for the surface tension (Mulero et al. 2012)";
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsIsobutane(
@@ -229,14 +229,19 @@ The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, 
      DOI: <a href=\"http://dx.doi.org/10.1063/1.1901687\">10.1063/1.1901687</a>
 </dd>
 <dt> Vogel, Eckhard; K&uuml;chenmeister, Cornelia and Bich, Eckard</dt>
-<dd> <b>Viscosity correlation for n-Butane in the fluid region</b><br />
-     High Temperatures - High Pressures 31.2, 173-186 (1999)<br />
-     DOI: <a href=\"http://dx.doi.org/10.1068/htrt154\">10.1068/htrt154</a>
+<dd> <b>Viscosity Correlation for Isobutane over Wide Ranges of the Fluid Region</b><br />
+     International Journal of Thermophysics 21.2, 343-356 (2000)<br />
+     DOI: <a href=\"https://doi.org/10.1023/A:1006623310780\">10.1023/A:1006623310780</a>
 </dd>
-<dt> Perkins, Richard A. et. al.</dt>
-<dd> <b>Measurement and Correlation of the Thermal Conductivity of Butane from 135 K to 600 K at Pressures to 70 MPa</b><br />
-     Journal of Chemical &amp; Engineering Data 47.5, S. 1263-1271. (2002)<br />
-     DOI: <a href=\"http://dx.doi.org/10.1021/je0101202\">10.1021/je0101202</a>
+<dt> Perkins, Richard A.</dt>
+<dd> <b>Measurement and Correlation of the Thermal Conductivity of Isobutane from 114 K to 600 K at Pressures to 70 MPa</b><br />
+     Journal of Chemical &amp; Engineering Data 47.5, 1272-1279 (2002)<br />
+     DOI: <a href=\"https://doi.org/10.1021/je010121u\">10.1021/je010121u</a>
+</dd>
+<dt> Mulero, A., Cachadi&ntilde;a, I. and Parra, M.I.</dt>
+<dd> <b>Recommended Correlations for the Surface Tension of Common Fluids</b><br />
+     J. Phys. Chem. Ref. Data, 41:043105, 2012.<br />
+     DOI: <a href=\"https://doi.org/10.1063/1.4768782\">10.1063/1.4768782</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />

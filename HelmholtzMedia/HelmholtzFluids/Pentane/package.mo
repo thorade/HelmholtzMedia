@@ -138,9 +138,9 @@ package Pentane "Pentane"
   final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsPentane(
     coeffs=[
-     0.0562267,   1.25;
-    -0.0037496,   2.25;
-    -0.0029861,   3.25]) "Coefficients for the surface tension";
+      0.08015,   1.408;
+      0.004384,   1.031;
+      -0.03437,   1.818]) "Coefficients for the surface tension (Mulero et al. 2012)";
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsPentane(
@@ -199,6 +199,11 @@ The reference state is set to NBP (saturated liquid at 101325 Pa: h = 0, s = 0),
 <dd> <b>Melting curves of pressure-transmitting fluids</b><br />
      Journal of Chemical Physics 40 (12) , 3662-3666 (1964)<br />
      DOI: <a href=\"http://dx.doi.org/10.1063/1.1725068\">10.1063/1.1725068</a>
+</dd>
+<dt> Mulero, A., Cachadi&ntilde;a, I. and Parra, M.I.</dt>
+<dd> <b>Recommended Correlations for the Surface Tension of Common Fluids</b><br />
+     J. Phys. Chem. Ref. Data, 41:043105, 2012.<br />
+     DOI: <a href=\"https://doi.org/10.1063/1.4768782\">10.1063/1.4768782</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />

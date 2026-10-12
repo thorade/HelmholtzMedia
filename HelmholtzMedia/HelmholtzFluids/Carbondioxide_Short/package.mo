@@ -69,6 +69,7 @@ package Carbondioxide_Short "Carbondioxide short FES"
   annotation (Documentation(info="<html>
   These are the coefficients for Carbondioxide, 
   using a shorter and faster but less accurate equation of state.
+Transport properties and surface tension are the same as in Carbondioxide.
 The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, s = 1 kJ/(kg K)), the REFPROP default.
 
 <dl>

@@ -162,7 +162,7 @@ package R134a "R134a with IIR reference state"
   final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsR134a(
     coeffs=[
-      0.06016,    1.26]) "Coefficients for the surface tension";
+      0.05801,   1.241]) "Coefficients for the surface tension (Mulero et al. 2012)";
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsR134a(
@@ -216,6 +216,11 @@ the ancillary equations use the REFPROP critical point 374.21 K, 4.05928 MPa, 51
 <dd> <b>Properties of R134a</b><br />
      VDI Heat Atlas, Section D2.7, 2010.<br />
      DOI: <a href=\"http://dx.doi.org/10.1007/978-3-540-77877-6_11\">10.1007/978-3-540-77877-6_11</a>
+</dd>
+<dt> Mulero, A., Cachadi&ntilde;a, I. and Parra, M.I.</dt>
+<dd> <b>Recommended Correlations for the Surface Tension of Common Fluids</b><br />
+     J. Phys. Chem. Ref. Data, 41:043105, 2012.<br />
+     DOI: <a href=\"https://doi.org/10.1063/1.4768782\">10.1063/1.4768782</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />

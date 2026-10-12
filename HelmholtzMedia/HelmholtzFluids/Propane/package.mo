@@ -174,8 +174,8 @@ extends Interfaces.PartialHelmholtzMedium(
   final constant Transport.SurfaceTensionCoefficients
   surfaceTensionCoefficientsPropane(
     coeffs=[
-       0.05666,     1.265;
-      -0.005291,    2.265]) "Coefficients for the surface tension";
+      0.05334,   1.235;
+      -0.01748,   4.404]) "Coefficients for the surface tension (Mulero et al. 2012)";
 
   final constant Ancillary.AncillaryCoefficients
   ancillaryCoefficientsPropane(
@@ -229,10 +229,20 @@ The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, 
      Journal of Physical and Chemical Reference Data 27/5, 947-970 (1998)<br />
      DOI: <a href=\"http://dx.doi.org/10.1063/1.556025\">10.1063/1.556025</a>
 </dd>
+<dt> Marsh, K.N., Perkins, R.A. and Ramires, M.L.V.</dt>
+<dd> <b>Measurement and Correlation of the Thermal Conductivity of Propane from 86 K to 600 K at Pressures to 70 MPa</b><br />
+     Journal of Chemical &amp; Engineering Data 47.4, 932-940 (2002)<br />
+     DOI: <a href=\"https://doi.org/10.1021/je010001m\">10.1021/je010001m</a>
+</dd>
 <dt> Reeves, L.E. and Scott, G.J. and Babb, S.E.Jr.</dt>
 <dd> <b>Melting curves of pressure-transmitting fluids</b><br />
      Journal of Chemical Physics 40 (12) , 3662-3666 (1964)<br />
      DOI: <a href=\"http://dx.doi.org/10.1063/1.1725068\">10.1063/1.1725068</a>
+</dd>
+<dt> Mulero, A., Cachadi&ntilde;a, I. and Parra, M.I.</dt>
+<dd> <b>Recommended Correlations for the Surface Tension of Common Fluids</b><br />
+     J. Phys. Chem. Ref. Data, 41:043105, 2012.<br />
+     DOI: <a href=\"https://doi.org/10.1063/1.4768782\">10.1063/1.4768782</a>
 </dd>
 <dt> Lemmon, Eric W.; Huber, M. L. and McLinden, M. O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP. 9.0</b><br />
