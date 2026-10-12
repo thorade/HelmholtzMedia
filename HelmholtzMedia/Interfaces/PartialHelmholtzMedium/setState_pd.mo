@@ -75,7 +75,6 @@ algorithm
         T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
         T_max := 1.02*sat.Tsat;
         T_iter := 1.1*T_min;
-        // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       elseif (d < sat.vap.d) then
         // Modelica.Utilities.Streams.print("single-phase vapour region", "printlog.txt");
         state.phase := 1;
@@ -90,7 +89,6 @@ algorithm
       state.phase := 1;
       // very low pressure, behaves like an ideal gas
       T_iter := p/(d*R_s);
-      // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
 
     elseif (p >= p_crit) then
       state.phase := 1;
@@ -98,7 +96,6 @@ algorithm
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical liquid-like region", "printlog.txt");
         T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
         T_iter := 1.05*T_min;
-        // T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
       else
         // Modelica.Utilities.Streams.print("p>p_crit and d<=d_crit, single-phase super-critical vapour-like region", "printlog.txt");
         T_min := 0.98*T_crit;
@@ -111,7 +108,7 @@ algorithm
   end if;
   // Modelica.Utilities.Streams.print("phase and region determination finshed, phase=" + String(state.phase) + ", T_min=" + String(T_min) + ", T_max=" + String(T_max) + ", T_iter=" + String(T_iter), "printlog.txt");
 
-  // check bounds, van der Waals is not very accurate
+  // check bounds, the start values from van der Waals or the ancillary equations are not very accurate
   T_iter := max({T_iter, T_min, fluidLimits.TMIN});
   T_iter := min({T_iter, T_max, fluidLimits.TMAX});
 
