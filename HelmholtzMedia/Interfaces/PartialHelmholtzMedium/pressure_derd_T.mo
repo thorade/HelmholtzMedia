@@ -2,17 +2,7 @@ within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
 function pressure_derd_T "returns pressure derivative (dp/dd)@T=const"
   input ThermodynamicState state;
   output DerPressureByDensity dpdT;
-
-protected
-  EoS.HelmholtzDerivs f;
-
 algorithm
-  if state.phase==1 then
-    f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase, order=2);
-    dpdT := EoS.dpdT(f);
-  elseif state.phase==2 then
-    dpdT := Modelica.Constants.small; // zero
-  else
-    assert(false, "pressure_derd_T error: phase is neither 1 nor 2");
-  end if;
+  dpdT := pressure_derd_T_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+annotation (Inline=true);
 end pressure_derd_T;
