@@ -2,6 +2,8 @@ acentricFactor
 CheckDerivativesButane
 CheckDerivativesCarbondioxide
 CheckDerivativesHelium
+CheckDerivativeAnnotations
+CheckDerivativeAnnotationsTwoPhase
 CheckDerivativesMedium
 CheckDerivativesWater
 CheckPartialDerivativesMedium
