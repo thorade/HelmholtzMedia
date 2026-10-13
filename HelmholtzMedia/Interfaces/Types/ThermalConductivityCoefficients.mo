@@ -1,8 +1,7 @@
 within HelmholtzMedia.Interfaces.Types;
 record ThermalConductivityCoefficients
-  import HelmholtzMedia.Interfaces.Choices.*;
-  constant ThermalConductivityModel thermalConductivityModel;
-  constant ThermalConductivityCriticalEnhancementModel thermalConductivityCriticalEnhancementModel;
+  constant HelmholtzMedia.Interfaces.Choices.ThermalConductivityModel thermalConductivityModel;
+  constant HelmholtzMedia.Interfaces.Choices.ThermalConductivityCriticalEnhancementModel thermalConductivityCriticalEnhancementModel;
   // dilute gas / zero density terms
   constant Temperature reducingTemperature_0=1 "reducing temperature";
   constant Real reducingThermalConductivity_0=1 "usually unity";

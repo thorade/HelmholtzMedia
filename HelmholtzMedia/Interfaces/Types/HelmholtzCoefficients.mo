@@ -1,7 +1,6 @@
 within HelmholtzMedia.Interfaces.Types;
 record HelmholtzCoefficients
   "Coefficients for Helmholtz energy equations of state"
-  import HelmholtzMedia.Interfaces.Choices.*;
 
   //reducing parameters: tau=T_reducing/T, delta=d/d_reducing; usually, but not always, equal to the critical values
   constant Temperature T_reducing "reducing temperature of the EoS";

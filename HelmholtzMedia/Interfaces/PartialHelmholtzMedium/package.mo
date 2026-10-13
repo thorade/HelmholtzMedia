@@ -1,10 +1,7 @@
 within HelmholtzMedia.Interfaces;
 partial package PartialHelmholtzMedium
   extends HelmholtzMedia.Interfaces.Types;
-
-
   extends HelmholtzMedia.Interfaces.Choices;
-
 
   extends Modelica.Media.Interfaces.PartialTwoPhaseMedium(
     onePhase=false,

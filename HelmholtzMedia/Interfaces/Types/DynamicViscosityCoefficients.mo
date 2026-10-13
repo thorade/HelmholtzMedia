@@ -1,8 +1,7 @@
 within HelmholtzMedia.Interfaces.Types;
 record DynamicViscosityCoefficients
-  import HelmholtzMedia.Interfaces.Choices.*;
-  constant DynamicViscosityModel dynamicViscosityModel;
-  constant CollisionIntegralModel collisionIntegralModel;
+  constant HelmholtzMedia.Interfaces.Choices.DynamicViscosityModel dynamicViscosityModel;
+  constant HelmholtzMedia.Interfaces.Choices.CollisionIntegralModel collisionIntegralModel;
   // collision integral S_mathfrak
   constant Temperature epsilon_kappa(min=0) "Lennard-Jones energy parameter";
   constant Real sigma "Lennard-Jones size parameter";
