@@ -8,7 +8,7 @@ function specificEnthalpy_pd "returns specific enthalpy for a given p and d"
   output SpecificEnthalpy h "specific enthalpy";
 
 algorithm
-  h := specificEnthalpy(setState_pd(p=p, d=d, phase=phase));
+  h := Auxiliary.specificEnthalpy_pd_state(p=p, d=d, state=setState_pd(p=p, d=d, phase=phase));
 
 annotation (
   inverse(d=density_ph(p=p, h=h, phase=phase)));

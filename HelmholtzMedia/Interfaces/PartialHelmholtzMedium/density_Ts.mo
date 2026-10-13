@@ -8,7 +8,7 @@ function density_Ts "returns density for given T and s"
   output Density d "Density";
 
 algorithm
-  d := density(setState_Ts(T=T, s=s, phase=phase));
+  d := Auxiliary.density_Ts_state(T=T, s=s, state=setState_Ts(T=T, s=s, phase=phase));
 
 annotation (
   inverse=specificEntropy_dT(d=d, T=T, phase=phase));

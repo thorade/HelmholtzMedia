@@ -8,7 +8,7 @@ function specificEntropy_dT "return specific enthalpy for given d and T"
   output SpecificEntropy s "specific entropy";
 
 algorithm
-  s := specificEntropy(setState_dTX(d=d,T=T,phase=phase));
+  s := Auxiliary.specificEntropy_dT_state(d=d, T=T, state=setState_dTX(d=d, T=T, phase=phase));
 
 annotation (
   inverse(d=density_Ts(T=T, s=s, phase=phase)));

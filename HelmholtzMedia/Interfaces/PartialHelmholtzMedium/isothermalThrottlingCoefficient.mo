@@ -3,6 +3,6 @@ function isothermalThrottlingCoefficient "returns isothermal throttling coeffici
   input ThermodynamicState state;
   output DerEnthalpyByPressure delta_T;
 algorithm
-  delta_T := isothermalThrottlingCoefficient_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+  delta_T := Auxiliary.isothermalThrottlingCoefficient_aux(state=state, aux=Auxiliary.setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
 annotation (Inline=true);
 end isothermalThrottlingCoefficient;

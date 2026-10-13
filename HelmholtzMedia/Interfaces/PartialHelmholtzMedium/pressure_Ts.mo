@@ -8,7 +8,7 @@ function pressure_Ts "returns pressure for given T and s"
   output AbsolutePressure p "Pressure";
 
 algorithm
-  p := pressure(setState_Ts(T=T, s=s, phase=phase));
+  p := Auxiliary.pressure_Ts_state(T=T, s=s, state=setState_Ts(T=T, s=s, phase=phase));
 
 annotation (
   inverse(s=specificEntropy_pT(p=p, T=T, phase=phase),
