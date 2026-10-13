@@ -56,7 +56,7 @@ package R134a "R134a with IIR reference state"
     SMIN=250,
     SMAX=5330) "Helmholtz EoS Limits";
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsR134a(
     T_reducing=374.18,
     d_reducing=508,
@@ -93,7 +93,7 @@ package R134a "R134a with IIR reference state"
      -0.1285458000E-03,  50.00,  10.00,   4],
    residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
-  final constant Transport.ThermalConductivityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.ThermalConductivityCoefficients
   thermalConductivityCoefficientsR134a(
     thermalConductivityModel=ThermalConductivityModel.TC1,
     thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
@@ -115,7 +115,7 @@ package R134a "R134a with IIR reference state"
     qd_inverse=5.285356E-10,
     T_ref=561.411) "Coefficients for the thermal conductivity";
 
-  final constant Transport.DynamicViscosityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsR134a(
     dynamicViscosityModel=DynamicViscosityModel.VS1_alternative,
     collisionIntegralModel=CollisionIntegralModel.CI1,
@@ -159,12 +159,12 @@ package R134a "R134a with IIR reference state"
     -1.00,                   0.00,  1.00,  0.00,  0])
   "Coefficients for the dynamic viscosity";
 
-  final constant Transport.SurfaceTensionCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.SurfaceTensionCoefficients
   surfaceTensionCoefficientsR134a(
     coeffs=[
       0.05801,   1.241]) "Coefficients for the surface tension (Mulero et al. 2012)";
 
-  final constant Ancillary.AncillaryCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients
   ancillaryCoefficientsR134a(
     T_crit=374.21,
     p_crit=4059280,

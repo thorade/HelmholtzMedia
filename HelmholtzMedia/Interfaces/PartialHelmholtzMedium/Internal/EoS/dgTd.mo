@@ -1,0 +1,8 @@
+within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.EoS;
+function dgTd "returns Gibbs energy derivative (dg/dT)@d=const"
+  input EoS.HelmholtzDerivs f;
+  output DerEnergyByTemperature dgTd;
+
+algorithm
+  dgTd := f.R_s*(-f.tau*(f.it+f.rt) +(f.i+f.r) +(1+f.delta*f.rd-f.delta*f.tau*f.rtd));
+end dgTd;

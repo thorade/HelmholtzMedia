@@ -57,7 +57,7 @@ extends Interfaces.PartialHelmholtzMedium(
     SMIN=-4060,
     SMAX=105020) "Helmholtz EoS Limits";
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsHelium(
     T_reducing=5.1953,
     d_reducing=0.004002602*17.3837e3,
@@ -98,7 +98,7 @@ extends Interfaces.PartialHelmholtzMedium(
          -0.049386338,   6.13,    2,  2, 2,  -42.2358, -1357.6577,   1.076,    0.959])
   "Coefficients of the Helmholtz EoS";
 
-  final constant Transport.ThermalConductivityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.ThermalConductivityCoefficients
   thermalConductivityCoefficientsHelium(
     thermalConductivityModel=ThermalConductivityModel.TC0,
     thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK0,
@@ -114,7 +114,7 @@ extends Interfaces.PartialHelmholtzMedium(
     qd_inverse=0.875350E-9,
     T_ref=637.68) "Coefficients for the thermal conductivity";
 
-  final constant Transport.DynamicViscosityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsHelium(
     dynamicViscosityModel=DynamicViscosityModel.VS0,
     collisionIntegralModel=CollisionIntegralModel.CI0,
@@ -131,14 +131,14 @@ extends Interfaces.PartialHelmholtzMedium(
     nu_po=fill(0.0, 0, 5),
     de_po=fill(0.0, 0, 5)) "Coefficients for the dynamic viscosity";
 
-  final constant Transport.SurfaceTensionCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.SurfaceTensionCoefficients
   surfaceTensionCoefficientsHelium(
     coeffs=[
        0.0004656,   1.04;
        0.001889,    2.468;
       -0.002006,    2.661]) "Coefficients for the surface tension";
 
-  final constant Ancillary.AncillaryCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients
   ancillaryCoefficientsHelium(
     T_crit=5.1953,
     p_crit=228320,
@@ -184,7 +184,7 @@ The equation of state was fitted with the molar gas constant R = 8.314472 J/(mol
 whereas HelmholtzMedia uses the exact value Modelica.Constants.R = 8.31446261815324 J/(mol K) for all fluids.
 The relative difference of 1.1e-6 is far below the uncertainty of the equation of state;
 the check values in Tables 3 and 4 of NIST IR 8474 are reproduced within their stated digits
-(see Examples.Validation.EoSHelium).
+(see Validation.Properties.EoSHelium).
 </p>
 <p>
 The ancillary equations for saturation pressure and densities are those of REFPROP 10.

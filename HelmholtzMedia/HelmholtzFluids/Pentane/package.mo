@@ -56,7 +56,7 @@ package Pentane "Pentane"
     SMIN=-1910,
     SMAX=6880) "Helmholtz EoS Limits";
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsPentane(
     T_reducing=469.7,
     d_reducing=0.07214878*3215.5776,
@@ -87,7 +87,7 @@ package Pentane "Pentane"
       0.016877016,       12.0,     4.0,   3],
    residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
-  final constant Transport.ThermalConductivityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.ThermalConductivityCoefficients
   thermalConductivityCoefficientsPentane(
     thermalConductivityModel=ThermalConductivityModel.TC1,
     thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
@@ -112,7 +112,7 @@ package Pentane "Pentane"
     qd_inverse=0.9345E-9,
     T_ref=704.55) "Coefficients for the thermal conductivity";
 
-  final constant Transport.DynamicViscosityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsPentane(
     dynamicViscosityModel=DynamicViscosityModel.VS2,
     collisionIntegralModel=CollisionIntegralModel.CI0,
@@ -135,14 +135,14 @@ package Pentane "Pentane"
        21435.7720323;
        3.215]) "Coefficients for the dynamic viscosity";
 
-  final constant Transport.SurfaceTensionCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.SurfaceTensionCoefficients
   surfaceTensionCoefficientsPentane(
     coeffs=[
       0.08015,   1.408;
       0.004384,   1.031;
       -0.03437,   1.818]) "Coefficients for the surface tension (Mulero et al. 2012)";
 
-  final constant Ancillary.AncillaryCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients
   ancillaryCoefficientsPentane(
     T_crit=469.7,
     p_crit=3370000,

@@ -57,7 +57,7 @@ package R32 "R32 with IIR reference state"
     SMIN=-370,
     SMAX=8810) "Helmholtz EoS Limits";
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsR32(
     T_reducing=351.255,
     d_reducing=424.435723,
@@ -94,7 +94,7 @@ package R32 "R32 with IIR reference state"
       0.8263017E+00,    0.500,   3.00,   1] "See before, why 2 row more?",
    residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
-  final constant Transport.ThermalConductivityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.ThermalConductivityCoefficients
   thermalConductivityCoefficientsR32(
     thermalConductivityModel=ThermalConductivityModel.TC1,
     thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
@@ -123,7 +123,7 @@ package R32 "R32 with IIR reference state"
     qd_inverse=5.582925E-10,
     T_ref=526.8825) "Coefficients for the thermal conductivity";
 
-  final constant Transport.DynamicViscosityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsR32(
     dynamicViscosityModel=DynamicViscosityModel.VS1,
     collisionIntegralModel=CollisionIntegralModel.CI1,
@@ -160,12 +160,12 @@ package R32 "R32 with IIR reference state"
       4.4106,       -1.5,   8/3,    0,  0] "higher-order term <coeff, power of T/T_red, power of d/d_red, -, ->")
   "Coefficients for the dynamic viscosity";
 
-  final constant Transport.SurfaceTensionCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.SurfaceTensionCoefficients
   surfaceTensionCoefficientsR32(
     coeffs=[
       0.07147,    1.246]) "Coefficients for the surface tension <sigma0 and n>";
 
-  final constant Ancillary.AncillaryCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients
   ancillaryCoefficientsR32(
     T_crit=351.255,
     p_crit=5782000,

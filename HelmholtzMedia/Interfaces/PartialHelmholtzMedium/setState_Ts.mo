@@ -15,7 +15,7 @@ protected
   constant Temperature T_reducing=helmholtzCoefficients.T_reducing "reducing temperature of the EoS";
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
 
-  EoS.HelmholtzDerivs f(T=T,tau=T_reducing/T);
+  Internal.EoS.HelmholtzDerivs f(T=T,tau=T_reducing/T);
   SaturationProperties sat;
   MassFraction x "vapour quality";
 
@@ -52,13 +52,13 @@ algorithm
         sat := setSat_T(T=T);
       else
         // do a simple check first, quite often this is sufficient
-        sat.liq.d := Ancillary.bubbleDensity_T(T=T);
-        f := EoS.setHelmholtzDerivs(T=T, d=sat.liq.d, order=1);
-        sat.liq.s := EoS.s(f);
+        sat.liq.d := Internal.Ancillary.bubbleDensity_T(T=T);
+        f := Internal.EoS.setHelmholtzDerivs(T=T, d=sat.liq.d, order=1);
+        sat.liq.s := Internal.EoS.s(f);
 
-        sat.vap.d := Ancillary.dewDensity_T(T=T);
-        f := EoS.setHelmholtzDerivs(T=T, d=sat.vap.d, order=1);
-        sat.vap.s := EoS.s(f);
+        sat.vap.d := Internal.Ancillary.dewDensity_T(T=T);
+        f := Internal.EoS.setHelmholtzDerivs(T=T, d=sat.vap.d, order=1);
+        sat.vap.s := Internal.EoS.s(f);
 
         if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
           // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
@@ -104,14 +104,14 @@ algorithm
 
     // Modelica.Utilities.Streams.print("initialize bisection", "printlog.txt");
     // min
-    f := EoS.setHelmholtzDerivs(T=T, d=d_min, order=1);
-    RES_min := EoS.s(f) - s;
+    f := Internal.EoS.setHelmholtzDerivs(T=T, d=d_min, order=1);
+    RES_min := Internal.EoS.s(f) - s;
     // max
-    f := EoS.setHelmholtzDerivs(T=T, d=d_max, order=1);
-    RES_max := EoS.s(f) - s;
+    f := Internal.EoS.setHelmholtzDerivs(T=T, d=d_max, order=1);
+    RES_max := Internal.EoS.s(f) - s;
     // iter
-    f := EoS.setHelmholtzDerivs(T=T, d=d_iter, order=2);
-    RES_s := EoS.s(f) - s;
+    f := Internal.EoS.setHelmholtzDerivs(T=T, d=d_iter, order=2);
+    RES_s := Internal.EoS.s(f) - s;
 
     //assert((RES_min*RES_max<0), "setState_Ts: d_min and d_max did not bracket the root, input was T=" + String(T) + " and s=" + String(s));
     // thighten the bounds
@@ -130,7 +130,7 @@ algorithm
       // gamma := iter/(iter+1);
 
       // calculate gradient with respect to density (f contains the second derivatives)
-      dsdT := EoS.dsdT(f);
+      dsdT := Internal.EoS.dsdT(f);
 
       // print for debugging
       // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
@@ -146,8 +146,8 @@ algorithm
       end if;
 
       // calculate new RES_s
-      f := EoS.setHelmholtzDerivs(T=T, d=d_iter, order=2);
-      RES_s := EoS.s(f) - s;
+      f := Internal.EoS.setHelmholtzDerivs(T=T, d=d_iter, order=2);
+      RES_s := Internal.EoS.s(f) - s;
 
       // thighten the bounds
       // opposite sign brackets the root
@@ -170,9 +170,9 @@ algorithm
     state.T := T;
     state.s :=s;
     state.d := d_iter;
-    state.p := EoS.p(f);
-    state.h := EoS.h(f);
-    state.u := EoS.u(f);
+    state.p := Internal.EoS.p(f);
+    state.h := Internal.EoS.h(f);
+    state.u := Internal.EoS.u(f);
   end if;
 
 end setState_Ts;

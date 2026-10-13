@@ -5,7 +5,7 @@ package R134a_NBP "R134a with NBP reference state"
     fluidConstantsR134a(HCRIT0=223825.762309361, SCRIT0=693.041526619274),
     helmholtzCoefficients=helmholtzCoefficientsR134a_NBP);
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsR134a_NBP(
     T_reducing=374.18,
     d_reducing=508,

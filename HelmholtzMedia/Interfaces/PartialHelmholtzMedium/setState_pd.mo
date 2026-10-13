@@ -17,10 +17,10 @@ protected
   constant Temperature T_reducing=helmholtzCoefficients.T_reducing "reducing temperature of the EoS";
   constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
   constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
-  constant Density dv_trip = Ancillary.dewDensity_T(T_trip);
-  constant Density dl_trip = Ancillary.bubbleDensity_T(T_trip);
+  constant Density dv_trip = Internal.Ancillary.dewDensity_T(T_trip);
+  constant Density dl_trip = Internal.Ancillary.bubbleDensity_T(T_trip);
 
-  EoS.HelmholtzDerivs f(d=d, delta = d/d_reducing);
+  Internal.EoS.HelmholtzDerivs f(d=d, delta = d/d_reducing);
   SaturationProperties sat;
   MassFraction x "vapour quality";
 
@@ -57,9 +57,9 @@ algorithm
         sat := setSat_p(p=p);
       else
         // do a simple check first, quite often this is sufficient
-        sat.Tsat := Ancillary.saturationTemperature_p(p=p);
-        sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
-        sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
+        sat.Tsat := Internal.Ancillary.saturationTemperature_p(p=p);
+        sat.liq.d := Internal.Ancillary.bubbleDensity_T(T=sat.Tsat);
+        sat.vap.d := Internal.Ancillary.dewDensity_T(T=sat.Tsat);
         // Modelica.Utilities.Streams.print("setState_pd: sat.Tsat=" + String(sat.Tsat) + " and sat.liq.d=" + String(sat.liq.d) + " sat.vap.d=" + String(sat.vap.d) + ", simple check only", "printlog.txt");
         if ((d < sat.liq.d + abs(0.05*sat.liq.d)) and (d > sat.vap.d - abs(0.05*sat.vap.d))) then
           // Modelica.Utilities.Streams.print("setState_pd: p = " + String(p) + "d = " + String(d) + ", two-phase state or close to it", "printlog.txt");
@@ -72,14 +72,14 @@ algorithm
       if (d > sat.liq.d) then
         // Modelica.Utilities.Streams.print("single-phase liquid region", "printlog.txt");
         state.phase := 1;
-        T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
+        T_min := 0.98*Internal.Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
         T_max := 1.02*sat.Tsat;
         T_iter := 1.1*T_min;
       elseif (d < sat.vap.d) then
         // Modelica.Utilities.Streams.print("single-phase vapour region", "printlog.txt");
         state.phase := 1;
         T_min := 0.99*sat.Tsat;
-        T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
+        T_iter:= Internal.Ancillary.temperature_pd_Waals(p=p, d=d);
       elseif (sat.liq.d > sat.vap.d) then
         // Modelica.Utilities.Streams.print("two-phase region, all properties can be calculated from sat record", "printlog.txt");
         state.phase := 2;
@@ -98,12 +98,12 @@ algorithm
       state.phase := 1;
       if (d>d_crit) then
         // Modelica.Utilities.Streams.print("p>p_crit and d>d_crit, single-phase super-critical liquid-like region", "printlog.txt");
-        T_min := 0.98*Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
+        T_min := 0.98*Internal.Ancillary.saturationTemperature_d(d=d); // look at isobars in T,d-Diagram !!
         T_iter := 1.05*T_min;
       else
         // Modelica.Utilities.Streams.print("p>p_crit and d<=d_crit, single-phase super-critical vapour-like region", "printlog.txt");
         T_min := 0.98*T_crit;
-        T_iter:= Ancillary.temperature_pd_Waals(p=p, d=d);
+        T_iter:= Internal.Ancillary.temperature_pd_Waals(p=p, d=d);
         T_max := 25*fluidLimits.TMAX;
       end if;
     else
@@ -130,14 +130,14 @@ algorithm
 
     // Modelica.Utilities.Streams.print("initialize bisection", "printlog.txt");
     // min
-    f := EoS.setHelmholtzDerivs(d=d, T=T_min, order=1, includeIdeal=false);
-    RES_min := EoS.p(f) - p;
+    f := Internal.EoS.setHelmholtzDerivs(d=d, T=T_min, order=1, includeIdeal=false);
+    RES_min := Internal.EoS.p(f) - p;
     // max
-    f := EoS.setHelmholtzDerivs(d=d, T=T_max, order=1, includeIdeal=false);
-    RES_max := EoS.p(f) - p;
+    f := Internal.EoS.setHelmholtzDerivs(d=d, T=T_max, order=1, includeIdeal=false);
+    RES_max := Internal.EoS.p(f) - p;
     // iter
-    f := EoS.setHelmholtzDerivs(d=d, T=T_iter, order=2, includeIdeal=false);
-    RES_p := EoS.p(f) - p;
+    f := Internal.EoS.setHelmholtzDerivs(d=d, T=T_iter, order=2, includeIdeal=false);
+    RES_p := Internal.EoS.p(f) - p;
 
     assert((RES_min*RES_max<0), "setState_pd: T_min=" + String(T_min) + " and T_max=" + String(T_max) + " did not bracket the root, input was p=" + String(p) + " and d=" + String(d), level=AssertionLevel.warning);
     // thighten the bounds
@@ -156,7 +156,7 @@ algorithm
       // gamma := iter/(iter+1);
 
       // calculate gradients with respect to temperature (f contains the second derivatives of the residual part)
-      dpTd := EoS.dpTd(f);
+      dpTd := Internal.EoS.dpTd(f);
 
       // print for debugging
       // Modelica.Utilities.Streams.print("Iteration step " +String(iter), "printlog.txt");
@@ -172,8 +172,8 @@ algorithm
       end if;
 
       // calculate new RES_p
-      f := EoS.setHelmholtzDerivs(d=d, T=T_iter, order=2, includeIdeal=false);
-      RES_p := EoS.p(f) - p;
+      f := Internal.EoS.setHelmholtzDerivs(d=d, T=T_iter, order=2, includeIdeal=false);
+      RES_p := Internal.EoS.p(f) - p;
 
       // thighten the bounds
       // opposite sign brackets the root
@@ -195,10 +195,10 @@ algorithm
     state.p := p;
     state.d := d;
     state.T := T_iter;
-    f := EoS.setHelmholtzDerivs(d=state.d, T=state.T, order=1);
-    state.h := EoS.h(f);
-    state.u := EoS.u(f);
-    state.s := EoS.s(f);
+    f := Internal.EoS.setHelmholtzDerivs(d=state.d, T=state.T, order=1);
+    state.h := Internal.EoS.h(f);
+    state.u := Internal.EoS.u(f);
+    state.s := Internal.EoS.s(f);
   end if;
 
 end setState_pd;

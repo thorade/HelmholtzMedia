@@ -56,7 +56,7 @@ package Isopentane "Isopentane"
     SMIN=-2870,
     SMAX=6430) "Helmholtz EoS Limits";
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsIsopentane(
     T_reducing=460.35,
     d_reducing=0.07214878*3271,
@@ -86,7 +86,7 @@ package Isopentane "Isopentane"
        0.018156,       12.0,     4.0,   3],
    residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
-  final constant Transport.ThermalConductivityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.ThermalConductivityCoefficients
   thermalConductivityCoefficientsIsopentane(
     thermalConductivityModel=ThermalConductivityModel.TC1,
     thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
@@ -111,7 +111,7 @@ package Isopentane "Isopentane"
     qd_inverse=0.9316E-9,
     T_ref=690.525) "Coefficients for the thermal conductivity";
 
-  final constant Transport.DynamicViscosityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsIsopentane(
     dynamicViscosityModel=DynamicViscosityModel.VS2,
     collisionIntegralModel=CollisionIntegralModel.CI0,
@@ -134,12 +134,12 @@ package Isopentane "Isopentane"
       -20914.7951660000;
        3.24]) "Coefficients for the dynamic viscosity";
 
-  final constant Transport.SurfaceTensionCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.SurfaceTensionCoefficients
   surfaceTensionCoefficientsIsopentane(
     coeffs=[
       0.051,   1.209]) "Coefficients for the surface tension (Mulero et al. 2012)";
 
-  final constant Ancillary.AncillaryCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients
   ancillaryCoefficientsIsopentane(
     T_crit=460.35,
     p_crit=3378000,

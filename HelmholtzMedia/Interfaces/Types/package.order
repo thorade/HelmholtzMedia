@@ -37,3 +37,8 @@ Der2TemperatureByPressureDensity
 DerFractionByTemperature
 DerFractionByPressure
 EoSLimits
+HelmholtzCoefficients
+AncillaryCoefficients
+ThermalConductivityCoefficients
+DynamicViscosityCoefficients
+SurfaceTensionCoefficients

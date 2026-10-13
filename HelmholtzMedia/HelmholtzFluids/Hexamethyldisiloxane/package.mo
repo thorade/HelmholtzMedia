@@ -56,7 +56,7 @@ extends Interfaces.PartialHelmholtzMedium(
     SMIN=-740,
     SMAX=3630) "Helmholtz EoS Limits";
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsMM(
     T_reducing=518.69997204,
     d_reducing=0.16237752*1874.67076,
@@ -85,7 +85,7 @@ extends Interfaces.PartialHelmholtzMedium(
        0.25902341E-1,   12.0,     4,   3],
      residualGauss=fill(0.0, 0, 9)) "Coefficients of the Helmholtz EoS";
 
-  final constant Transport.ThermalConductivityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.ThermalConductivityCoefficients
   thermalConductivityCoefficientsMM(
     thermalConductivityModel=ThermalConductivityModel.TC1,
     thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
@@ -101,7 +101,7 @@ extends Interfaces.PartialHelmholtzMedium(
     qd_inverse=0.875350E-9,
     T_ref=637.68) "Coefficients for the thermal conductivity";
 
-  final constant Transport.DynamicViscosityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsMM(
     dynamicViscosityModel=DynamicViscosityModel.VS1,
     collisionIntegralModel=CollisionIntegralModel.CI1,
@@ -118,12 +118,12 @@ extends Interfaces.PartialHelmholtzMedium(
     nu_po=fill(0.0, 0, 5),
     de_po=fill(0.0, 0, 5)) "Coefficients for the dynamic viscosity";
 
-  final constant Transport.SurfaceTensionCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.SurfaceTensionCoefficients
   surfaceTensionCoefficientsMM(
     coeffs=[
       0.04576,    1.272]) "Coefficients for the surface tension (Mulero and Cachadina 2014)";
 
-  final constant Ancillary.AncillaryCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients
   ancillaryCoefficientsMM(
     T_crit=518.69997204,
     p_crit=1939390,
