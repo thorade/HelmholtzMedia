@@ -1,6 +1,5 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal;
 package Ancillary "Helper functions for determining phase regions and start values"
-  extends Modelica.Icons.InternalPackage;
 
   annotation (Documentation(info="<html>
 <p>
