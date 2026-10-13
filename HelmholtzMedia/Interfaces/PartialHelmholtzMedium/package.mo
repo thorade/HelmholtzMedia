@@ -1450,36 +1450,40 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   redeclare function extends specificHeatCapacityCp
   "returns the isobaric specific heat capcacity"
-  //input state
-  //output cp
+  algorithm
+    cp := specificHeatCapacityCp_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+  annotation (Inline=true);
+  end specificHeatCapacityCp;
 
-  protected
-    EoS.HelmholtzDerivs f;
-
+  function specificHeatCapacityCp_aux "returns the isobaric specific heat capcacity (computed from the shared auxiliary properties, see specificHeatCapacityCp)"
+    input ThermodynamicState state;
+    input AuxiliaryProperties aux;
+    output SpecificHeatCapacity cp;
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
-      cp := EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
+      cp := EoS.dhTd(aux.f) - EoS.dhdT(aux.f)*EoS.dpTd(aux.f)/EoS.dpdT(aux.f);
     elseif state.phase==2 then
       assert(false, "specificHeatCapacityCp warning: in the two-phase region cp is infinite", level=AssertionLevel.warning);
       cp := Modelica.Constants.inf;
     end if;
 
-  end specificHeatCapacityCp;
+  end specificHeatCapacityCp_aux;
 
   redeclare function extends specificHeatCapacityCv
   "returns the isochoric specific heat capcacity"
-  //input state
-  //output cv
+  algorithm
+    cv := specificHeatCapacityCv_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+  annotation (Inline=true);
+  end specificHeatCapacityCv;
 
+  function specificHeatCapacityCv_aux "returns the isochoric specific heat capcacity (computed from the shared auxiliary properties, see specificHeatCapacityCv)"
+    input ThermodynamicState state;
+    input AuxiliaryProperties aux;
+    output SpecificHeatCapacity cv;
   protected
-    EoS.HelmholtzDerivs f;
 
-    SaturationProperties sat;
     MassFraction x "vapour quality";
     DerPressureByTemperature dpT;
-    EoS.HelmholtzDerivs fl;
-    EoS.HelmholtzDerivs fv;
 
     DerEnergyByTemperature duT_liq;
     DerEnergyByTemperature duT_vap;
@@ -1491,42 +1495,41 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
-      cv := EoS.duTd(f);
+      cv := EoS.duTd(aux.f);
 
     elseif state.phase==2 then
-      sat := setSat_T(T=state.T);
-      x := vapourQuality_sat(state=state, sat=sat);
-      dpT := saturationPressure_derT_sat(sat=sat);
+      x := vapourQuality_sat(state=state, sat=aux.sat);
+      dpT := saturationPressure_derT_sat(sat=aux.sat);
 
-      fl := EoS.setHelmholtzDerivs(T=state.T, d=sat.liq.d, phase=1, order=2);
-      fv := EoS.setHelmholtzDerivs(T=state.T, d=sat.vap.d, phase=1, order=2);
 
-      duT_liq := EoS.duTd(fl)-EoS.dudT(fl)*EoS.dpTd(fl)/EoS.dpdT(fl) + EoS.dudT(fl)/EoS.dpdT(fl)*dpT;
-      duT_vap := EoS.duTd(fv)-EoS.dudT(fv)*EoS.dpTd(fv)/EoS.dpdT(fv) + EoS.dudT(fv)/EoS.dpdT(fv)*dpT;
-      ddT_liq := -EoS.dpTd(fl)/EoS.dpdT(fl) + 1.0/EoS.dpdT(fl)*dpT;
-      ddT_vap := -EoS.dpTd(fv)/EoS.dpdT(fv) + 1.0/EoS.dpdT(fv)*dpT;
-      dvT_liq := -1/sat.liq.d^2 * ddT_liq;
-      dvT_vap := -1/sat.vap.d^2 * ddT_vap;
-      dxTv :=(x*dvT_vap + (1 - x)*dvT_liq)/(1/sat.liq.d - 1/sat.vap.d);
+      duT_liq := EoS.duTd(aux.fl)-EoS.dudT(aux.fl)*EoS.dpTd(aux.fl)/EoS.dpdT(aux.fl) + EoS.dudT(aux.fl)/EoS.dpdT(aux.fl)*dpT;
+      duT_vap := EoS.duTd(aux.fv)-EoS.dudT(aux.fv)*EoS.dpTd(aux.fv)/EoS.dpdT(aux.fv) + EoS.dudT(aux.fv)/EoS.dpdT(aux.fv)*dpT;
+      ddT_liq := -EoS.dpTd(aux.fl)/EoS.dpdT(aux.fl) + 1.0/EoS.dpdT(aux.fl)*dpT;
+      ddT_vap := -EoS.dpTd(aux.fv)/EoS.dpdT(aux.fv) + 1.0/EoS.dpdT(aux.fv)*dpT;
+      dvT_liq := -1/aux.sat.liq.d^2 * ddT_liq;
+      dvT_vap := -1/aux.sat.vap.d^2 * ddT_vap;
+      dxTv :=(x*dvT_vap + (1 - x)*dvT_liq)/(1/aux.sat.liq.d - 1/aux.sat.vap.d);
 
-      cv := duT_liq + dxTv*(sat.vap.u-sat.liq.u) + x*(duT_vap-duT_liq);
+      cv := duT_liq + dxTv*(aux.sat.vap.u-aux.sat.liq.u) + x*(duT_vap-duT_liq);
     end if;
 
-  end specificHeatCapacityCv;
+  end specificHeatCapacityCv_aux;
 
   redeclare function extends velocityOfSound
   "returns the speed or velocity of sound"
-  // a^2 := (dp/dd)@s=const
+  algorithm
+    a := velocityOfSound_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+  annotation (Inline=true);
+  end velocityOfSound;
 
+  function velocityOfSound_aux "returns the speed or velocity of sound (computed from the shared auxiliary properties, see velocityOfSound)"
+    input ThermodynamicState state;
+    input AuxiliaryProperties aux;
+    output VelocityOfSound a;
   protected
-    EoS.HelmholtzDerivs f;
 
-    SaturationProperties sat;
     MassFraction x "vapour quality";
     DerTemperatureByPressure dTp;
-    EoS.HelmholtzDerivs fl;
-    EoS.HelmholtzDerivs fv;
 
     DerEntropyByPressure dsp_liq;
     DerEntropyByPressure dsp_vap;
@@ -1539,64 +1542,64 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
-      a := sqrt(EoS.dpdT(f)-EoS.dpTd(f)*EoS.dsdT(f)/EoS.dsTd(f));
+      a := sqrt(EoS.dpdT(aux.f)-EoS.dpTd(aux.f)*EoS.dsdT(aux.f)/EoS.dsTd(aux.f));
     elseif state.phase==2 then
-      sat := setSat_T(T=state.T);
-      x := vapourQuality_sat(state=state, sat=sat);
-      dTp := saturationTemperature_derp_sat(sat=sat);
+      x := vapourQuality_sat(state=state, sat=aux.sat);
+      dTp := saturationTemperature_derp_sat(sat=aux.sat);
 
-      fl := EoS.setHelmholtzDerivs(T=state.T, d=sat.liq.d, phase=1, order=2);
-      fv := EoS.setHelmholtzDerivs(T=state.T, d=sat.vap.d, phase=1, order=2);
 
-      dsp_liq := EoS.dsdT(fl)/EoS.dpdT(fl) + (EoS.dsTd(fl)-EoS.dsdT(fl)*EoS.dpTd(fl)/EoS.dpdT(fl))*dTp;
-      dsp_vap := EoS.dsdT(fv)/EoS.dpdT(fv) + (EoS.dsTd(fv)-EoS.dsdT(fv)*EoS.dpTd(fv)/EoS.dpdT(fv))*dTp;
-      ddp_liq := 1.0/EoS.dpdT(fl) - EoS.dpTd(fl)/EoS.dpdT(fl)*dTp;
-      ddp_vap := 1.0/EoS.dpdT(fv) - EoS.dpTd(fv)/EoS.dpdT(fv)*dTp;
-      dvp_liq := -1.0/sat.liq.d^2 * ddp_liq;
-      dvp_vap := -1.0/sat.vap.d^2 * ddp_vap;
-      dxps :=(x*dsp_vap + (1 - x)*dsp_liq)/(sat.liq.s - sat.vap.s);
+      dsp_liq := EoS.dsdT(aux.fl)/EoS.dpdT(aux.fl) + (EoS.dsTd(aux.fl)-EoS.dsdT(aux.fl)*EoS.dpTd(aux.fl)/EoS.dpdT(aux.fl))*dTp;
+      dsp_vap := EoS.dsdT(aux.fv)/EoS.dpdT(aux.fv) + (EoS.dsTd(aux.fv)-EoS.dsdT(aux.fv)*EoS.dpTd(aux.fv)/EoS.dpdT(aux.fv))*dTp;
+      ddp_liq := 1.0/EoS.dpdT(aux.fl) - EoS.dpTd(aux.fl)/EoS.dpdT(aux.fl)*dTp;
+      ddp_vap := 1.0/EoS.dpdT(aux.fv) - EoS.dpTd(aux.fv)/EoS.dpdT(aux.fv)*dTp;
+      dvp_liq := -1.0/aux.sat.liq.d^2 * ddp_liq;
+      dvp_vap := -1.0/aux.sat.vap.d^2 * ddp_vap;
+      dxps :=(x*dsp_vap + (1 - x)*dsp_liq)/(aux.sat.liq.s - aux.sat.vap.s);
 
-      dvps := dvp_liq + dxps*(1.0/sat.vap.d-1.0/sat.liq.d) + x*(dvp_vap-dvp_liq);
+      dvps := dvp_liq + dxps*(1.0/aux.sat.vap.d-1.0/aux.sat.liq.d) + x*(dvp_vap-dvp_liq);
       a := sqrt(-1.0/(state.d*state.d*dvps));
     end if;
-  end velocityOfSound;
+  end velocityOfSound_aux;
 
   redeclare function extends isobaricExpansionCoefficient
   "returns 1/v*(dv/dT)@p=const"
-  //input state
-  //output beta
+  algorithm
+    beta := isobaricExpansionCoefficient_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+  annotation (Inline=true);
+  end isobaricExpansionCoefficient;
 
-  protected
-    EoS.HelmholtzDerivs f;
-
+  function isobaricExpansionCoefficient_aux "returns 1/v*(dv/dT)@p=const (computed from the shared auxiliary properties, see isobaricExpansionCoefficient)"
+    input ThermodynamicState state;
+    input AuxiliaryProperties aux;
+    output IsobaricExpansionCoefficient beta;
   algorithm
     if state.phase==1 then
-      f:=EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
-      beta := 1.0/state.d*EoS.dpTd(f)/EoS.dpdT(f);
+      beta := 1.0/state.d*EoS.dpTd(aux.f)/EoS.dpdT(aux.f);
     elseif state.phase==2 then
       assert(false, "isobaricExpansionCoefficient warning: in the two-phase region beta is zero", level=AssertionLevel.warning);
       beta := Modelica.Constants.small;
     end if;
-  end isobaricExpansionCoefficient;
+  end isobaricExpansionCoefficient_aux;
 
   redeclare function extends isothermalCompressibility
   "returns -1/v*(dv/dp)@T=const"
-  //input state and
-  //output kappa are inherited from PartialMedium
+  algorithm
+    kappa := isothermalCompressibility_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+  annotation (Inline=true);
+  end isothermalCompressibility;
 
-  protected
-    EoS.HelmholtzDerivs f;
-
+  function isothermalCompressibility_aux "returns -1/v*(dv/dp)@T=const (computed from the shared auxiliary properties, see isothermalCompressibility)"
+    input ThermodynamicState state;
+    input AuxiliaryProperties aux;
+    output Modelica.Units.SI.IsothermalCompressibility kappa;
   algorithm
     if state.phase==1 then
-      f:=EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
-      kappa := 1.0/state.d/EoS.dpdT(f);
+      kappa := 1.0/state.d/EoS.dpdT(aux.f);
     elseif state.phase==2 then
       assert(false, "isothermalCompressibility warning: in the two-phase region kappa is infinite", level=AssertionLevel.warning);
       kappa := Modelica.Constants.inf;
     end if;
-  end isothermalCompressibility;
+  end isothermalCompressibility_aux;
 
   redeclare function extends isentropicExponent "returns -v/p*(dp/dv)@s=const"
   // also known as isentropic expansion coefficient
@@ -1815,17 +1818,19 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   redeclare function extends density_derp_h
   "returns density derivative (dd/dp)@h=const"
-  //input state
-  //output ddph
+  algorithm
+    ddph := density_derp_h_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+  annotation (Inline=true);
+  end density_derp_h;
 
+  function density_derp_h_aux "returns density derivative (dd/dp)@h=const (computed from the shared auxiliary properties, see density_derp_h)"
+    input ThermodynamicState state;
+    input AuxiliaryProperties aux;
+    output DerDensityByPressure ddph;
   protected
-    EoS.HelmholtzDerivs f;
 
-    SaturationProperties sat;
     MassFraction x "vapour quality";
     DerTemperatureByPressure dTp;
-    EoS.HelmholtzDerivs fl;
-    EoS.HelmholtzDerivs fv;
 
     DerEnthalpyByPressure dhp_liq;
     DerEnthalpyByPressure dhp_vap;
@@ -1838,49 +1843,45 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase, order=2);
-      ddph := 1.0/(EoS.dpdT(f) - EoS.dpTd(f)*EoS.dhdT(f)/EoS.dhTd(f));
+      ddph := 1.0/(EoS.dpdT(aux.f) - EoS.dpTd(aux.f)*EoS.dhdT(aux.f)/EoS.dhTd(aux.f));
     elseif state.phase==2 then
-      sat := setSat_T(T=state.T);
-      x := vapourQuality_sat(state=state, sat=sat);
-      dTp := saturationTemperature_derp_sat(sat=sat);
+      x := vapourQuality_sat(state=state, sat=aux.sat);
+      dTp := saturationTemperature_derp_sat(sat=aux.sat);
 
-      fl := EoS.setHelmholtzDerivs(T=state.T, d=sat.liq.d, phase=1, order=2);
-      fv := EoS.setHelmholtzDerivs(T=state.T, d=sat.vap.d, phase=1, order=2);
 
-      dhp_liq := EoS.dhdT(fl)/EoS.dpdT(fl) + (EoS.dhTd(fl)-EoS.dhdT(fl)*EoS.dpTd(fl)/EoS.dpdT(fl))*dTp;
-      dhp_vap := EoS.dhdT(fv)/EoS.dpdT(fv) + (EoS.dhTd(fv)-EoS.dhdT(fv)*EoS.dpTd(fv)/EoS.dpdT(fv))*dTp;
-      ddp_liq := 1.0/EoS.dpdT(fl) - EoS.dpTd(fl)/EoS.dpdT(fl)*dTp;
-      ddp_vap := 1.0/EoS.dpdT(fv) - EoS.dpTd(fv)/EoS.dpdT(fv)*dTp;
-      dvp_liq := -1.0/sat.liq.d^2 * ddp_liq;
-      dvp_vap := -1.0/sat.vap.d^2 * ddp_vap;
-      dxph :=(x*dhp_vap + (1 - x)*dhp_liq)/(sat.liq.h - sat.vap.h);
+      dhp_liq := EoS.dhdT(aux.fl)/EoS.dpdT(aux.fl) + (EoS.dhTd(aux.fl)-EoS.dhdT(aux.fl)*EoS.dpTd(aux.fl)/EoS.dpdT(aux.fl))*dTp;
+      dhp_vap := EoS.dhdT(aux.fv)/EoS.dpdT(aux.fv) + (EoS.dhTd(aux.fv)-EoS.dhdT(aux.fv)*EoS.dpTd(aux.fv)/EoS.dpdT(aux.fv))*dTp;
+      ddp_liq := 1.0/EoS.dpdT(aux.fl) - EoS.dpTd(aux.fl)/EoS.dpdT(aux.fl)*dTp;
+      ddp_vap := 1.0/EoS.dpdT(aux.fv) - EoS.dpTd(aux.fv)/EoS.dpdT(aux.fv)*dTp;
+      dvp_liq := -1.0/aux.sat.liq.d^2 * ddp_liq;
+      dvp_vap := -1.0/aux.sat.vap.d^2 * ddp_vap;
+      dxph :=(x*dhp_vap + (1 - x)*dhp_liq)/(aux.sat.liq.h - aux.sat.vap.h);
 
-      dvph := dvp_liq + dxph*(1.0/sat.vap.d-1.0/sat.liq.d) + x*(dvp_vap-dvp_liq);
+      dvph := dvp_liq + dxph*(1.0/aux.sat.vap.d-1.0/aux.sat.liq.d) + x*(dvp_vap-dvp_liq);
       ddph := -state.d*state.d*dvph;
     end if;
-  end density_derp_h;
+  end density_derp_h_aux;
 
   redeclare function extends density_derh_p
   "returns density derivative (dd/dh)@p=const"
-  //input state
-  //output ddhp
+  algorithm
+    ddhp := density_derh_p_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+  annotation (Inline=true);
+  end density_derh_p;
 
-  protected
-    EoS.HelmholtzDerivs f;
-    SaturationProperties sat;
-
+  function density_derh_p_aux "returns density derivative (dd/dh)@p=const (computed from the shared auxiliary properties, see density_derh_p)"
+    input ThermodynamicState state;
+    input AuxiliaryProperties aux;
+    output DerDensityByEnthalpy ddhp;
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase, order=2);
-      ddhp := 1.0/(EoS.dhdT(f) - EoS.dhTd(f)*EoS.dpdT(f)/EoS.dpTd(f));
+      ddhp := 1.0/(EoS.dhdT(aux.f) - EoS.dhTd(aux.f)*EoS.dpdT(aux.f)/EoS.dpTd(aux.f));
     elseif state.phase==2 then
-      sat:=setSat_T(T=state.T);
       // dvhp = (v"-v')/(h"-h')
       // ddhp = -d^2 * dvhp
-      ddhp := -state.d^2*(1/sat.liq.d-1/sat.vap.d)/(sat.liq.h-sat.vap.h);
+      ddhp := -state.d^2*(1/aux.sat.liq.d-1/aux.sat.vap.d)/(aux.sat.liq.h-aux.sat.vap.h);
     end if;
-  end density_derh_p;
+  end density_derh_p_aux;
 
   redeclare function temperature_ph "returns temperature for given p and h"
     extends Modelica.Icons.Function;
@@ -1915,35 +1916,41 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
   redeclare function extends density_derp_T
   "returns density derivative (dd/dp)@T=const"
-  //input state and output ddpT are inherited
+  algorithm
+    ddpT := density_derp_T_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+  annotation (Inline=true);
+  end density_derp_T;
 
-  protected
-    EoS.HelmholtzDerivs f;
-
+  function density_derp_T_aux "returns density derivative (dd/dp)@T=const (computed from the shared auxiliary properties, see density_derp_T)"
+    input ThermodynamicState state;
+    input AuxiliaryProperties aux;
+    output DerDensityByPressure ddpT;
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
-      ddpT := 1.0/EoS.dpdT(f);
+      ddpT := 1.0/EoS.dpdT(aux.f);
     elseif state.phase==2 then
       ddpT := Modelica.Constants.inf; // divide by zero
     end if;
-  end density_derp_T;
+  end density_derp_T_aux;
 
   redeclare function extends density_derT_p
   "returns density derivative (dd/dT)@p=const"
-  //input state and output ddTp are inherited
+  algorithm
+    ddTp := density_derT_p_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+  annotation (Inline=true);
+  end density_derT_p;
 
-  protected
-    EoS.HelmholtzDerivs f;
-
+  function density_derT_p_aux "returns density derivative (dd/dT)@p=const (computed from the shared auxiliary properties, see density_derT_p)"
+    input ThermodynamicState state;
+    input AuxiliaryProperties aux;
+    output DerDensityByTemperature ddTp;
   algorithm
     if state.phase==1 then
-      f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
-      ddTp := -EoS.dpTd(f)/EoS.dpdT(f);
+      ddTp := -EoS.dpTd(aux.f)/EoS.dpdT(aux.f);
     elseif state.phase==2 then
       ddTp := Modelica.Constants.inf; // divide by zero
     end if;
-  end density_derT_p;
+  end density_derT_p_aux;
 
   redeclare function specificEnthalpy_pT
   "returns specific enthalpy for given p and T"

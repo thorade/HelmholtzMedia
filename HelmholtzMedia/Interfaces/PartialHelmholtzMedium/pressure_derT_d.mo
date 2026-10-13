@@ -2,19 +2,7 @@ within HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
 function pressure_derT_d "returns pressure derivative (dp/dT)@d=const"
   input ThermodynamicState state;
   output DerPressureByTemperature dpTd;
-
-protected
-  EoS.HelmholtzDerivs f;
-  SaturationProperties sat;
-
 algorithm
-  if state.phase==1 then
-    f := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=state.phase, order=2);
-    dpTd := EoS.dpTd(f);
-  elseif state.phase==2 then
-    sat := setSat_T(T=state.T);
-    dpTd := (sat.vap.s-sat.liq.s)/(1.0/sat.vap.d-1.0/sat.liq.d);
-  else
-    assert(false, "pressure_derT_d error: phase is neither 1 nor 2");
-  end if;
+  dpTd := pressure_derT_d_aux(state=state, aux=setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+annotation (Inline=true);
 end pressure_derT_d;
