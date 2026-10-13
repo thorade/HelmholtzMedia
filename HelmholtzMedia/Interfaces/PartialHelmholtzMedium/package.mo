@@ -18,15 +18,15 @@ partial package PartialHelmholtzMedium
 
   constant HelmholtzMedia.Interfaces.Types.EoSLimits fluidLimits;
 
-  constant EoS.HelmholtzCoefficients helmholtzCoefficients;
+  constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients helmholtzCoefficients;
 
-  constant Transport.ThermalConductivityCoefficients thermalConductivityCoefficients;
+  constant HelmholtzMedia.Interfaces.Types.ThermalConductivityCoefficients thermalConductivityCoefficients;
 
-  constant Transport.DynamicViscosityCoefficients dynamicViscosityCoefficients;
+  constant HelmholtzMedia.Interfaces.Types.DynamicViscosityCoefficients dynamicViscosityCoefficients;
 
-  constant Transport.SurfaceTensionCoefficients surfaceTensionCoefficients;
+  constant HelmholtzMedia.Interfaces.Types.SurfaceTensionCoefficients surfaceTensionCoefficients;
 
-  constant Ancillary.AncillaryCoefficients ancillaryCoefficients;
+  constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients ancillaryCoefficients;
 
   // constant IndependentVariables independentVariables=IndependentVariables.dTX;
   constant InputChoice inputChoice=InputChoice.ph
@@ -84,21 +84,21 @@ partial package PartialHelmholtzMedium
     // is given instead of the input variable (e.g. p and T fixed at a boundary with input choice ph).
     // The state must not be a separate variable: index reduction would then require its derivative.
     if (componentInputChoice == InputChoice.ph) then
-      d = Auxiliary.density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h));
+      d = Internal.density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h));
       T = temperature_ph(p=p, h=h);
-      s = Auxiliary.specificEntropy_ph_state(p=p, h=h, state=setState_ph(p=p, h=h));
+      s = Internal.specificEntropy_ph_state(p=p, h=h, state=setState_ph(p=p, h=h));
     elseif (componentInputChoice == InputChoice.ps) then
-      d = Auxiliary.density_ps_state(p=p, s=s, state=setState_ps(p=p, s=s));
+      d = Internal.density_ps_state(p=p, s=s, state=setState_ps(p=p, s=s));
       T = temperature_ps(p=p, s=s);
-      h = Auxiliary.specificEnthalpy_ps_state(p=p, s=s, state=setState_ps(p=p, s=s));
+      h = Internal.specificEnthalpy_ps_state(p=p, s=s, state=setState_ps(p=p, s=s));
     elseif (componentInputChoice == InputChoice.pT) then
-      d = Auxiliary.density_pT_state(p=p, T=T, state=setState_pT(p=p, T=T));
+      d = Internal.density_pT_state(p=p, T=T, state=setState_pT(p=p, T=T));
       h = specificEnthalpy_pT(p=p, T=T);
-      s = Auxiliary.specificEntropy_pT_state(p=p, T=T, state=setState_pT(p=p, T=T));
+      s = Internal.specificEntropy_pT_state(p=p, T=T, state=setState_pT(p=p, T=T));
     elseif (componentInputChoice == InputChoice.dT) then
       p = pressure_dT(d=d, T=T);
-      h = Auxiliary.specificEnthalpy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T));
-      s = Auxiliary.specificEntropy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T));
+      h = Internal.specificEnthalpy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T));
+      s = Internal.specificEntropy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T));
     else
       assert(false, "Invalid choice for basePropertiesInput");
     end if;
@@ -157,8 +157,8 @@ partial package PartialHelmholtzMedium
     sat.Tsat := T;
 
   if ((T>=T_trip) and (T<T_crit*(1-1e-7))) then
-    (delta_liq, delta_vap) := setSat_T_start(T=T);
-    (converged, delta_liq, delta_vap, RES) := setSat_T_Newton(T=T, delta_liq_start=delta_liq, delta_vap_start=delta_vap);
+    (delta_liq, delta_vap) := Internal.Ancillary.setSat_T_start(T=T);
+    (converged, delta_liq, delta_vap, RES) := Internal.setSat_T_Newton(T=T, delta_liq_start=delta_liq, delta_vap_start=delta_vap);
 
     x := 1 - T/T_crit;
     if not converged and (x<x_continuation) then
@@ -170,7 +170,7 @@ partial package PartialHelmholtzMedium
       while converged and (n_steps==0 or x_1>x) loop
         T_k := if (x_k<=x) then T else T_crit*(1-x_k);
         if (n_steps==0) then
-          (delta_liq, delta_vap) := setSat_T_start(T=T_k);
+          (delta_liq, delta_vap) := Internal.Ancillary.setSat_T_start(T=T_k);
         else
           if (n_steps>=2) then
             beta_liq := min(max(log((delta_liq_0-delta_crit)/(delta_liq_1-delta_crit))/log(x_0/x_1), 0.25), 0.55);
@@ -182,7 +182,7 @@ partial package PartialHelmholtzMedium
           delta_liq := delta_crit + (delta_liq_1-delta_crit)*(x_k/x_1)^beta_liq;
           delta_vap := delta_crit - (delta_crit-delta_vap_1)*(x_k/x_1)^beta_vap;
         end if;
-        (converged, delta_liq, delta_vap, RES) := setSat_T_Newton(T=T_k, delta_liq_start=delta_liq, delta_vap_start=delta_vap);
+        (converged, delta_liq, delta_vap, RES) := Internal.setSat_T_Newton(T=T_k, delta_liq_start=delta_liq, delta_vap_start=delta_vap);
         n_steps := n_steps+1;
         x_0 := x_1; delta_liq_0 := delta_liq_1; delta_vap_0 := delta_vap_1;
         x_1 := max(x_k, x); delta_liq_1 := delta_liq; delta_vap_1 := delta_vap;
@@ -215,8 +215,8 @@ partial package PartialHelmholtzMedium
     // anyway, during initialization (at time=0) T=0 may happen
     // density values are extrapolated linearly, fantasy values are returned
     sat.Tsat := max(T, Modelica.Constants.small);
-    delta_liq := (T_trip/sat.Tsat)*Ancillary.bubbleDensity_T(T=T_trip)/d_reducing;
-    delta_vap := (sat.Tsat/T_trip)*Ancillary.dewDensity_T(T=T_trip)/d_reducing;
+    delta_liq := (T_trip/sat.Tsat)*Internal.Ancillary.bubbleDensity_T(T=T_trip)/d_reducing;
+    delta_vap := (sat.Tsat/T_trip)*Internal.Ancillary.dewDensity_T(T=T_trip)/d_reducing;
 
     sat.liq := setState_dTX(d=delta_liq*d_reducing, T=T, phase=1);
     sat.vap := setState_dTX(d=delta_vap*d_reducing, T=T, phase=1);
@@ -255,11 +255,11 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
-    constant Density dv_trip = Ancillary.dewDensity_T(T_trip);
-    constant Density dl_trip = Ancillary.bubbleDensity_T(T_trip);
+    constant Density dv_trip = Internal.Ancillary.dewDensity_T(T_trip);
+    constant Density dl_trip = Internal.Ancillary.bubbleDensity_T(T_trip);
 
-    EoS.HelmholtzDerivs fl;
-    EoS.HelmholtzDerivs fv;
+    Internal.EoS.HelmholtzDerivs fl;
+    Internal.EoS.HelmholtzDerivs fv;
 
     Real RES[3] "residual function vector";
     Real Jacobian[3,3] "Jacobian matrix";
@@ -287,28 +287,28 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     if (p>0.9*p_crit) then
       // close to the critical point, evaluate the ancillary equations in reduced variables, so that their critical point
       // coincides with the critical point of the EoS (they may be fitted to slightly different critical values)
-      T_anc := Ancillary.saturationTemperature_p(p=p*ancillaryCoefficients.p_crit/p_crit);
+      T_anc := Internal.Ancillary.saturationTemperature_p(p=p*ancillaryCoefficients.p_crit/p_crit);
       sat.Tsat := T_anc*T_crit/ancillaryCoefficients.T_crit;
-      sat.liq.d := 1.02*Ancillary.bubbleDensity_T(T=T_anc)*d_crit/ancillaryCoefficients.d_crit;
-      sat.vap.d := 0.98*Ancillary.dewDensity_T(T=T_anc)*d_crit/ancillaryCoefficients.d_crit;
+      sat.liq.d := 1.02*Internal.Ancillary.bubbleDensity_T(T=T_anc)*d_crit/ancillaryCoefficients.d_crit;
+      sat.vap.d := 0.98*Internal.Ancillary.dewDensity_T(T=T_anc)*d_crit/ancillaryCoefficients.d_crit;
     else
-      sat.Tsat := Ancillary.saturationTemperature_p(p=p);
-      sat.liq.d := 1.02*Ancillary.bubbleDensity_T(T=sat.Tsat);
-      sat.vap.d := 0.98*Ancillary.dewDensity_T(T=sat.Tsat);
+      sat.Tsat := Internal.Ancillary.saturationTemperature_p(p=p);
+      sat.liq.d := 1.02*Internal.Ancillary.bubbleDensity_T(T=sat.Tsat);
+      sat.vap.d := 0.98*Internal.Ancillary.dewDensity_T(T=sat.Tsat);
     end if;
 
     // calculate residuals: RES=calc-input
-    fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
-    fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
-    RES := {EoS.p(fl)-p, EoS.p(fv)-p, EoS.g(fl)-EoS.g(fv)};
+    fl := Internal.EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
+    fv := Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
+    RES := {Internal.EoS.p(fl)-p, Internal.EoS.p(fv)-p, Internal.EoS.g(fl)-Internal.EoS.g(fv)};
 
     while (iter<iter_max) and not converged and not trivial loop
       iter := iter+1;
 
       // calculate Jacobian matrix and Newton Step vector
-      Jacobian := [+EoS.dpdT(fl), +0,            +EoS.dpTd(fl);
-                   +0,            +EoS.dpdT(fv), +EoS.dpTd(fv);
-                   +EoS.dgdT(fl), -EoS.dgdT(fv), EoS.dgTd(fl)-EoS.dgTd(fv)];
+      Jacobian := [+Internal.EoS.dpdT(fl), +0,            +Internal.EoS.dpTd(fl);
+                   +0,            +Internal.EoS.dpdT(fv), +Internal.EoS.dpTd(fv);
+                   +Internal.EoS.dgdT(fl), -Internal.EoS.dgdT(fv), Internal.EoS.dgTd(fl)-Internal.EoS.dgTd(fv)];
       NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
 
       // calculate better sat.liq.d, sat.vap.d and sat.Tsat
@@ -325,15 +325,15 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       sat.Tsat  := min(sat.Tsat,  1.02*T_crit);
 
       // calculate new residuals: RES=calc-input
-      fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
-      fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
-      RES := {EoS.p(fl)-p, EoS.p(fv)-p, EoS.g(fl)-EoS.g(fv)};
+      fl := Internal.EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
+      fv := Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
+      RES := {Internal.EoS.p(fl)-p, Internal.EoS.p(fv)-p, Internal.EoS.g(fl)-Internal.EoS.g(fv)};
 
       // convergence test
       // residuals only: near the critical point the Jacobian is almost singular, so the Newton step is not a reliable measure;
       // for the (almost incompressible) liquid at low p, abs(RES[1]/p)<=tol_rel is not reachable, so the liquid
       // pressure residual may alternatively be measured as density error; the Gibbs residual is scaled by R_s*T
-      converged := (abs(RES[1]/p)<=tol_rel or abs(RES[1]/EoS.dpdT(fl))<=tol_rel*sat.liq.d)
+      converged := (abs(RES[1]/p)<=tol_rel or abs(RES[1]/Internal.EoS.dpdT(fl))<=tol_rel*sat.liq.d)
                and abs(RES[2]/p)<=tol_rel
                and abs(RES[3])<=tol_rel*R_s*sat.Tsat;
       // close to the critical point, the residuals also vanish for the trivial solution d_liq=d_vap (at T>=T_crit),
@@ -346,7 +346,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       // fallback, mainly close to the critical point: solve psat(T)=p by Newton's method in T, using the robust setSat_T;
       // the slope of the vapour pressure curve is given by Clausius-Clapeyron (on the critical isochore by dp/dT@d)
       fallback := true;
-      T_iter := Ancillary.saturationTemperature_p(p=p*ancillaryCoefficients.p_crit/p_crit)*T_crit/ancillaryCoefficients.T_crit;
+      T_iter := Internal.Ancillary.saturationTemperature_p(p=p*ancillaryCoefficients.p_crit/p_crit)*T_crit/ancillaryCoefficients.T_crit;
       iter := 0;
       while (iter<iter_max) and not converged loop
         iter := iter+1;
@@ -446,7 +446,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
 
-    EoS.HelmholtzDerivs f;
+    Internal.EoS.HelmholtzDerivs f;
     SaturationProperties sat;
     MassFraction x "vapour quality";
 
@@ -458,7 +458,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       if ((T>=T_trip) and (T<T_crit)) then
         // two-phase possible, do simple density check
         // Modelica.Utilities.Streams.print("setState_dT: dliq=" + String(bubbleDensity_T_ANC(T=T)) + " dvap=" + String(dewDensity_T_ANC(T=T)) + ", simple check only");
-        if ((d > 1.05*Ancillary.bubbleDensity_T(T=T)) or (d < 0.98*Ancillary.dewDensity_T(T=T))) then
+        if ((d > 1.05*Internal.Ancillary.bubbleDensity_T(T=T)) or (d < 0.98*Internal.Ancillary.dewDensity_T(T=T))) then
           state.phase := 1;
         else
           // Modelica.Utilities.Streams.print("setState_dT: d=" + String(d) + " T=" + String(T) + ", two-phase state or close to it");
@@ -492,11 +492,11 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       state.s := sat.liq.s + x*(sat.vap.s - sat.liq.s);
     else
       // force single-phase
-      f := EoS.setHelmholtzDerivs(d=d,T=T, order=1);
-      state.p := EoS.p(f=f);
-      state.s := EoS.s(f=f);
-      state.h := EoS.h(f=f);
-      state.u := EoS.u(f=f);
+      f := Internal.EoS.setHelmholtzDerivs(d=d,T=T, order=1);
+      state.p := Internal.EoS.p(f=f);
+      state.s := Internal.EoS.s(f=f);
+      state.h := Internal.EoS.h(f=f);
+      state.u := Internal.EoS.u(f=f);
     end if;
 
   end setState_dTX;
@@ -554,7 +554,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     // constant Real Z_crit=1/(d_crit*R*T_crit/p_crit);
 
-    EoS.HelmholtzDerivs f(T=T,tau=T_reducing/T);
+    Internal.EoS.HelmholtzDerivs f(T=T,tau=T_reducing/T);
     SaturationProperties sat;
 
     Density d_min;
@@ -579,11 +579,11 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
 
     if (T < T_crit) then
       // determine p_sat
-      sat.psat := Ancillary.saturationPressure_T(T=T);
+      sat.psat := Internal.Ancillary.saturationPressure_T(T=T);
       if (p > 1.02*sat.psat) then
-        sat.liq.d := Ancillary.bubbleDensity_T(T=T);
+        sat.liq.d := Internal.Ancillary.bubbleDensity_T(T=T);
       elseif (p < 0.98*sat.psat) then
-        sat.vap.d := Ancillary.dewDensity_T(T=T);
+        sat.vap.d := Internal.Ancillary.dewDensity_T(T=T);
       else
         // Modelica.Utilities.Streams.print("close to saturation boundary, get saturation properties from EoS", "printlog.txt");
         sat := setSat_T(T=T);
@@ -596,14 +596,14 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         d_min  := 0.98*sat.liq.d;
         d_max  := 1.10*fluidLimits.DMAX;
         d_iter := 1.10*sat.liq.d;
-        // d_iter := Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
+        // d_iter := Internal.Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
         // d_iter := 1/(R*T_crit/p_crit*Z_crit^(1+min(0,1-T/T_crit)^(2/7))) "Rackett";
       elseif (p < sat.psat) then
         // Modelica.Utilities.Streams.print("single-phase vapor region", "printlog.txt");
         d_min  := fluidLimits.DMIN;
         d_max  := 1.02*sat.vap.d;
         // d_iter := p/(R*T);
-        d_iter := Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
+        d_iter := Internal.Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
       else
         // Modelica.Utilities.Streams.print("two-phase region", "printlog.txt");
         assert(false, "setState_pTX_error: pressure equals saturation pressure");
@@ -613,7 +613,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       d_min  := fluidLimits.DMIN;
       d_max  := 1.1*fluidLimits.DMAX;
       // d_iter := p/(R*T);
-      d_iter := Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
+      d_iter := Internal.Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
     end if;
 
     // Modelica.Utilities.Streams.print("phase and region determined, d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
@@ -629,15 +629,15 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       // avoids evaluating the EoS at d=fluidLimits.DMIN (Modelica.Constants.small), which returns NaN
       RES_min := -p;
     else
-      f := EoS.setHelmholtzDerivs(d=d_min, T=T, order=1, includeIdeal=false);
-      RES_min := EoS.p(f) - p;
+      f := Internal.EoS.setHelmholtzDerivs(d=d_min, T=T, order=1, includeIdeal=false);
+      RES_min := Internal.EoS.p(f) - p;
     end if;
     // max
-    f := EoS.setHelmholtzDerivs(d=d_max, T=T, order=1, includeIdeal=false);
-    RES_max := EoS.p(f) - p;
+    f := Internal.EoS.setHelmholtzDerivs(d=d_max, T=T, order=1, includeIdeal=false);
+    RES_max := Internal.EoS.p(f) - p;
     // iter
-    f := EoS.setHelmholtzDerivs(d=d_iter, T=T, order=2, includeIdeal=false);
-    RES_p := EoS.p(f) - p;
+    f := Internal.EoS.setHelmholtzDerivs(d=d_iter, T=T, order=2, includeIdeal=false);
+    RES_p := Internal.EoS.p(f) - p;
 
     assert((RES_min*RES_max<0), "setState_pTX: d_min and d_max did not bracket the root", level=AssertionLevel.warning);
     // thighten the bounds
@@ -656,7 +656,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       // gamma := iter/(iter+1);
 
       // calculate gradient with respect to density (f contains the second derivatives of the residual part)
-      dpdT := EoS.dpdT(f);
+      dpdT := Internal.EoS.dpdT(f);
 
       // print for Newton debugging
       // Modelica.Utilities.Streams.print("Iteration step " +String(iter) + ", current d_iter=" + String(d_iter), "printlog.txt");
@@ -672,8 +672,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       end if;
 
       // set necessary parts of f, then calculate new RES_p
-      f := EoS.setHelmholtzDerivs(d=d_iter, T=T, order=2, includeIdeal=false);
-      RES_p := EoS.p(f) - p;
+      f := Internal.EoS.setHelmholtzDerivs(d=d_iter, T=T, order=2, includeIdeal=false);
+      RES_p := Internal.EoS.p(f) - p;
 
       // thighten the bounds
       // opposite sign brackets the root
@@ -697,10 +697,10 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     state.p := p;
     state.T := T;
     state.d := d_iter;
-    f := EoS.setHelmholtzDerivs(d=state.d, T=state.T, order=1);
-    state.s := EoS.s(f=f);
-    state.h := EoS.h(f=f);
-    state.u := EoS.u(f=f);
+    f := Internal.EoS.setHelmholtzDerivs(d=state.d, T=state.T, order=1);
+    state.s := Internal.EoS.s(f=f);
+    state.h := Internal.EoS.h(f=f);
+    state.u := Internal.EoS.u(f=f);
   end setState_pTX;
 
   redeclare function extends setState_phX
@@ -719,7 +719,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     constant SpecificEnthalpy h_crit=fluidConstants[1].HCRIT0;
 
-    EoS.HelmholtzDerivs f;
+    Internal.EoS.HelmholtzDerivs f;
     SaturationProperties sat;
     MassFraction x "vapour quality";
 
@@ -780,15 +780,15 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           sat := setSat_p(p=p);
         else
           // do a simple check first, quite often this is sufficient
-          sat.Tsat := Ancillary.saturationTemperature_p(p=p);
+          sat.Tsat := Internal.Ancillary.saturationTemperature_p(p=p);
 
-          sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
-          f := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=1);
-          sat.liq.h := EoS.h(f);
+          sat.liq.d := Internal.Ancillary.bubbleDensity_T(T=sat.Tsat);
+          f := Internal.EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=1);
+          sat.liq.h := Internal.EoS.h(f);
 
-          sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
-          f := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=1);
-          sat.vap.h := EoS.h(f);
+          sat.vap.d := Internal.Ancillary.dewDensity_T(T=sat.Tsat);
+          f := Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=1);
+          sat.vap.h := Internal.EoS.h(f);
 
           if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02*sat.vap.h))) then
             // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
@@ -834,7 +834,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           d_max := fluidLimits.DMAX*1.1;
 
           T_min := fluidLimits.TMIN;
-          T_max := 1.25*Ancillary.saturationTemperature_h_liq(h=h);
+          T_max := 1.25*Internal.Ancillary.saturationTemperature_h_liq(h=h);
           T_iter:= (1*T_min + 5*T_max/1.25)/6;
         else
           // Modelica.Utilities.Streams.print("h>h_crit, single-phase super-critical vapour-like region", "printlog.txt");
@@ -871,8 +871,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         // which exists slightly above p_crit; restart on the liquid branch (close to the saturated liquid with the same h)
         // or on the vapour-like side, respectively
         if (h<=h_crit) then
-          T_iter := min(Ancillary.saturationTemperature_h_liq(h=h), T_crit);
-          d_iter := min(max(1.05*Ancillary.bubbleDensity_T(T=T_iter), 1.1*d_crit), d_max);
+          T_iter := min(Internal.Ancillary.saturationTemperature_h_liq(h=h), T_crit);
+          d_iter := min(max(1.05*Internal.Ancillary.bubbleDensity_T(T=T_iter), 1.1*d_crit), d_max);
         else
           T_iter := 1.05*T_crit;
           d_iter := 0.5*d_crit;
@@ -882,16 +882,16 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         converged := false;
         lambda := 1;
       end if;
-      f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
-      RES := {(EoS.p(f)-p)/p, (EoS.h(f)-h)/h_scale};
+      f := Internal.EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
+      RES := {(Internal.EoS.p(f)-p)/p, (Internal.EoS.h(f)-h)/h_scale};
       RSS := RES*RES/2;
 
       while (iter<iter_max) and not converged loop
         iter := iter+1;
 
         // calculate Jacobian matrix, Newton Step vector, gradient and slope
-        Jacobian := [EoS.dpdT(f)/p, EoS.dpTd(f)/p;
-                     EoS.dhdT(f)/h_scale, EoS.dhTd(f)/h_scale];
+        Jacobian := [Internal.EoS.dpdT(f)/p, Internal.EoS.dpTd(f)/p;
+                     Internal.EoS.dhdT(f)/h_scale, Internal.EoS.dhTd(f)/h_scale];
         NS := -Modelica.Math.Matrices.solve(Jacobian,RES) "-J^(-1)*F";
         grad := RES*Jacobian "F*J";
         slope := -RES*RES "= grad*NS for the Newton direction, computed exactly to avoid a wrong sign from roundoff";
@@ -913,8 +913,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         T_iter := min(T_iter, T_max);
 
         // calculate new residual vector and residual sum of squares
-        f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
-        RES := {(EoS.p(f)-p)/p, (EoS.h(f)-h)/h_scale};
+        f := Internal.EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
+        RES := {(Internal.EoS.p(f)-p)/p, (Internal.EoS.h(f)-h)/h_scale};
         RSS := RES*RES/2;
         // Modelica.Utilities.Streams.print("iter=" + String(iter) + " d_iter=" + String(d_iter) + " T_iter=" + String(T_iter) + " RES_p=" + String(RES[1]) + " RES_h=" + String(RES[2]) + " RSS=" + String(RSS), "printlog.txt");
 
@@ -970,8 +970,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           T_iter := min(T_iter, T_max);
 
           // calculate new residual vector and residual sum of squares
-          f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
-          RES := {(EoS.p(f)-p)/p, (EoS.h(f)-h)/h_scale};
+          f := Internal.EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
+          RES := {(Internal.EoS.p(f)-p)/p, (Internal.EoS.h(f)-h)/h_scale};
           RSS := RES*RES/2;
           // Modelica.Utilities.Streams.print("    linesearch attempt " + String(iterLineSearch) + ": lambda= " + String(lambda) + " d_iter=" + String(d_iter) + " T_iter= " + String(T_iter) + " RSS= " + String(RSS), "printlog.txt");
 
@@ -989,7 +989,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       // accepted is a converged, mechanically stable root; for p>=p_crit and T<T_crit it must also be compressed liquid,
       // i.e. denser than the saturated liquid (0.98 allows for the ancillary equation); otherwise Newton found the
       // metastable (supersaturated) vapour root of the van der Waals loop, which can be denser than d_crit
-      stable := converged and (EoS.dpdT(f)>0) and ((p<p_crit) or (T_iter>=T_crit) or (d_iter>=0.98*Ancillary.bubbleDensity_T(T=T_iter)));
+      stable := converged and (Internal.EoS.dpdT(f)>0) and ((p<p_crit) or (T_iter>=T_crit) or (d_iter>=0.98*Internal.Ancillary.bubbleDensity_T(T=T_iter)));
       end while;
       // Modelica.Utilities.Streams.print("setState_ph total iteration steps " + String(iter), "printlog.txt");
       assert(converged, "setState_phX did not converge, input was p=" + String(p) + " and h=" + String(h));
@@ -998,8 +998,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       state.h := h;
       state.d := d_iter;
       state.T := T_iter;
-      state.u := EoS.u(f);
-      state.s := EoS.s(f);
+      state.u := Internal.EoS.u(f);
+      state.s := Internal.EoS.s(f);
     end if;
 
   end setState_phX;
@@ -1020,7 +1020,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     constant SpecificEntropy s_crit=fluidConstants[1].SCRIT0;
 
-    EoS.HelmholtzDerivs f;
+    Internal.EoS.HelmholtzDerivs f;
     SaturationProperties sat;
     MassFraction x "vapour quality";
 
@@ -1041,7 +1041,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Real grad[2] "gradient vector";
     Real slope;
 
-    EoS.HelmholtzDerivs f_med;
+    Internal.EoS.HelmholtzDerivs f_med;
     Real[2] RES_med "residual function vector";
     Real[2] xy;
     Real[2] xy_old;
@@ -1090,15 +1090,15 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           sat := setSat_p(p=p);
         else
           // do a simple check first, quite often this is sufficient
-          sat.Tsat := Ancillary.saturationTemperature_p(p=p);
+          sat.Tsat := Internal.Ancillary.saturationTemperature_p(p=p);
 
-          sat.liq.d := Ancillary.bubbleDensity_T(T=sat.Tsat);
-          f := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=1);
-          sat.liq.s := EoS.s(f);
+          sat.liq.d := Internal.Ancillary.bubbleDensity_T(T=sat.Tsat);
+          f := Internal.EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=1);
+          sat.liq.s := Internal.EoS.s(f);
 
-          sat.vap.d := Ancillary.dewDensity_T(T=sat.Tsat);
-          f := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=1);
-          sat.vap.s := EoS.s(f);
+          sat.vap.d := Internal.Ancillary.dewDensity_T(T=sat.Tsat);
+          f := Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=1);
+          sat.vap.s := Internal.EoS.s(f);
 
           if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
             // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
@@ -1141,7 +1141,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           // Modelica.Utilities.Streams.print("s<=s_crit, single-phase super-critical liquid-like region", "printlog.txt");
           state_ref := setState_pT(p=p, T=T_crit);
           if (s<state_ref.s) then
-            T_min := max(fluidLimits.TMIN*0.99, Ancillary.saturationTemperature_s_liq(s=s)*0.95);
+            T_min := max(fluidLimits.TMIN*0.99, Internal.Ancillary.saturationTemperature_s_liq(s=s)*0.95);
             T_max := T_crit;
             T_iter := 0.95*T_crit;
           elseif (s>state_ref.s) then
@@ -1215,8 +1215,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         // which exists slightly above p_crit; restart on the liquid branch (close to the saturated liquid with the same s)
         // or on the vapour-like side, respectively
         if (s<=s_crit) then
-          T_iter := min(Ancillary.saturationTemperature_s_liq(s=s), T_crit);
-          d_iter := min(max(1.05*Ancillary.bubbleDensity_T(T=T_iter), 1.1*d_crit), d_max);
+          T_iter := min(Internal.Ancillary.saturationTemperature_s_liq(s=s), T_crit);
+          d_iter := min(max(1.05*Internal.Ancillary.bubbleDensity_T(T=T_iter), 1.1*d_crit), d_max);
         else
           T_iter := 1.05*T_crit;
           d_iter := 0.5*d_crit;
@@ -1226,16 +1226,16 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         converged := false;
         lambda := 1;
       end if;
-      f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
-      RES := {(EoS.p(f)-p)/p, (EoS.s(f)-s)/s_scale};
+      f := Internal.EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
+      RES := {(Internal.EoS.p(f)-p)/p, (Internal.EoS.s(f)-s)/s_scale};
       RSS := RES*RES/2;
 
       while (iter<iter_max) and not converged loop
         iter := iter+1;
 
         // calculate Jacobian matrix, Newton Step vector, gradient and slope
-        Jacobian := [EoS.dpdT(f)/p, EoS.dpTd(f)/p;
-                     EoS.dsdT(f)/s_scale, EoS.dsTd(f)/s_scale];
+        Jacobian := [Internal.EoS.dpdT(f)/p, Internal.EoS.dpTd(f)/p;
+                     Internal.EoS.dsdT(f)/s_scale, Internal.EoS.dsTd(f)/s_scale];
         NS := -Modelica.Math.Matrices.solve(Jacobian,RES) "-J^(-1)*F";
         grad := RES*Jacobian "F*J";
         slope := -RES*RES "= grad*NS for the Newton direction, computed exactly to avoid a wrong sign from roundoff";
@@ -1257,10 +1257,10 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       xy_med[1] := min(d_iter, d_max);
       xy_med[2] := max(T_iter, T_min);
       xy_med[2] := min(T_iter, T_max);
-      f_med := EoS.setHelmholtzDerivs(d=xy_med[1], T=xy_med[2], phase=1, order=2);
-      RES_med := {EoS.p(f_med)-p, EoS.s(f_med)-s};
-      Jacobian_med := [EoS.dpdT(f_med), EoS.dpTd(f_med);
-                       EoS.dsdT(f_med), EoS.dsTd(f_med)];
+      f_med := Internal.EoS.setHelmholtzDerivs(d=xy_med[1], T=xy_med[2], phase=1, order=2);
+      RES_med := {Internal.EoS.p(f_med)-p, Internal.EoS.s(f_med)-s};
+      Jacobian_med := [Internal.EoS.dpdT(f_med), Internal.EoS.dpTd(f_med);
+                       Internal.EoS.dsdT(f_med), Internal.EoS.dsTd(f_med)];
       xy := xy_med - Modelica.Math.Matrices.inv(Jacobian)*RES_med;
       d_iter:=xy[1];
       T_iter:=xy[2]; */
@@ -1292,8 +1292,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       end if;*/
 
         // calculate new residual vector and residual sum of squares
-        f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
-        RES := {(EoS.p(f)-p)/p, (EoS.s(f)-s)/s_scale};
+        f := Internal.EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
+        RES := {(Internal.EoS.p(f)-p)/p, (Internal.EoS.s(f)-s)/s_scale};
         RSS := RES*RES/2;
         // Modelica.Utilities.Streams.print("iter=" + String(iter) + " d_iter=" + String(d_iter) + " T_iter=" + String(T_iter) + " RES_p=" + String(RES[1]) + " RES_s=" + String(RES[2]) + " RSS=" + String(RSS), "printlog.txt");
 
@@ -1350,8 +1350,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           T_iter := min(T_iter, T_max);
 
           // calculate new residual vector and residual sum of squares
-          f := EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
-          RES := {(EoS.p(f)-p)/p, (EoS.s(f)-s)/s_scale};
+          f := Internal.EoS.setHelmholtzDerivs(d=d_iter, T=T_iter, phase=1, order=2);
+          RES := {(Internal.EoS.p(f)-p)/p, (Internal.EoS.s(f)-s)/s_scale};
           RSS := RES*RES/2;
           // Modelica.Utilities.Streams.print("    linesearch attempt " + String(iterLineSearch) + ": lambda= " + String(lambda) + " d_iter=" + String(d_iter) + " T_iter= " + String(T_iter) + " RSS= " + String(RSS), "printlog.txt");
 
@@ -1369,7 +1369,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       // accepted is a converged, mechanically stable root; for p>=p_crit and T<T_crit it must also be compressed liquid,
       // i.e. denser than the saturated liquid (0.98 allows for the ancillary equation); otherwise Newton found the
       // metastable (supersaturated) vapour root of the van der Waals loop, which can be denser than d_crit
-      stable := converged and (EoS.dpdT(f)>0) and ((p<p_crit) or (T_iter>=T_crit) or (d_iter>=0.98*Ancillary.bubbleDensity_T(T=T_iter)));
+      stable := converged and (Internal.EoS.dpdT(f)>0) and ((p<p_crit) or (T_iter>=T_crit) or (d_iter>=0.98*Internal.Ancillary.bubbleDensity_T(T=T_iter)));
       end while;
       // Modelica.Utilities.Streams.print("setState_ps total iteration steps " + String(iter), "printlog.txt");
       assert(converged, "setState_psX did not converge, input was p=" + String(p) + " and s=" + String(s) + ", remaining residual is RES_p=" +String(RES[1]) + " and RES_s=" + String(RES[2]));
@@ -1378,8 +1378,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       state.s := s;
       state.d := d_iter;
       state.T := T_iter;
-      state.u := EoS.u(f);
-      state.h := EoS.h(f);
+      state.u := Internal.EoS.u(f);
+      state.h := Internal.EoS.h(f);
     end if;
 
   end setState_psX;
@@ -1451,35 +1451,35 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   redeclare function extends specificHeatCapacityCp
   "returns the isobaric specific heat capcacity"
   algorithm
-    cp := Auxiliary.specificHeatCapacityCp_aux(state=state, aux=Auxiliary.setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+    cp := Internal.specificHeatCapacityCp_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end specificHeatCapacityCp;
 
   redeclare function extends specificHeatCapacityCv
   "returns the isochoric specific heat capcacity"
   algorithm
-    cv := Auxiliary.specificHeatCapacityCv_aux(state=state, aux=Auxiliary.setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+    cv := Internal.specificHeatCapacityCv_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end specificHeatCapacityCv;
 
   redeclare function extends velocityOfSound
   "returns the speed or velocity of sound"
   algorithm
-    a := Auxiliary.velocityOfSound_aux(state=state, aux=Auxiliary.setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+    a := Internal.velocityOfSound_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end velocityOfSound;
 
   redeclare function extends isobaricExpansionCoefficient
   "returns 1/v*(dv/dT)@p=const"
   algorithm
-    beta := Auxiliary.isobaricExpansionCoefficient_aux(state=state, aux=Auxiliary.setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+    beta := Internal.isobaricExpansionCoefficient_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end isobaricExpansionCoefficient;
 
   redeclare function extends isothermalCompressibility
   "returns -1/v*(dv/dp)@T=const"
   algorithm
-    kappa := Auxiliary.isothermalCompressibility_aux(state=state, aux=Auxiliary.setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+    kappa := Internal.isothermalCompressibility_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end isothermalCompressibility;
 
@@ -1503,7 +1503,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     // inherits input state and output eta
   algorithm
     assert(state.phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
-    eta := Transport.dynamicViscosity(state);
+    eta := Internal.Transport.dynamicViscosity(state);
   end dynamicViscosity;
 
   redeclare replaceable function extends thermalConductivity
@@ -1511,7 +1511,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     // inherits input state and output lambda
   algorithm
     assert(state.phase <> 2, "thermalConductivity warning: property not defined in two-phase region", level=AssertionLevel.warning);
-    lambda := Transport.thermalConductivity(state);
+    lambda := Internal.Transport.thermalConductivity(state);
   end thermalConductivity;
 
   redeclare replaceable function extends surfaceTension
@@ -1523,7 +1523,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   algorithm
     assert(sat.Tsat >= T_trip, "surfaceTension error: Temperature is lower than triple-point temperature");
     assert(sat.Tsat <= T_crit, "surfaceTension error: Temperature is higher than critical temperature");
-    sigma := Transport.surfaceTension(sat=sat);
+    sigma := Internal.Transport.surfaceTension(sat=sat);
   end surfaceTension;
 
   redeclare function extends bubbleEnthalpy
@@ -1622,28 +1622,28 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   redeclare function extends dBubbleDensity_dPressure
   "Return bubble point density derivative"
   algorithm
-    ddldp := Auxiliary.dBubbleDensity_dPressure_aux(sat=sat, f=EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, order=2));
+    ddldp := Internal.dBubbleDensity_dPressure_cache(sat=sat, f=Internal.EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, order=2));
   annotation (Inline=true);
   end dBubbleDensity_dPressure;
 
   redeclare function extends dDewDensity_dPressure
   "Return dew point density derivative"
   algorithm
-    ddvdp := Auxiliary.dDewDensity_dPressure_aux(sat=sat, f=EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, order=2));
+    ddvdp := Internal.dDewDensity_dPressure_cache(sat=sat, f=Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, order=2));
   annotation (Inline=true);
   end dDewDensity_dPressure;
 
   redeclare function extends dBubbleEnthalpy_dPressure
   "Return bubble point enthalpy derivative"
   algorithm
-    dhldp := Auxiliary.dBubbleEnthalpy_dPressure_aux(sat=sat, f=EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, order=2));
+    dhldp := Internal.dBubbleEnthalpy_dPressure_cache(sat=sat, f=Internal.EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, order=2));
   annotation (Inline=true);
   end dBubbleEnthalpy_dPressure;
 
   redeclare function extends dDewEnthalpy_dPressure
   "Return dew point enthalpy derivative"
   algorithm
-    dhvdp := Auxiliary.dDewEnthalpy_dPressure_aux(sat=sat, f=EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, order=2));
+    dhvdp := Internal.dDewEnthalpy_dPressure_cache(sat=sat, f=Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, order=2));
   annotation (Inline=true);
   end dDewEnthalpy_dPressure;
 
@@ -1656,7 +1656,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output Density d "density";
 
   algorithm
-    d := Auxiliary.density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
+    d := Internal.density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
 
   annotation (
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
@@ -1665,14 +1665,14 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   redeclare function extends density_derp_h
   "returns density derivative (dd/dp)@h=const"
   algorithm
-    ddph := Auxiliary.density_derp_h_aux(state=state, aux=Auxiliary.setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+    ddph := Internal.density_derp_h_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end density_derp_h;
 
   redeclare function extends density_derh_p
   "returns density derivative (dd/dh)@p=const"
   algorithm
-    ddhp := Auxiliary.density_derh_p_aux(state=state, aux=Auxiliary.setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+    ddhp := Internal.density_derh_p_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end density_derh_p;
 
@@ -1685,7 +1685,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output Temperature T "Temperature";
 
   algorithm
-    T := Auxiliary.temperature_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
+    T := Internal.temperature_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
 
   annotation (
     inverse(h=specificEnthalpy_pT(p=p, T=T, phase=phase)));
@@ -1700,7 +1700,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output Density d "Density";
 
   algorithm
-    d := Auxiliary.density_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
+    d := Internal.density_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
 
   annotation (
     inverse(p=pressure_dT(d=d, T=T, phase=phase),
@@ -1710,14 +1710,14 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   redeclare function extends density_derp_T
   "returns density derivative (dd/dp)@T=const"
   algorithm
-    ddpT := Auxiliary.density_derp_T_aux(state=state, aux=Auxiliary.setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+    ddpT := Internal.density_derp_T_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end density_derp_T;
 
   redeclare function extends density_derT_p
   "returns density derivative (dd/dT)@p=const"
   algorithm
-    ddTp := Auxiliary.density_derT_p_aux(state=state, aux=Auxiliary.setAuxiliaryProperties(d=state.d, T=state.T, phase=state.phase));
+    ddTp := Internal.density_derT_p_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end density_derT_p;
 
@@ -1731,7 +1731,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output SpecificEnthalpy h "specific enthalpy";
 
   algorithm
-    h := Auxiliary.specificEnthalpy_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
+    h := Internal.specificEnthalpy_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
 
   annotation (
     inverse(T=temperature_ph(p=p, h=h, phase=phase)));
@@ -1746,7 +1746,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output AbsolutePressure p "pressure";
 
   algorithm
-    p := Auxiliary.pressure_dT_state(d=d, T=T, state=setState_dT(d=d, T=T, phase=phase));
+    p := Internal.pressure_dT_state(d=d, T=T, state=setState_dT(d=d, T=T, phase=phase));
 
   annotation (
     inverse(d=density_pT(p=p, T=T, phase=phase),
@@ -1762,7 +1762,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output SpecificEnthalpy h "Specific Enthalpy";
 
   algorithm
-    h := Auxiliary.specificEnthalpy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T, phase=phase));
+    h := Internal.specificEnthalpy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T, phase=phase));
 
   annotation (
     Inline=true);
@@ -1777,7 +1777,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output Temperature T "Temperature";
 
   algorithm
-    T := Auxiliary.temperature_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
+    T := Internal.temperature_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
 
   annotation (
     inverse(p=pressure_Ts(T=T, s=s, phase=phase),
@@ -1794,7 +1794,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output SpecificEnthalpy h "specific enthalpy";
 
   algorithm
-    h := Auxiliary.specificEnthalpy_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
+    h := Internal.specificEnthalpy_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
 
   annotation (
     inverse(s=specificEntropy_ph(p=p, h=h, phase=phase)));
@@ -1807,6 +1807,6 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
     output Density d "Density";
   algorithm
-    d := Auxiliary.density_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
+    d := Internal.density_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
   end density_ps;
 end PartialHelmholtzMedium;

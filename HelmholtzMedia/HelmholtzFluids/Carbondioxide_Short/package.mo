@@ -33,7 +33,7 @@ package Carbondioxide_Short "Carbondioxide short FES"
     normalBoilingPoint=194.686,
     meltingPoint=216.592) "Fluid Constants";
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsCarbondioxide_Short(
     T_reducing=304.1282,
     d_reducing=467.6,

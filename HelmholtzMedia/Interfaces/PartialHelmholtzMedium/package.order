@@ -1,7 +1,4 @@
-EoS
-Auxiliary
-Ancillary
-Transport
+Internal
 fluidLimits
 helmholtzCoefficients
 thermalConductivityCoefficients
@@ -13,8 +10,6 @@ ThermodynamicState
 SaturationProperties
 BaseProperties
 setSat_T
-setSat_T_start
-setSat_T_Newton
 setSat_p
 setSat_d
 setBubbleState

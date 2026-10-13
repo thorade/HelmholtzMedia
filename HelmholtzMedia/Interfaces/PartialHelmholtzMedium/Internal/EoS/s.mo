@@ -1,0 +1,8 @@
+within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.EoS;
+function s "returns specifc entropy s from EoS"
+  input HelmholtzDerivs f;
+  output SpecificEntropy s;
+
+algorithm
+  s := f.R_s*(f.tau*(f.it + f.rt) - f.i - f.r);
+end s;

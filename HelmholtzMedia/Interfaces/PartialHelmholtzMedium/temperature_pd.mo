@@ -8,7 +8,7 @@ function temperature_pd "returns temperature for given p and d"
   output Temperature T "Temperature";
 
 algorithm
-  T := Auxiliary.temperature_pd_state(p=p, d=d, state=setState_pd(p=p, d=d, phase=phase));
+  T := Internal.temperature_pd_state(p=p, d=d, state=setState_pd(p=p, d=d, phase=phase));
 
 annotation (
   inverse(p=pressure_dT(d=d, T=T, phase=phase),

@@ -56,7 +56,7 @@ extends Interfaces.PartialHelmholtzMedium(
     SMIN=-2180,
     SMAX=10170) "Helmholtz EoS Limits";
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsEthanol(
     T_reducing=514.71,
     d_reducing=0.04606844*5930,
@@ -99,7 +99,7 @@ extends Interfaces.PartialHelmholtzMedium(
      -0.08977971,     1.00,   2,   2,   2,   -2.300,   -1.287,   1.493,   0.793;
      -0.39512601,     1.00,   1,   2,   2,   -3.143,   -3.090,   1.542,   0.313]) "Coefficients of the Helmholtz EoS";
 
-  final constant Transport.ThermalConductivityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.ThermalConductivityCoefficients
   thermalConductivityCoefficientsEthanol(
     thermalConductivityModel=ThermalConductivityModel.TC1,
     thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
@@ -136,7 +136,7 @@ extends Interfaces.PartialHelmholtzMedium(
     qd_inverse=0.53E-9,
     T_ref=772.06) "Coefficients for the thermal conductivity";
 
-  final constant Transport.DynamicViscosityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsEthanol(
     dynamicViscosityModel=DynamicViscosityModel.VS1,
     collisionIntegralModel=CollisionIntegralModel.CI1,
@@ -181,14 +181,14 @@ extends Interfaces.PartialHelmholtzMedium(
     -1.,                 0.0,    1,  0,  0])
   "Coefficients for the dynamic viscosity";
 
-  final constant Transport.SurfaceTensionCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.SurfaceTensionCoefficients
   surfaceTensionCoefficientsEthanol(
     coeffs=[
       0.0628594,   1.04726;
      -29.4208,     4.34139;
       29.4913,     4.34996]) "Coefficients for the surface tension";
 
-  final constant Ancillary.AncillaryCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients
   ancillaryCoefficientsEthanol(
     T_crit=514.71,
     p_crit=6268000,

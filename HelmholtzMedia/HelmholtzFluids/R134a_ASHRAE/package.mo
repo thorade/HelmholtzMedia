@@ -5,7 +5,7 @@ package R134a_ASHRAE "R134a with ASHRAE reference state"
     fluidConstantsR134a(HCRIT0=241491.936244432, SCRIT0=766.479922919039),
     helmholtzCoefficients=helmholtzCoefficientsR134a_ASHRAE);
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsR134a_ASHRAE(
     T_reducing=374.18,
     d_reducing=508,

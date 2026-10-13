@@ -13,11 +13,11 @@ protected
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
   constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
   constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
-  constant Density dv_trip = Ancillary.dewDensity_T(T_trip);
-  constant Density dl_trip = Ancillary.bubbleDensity_T(T_trip);
+  constant Density dv_trip = Internal.Ancillary.dewDensity_T(T_trip);
+  constant Density dl_trip = Internal.Ancillary.bubbleDensity_T(T_trip);
 
-  EoS.HelmholtzDerivs fl;
-  EoS.HelmholtzDerivs fv;
+  Internal.EoS.HelmholtzDerivs fl;
+  Internal.EoS.HelmholtzDerivs fv;
 
   Real RES[2] "residual function vector";
   Real Jacobian[2,2] "Jacobian matrix";
@@ -35,33 +35,33 @@ algorithm
   // Modelica.Utilities.Streams.print(" ", "printlog.txt");
   // Modelica.Utilities.Streams.print("setSat_d: d="+String(d),"printlog.txt");
 
-  T_anc := Ancillary.saturationTemperature_d(d=d*ancillaryCoefficients.d_crit/d_crit);
+  T_anc := Internal.Ancillary.saturationTemperature_d(d=d*ancillaryCoefficients.d_crit/d_crit);
   if (T_anc>ancillaryCoefficients.T_crit*(1-1e-2)) then
     // close to the critical point, evaluate the ancillary equations in reduced variables, so that their critical point
     // coincides with the critical point of the EoS (they may be fitted to slightly different critical values)
     sat.Tsat := T_anc*T_crit/ancillaryCoefficients.T_crit;
     d_scale := d_crit/ancillaryCoefficients.d_crit;
   else
-    T_anc := Ancillary.saturationTemperature_d(d=d);
+    T_anc := Internal.Ancillary.saturationTemperature_d(d=d);
     sat.Tsat := T_anc;
     d_scale := 1;
   end if;
   if (d<d_crit) and (d>dv_trip) then
     // Modelica.Utilities.Streams.print("d<d_crit: input is on vapour side: find d_liq and T_sat", "printlog.txt");
-    sat.liq.d := 1.02*d_scale*Ancillary.bubbleDensity_T(T_anc);
+    sat.liq.d := 1.02*d_scale*Internal.Ancillary.bubbleDensity_T(T_anc);
     sat.vap.d := d; // d_vap is a constant
 
     // calculate residuals: liq-vap (=var-const)
-    fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
-    fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
-    RES := {EoS.p(fl)-EoS.p(fv), EoS.g(fl)-EoS.g(fv)};
+    fl := Internal.EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
+    fv := Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
+    RES := {Internal.EoS.p(fl)-Internal.EoS.p(fv), Internal.EoS.g(fl)-Internal.EoS.g(fv)};
 
   while (iter<iter_max) and not converged loop
       iter := iter+1;
 
       // calculate Jacobian matrix and Newton Step vector
-      Jacobian := [EoS.dpdT(fl), EoS.dpTd(fl)-EoS.dpTd(fv);
-                   EoS.dgdT(fl), EoS.dgTd(fl)-EoS.dgTd(fv)];
+      Jacobian := [Internal.EoS.dpdT(fl), Internal.EoS.dpTd(fl)-Internal.EoS.dpTd(fv);
+                   Internal.EoS.dgdT(fl), Internal.EoS.dgTd(fl)-Internal.EoS.dgTd(fv)];
       NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
 
       // calculate better values for sat.liq.d and sat.Tsat
@@ -75,9 +75,9 @@ algorithm
       sat.Tsat  := min(sat.Tsat,  1.02*T_crit);
 
       // calculate new residuals: liq-vap
-      fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
-      fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
-      RES := {EoS.p(fl)-EoS.p(fv), EoS.g(fl)-EoS.g(fv)};
+      fl := Internal.EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
+      fv := Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
+      RES := {Internal.EoS.p(fl)-Internal.EoS.p(fv), Internal.EoS.g(fl)-Internal.EoS.g(fv)};
 
       // convergence test, evaluated where RES and NS both have a value
       converged := abs(RES[1])<=tolerance and abs(RES[2])<=tolerance
@@ -92,20 +92,20 @@ algorithm
 
   elseif (d>d_crit) and (d<dl_trip) then
     // Modelica.Utilities.Streams.print("d>d_crit: input is on liquid side: find d_vap and T_sat", "printlog.txt");
-    sat.vap.d := 0.98*d_scale*Ancillary.dewDensity_T(T_anc);
+    sat.vap.d := 0.98*d_scale*Internal.Ancillary.dewDensity_T(T_anc);
     sat.liq.d := d; // d_liq is a constant
 
     // calculate residuals: vap-liq (=var-const)
-    fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
-    fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
-    RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
+    fv := Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
+    fl := Internal.EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
+    RES := {Internal.EoS.p(fv)-Internal.EoS.p(fl), Internal.EoS.g(fv)-Internal.EoS.g(fl)};
 
   while (iter<iter_max) and not converged loop
       iter := iter+1;
 
       // calculate Jacobian matrix and Newton Step vector
-      Jacobian := [EoS.dpdT(fv), EoS.dpTd(fv)-EoS.dpTd(fl);
-                   EoS.dgdT(fv), EoS.dgTd(fv)-EoS.dgTd(fl)];
+      Jacobian := [Internal.EoS.dpdT(fv), Internal.EoS.dpTd(fv)-Internal.EoS.dpTd(fl);
+                   Internal.EoS.dgdT(fv), Internal.EoS.dgTd(fv)-Internal.EoS.dgTd(fl)];
       NS := -Modelica.Math.Matrices.solve(Jacobian,RES);
 
       // calculate better values for sat.vap.d and sat.Tsat
@@ -119,9 +119,9 @@ algorithm
       sat.Tsat  := min(sat.Tsat,  1.02*T_crit);
 
       // calculate new residuals: vap-liq
-      fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
-      fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
-      RES := {EoS.p(fv)-EoS.p(fl), EoS.g(fv)-EoS.g(fl)};
+      fv := Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=2);
+      fl := Internal.EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, phase=1, order=2);
+      RES := {Internal.EoS.p(fv)-Internal.EoS.p(fl), Internal.EoS.g(fv)-Internal.EoS.g(fl)};
 
       // convergence test, evaluated where RES and NS both have a value
       converged := abs(RES[1])<=tolerance and abs(RES[2])<=tolerance

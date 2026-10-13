@@ -57,7 +57,7 @@ extends Interfaces.PartialHelmholtzMedium(
     SMIN=-920,
     SMAX=9220) "Helmholtz EoS Limits";
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsButane(
     T_reducing=425.125,
     d_reducing=228,
@@ -101,7 +101,7 @@ extends Interfaces.PartialHelmholtzMedium(
        +0.14904666224681E-02,   0.0,    2., 2, 2,  -10.,  -200.,  1.13,  1.0])
   "Coefficients of the Helmholtz EoS";
 
-  final constant Transport.ThermalConductivityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.ThermalConductivityCoefficients
   thermalConductivityCoefficientsButane(
     thermalConductivityModel=ThermalConductivityModel.TC1,
     thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
@@ -130,7 +130,7 @@ extends Interfaces.PartialHelmholtzMedium(
     qd_inverse=0.875350E-9,
     T_ref=637.68) "Coefficients for the thermal conductivity";
 
-final constant Transport.DynamicViscosityCoefficients
+final constant HelmholtzMedia.Interfaces.Types.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsButane(
   dynamicViscosityModel=DynamicViscosityModel.VS1,
   collisionIntegralModel=CollisionIntegralModel.CI1,
@@ -179,12 +179,12 @@ final constant Transport.DynamicViscosityCoefficients
     -1.,                 0.0,    1,  0,  0])
   "Coefficients for the dynamic viscosity";
 
-  final constant Transport.SurfaceTensionCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.SurfaceTensionCoefficients
   surfaceTensionCoefficientsButane(
     coeffs=[
       0.05138,   1.209]) "Coefficients for the surface tension (Mulero et al. 2012)";
 
-final constant Ancillary.AncillaryCoefficients
+final constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients
   ancillaryCoefficientsButane(
     T_crit=425.125,
     p_crit=3796000,

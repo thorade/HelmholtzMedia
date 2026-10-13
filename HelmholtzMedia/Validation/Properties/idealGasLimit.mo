@@ -1,0 +1,59 @@
+within HelmholtzMedia.Validation.Properties;
+model idealGasLimit
+  replaceable package Medium = HelmholtzFluids.Helium;
+
+  parameter Medium.Temperature T=298.15;
+  Modelica.Units.SI.SpecificVolume v;
+  Medium.Density d=1/v;
+
+  Medium.ThermodynamicState state = Medium.setState_dT(d=d, T=T, phase=1);
+  Medium.Internal.EoS.HelmholtzDerivs f = Medium.Internal.EoS.setHelmholtzDerivs(d=d, T=T, phase=1, order=3);
+//Medium.Internal.EoS.HelmholtzDerivs f0 = Medium.Internal.EoS.setHelmholtzDerivs(d=0, T=T, phase=1, order=3);
+
+  constant Medium.MolarMass MM = Medium.fluidConstants[1].molarMass;
+  constant Medium.SpecificHeatCapacity R_s=Modelica.Constants.R/MM
+    "specific gas constant";
+  Real Z = (state.p*v)/(R_s*state.T);
+
+  Medium.SpecificHeatCapacity cv = Medium.specificHeatCapacityCv(state);
+  Medium.SpecificHeatCapacity cp = Medium.specificHeatCapacityCp(state);
+  Medium.SpecificHeatCapacity cp0 = Medium.Internal.EoS.cp0(f);
+
+  Medium.IsentropicExponent gamma = Medium.isentropicExponent(state);
+  Medium.IsentropicExponent gamma0 = cp/cv;
+
+//Real B=f.rd*f.delta/d;
+  Real B=f.rd/f.d_reducing;
+//Real B0=f0.rd/f0.d_reducing;
+
+//Real C=f.rdd*f.delta^2/d^2;
+  Real C=f.rdd/f.d_reducing^2;
+//Real C0=f0.rdd/f0.d_reducing^2;
+
+//Real D=f.rddd*f.delta^3/d^3;
+  Real D=f.rddd/f.d_reducing^3;
+//Real D0=f0.rddd/f0.d_reducing^3;
+
+equation
+  v = exp(time/10);
+
+  annotation (Documentation(info="
+<html>
+<style type=\"text/css\">
+  code{background-color:#EEEEEE; padding:2px; margin:2px;}
+</style>
+This model is used to validate the behavior of the EoS in the ideal gas limit, that is at <code> lim d &rarr; 0 </code>.
+<br />
+How to use:
+<ol>
+  <li>Simulate with any <code>T_trip &lt; T &lt; T_max</code></li>
+  <li>Plot <code>f.rd</code> and <code>B</code> </li>
+  <li>Make <code>d</code> the independent variable of the plot </li>
+  <li>Set the horizontal axis <code>(d)</code> to logarithmic scale</li>
+  <li>Set line style to dotted and marker style to cross</li>
+  <li>Look at the graphs </li>
+</ol>
+
+</html>"),
+experiment(StopTime=200));
+end idealGasLimit;

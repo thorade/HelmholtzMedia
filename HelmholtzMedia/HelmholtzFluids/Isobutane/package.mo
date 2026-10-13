@@ -56,7 +56,7 @@ package Isobutane "Isobutane"
     SMIN=-940,
     SMAX=9170) "Helmholtz EoS Limits";
 
-  final constant EoS.HelmholtzCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsIsobutane(
     T_reducing=407.81,
     d_reducing=0.0581222*3879.756788,
@@ -100,7 +100,7 @@ package Isobutane "Isobutane"
       -0.53001044558079E-02,    0.0,    2.,   2, 2,  -10.,  -200.,  1.13,  1.0])
   "Coefficients of the Helmholtz EoS";
 
-  final constant Transport.ThermalConductivityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.ThermalConductivityCoefficients
   thermalConductivityCoefficientsIsobutane(
     thermalConductivityModel=ThermalConductivityModel.TC1,
     thermalConductivityCriticalEnhancementModel=ThermalConductivityCriticalEnhancementModel.TK3,
@@ -129,7 +129,7 @@ package Isobutane "Isobutane"
     qd_inverse=0.657661E-9,
     T_ref=611.73) "Coefficients for the thermal conductivity";
 
-  final constant Transport.DynamicViscosityCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsIsobutane(
     dynamicViscosityModel=DynamicViscosityModel.VS1,
     collisionIntegralModel=CollisionIntegralModel.CI1,
@@ -178,13 +178,13 @@ package Isobutane "Isobutane"
      -1.,                0.0,    1.00,  0.00,  0])
   "Coefficients for the dynamic viscosity";
 
-  final constant Transport.SurfaceTensionCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.SurfaceTensionCoefficients
   surfaceTensionCoefficientsIsobutane(
     coeffs=[
       0.06121,   1.304;
       -0.01639,   2.102]) "Coefficients for the surface tension (Mulero et al. 2012)";
 
-  final constant Ancillary.AncillaryCoefficients
+  final constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients
   ancillaryCoefficientsIsobutane(
     T_crit=407.81,
     p_crit=3629000,
