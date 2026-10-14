@@ -497,6 +497,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       state.u := Internal.EoS.u(f=f);
     end if;
 
+  annotation (derivative=Internal.setState_dTX_der);
   end setState_dTX;
 
   redeclare function setState_Tx
@@ -699,6 +700,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     state.s := Internal.EoS.s(f=f);
     state.h := Internal.EoS.h(f=f);
     state.u := Internal.EoS.u(f=f);
+  annotation (derivative=Internal.setState_pTX_der);
   end setState_pTX;
 
   redeclare function extends setState_phX
@@ -1381,6 +1383,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       state.h := Internal.EoS.h(f);
     end if;
 
+  annotation (derivative=Internal.setState_psX_der);
   end setState_psX;
 
   redeclare function extends temperature

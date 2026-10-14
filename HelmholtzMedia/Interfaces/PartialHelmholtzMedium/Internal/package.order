@@ -4,6 +4,9 @@ Transport
 HelmholtzCache
 setHelmholtzCache
 setState_phX_der
+setState_pTX_der
+setState_dTX_der
+setState_psX_der
 setSat_T_Newton
 dBubbleDensity_dPressure_cache
 dBubbleEnthalpy_dPressure_cache
@@ -21,8 +24,10 @@ isothermalThrottlingCoefficient_cache
 isothermalThrottlingCoefficient_cache_der
 jouleThomsonCoefficient_cache
 pressure_derT_d_cache
+pressure_derT_d_cache_der
 pressure_derd_T_cache
 specificEnthalpy_derT_d_cache
+specificEnthalpy_derT_d_cache_der
 specificEnthalpy_derd_T_cache
 specificHeatCapacityCp_cache
 specificHeatCapacityCp_cache_der
