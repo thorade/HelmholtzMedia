@@ -1449,7 +1449,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   redeclare function extends specificHeatCapacityCp
   "returns the isobaric specific heat capcacity"
   algorithm
-    cp := Internal.specificHeatCapacityCp_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
+    cp := Internal.specificHeatCapacityCp_cache(d=state.d, T=state.T, phase=state.phase, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end specificHeatCapacityCp;
 
@@ -1657,20 +1657,21 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     d := Internal.density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
 
   annotation (
+    derivative=Internal.density_ph_der,
     inverse(h=specificEnthalpy_pd(p=p, d=d, phase=phase)));
   end density_ph;
 
   redeclare function extends density_derp_h
   "returns density derivative (dd/dp)@h=const"
   algorithm
-    ddph := Internal.density_derp_h_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
+    ddph := Internal.density_derp_h_cache(d=state.d, T=state.T, phase=state.phase, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end density_derp_h;
 
   redeclare function extends density_derh_p
   "returns density derivative (dd/dh)@p=const"
   algorithm
-    ddhp := Internal.density_derh_p_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
+    ddhp := Internal.density_derh_p_cache(d=state.d, T=state.T, phase=state.phase, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
   annotation (Inline=true);
   end density_derh_p;
 
@@ -1686,6 +1687,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     T := Internal.temperature_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
 
   annotation (
+    derivative=Internal.temperature_ph_der,
     inverse(h=specificEnthalpy_pT(p=p, T=T, phase=phase)));
   end temperature_ph;
 
@@ -1701,6 +1703,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     d := Internal.density_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
 
   annotation (
+    derivative=Internal.density_pT_der,
     inverse(p=pressure_dT(d=d, T=T, phase=phase),
             T=temperature_pd(p=p, d=d, phase=phase)));
   end density_pT;
@@ -1732,6 +1735,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     h := Internal.specificEnthalpy_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
 
   annotation (
+    derivative=Internal.specificEnthalpy_pT_der,
     inverse(T=temperature_ph(p=p, h=h, phase=phase)));
   end specificEnthalpy_pT;
 
@@ -1747,6 +1751,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     p := Internal.pressure_dT_state(d=d, T=T, state=setState_dT(d=d, T=T, phase=phase));
 
   annotation (
+    derivative=Internal.pressure_dT_der,
     inverse(d=density_pT(p=p, T=T, phase=phase),
             T=temperature_pd(p=p, d=d, phase=phase)));
   end pressure_dT;
@@ -1763,6 +1768,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     h := Internal.specificEnthalpy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T, phase=phase));
 
   annotation (
+    derivative=Internal.specificEnthalpy_dT_der,
     Inline=true);
   end specificEnthalpy_dT;
 
@@ -1778,6 +1784,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     T := Internal.temperature_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
 
   annotation (
+    derivative=Internal.temperature_ps_der,
     inverse(p=pressure_Ts(T=T, s=s, phase=phase),
             s=specificEntropy_pT(p=p, T=T, phase=phase)));
   end temperature_ps;
@@ -1795,6 +1802,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     h := Internal.specificEnthalpy_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
 
   annotation (
+    derivative=Internal.specificEnthalpy_ps_der,
     inverse(s=specificEntropy_ph(p=p, h=h, phase=phase)));
   end specificEnthalpy_ps;
 
@@ -1806,5 +1814,6 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output Density d "Density";
   algorithm
     d := Internal.density_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
+  annotation (derivative=Internal.density_ps_der);
   end density_ps;
 end PartialHelmholtzMedium;

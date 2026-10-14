@@ -11,5 +11,6 @@ algorithm
   s := Internal.specificEntropy_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
 
 annotation (
+  derivative=Internal.specificEntropy_ph_der,
   inverse(h=specificEnthalpy_ps(p=p, s=s, phase=phase)));
 end specificEntropy_ph;

@@ -10,5 +10,5 @@ algorithm
 annotation (
   Inline=false,
   LateInline=true,
-  derivative(noDerivative=state)=temperature_pd_der);
+  derivative(noDerivative=state)=temperature_pd_state_der);
 end temperature_pd_state;

@@ -1,14 +1,18 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal;
-function temperature_ps_der "time derivative of temperature_ps"
+function temperature_ps_der "time derivative of temperature_ps, derivative annotation of the public function temperature_ps"
   extends Modelica.Icons.Function;
-  input AbsolutePressure p "Pressure";
-  input SpecificEntropy s "Specific entropy";
-  input ThermodynamicState state "state at (p, s)";
+  input AbsolutePressure p;
+  input SpecificEntropy s;
+  input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   input Real p_der "time derivative of p";
   input Real s_der "time derivative of s";
-  output Real T_der "time derivative of T";
+  output Real T_der "time derivative of temperature_ps";
 algorithm
-  T_der := if state.phase == 2 then p_der*jouleThomsonCoefficient(state)
-    else (-p_der*state.T*density_derT_p(state)/state.d^2 + s_der*state.T)/specificHeatCapacityCp(state);
-annotation (Inline=true);
+  T_der := temperature_ps_state_der(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase), p_der=p_der, s_der=s_der);
+  annotation (Inline=true, Documentation(info="<html>
+<p>
+Inlined, so that the call of setState_ps is shared with the one in temperature_ps (same scalar arguments).
+The derivative itself is computed in <a href=\"modelica://HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.temperature_ps_state_der\">temperature_ps_state_der</a>.
+</p>
+</html>"));
 end temperature_ps_der;

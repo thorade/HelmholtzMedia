@@ -19,7 +19,13 @@ The public property function is an inlined one-line wrapper that calls the worke
 All wrappers call setHelmholtzCache with the same scalar arguments, so the tool evaluates it only once per state.</li>
 <li><b>*_state</b>: property functions of two independent variables (e.g. density_ph_state) that receive the thermodynamic state as an
 additional argument and carry the derivative annotation; the public function (e.g. density_ph) keeps the inverse annotation.</li>
-<li><b>*_der</b>: time derivatives used by the derivative annotations of the *_state functions.</li>
+<li><b>*_state_der</b>: time derivatives of the *_state functions (their derivative annotation).</li>
+<li><b>*_der</b>: time derivatives of the public functions of two variables (their derivative annotation, used e.g. for
+analytic Jacobians); inlined, they call the *_state_der function with the same setState call as the public function.</li>
+<li><b>*_cache_der</b>: time derivatives of the worker functions (derivative annotation with noDerivative=cache). The workers
+take the scalars d, T and phase instead of the state record, so that the tool can differentiate them; the derivatives need
+the Helmholtz derivatives up to third order, which are computed in the *_cache_der function.
+Available for density_derh_p, density_derp_h, specificHeatCapacityCp and isothermalThrottlingCoefficient.</li>
 <li><b>setSat_T_Newton</b>: Newton iteration of setSat_T (start values from Ancillary.setSat_T_start).</li>
 </ul>
 </html>"));
