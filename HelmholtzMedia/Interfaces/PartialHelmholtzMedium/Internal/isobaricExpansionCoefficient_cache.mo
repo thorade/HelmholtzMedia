@@ -9,5 +9,7 @@ algorithm
   elseif state.phase==2 then
     assert(false, "isobaricExpansionCoefficient warning: in the two-phase region beta is zero", level=AssertionLevel.warning);
     beta := Modelica.Constants.small;
+  else
+    assert(false, "isobaricExpansionCoefficient error: phase is neither 1 nor 2");
   end if;
 end isobaricExpansionCoefficient_cache;

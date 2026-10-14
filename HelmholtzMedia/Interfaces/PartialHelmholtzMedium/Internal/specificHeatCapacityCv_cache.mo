@@ -27,5 +27,7 @@ algorithm
     dvT_vap := -1/cache.sat.vap.d^2 * ddT_vap;
     dxTv :=(x*dvT_vap + (1 - x)*dvT_liq)/(1/cache.sat.liq.d - 1/cache.sat.vap.d);
     cv := duT_liq + dxTv*(cache.sat.vap.u-cache.sat.liq.u) + x*(duT_vap-duT_liq);
+  else
+    assert(false, "specificHeatCapacityCv error: phase is neither 1 nor 2");
   end if;
 end specificHeatCapacityCv_cache;

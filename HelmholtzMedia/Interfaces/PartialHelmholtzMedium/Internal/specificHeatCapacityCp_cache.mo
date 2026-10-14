@@ -9,5 +9,7 @@ algorithm
   elseif state.phase==2 then
     assert(false, "specificHeatCapacityCp warning: in the two-phase region cp is infinite", level=AssertionLevel.warning);
     cp := Modelica.Constants.inf;
+  else
+    assert(false, "specificHeatCapacityCp error: phase is neither 1 nor 2");
   end if;
 end specificHeatCapacityCp_cache;

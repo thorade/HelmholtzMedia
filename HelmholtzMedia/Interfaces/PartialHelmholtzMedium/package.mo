@@ -354,8 +354,12 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
                  else pressure_derT_d(state=sat_T.liq);
           T_iter := min(T_iter - (sat_T.psat-p)/dpT, T_crit);
         end if;
+
+        // the fallback result is sat_T; assign it where it is defined
+        sat := sat_T;
+        sat.psat := p;
+        RES := {sat_T.liq.p-p, sat_T.vap.p-p, sat_T.liq.h-sat_T.liq.T*sat_T.liq.s-(sat_T.vap.h-sat_T.vap.T*sat_T.vap.s)};
       end while;
-      RES := {sat_T.liq.p-p, sat_T.vap.p-p, sat_T.liq.h-sat_T.liq.T*sat_T.liq.s-(sat_T.vap.h-sat_T.vap.T*sat_T.vap.s)};
     end if;
     // if verbose then Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt"); end if;
     // Modelica.Utilities.Streams.print("setSat_p total iteration steps " + String(iter), "printlog.txt");
@@ -364,10 +368,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
                           " and RES_pv=" + String(RES[2]) +
                           " and RES_g=" + String(RES[3]));
 
-    if fallback then
-      sat := sat_T;
-      sat.psat := p;
-    else
+    if not fallback then
       // no clamping to the triple-point/critical constants here: clamping T and d separately gives an inconsistent state
       sat.liq := setState_dTX(d=sat.liq.d, T=sat.Tsat, phase=1);
       sat.vap := setState_dTX(d=sat.vap.d, T=sat.Tsat, phase=1);

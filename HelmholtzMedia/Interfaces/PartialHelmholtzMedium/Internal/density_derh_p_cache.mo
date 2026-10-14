@@ -10,5 +10,7 @@ algorithm
     // dvhp = (v"-v')/(h"-h')
     // ddhp = -d^2 * dvhp
     ddhp := -state.d^2*(1/cache.sat.liq.d-1/cache.sat.vap.d)/(cache.sat.liq.h-cache.sat.vap.h);
+  else
+    assert(false, "density_derh_p error: phase is neither 1 nor 2");
   end if;
 end density_derh_p_cache;

@@ -8,5 +8,7 @@ algorithm
     ddTp := -EoS.dpTd(cache.f)/EoS.dpdT(cache.f);
   elseif state.phase==2 then
     ddTp := Modelica.Constants.inf; // divide by zero
+  else
+    assert(false, "density_derT_p error: phase is neither 1 nor 2");
   end if;
 end density_derT_p_cache;

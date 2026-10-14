@@ -29,5 +29,7 @@ algorithm
     dxps :=(x*dsp_vap + (1 - x)*dsp_liq)/(cache.sat.liq.s - cache.sat.vap.s);
     dvps := dvp_liq + dxps*(1.0/cache.sat.vap.d-1.0/cache.sat.liq.d) + x*(dvp_vap-dvp_liq);
     a := sqrt(-1.0/(state.d*state.d*dvps));
+  else
+    assert(false, "velocityOfSound error: phase is neither 1 nor 2");
   end if;
 end velocityOfSound_cache;

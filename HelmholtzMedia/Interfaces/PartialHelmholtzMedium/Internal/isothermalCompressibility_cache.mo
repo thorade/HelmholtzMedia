@@ -9,5 +9,7 @@ algorithm
   elseif state.phase==2 then
     assert(false, "isothermalCompressibility warning: in the two-phase region kappa is infinite", level=AssertionLevel.warning);
     kappa := Modelica.Constants.inf;
+  else
+    assert(false, "isothermalCompressibility error: phase is neither 1 nor 2");
   end if;
 end isothermalCompressibility_cache;

@@ -29,5 +29,7 @@ algorithm
     dxph :=(x*dhp_vap + (1 - x)*dhp_liq)/(cache.sat.liq.h - cache.sat.vap.h);
     dvph := dvp_liq + dxph*(1.0/cache.sat.vap.d-1.0/cache.sat.liq.d) + x*(dvp_vap-dvp_liq);
     ddph := -state.d*state.d*dvph;
+  else
+    assert(false, "density_derp_h error: phase is neither 1 nor 2");
   end if;
 end density_derp_h_cache;
