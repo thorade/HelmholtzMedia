@@ -1000,6 +1000,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       state.s := Internal.EoS.s(f);
     end if;
 
+  annotation (derivative=Internal.setState_phX_der);
   end setState_phX;
 
   redeclare function extends setState_psX

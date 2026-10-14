@@ -3,6 +3,7 @@ Ancillary
 Transport
 HelmholtzCache
 setHelmholtzCache
+setState_phX_der
 setSat_T_Newton
 dBubbleDensity_dPressure_cache
 dBubbleEnthalpy_dPressure_cache
