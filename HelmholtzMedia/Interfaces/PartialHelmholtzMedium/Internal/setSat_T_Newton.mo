@@ -22,12 +22,19 @@ protected
 
   EoS.HelmholtzDerivs fl "residual part at the liquid density";
   EoS.HelmholtzDerivs fv "residual part at the vapour density";
-  Real J_liq; Real J_vap; Real K_liq; Real K_vap;
-  Real J_liq_delta; Real J_vap_delta; Real K_liq_delta; Real K_vap_delta;
+  Real J_liq;
+  Real J_vap;
+  Real K_liq;
+  Real K_vap;
+  Real J_liq_delta;
+  Real J_vap_delta;
+  Real K_liq_delta;
+  Real K_vap_delta;
   Real Jacobian[2,2] "Jacobian matrix";
   Real NS[2] "Newton step vector";
   Real lambda "step length, halved until the step is acceptable";
-  Real delta_liq_new; Real delta_vap_new;
+  Real delta_liq_new;
+  Real delta_vap_new;
   Real RES_new[2];
   Boolean accepted;
   Integer iter=0;
