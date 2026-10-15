@@ -2,6 +2,7 @@ dynamicViscosity
 dynamicViscosity_dilute
 dynamicViscosity_initial
 dynamicViscosity_residual
+dynamicViscosity_der
 thermalConductivity
 thermalConductivity_dilute
 thermalConductivity_background

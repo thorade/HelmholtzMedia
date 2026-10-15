@@ -24,11 +24,12 @@ model CheckDerivativeAnnotations
     elseif endStates==EndStates.LiquidNearSaturation then Medium.setState_pT(p=sat0.psat, T=(1 - dT_sat)*sat0.Tsat)
     elseif endStates==EndStates.VapourNearSaturation then Medium.setState_pT(p=sat0.psat, T=1.1*sat0.Tsat)
     else Medium.setState_pT(p=1.5*Medium.fluidConstants[1].criticalPressure, T=1.3*Medium.fluidConstants[1].criticalTemperature);
-  constant String names[20]={"density_ph","temperature_ph","specificEntropy_ph","density_ps","temperature_ps","specificEnthalpy_ps",
+  constant String names[22]={"density_ph","temperature_ph","specificEntropy_ph","density_ps","temperature_ps","specificEnthalpy_ps",
     "pressure_dT","specificEnthalpy_dT","specificEntropy_dT","pressure_Ts","density_Ts","temperature_pd","specificEnthalpy_pd",
     "density_pT","specificEnthalpy_pT","specificEntropy_pT",
-    "density_derh_p","density_derp_h","specificHeatCapacityCp","isothermalThrottlingCoefficient"};
-  constant Integer n=20 "number of tested functions";
+    "density_derh_p","density_derp_h","specificHeatCapacityCp","isothermalThrottlingCoefficient",
+    "dynamicViscosity","thermalConductivity"};
+  constant Integer n=22 "number of tested functions";
   final parameter Boolean skip_state=(endStates==EndStates.PhaseChange)
     "the functions of the state are skipped if the path crosses the phase boundary (fixed phase of the state)" annotation(Evaluate=true);
   final parameter Medium.FixedPhase phase_state=if endStates==EndStates.TwoPhase then 2 else 1
@@ -72,6 +73,8 @@ equation
   y[18] = if skip_state then 0 else Medium.density_derp_h(state);
   y[19] = if skip_state or phase_state==2 then 0 else Medium.specificHeatCapacityCp(state) "infinite in the two-phase region";
   y[20] = if skip_state or phase_state==2 then 0 else Medium.isothermalThrottlingCoefficient(state) "infinite in the two-phase region";
+  y[21] = if skip_state or phase_state==2 then 0 else Medium.dynamicViscosity(state) "not defined in the two-phase region";
+  y[22] = if skip_state or phase_state==2 then 0 else Medium.thermalConductivity(state) "not defined in the two-phase region";
   der(y_int) = der(y);
 initial equation
   y_int = y;
@@ -101,9 +104,9 @@ vapour (1.05 T_sat); the derivatives jump at the phase boundaries.</li>
 <li>VapourNearSaturation: at 0.5 p_crit from (1 + dT_sat) T_sat to 1.1 T_sat.</li>
 </ul>
 <p>
-The functions of the state (density_derh_p, density_derp_h, specificHeatCapacityCp, isothermalThrottlingCoefficient)
-are evaluated for a state built from variables, as in BaseProperties, with a fixed phase; they are skipped for
-PhaseChange, cp and the isothermal throttling coefficient also for TwoPhase (infinite there).
+The functions of the state (density_derh_p, density_derp_h, specificHeatCapacityCp, isothermalThrottlingCoefficient,
+dynamicViscosity, thermalConductivity) are evaluated for a state built from variables, as in BaseProperties, with a fixed phase; they are skipped for
+PhaseChange, cp, the isothermal throttling coefficient and the transport properties also for TwoPhase (infinite or not defined there).
 Their deviation is relative to 1e-3 of their start value, since their values are small in SI units.
 </p>
 <p>

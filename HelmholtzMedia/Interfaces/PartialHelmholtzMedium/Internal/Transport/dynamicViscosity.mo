@@ -23,7 +23,7 @@ algorithm
   // RefProp results are in µPa*s where µ means micro or 1E-6 but SI default is Pa*s
   eta := micro*eta;
 
-  annotation (smoothOrder=2, Documentation(info="<html>
+  annotation (derivative=dynamicViscosity_der, Documentation(info="<html>
 <p>
 This model is identical to the RefProp VS1 or VS2 model.
 
