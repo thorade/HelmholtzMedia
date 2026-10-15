@@ -10,12 +10,20 @@ function setState_dTX_der "time derivative of setState_dTX (derivative of the st
   input Real X_der[:] "time derivative of X (not used, pure substance)";
   output ThermodynamicState state_der "time derivative of the state (phase is set to 0, it has no derivative)";
 protected
-  ThermodynamicState state=setState_dTX(d=d, T=T, X=X, phase=phase) "the state, evaluated once";
-  HelmholtzCache cache=setHelmholtzCache(d=state.d, T=state.T, phase=state.phase) "evaluated once";
+  ThermodynamicState state "the state, evaluated once";
+  HelmholtzCache cache "evaluated once";
   Real p_der;
   Real h_der;
   Real dpTd;
 algorithm
+  if (d_der == 0 and T_der == 0) then
+    // zero seed (e.g. in the analytic Jacobian of a nonlinear system, for a state that does not depend on
+    // the iteration variables): skip the evaluation of the state
+    state_der := ThermodynamicState(phase=0, d=0, T=0, p=0, h=0, u=0, s=0);
+    return;
+  end if;
+  state := setState_dTX(d=d, T=T, X=X, phase=phase);
+  cache := setHelmholtzCache(d=state.d, T=state.T, phase=state.phase);
   dpTd := pressure_derT_d_cache(d=state.d, T=state.T, phase=state.phase, cache=cache);
   p_der := d_der*pressure_derd_T_cache(d=state.d, T=state.T, phase=state.phase, cache=cache) + T_der*dpTd;
   h_der := d_der*specificEnthalpy_derd_T_cache(d=state.d, T=state.T, phase=state.phase, cache=cache) + T_der*specificEnthalpy_derT_d_cache(d=state.d, T=state.T, phase=state.phase, cache=cache);
@@ -30,7 +38,7 @@ algorithm
   annotation (Documentation(info="<html>
 <p>
 Derivative annotation of setState_dTX, see <a href=\"modelica://HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.setState_phX_der\">setState_phX_der</a>.
-Not inlined: the state and the HelmholtzCache are evaluated once, and the partial derivatives are computed by the *_cache workers.
+Not inlined: the state and the HelmholtzCache are evaluated once (not at all if both derivatives of the inputs are zero), and the partial derivatives are computed by the *_cache workers.
 Dymola does not inline derivative functions inside the analytic Jacobians of nonlinear systems, where an inlined version evaluated the state several times per call.
 u = h - p/d, so du/dt = dh/dt - (dp/dt)/d + p/d^2*(dd/dt).
 </p>

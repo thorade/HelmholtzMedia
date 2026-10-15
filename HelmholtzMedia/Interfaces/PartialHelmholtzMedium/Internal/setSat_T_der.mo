@@ -36,6 +36,14 @@ protected
   Real vl_T "d(v_liq)/dT along saturation";
   Real vv_T "d(v_vap)/dT along saturation";
 algorithm
+  if (T_der == 0) then
+    // zero seed (e.g. in the analytic Jacobian of a nonlinear system): skip the evaluation of the saturation state
+    sat_der.psat := 0;
+    sat_der.Tsat := 0;
+    sat_der.liq := ThermodynamicState(phase=0, d=0, T=0, p=0, h=0, u=0, s=0);
+    sat_der.vap := ThermodynamicState(phase=0, d=0, T=0, p=0, h=0, u=0, s=0);
+    return;
+  end if;
   sat := setSat_T(T=T);
   fl := EoS.setHelmholtzDerivs(d=sat.liq.d, T=sat.Tsat, order=2);
   fv := EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, order=2);
