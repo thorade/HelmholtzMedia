@@ -219,6 +219,16 @@ The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, 
 Note that the REFPROP default for ammonia is different (u = 0 and s = 0 for the saturated liquid at the triple point).
 </p>
 <p>
+The coefficients of the equation of state are taken from
+Gao, K., Wu, J., Bell, I.H., Harvey, A.H. and Lemmon, E.W.:
+<i>A Reference Equation of State with an Associating Term for the Thermodynamic Properties of Ammonia</i>,
+J. Phys. Chem. Ref. Data 52, 013102 (2023), DOI: <a href=\"https://doi.org/10.1063/5.0128269\">10.1063/5.0128269</a>:
+the residual part from Table 5 and Eq. (29), the ideal-gas part from Eq. (28), the physical constants from Table 1.
+Only the constants a1 and a2 of the ideal-gas part are recomputed for the IIR reference state.
+The values of Table 7 of the publication are used for validation, see
+<a href=\"modelica://HelmholtzMedia.Validation.Properties.EoSAmmonia\">Validation.Properties.EoSAmmonia</a>.
+</p>
+<p>
 The equation of state of Gao et al. (2023) contains two associating terms
 n*delta^d*tau^t*exp(eta*(delta-epsilon)^2 + 1/(beta*(tau-gamma)^2 + b)), see <code>residualAssociating</code>.
 The ancillary equations (vapour pressure, saturated densities, Eqs. (20)-(22)) and the melting curve of solid phase I
