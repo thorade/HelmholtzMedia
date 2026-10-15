@@ -3,17 +3,13 @@ function dynamicViscosity_initial
   "Returns dynamic Viscosity initial contribution"
   input Density d "density";
   input Temperature T "temperature";
+  input DynamicViscosity eta_0 "dilute contribution, see dynamicViscosity_dilute (used by VS1)";
   output DynamicViscosity eta_1;
 
 protected
   DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
-  CollisionIntegralModel collisionIntegralModel=dynamicViscosityCoefficients.collisionIntegralModel;
 
-  Temperature T_crit=fluidConstants[1].criticalTemperature;
-  Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
-  Temperature T_red_residual=dynamicViscosityCoefficients.reducingTemperature_residual;
   Real T_star "reduced temperature";
-  Real tau "reduced temperature";
 
   MolarMass MM = fluidConstants[1].molarMass;
   Real dm=d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
@@ -40,7 +36,7 @@ algorithm
     T_star := (T/dynamicViscosityCoefficients.epsilon_kappa);
     B_star := sum(b[i, 1]*T_star^b[i, 2] for i in 1:size(b, 1));
     B := B_star*0.6022137*sigma^3;
-    eta_1 := dynamicViscosity_dilute(d=d, T=T)*B*dm;
+    eta_1 := eta_0*B*dm;
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
     eta_1 := dm * (b[1,1] + b[2,1]*(b[3,1]-log(T/b[4,1]))^2);
   else

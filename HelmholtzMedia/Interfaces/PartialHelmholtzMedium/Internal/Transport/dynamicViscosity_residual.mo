@@ -7,12 +7,8 @@ function dynamicViscosity_residual
 
 protected
   DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
-  CollisionIntegralModel collisionIntegralModel=dynamicViscosityCoefficients.collisionIntegralModel;
 
-  Temperature T_crit=fluidConstants[1].criticalTemperature;
-  Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
   Temperature T_red_residual=dynamicViscosityCoefficients.reducingTemperature_residual;
-  Real T_star "reduced temperature";
   Real tau "reduced temperature";
 
   MolarMass MM = fluidConstants[1].molarMass;

@@ -8,6 +8,7 @@ function dynamicViscosity "Returns dynamic Viscosity"
 protected
   DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
   constant Real micro=1e-6;
+  DynamicViscosity eta_0 "dilute contribution, also needed by the initial density contribution";
 
 algorithm
   assert(phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
@@ -18,7 +19,8 @@ algorithm
   else
     // composite models
     assert(size(dynamicViscosityCoefficients.CET, 1) > 0, "dynamicViscosity: no viscosity correlation available for " + mediumName);
-    eta := dynamicViscosity_dilute(d=d, T=T) + dynamicViscosity_initial(d=d, T=T) + dynamicViscosity_residual(d=d, T=T);
+    eta_0 := dynamicViscosity_dilute(d=d, T=T);
+    eta := eta_0 + dynamicViscosity_initial(d=d, T=T, eta_0=eta_0) + dynamicViscosity_residual(d=d, T=T);
   end if;
   // RefProp results are in µPa*s where µ means micro or 1E-6 but SI default is Pa*s
   eta := micro*eta;
