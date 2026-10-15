@@ -1,6 +1,7 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal;
 function dBubbleDensity_dPressure_cache "Return bubble point density derivative (worker of dBubbleDensity_dPressure, with the derivatives at the saturated liquid density)"
   extends Modelica.Icons.Function;
+  input Temperature T "saturation temperature, sat.Tsat (for the derivative annotation)";
   input SaturationProperties sat;
   input EoS.HelmholtzDerivs f "derivatives of the Helmholtz energy at sat.liq";
   output DerDensityByPressure ddldp;
@@ -10,4 +11,5 @@ protected
   DerTemperatureByPressure dTp = saturationTemperature_derp_sat(sat=sat);
 algorithm
   ddldp := ddpT + ddTp*dTp;
+  annotation (derivative(noDerivative=sat, noDerivative=f)=dBubbleDensity_dPressure_cache_der);
 end dBubbleDensity_dPressure_cache;

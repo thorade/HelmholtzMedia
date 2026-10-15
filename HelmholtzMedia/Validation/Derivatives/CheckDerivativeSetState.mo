@@ -1,6 +1,6 @@
 within HelmholtzMedia.Validation.Derivatives;
 model CheckDerivativeSetState
-  "time derivatives of setState_phX, setState_pTX, setState_dTX, setState_psX and of functions of a state computed by setState_phX"
+  "time derivatives of setState_*X, setSat_p, setSat_T and of the functions of a state or a saturation state computed by them"
   extends Modelica.Icons.Example;
   replaceable package Medium = HelmholtzMedia.HelmholtzFluids.Carbondioxide
     constrainedby HelmholtzMedia.Interfaces.PartialHelmholtzMedium;
@@ -22,20 +22,27 @@ model CheckDerivativeSetState
     elseif endStates==EndStates.LiquidNearSaturation then Medium.setState_pT(p=sat0.psat, T=(1 - dT_sat)*sat0.Tsat)
     elseif endStates==EndStates.VapourNearSaturation then Medium.setState_pT(p=sat0.psat, T=1.1*sat0.Tsat)
     else Medium.setState_pT(p=1.5*Medium.fluidConstants[1].criticalPressure, T=1.3*Medium.fluidConstants[1].criticalTemperature);
-  constant Integer n=22 "number of tested expressions";
+  constant Integer n=43 "number of tested expressions";
   constant String names[n]={
     "phX.temperature","phX.density","phX.specificInternalEnergy","phX.specificEntropy",
     "density_derh_p","density_derp_h","specificHeatCapacityCp","isothermalThrottlingCoefficient",
     "pressure_derT_d","specificEnthalpy_derT_d",
     "pTX.density","pTX.specificEnthalpy","pTX.specificInternalEnergy","pTX.specificEntropy",
     "dTX.pressure","dTX.specificEnthalpy","dTX.specificInternalEnergy","dTX.specificEntropy",
-    "psX.density","psX.temperature","psX.specificEnthalpy","psX.specificInternalEnergy"};
+    "psX.density","psX.temperature","psX.specificEnthalpy","psX.specificInternalEnergy",
+    "density_derp_T","density_derT_p","pressure_derd_T","specificEnthalpy_derd_T","isobaricExpansionCoefficient",
+    "isothermalCompressibility","jouleThomsonCoefficient","specificHeatCapacityCv","velocityOfSound",
+    "setSat_p.bubbleDensity","setSat_p.dewDensity","setSat_p.bubbleEnthalpy","setSat_p.dewEntropy",
+    "dBubbleDensity_dPressure","dDewDensity_dPressure","dBubbleEnthalpy_dPressure","dDewEnthalpy_dPressure",
+    "saturationTemperature_derp_sat","setSat_T.bubbleEnthalpy","setSat_T.dewDensity","setSat_T.bubbleEntropy"};
   final parameter Boolean skip_state=(endStates==EndStates.PhaseChange)
     "the derivative properties jump at the phase boundary" annotation(Evaluate=true);
   final parameter Boolean skip_inf=(endStates==EndStates.TwoPhase)
     "cp and the isothermal throttling coefficient are infinite in the two-phase region" annotation(Evaluate=true);
   final parameter Boolean skip_pT=(endStates==EndStates.TwoPhase or endStates==EndStates.PhaseChange)
     "p and T are not independent in the two-phase region" annotation(Evaluate=true);
+  final parameter Boolean skip_sat=(endStates<>EndStates.TwoPhase)
+    "saturation functions only for TwoPhase (p and T along the saturation line)" annotation(Evaluate=true);
 
   Real r(unit="1")=time/tEnd;
   Medium.AbsolutePressure p=s0.p + (s1.p - s0.p)*r;
@@ -72,6 +79,27 @@ equation
   y[20] = Medium.temperature(Medium.setState_psX(p=p, s=s));
   y[21] = Medium.specificEnthalpy(Medium.setState_psX(p=p, s=s));
   y[22] = Medium.specificInternalEnergy(Medium.setState_psX(p=p, s=s));
+  y[23] = if skip_state or skip_inf then 0 else Medium.density_derp_T(Medium.setState_phX(p=p, h=h)) "infinite in two phase";
+  y[24] = if skip_state or skip_inf then 0 else Medium.density_derT_p(Medium.setState_phX(p=p, h=h)) "infinite in two phase";
+  y[25] = if skip_state then 0 else Medium.pressure_derd_T(Medium.setState_phX(p=p, h=h));
+  y[26] = if skip_state then 0 else Medium.specificEnthalpy_derd_T(Medium.setState_phX(p=p, h=h));
+  y[27] = if skip_state then 0 else Medium.isobaricExpansionCoefficient(Medium.setState_phX(p=p, h=h));
+  y[28] = if skip_state or skip_inf then 0 else Medium.isothermalCompressibility(Medium.setState_phX(p=p, h=h)) "infinite in two phase";
+  y[29] = if skip_state then 0 else Medium.jouleThomsonCoefficient(Medium.setState_phX(p=p, h=h));
+  y[30] = if skip_state then 0 else Medium.specificHeatCapacityCv(Medium.setState_phX(p=p, h=h));
+  y[31] = if skip_state then 0 else Medium.velocityOfSound(Medium.setState_phX(p=p, h=h));
+  y[32] = if skip_sat then 0 else Medium.bubbleDensity(Medium.setSat_p(p=p));
+  y[33] = if skip_sat then 0 else Medium.dewDensity(Medium.setSat_p(p=p));
+  y[34] = if skip_sat then 0 else Medium.bubbleEnthalpy(Medium.setSat_p(p=p));
+  y[35] = if skip_sat then 0 else Medium.dewEntropy(Medium.setSat_p(p=p));
+  y[36] = if skip_sat then 0 else Medium.dBubbleDensity_dPressure(Medium.setSat_p(p=p));
+  y[37] = if skip_sat then 0 else Medium.dDewDensity_dPressure(Medium.setSat_p(p=p));
+  y[38] = if skip_sat then 0 else Medium.dBubbleEnthalpy_dPressure(Medium.setSat_p(p=p));
+  y[39] = if skip_sat then 0 else Medium.dDewEnthalpy_dPressure(Medium.setSat_p(p=p));
+  y[40] = if skip_sat then 0 else Medium.saturationTemperature_derp_sat(Medium.setSat_p(p=p));
+  y[41] = if skip_sat then 0 else Medium.bubbleEnthalpy(Medium.setSat_T(T=T));
+  y[42] = if skip_sat then 0 else Medium.dewDensity(Medium.setSat_T(T=T));
+  y[43] = if skip_sat then 0 else Medium.bubbleEntropy(Medium.setSat_T(T=T));
   der(y_int) = der(y);
 initial equation
   y_int = y;
@@ -86,7 +114,9 @@ algorithm
   annotation (experiment(StopTime=1, Tolerance=1e-10), Documentation(info="<html>
 <p>
 Tests the derivative annotations of setState_phX, setState_pTX, setState_dTX and setState_psX (Internal.setState_*_der)
-and, through them, the functions of a state computed by setState_phX, as in Modelica.Fluid components. All inputs vary linearly between the end states selected by <code>endStates</code>
+and, through them, the functions of a state computed by setState_phX, as in Modelica.Fluid components; also the
+derivatives of setSat_p and setSat_T and the functions of a saturation state (TwoPhase only, where p and T move
+along the saturation line). All inputs vary linearly between the end states selected by <code>endStates</code>
 (see CheckDerivativeAnnotations).
 </p>
 </html>"));
