@@ -33,10 +33,16 @@ algorithm
 
   // numerator terms, check last numerator exponent
   if (A_num[nDilute_num,2]>-90) then
-    lambda_0 := sum(A_num[i, 1]*tau^A_num[i, 2] for i in 1:nDilute_num);
+    lambda_0 := 0;
+    for i in 1:nDilute_num loop
+      lambda_0 := lambda_0 + A_num[i, 1]*tau^A_num[i, 2];
+    end for;
   else
     // flagged algorithm, exclude last term from sum loop
-    lambda_0 := sum(A_num[i, 1]*tau^A_num[i, 2] for i in 1:nDilute_num-1);
+    lambda_0 := 0;
+    for i in 1:nDilute_num-1 loop
+      lambda_0 := lambda_0 + A_num[i, 1]*tau^A_num[i, 2];
+    end for;
     if (abs(A_num[nDilute_num,2]+99)<eps) then
       // Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 99");
       // used by CO2
@@ -65,7 +71,10 @@ algorithm
   if (nDilute_den>0) then
     // Modelica.Utilities.Streams.print("thermalConductivity_dilute: use denominator term");
     // used by CO2
-    denom := sum(A_den[i, 1]*tau^A_den[i, 2] for i in 1:nDilute_den);
+    denom := 0;
+    for i in 1:nDilute_den loop
+      denom := denom + A_den[i, 1]*tau^A_den[i, 2];
+    end for;
   else
     denom := 1;
   end if;

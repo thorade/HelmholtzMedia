@@ -21,6 +21,8 @@ protected
   Real[size(dynamicViscosityCoefficients.CET, 1),2] CET=dynamicViscosityCoefficients.CET; // Chapman-Enskog-Term
   Real[size(dynamicViscosityCoefficients.CET_den, 1),2] CET_den=dynamicViscosityCoefficients.CET_den;
   Real Omega=0 "reduced effective cross section / Omega collision integral";
+  Real S "sum (collision integral or numerator)";
+  Real S_den "sum (denominator)";
   Real sigma=dynamicViscosityCoefficients.sigma;
 
   Real eta_red_0=dynamicViscosityCoefficients.reducingViscosity_0;
@@ -40,10 +42,18 @@ algorithm
     if abs(T_star)<1E-20 then
       T_star := 1E-20;
     end if;
-    Omega := exp(sum(a[i, 1]*(T_star)^a[i, 2] for i in 1:size(a, 1)));
+    S := 0;
+    for i in 1:size(a, 1) loop
+      S := S + a[i, 1]*T_star^a[i, 2];
+    end for;
+    Omega := exp(S);
   elseif (collisionIntegralModel == CollisionIntegralModel.CI2) then
     T_star := (dynamicViscosityCoefficients.epsilon_kappa/T)^(1/3);
-    Omega := 1/(sum(a[i, 1]*(T_star)^(4-i) for i in 1:size(a, 1)));
+    S := 0;
+    for i in 1:size(a, 1) loop
+      S := S + a[i, 1]*T_star^(4 - i);
+    end for;
+    Omega := 1/S;
   else
     assert(false, "unknown CollisionIntegralModel");
   end if;
@@ -57,13 +67,22 @@ algorithm
     tau := T/T_red_0;
     if size(CET_den, 1) > 0 then
       // empirical rational function, e.g. Velliadou et al. (2022) for R32
-      eta_0 := sum(CET[i, 1]*tau^CET[i, 2] for i in 1:size(CET, 1))
-              /sum(CET_den[i, 1]*tau^CET_den[i, 2] for i in 1:size(CET_den, 1));
+      S := 0;
+      for i in 1:size(CET, 1) loop
+        S := S + CET[i, 1]*tau^CET[i, 2];
+      end for;
+      S_den := 0;
+      for i in 1:size(CET_den, 1) loop
+        S_den := S_den + CET_den[i, 1]*tau^CET_den[i, 2];
+      end for;
+      eta_0 := S/S_den;
     else
       // first term is the Chapman-Enskog-Term
       eta_0 := CET[1, 1]*sqrt(tau)/(sigma^2*Omega);
       // possibly further empirical terms
-      eta_0 := eta_0 + sum(CET[i, 1]*(tau)^CET[i, 2] for i in 2:size(CET, 1));
+      for i in 2:size(CET, 1) loop
+        eta_0 := eta_0 + CET[i, 1]*tau^CET[i, 2];
+      end for;
     end if;
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
     eta_0 := CET[1, 1]*T^CET[1,2]/(sigma^2*Omega);

@@ -89,7 +89,10 @@ algorithm
   elseif (thermalConductivityModel == ThermalConductivityModel.TC1) then
     tau := T/T_red_background;
     delta := d/d_red_background;
-    lambda_b := sum((B[i, 1]*tau^B[i, 2])*(delta)^B[i, 3] for i in 1:nBackground);
+    lambda_b := 0;
+    for i in 1:nBackground loop
+      lambda_b := lambda_b + B[i, 1]*tau^B[i, 2]*delta^B[i, 3];
+    end for;
     lambda_b := lambda_b*lambda_red_background;
   elseif (thermalConductivityModel == ThermalConductivityModel.TC2) then
     assert(false, "ThermalconductivityModel TC2 not yet implemented");
