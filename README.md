@@ -28,7 +28,7 @@ In the future, there might be a release branch and official releases.
 Copyright  2009-2026 Matthis Thorade
 
 This Modelica package is free software and the use is completely at your own risk; 
-it is available under the BSD 3-Clause license. 
+it is available under the [BSD 3-Clause license](LICENSE.md). 
 Upon request, it is also available under other licenses, including the [Modelica License 2](https://www.modelica.org/licenses/ModelicaLicense2).  
 
 ## Development and contribution
