@@ -96,10 +96,17 @@ algorithm
     if size(g, 1) > 0 then
       // generalized RefProp algorithm, be careful with coeffs: they may differ from article
       if (dynamicViscosityModel == DynamicViscosityModel.VS1) then
-        delta_0 := sum(g[i, 1]*tau^g[i, 2] for i in 1:size(g, 1));
+        delta_0 := 0;
+        for i in 1:size(g, 1) loop
+          delta_0 := delta_0 + g[i, 1]*tau^g[i, 2];
+        end for;
       elseif (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative) then
         // alternative inverse form
-        delta_0 := g[1, 1]/(1 + sum(g[i, 1]*tau^g[i, 2] for i in 2:size(g, 1)));
+        delta_0 := 1;
+        for i in 2:size(g, 1) loop
+          delta_0 := delta_0 + g[i, 1]*tau^g[i, 2];
+        end for;
+        delta_0 := g[1, 1]/delta_0;
       end if;
     else
       delta_0 := 1.0;

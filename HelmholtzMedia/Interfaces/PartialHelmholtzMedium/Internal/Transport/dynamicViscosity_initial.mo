@@ -34,7 +34,10 @@ algorithm
       or  (dynamicViscosityModel == DynamicViscosityModel.VS4)) then
     // use the second viscosity virial coefficient B according to Rainwater and Friend theory
     T_star := (T/dynamicViscosityCoefficients.epsilon_kappa);
-    B_star := sum(b[i, 1]*T_star^b[i, 2] for i in 1:size(b, 1));
+    B_star := 0;
+    for i in 1:size(b, 1) loop
+      B_star := B_star + b[i, 1]*T_star^b[i, 2];
+    end for;
     B := B_star*0.6022137*sigma^3;
     eta_1 := eta_0*B*dm;
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
