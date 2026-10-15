@@ -7,7 +7,8 @@ model CheckDerivativeAnnotations
   parameter EndStates endStates=EndStates.SinglePhase "end states of the linear ramps" annotation(Evaluate=true);
   final parameter Boolean skip_pT=(endStates==EndStates.TwoPhase or endStates==EndStates.PhaseChange)
     "the functions of p and T are skipped if the path enters the two-phase region (p and T not independent there)" annotation(Evaluate=true);
-  parameter Real tol=1e-6 "relative tolerance";
+  parameter Real tol=if endStates==EndStates.PhaseChange then 1e-5 else 1e-6
+    "relative tolerance (larger for PhaseChange: the derivatives jump at the phase boundaries, without events)";
   parameter Modelica.Units.SI.Time tEnd=1 "duration of the ramps";
   parameter Real dT_sat=1e-4 "relative distance of the end state to the saturation temperature (LiquidNearSaturation, VapourNearSaturation)";
   parameter Medium.SaturationProperties sat0=Medium.setSat_p(p=0.5*Medium.fluidConstants[1].criticalPressure);

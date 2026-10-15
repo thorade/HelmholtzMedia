@@ -9,21 +9,30 @@ function setState_psX_der "time derivative of setState_psX (derivative of the st
   input Real s_der "time derivative of s";
   input Real X_der[:] "time derivative of X (not used, pure substance)";
   output ThermodynamicState state_der "time derivative of the state (phase is set to 0, it has no derivative)";
+protected
+  ThermodynamicState state=setState_psX(p=p, s=s, X=X, phase=phase) "the state, evaluated once";
+  HelmholtzCache cache=setHelmholtzCache(d=state.d, T=state.T, phase=state.phase) "evaluated once";
+  Real d_der;
+  Real h_der;
+  Real T_der;
 algorithm
+  T_der := if state.phase == 2 then p_der*jouleThomsonCoefficient_cache(d=state.d, T=state.T, phase=state.phase, cache=cache)
+    else (-p_der*state.T*density_derT_p_cache(d=state.d, T=state.T, phase=state.phase, cache=cache)/state.d^2 + s_der*state.T)/specificHeatCapacityCp_cache(d=state.d, T=state.T, phase=state.phase, cache=cache);
+  d_der := p_der/velocityOfSound_cache(d=state.d, T=state.T, phase=state.phase, cache=cache)^2 + s_der*state.T*density_derh_p_cache(d=state.d, T=state.T, phase=state.phase, cache=cache);
+  h_der := p_der/state.d + s_der*state.T;
   state_der := ThermodynamicState(
     phase=0,
-    T=temperature_ps_state_der(p=p, s=s, state=setState_psX(p=p, s=s, X=X, phase=phase), p_der=p_der, s_der=s_der),
+    T=T_der,
     p=p_der,
-    d=density_ps_state_der(p=p, s=s, state=setState_psX(p=p, s=s, X=X, phase=phase), p_der=p_der, s_der=s_der),
-    u=specificEnthalpy_ps_state_der(p=p, s=s, state=setState_psX(p=p, s=s, X=X, phase=phase), p_der=p_der, s_der=s_der)
-      - p_der/density(state=setState_psX(p=p, s=s, X=X, phase=phase))
-      + pressure(state=setState_psX(p=p, s=s, X=X, phase=phase))/density(state=setState_psX(p=p, s=s, X=X, phase=phase))^2*density_ps_state_der(p=p, s=s, state=setState_psX(p=p, s=s, X=X, phase=phase), p_der=p_der, s_der=s_der),
-    h=specificEnthalpy_ps_state_der(p=p, s=s, state=setState_psX(p=p, s=s, X=X, phase=phase), p_der=p_der, s_der=s_der),
+    d=d_der,
+    u=h_der - p_der/state.d + p/state.d^2*d_der,
+    h=h_der,
     s=s_der);
-  annotation (Inline=true, Documentation(info="<html>
+  annotation (Documentation(info="<html>
 <p>
 Derivative annotation of setState_psX, see <a href=\"modelica://HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.setState_phX_der\">setState_phX_der</a>.
-Written as one statement and inlined, so that the setState_psX calls are shared with the original call (same arguments).
+Not inlined: the state and the HelmholtzCache are evaluated once, and the partial derivatives are computed by the *_cache workers.
+Dymola does not inline derivative functions inside the analytic Jacobians of nonlinear systems, where an inlined version evaluated the state several times per call.
 u = h - p/d, so du/dt = dh/dt - (dp/dt)/d + p/d^2*(dd/dt).
 </p>
 </html>"));
