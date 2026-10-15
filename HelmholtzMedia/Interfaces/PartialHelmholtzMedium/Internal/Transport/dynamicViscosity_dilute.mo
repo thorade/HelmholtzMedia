@@ -1,21 +1,20 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.Transport;
 function dynamicViscosity_dilute
   "Returns dynamic Viscosity dilute contribution"
-  input ThermodynamicState state;
+  input Density d "density";
+  input Temperature T "temperature";
   output DynamicViscosity eta_0;
 
 protected
   DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
   CollisionIntegralModel collisionIntegralModel=dynamicViscosityCoefficients.collisionIntegralModel;
 
-  Temperature T_crit=fluidConstants[1].criticalTemperature;
   Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
-  Temperature T_red_residual=dynamicViscosityCoefficients.reducingTemperature_residual;
   Real T_star "reduced temperature";
   Real tau "reduced temperature";
 
   MolarMass MM = fluidConstants[1].molarMass;
-  Real dm=state.d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
+  Real dm=d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
   //Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
 
   Real[size(dynamicViscosityCoefficients.a, 1),2] a=dynamicViscosityCoefficients.a;
@@ -34,16 +33,16 @@ algorithm
   // first, calculate the collision integral Omega
   if ((collisionIntegralModel == CollisionIntegralModel.CI0)
    or (dynamicViscosityModel == DynamicViscosityModel.VS0)) then
-    T_star := (state.T/dynamicViscosityCoefficients.epsilon_kappa);
+    T_star := (T/dynamicViscosityCoefficients.epsilon_kappa);
     Omega := 1.16145/T_star^0.14874 + 0.52487*exp(-0.77320*T_star) + 2.16178*exp(-2.43787*T_star);
   elseif (collisionIntegralModel == CollisionIntegralModel.CI1) then
-    T_star := Modelica.Math.log(state.T/dynamicViscosityCoefficients.epsilon_kappa);
+    T_star := Modelica.Math.log(T/dynamicViscosityCoefficients.epsilon_kappa);
     if abs(T_star)<1E-20 then
       T_star := 1E-20;
     end if;
     Omega := exp(sum(a[i, 1]*(T_star)^a[i, 2] for i in 1:size(a, 1)));
   elseif (collisionIntegralModel == CollisionIntegralModel.CI2) then
-    T_star := (dynamicViscosityCoefficients.epsilon_kappa/state.T)^(1/3);
+    T_star := (dynamicViscosityCoefficients.epsilon_kappa/T)^(1/3);
     Omega := 1/(sum(a[i, 1]*(T_star)^(4-i) for i in 1:size(a, 1)));
   else
     assert(false, "unknown CollisionIntegralModel");
@@ -52,10 +51,10 @@ algorithm
   // dilute gas (zero density) contribution
   if (dynamicViscosityModel == DynamicViscosityModel.VS0) then
     // hardcoded models
-    eta_0 := 26.692E-3 * sqrt(dm*state.T)/(sigma^2*Omega);
+    eta_0 := 26.692E-3 * sqrt(dm*T)/(sigma^2*Omega);
   elseif ((dynamicViscosityModel == DynamicViscosityModel.VS1)
       or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
-    tau := state.T/T_red_0;
+    tau := T/T_red_0;
     if size(CET_den, 1) > 0 then
       // empirical rational function, e.g. Velliadou et al. (2022) for R32
       eta_0 := sum(CET[i, 1]*tau^CET[i, 2] for i in 1:size(CET, 1))
@@ -67,7 +66,7 @@ algorithm
       eta_0 := eta_0 + sum(CET[i, 1]*(tau)^CET[i, 2] for i in 2:size(CET, 1));
     end if;
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
-    eta_0 := CET[1, 1]*state.T^CET[1,2]/(sigma^2*Omega);
+    eta_0 := CET[1, 1]*T^CET[1,2]/(sigma^2*Omega);
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
     assert(false, "dynamicViscosityModel VS4 not yet implemented");
   else
@@ -77,7 +76,7 @@ algorithm
 
   /* // following lines are for debugging only
   Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("        T = " + String(state.T));
+  Modelica.Utilities.Streams.print("        T = " + String(T));
   Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
   Modelica.Utilities.Streams.print("      tau = " + String(tau));
   Modelica.Utilities.Streams.print("===========================================");
@@ -86,7 +85,7 @@ algorithm
   Modelica.Utilities.Streams.print("===========================================");
   */
 
-  annotation (Documentation(info="<html>
+  annotation (smoothOrder=2, Documentation(info="<html>
 <p>
 This model is identical to the RefProp VS1 or VS2 model.
 

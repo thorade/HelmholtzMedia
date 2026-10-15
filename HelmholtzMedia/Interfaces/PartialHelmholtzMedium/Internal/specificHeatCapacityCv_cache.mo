@@ -1,7 +1,9 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal;
 function specificHeatCapacityCv_cache "returns the isochoric specific heat capcacity (computed from the shared auxiliary properties, see specificHeatCapacityCv)"
-  input ThermodynamicState state;
-  input HelmholtzCache cache;
+  input Density d "density of the state";
+  input Temperature T "temperature of the state";
+  input FixedPhase phase "phase of the state: 1 single phase, 2 two-phase";
+  input HelmholtzCache cache "see setHelmholtzCache(d, T, phase)";
   output SpecificHeatCapacity cv;
 protected
   MassFraction x "vapour quality";
@@ -14,10 +16,11 @@ protected
   DerVolumeByTemperature dvT_vap;
   DerFractionByTemperature dxTv;
 algorithm
-  if state.phase==1 then
+  if phase==1 then
     cv := EoS.duTd(cache.f);
-  elseif state.phase==2 then
-    x := vapourQuality_sat(state=state, sat=cache.sat);
+  elseif phase==2 then
+    x := if d <= cache.sat.vap.d then 1.0 elseif d >= cache.sat.liq.d then 0.0
+         else (1.0/d - 1.0/cache.sat.liq.d)/(1.0/cache.sat.vap.d - 1.0/cache.sat.liq.d);
     dpT := saturationPressure_derT_sat(sat=cache.sat);
     duT_liq := EoS.duTd(cache.fl)-EoS.dudT(cache.fl)*EoS.dpTd(cache.fl)/EoS.dpdT(cache.fl) + EoS.dudT(cache.fl)/EoS.dpdT(cache.fl)*dpT;
     duT_vap := EoS.duTd(cache.fv)-EoS.dudT(cache.fv)*EoS.dpTd(cache.fv)/EoS.dpdT(cache.fv) + EoS.dudT(cache.fv)/EoS.dpdT(cache.fv)*dpT;
@@ -30,4 +33,5 @@ algorithm
   else
     assert(false, "specificHeatCapacityCv error: phase is neither 1 nor 2");
   end if;
+  annotation (derivative(noDerivative=cache)=specificHeatCapacityCv_cache_der);
 end specificHeatCapacityCv_cache;

@@ -15,5 +15,5 @@ annotation (
   Inline=false,
   LateInline=true,
   inverse(T=temperature_ph_state(p=p, h=h, state=state)),
-  derivative(noDerivative=state)=specificEnthalpy_pT_der);
+  derivative(noDerivative=state)=specificEnthalpy_pT_state_der);
 end specificEnthalpy_pT_state;

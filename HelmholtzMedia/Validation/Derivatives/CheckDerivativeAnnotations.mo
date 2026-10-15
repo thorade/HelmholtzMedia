@@ -7,7 +7,8 @@ model CheckDerivativeAnnotations
   parameter EndStates endStates=EndStates.SinglePhase "end states of the linear ramps" annotation(Evaluate=true);
   final parameter Boolean skip_pT=(endStates==EndStates.TwoPhase or endStates==EndStates.PhaseChange)
     "the functions of p and T are skipped if the path enters the two-phase region (p and T not independent there)" annotation(Evaluate=true);
-  parameter Real tol=1e-6 "relative tolerance";
+  parameter Real tol=if endStates==EndStates.PhaseChange then 1e-5 else 1e-6
+    "relative tolerance (larger for PhaseChange: the derivatives jump at the phase boundaries, without events)";
   parameter Modelica.Units.SI.Time tEnd=1 "duration of the ramps";
   parameter Real dT_sat=1e-4 "relative distance of the end state to the saturation temperature (LiquidNearSaturation, VapourNearSaturation)";
   parameter Medium.SaturationProperties sat0=Medium.setSat_p(p=0.5*Medium.fluidConstants[1].criticalPressure);
@@ -24,9 +25,16 @@ model CheckDerivativeAnnotations
     elseif endStates==EndStates.LiquidNearSaturation then Medium.setState_pT(p=sat0.psat, T=(1 - dT_sat)*sat0.Tsat)
     elseif endStates==EndStates.VapourNearSaturation then Medium.setState_pT(p=sat0.psat, T=1.1*sat0.Tsat)
     else Medium.setState_pT(p=1.5*Medium.fluidConstants[1].criticalPressure, T=1.3*Medium.fluidConstants[1].criticalTemperature);
-  constant String names[16]={"density_ph","temperature_ph","specificEntropy_ph","density_ps","temperature_ps","specificEnthalpy_ps",
+  constant String names[22]={"density_ph","temperature_ph","specificEntropy_ph","density_ps","temperature_ps","specificEnthalpy_ps",
     "pressure_dT","specificEnthalpy_dT","specificEntropy_dT","pressure_Ts","density_Ts","temperature_pd","specificEnthalpy_pd",
-    "density_pT","specificEnthalpy_pT","specificEntropy_pT"};
+    "density_pT","specificEnthalpy_pT","specificEntropy_pT",
+    "density_derh_p","density_derp_h","specificHeatCapacityCp","isothermalThrottlingCoefficient",
+    "dynamicViscosity","thermalConductivity"};
+  constant Integer n=22 "number of tested functions";
+  final parameter Boolean skip_state=(endStates==EndStates.PhaseChange)
+    "the functions of the state are skipped if the path crosses the phase boundary (fixed phase of the state)" annotation(Evaluate=true);
+  final parameter Medium.FixedPhase phase_state=if endStates==EndStates.TwoPhase then 2 else 1
+    "phase of the state for the functions of the state" annotation(Evaluate=true);
 
   // each pair of inputs varies linearly between the two end states
   Real r(unit="1")=time/tEnd;
@@ -35,9 +43,16 @@ model CheckDerivativeAnnotations
   Medium.SpecificEnthalpy h=s0.h + (s1.h - s0.h)*r;
   Medium.SpecificEntropy s=s0.s + (s1.s - s0.s)*r;
   Medium.Density d=s0.d + (s1.d - s0.d)*r;
-  Real y[16] "property functions";
-  Real y_int[16] "integrated time derivatives";
-  Real err[16]={abs(y_int[i] - y[i])/(abs(y[i]) + 1e-3) for i in 1:16} "relative deviation";
+  // state built from variables (as in BaseProperties), so that der() of the functions of the state is defined
+  Medium.Density d_state=Medium.density_ph(p=p, h=h);
+  Medium.Temperature T_state=Medium.temperature_ph(p=p, h=h);
+  Medium.ThermodynamicState state=Medium.ThermodynamicState(
+    phase=phase_state, d=d_state, T=T_state, p=p, h=h, u=h - p/d_state, s=Medium.specificEntropy_ph(p=p, h=h));
+  Real y[n] "property functions";
+  Real y_int[n] "integrated time derivatives";
+  parameter Real y_start[n](each fixed=false) "absolute values at the start, scale of the functions of the state";
+  Real err[n]={abs(y_int[i] - y[i])/(abs(y[i]) + (if i <= 16 then 1e-3 else max(1e-3*y_start[i], Modelica.Constants.small))) for i in 1:n}
+    "relative deviation (offset 1e-3 for the functions of two variables, 1e-3 of the start value for the functions of the state)";
 equation
   y[1] = Medium.density_ph(p=p, h=h);
   y[2] = Medium.temperature_ph(p=p, h=h);
@@ -55,12 +70,19 @@ equation
   y[14] = if skip_pT then 0 else Medium.density_pT(p=p, T=T);
   y[15] = if skip_pT then 0 else Medium.specificEnthalpy_pT(p=p, T=T);
   y[16] = if skip_pT then 0 else Medium.specificEntropy_pT(p=p, T=T);
+  y[17] = if skip_state then 0 else Medium.density_derh_p(state);
+  y[18] = if skip_state then 0 else Medium.density_derp_h(state);
+  y[19] = if skip_state or phase_state==2 then 0 else Medium.specificHeatCapacityCp(state) "infinite in the two-phase region";
+  y[20] = if skip_state or phase_state==2 then 0 else Medium.isothermalThrottlingCoefficient(state) "infinite in the two-phase region";
+  y[21] = if skip_state or phase_state==2 then 0 else Medium.dynamicViscosity(state) "not defined in the two-phase region";
+  y[22] = if skip_state or phase_state==2 then 0 else Medium.thermalConductivity(state) "not defined in the two-phase region";
   der(y_int) = der(y);
 initial equation
   y_int = y;
+  y_start = abs(y);
 algorithm
   when terminal() then
-    for i in 1:16 loop
+    for i in 1:n loop
       Modelica.Utilities.Streams.print(getInstanceName() + "." + names[i] + ": relative deviation " + String(err[i], significantDigits=3));
     end for;
     assert(max(err) < tol, getInstanceName() + ": a time derivative deviates, maximum relative deviation " + String(max(err)));
@@ -82,6 +104,12 @@ vapour (1.05 T_sat); the derivatives jump at the phase boundaries.</li>
 <li>LiquidNearSaturation: at 0.5 p_crit from 0.9 T_sat to (1 - dT_sat) T_sat.</li>
 <li>VapourNearSaturation: at 0.5 p_crit from (1 + dT_sat) T_sat to 1.1 T_sat.</li>
 </ul>
+<p>
+The functions of the state (density_derh_p, density_derp_h, specificHeatCapacityCp, isothermalThrottlingCoefficient,
+dynamicViscosity, thermalConductivity) are evaluated for a state built from variables, as in BaseProperties, with a fixed phase; they are skipped for
+PhaseChange, cp, the isothermal throttling coefficient and the transport properties also for TwoPhase (infinite or not defined there).
+Their deviation is relative to 1e-3 of their start value, since their values are small in SI units.
+</p>
 <p>
 The functions of p and T are skipped for TwoPhase and PhaseChange, since p and T are not independent in the
 two-phase region (density_pT etc. jump at the saturation line). The other paths may touch the two-phase region,

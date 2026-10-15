@@ -10,5 +10,5 @@ algorithm
 annotation (
   Inline=false,
   LateInline=true,
-  derivative(noDerivative=state)=specificEntropy_pT_der);
+  derivative(noDerivative=state)=specificEntropy_pT_state_der);
 end specificEntropy_pT_state;

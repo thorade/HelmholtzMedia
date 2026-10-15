@@ -13,5 +13,5 @@ algorithm
 annotation (
   Inline=false,
   LateInline=true,
-  derivative(noDerivative=state)=specificEnthalpy_dT_der);
+  derivative(noDerivative=state)=specificEnthalpy_dT_state_der);
 end specificEnthalpy_dT_state;

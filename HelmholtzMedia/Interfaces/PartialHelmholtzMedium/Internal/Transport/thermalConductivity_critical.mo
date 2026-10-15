@@ -1,14 +1,13 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.Transport;
 function thermalConductivity_critical
   "Return thermal conductivity critical enhancement"
-  input ThermodynamicState state;
+  input Density d "density";
+  input Temperature T "temperature";
   output ThermalConductivity lambda_c;
 
 protected
   MolarMass MM = fluidConstants[1].molarMass;
   Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-  Temperature T_crit=fluidConstants[1].criticalTemperature;
-  Real tau "reduced temperature";
   AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
   // coeffs for critical enhancement
@@ -45,17 +44,17 @@ algorithm
   lambda_c := 0;
 
   // critical enhancement by the simplified crossover model by Olchowy and Sengers
-  if ((state.T > T_ref) or (state.d < d_crit/100)) then
+  if ((T > T_ref) or (d < d_crit/100)) then
     lambda_c := 0; // far away from critical point
   else
     // use critical values from EoS to calculate chi, Omega and lambda_c
-    // watch out: algorithm for chi and chi_ref are different (chi_ref is multiplied with T_ref/state.T)
-    f     := EoS.setHelmholtzDerivs(T=state.T, d=state.d, phase=1, order=2);
-    f_ref := EoS.setHelmholtzDerivs(T=T_ref,   d=state.d, phase=1, order=2);
+    // watch out: algorithm for chi and chi_ref are different (chi_ref is multiplied with T_ref/T)
+    f     := EoS.setHelmholtzDerivs(T=T, d=d, phase=1, order=2);
+    f_ref := EoS.setHelmholtzDerivs(T=T_ref,   d=d, phase=1, order=2);
     ddpT     := 1.0/EoS.dpdT(f);
     ddpT_ref := 1.0/EoS.dpdT(f_ref);
-    chi     := p_crit/d_crit^2*state.d*ddpT;
-    chi_ref := p_crit/d_crit^2*state.d*ddpT_ref*T_ref/state.T;
+    chi     := p_crit/d_crit^2*d*ddpT;
+    chi_ref := p_crit/d_crit^2*d*ddpT_ref*T_ref/T;
 
     Delta_chi := chi - chi_ref;
 
@@ -64,20 +63,20 @@ algorithm
     else
       xi := xi_0*(Delta_chi/Gamma_0)^(nu/gamma);
 
-      Cp := specificHeatCapacityCp(state=state);
-      Cv := specificHeatCapacityCv(state=state);
+      Cp := EoS.dhTd(f) - EoS.dhdT(f)*EoS.dpTd(f)/EoS.dpdT(f);
+      Cv := EoS.duTd(f);
       Omega := 2/pi*((Cp - Cv)/Cp*atan(q_D*xi) + Cv/Cp*q_D*xi);
-      Omega_0 := 2/pi*(1 - exp(-1/(1/(q_D*xi) + ((q_D*xi*d_crit/state.d)^2)/3)));
+      Omega_0 := 2/pi*(1 - exp(-1/(1/(q_D*xi) + ((q_D*xi*d_crit/d)^2)/3)));
 
-      eta_b := dynamicViscosity(state=state);
-      lambda_c := (state.d*Cp*R0*k_b*state.T)/(6*pi*eta_b*xi)*(Omega - Omega_0);
+      eta_b := dynamicViscosity(d=d, T=T);
+      lambda_c := (d*Cp*R0*k_b*T)/(6*pi*eta_b*xi)*(Omega - Omega_0);
       lambda_c := max(0, lambda_c);
     end if;
   end if;
 
   /* // following lines are for debugging only
   Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("        d = " + String(state.d) + " and T = " + String(state.T));
+  Modelica.Utilities.Streams.print("        d = " + String(d) + " and T = " + String(T));
   Modelica.Utilities.Streams.print("   ddpT   = " + String(ddpT) + " and ddpT_ref = " + String(ddpT_ref));
   Modelica.Utilities.Streams.print("   chi    = " + String(chi) + "  and  chi_ref = " + String(chi_ref));
   Modelica.Utilities.Streams.print("Delta_chi = " + String(Delta_chi));
@@ -90,7 +89,7 @@ algorithm
   Modelica.Utilities.Streams.print("===========================================");
   */
 
-  annotation (Documentation(info="<html>
+  annotation (smoothOrder=2, Documentation(info="<html>
   <p>
 The thermal conductivity (TC) is split into three parts: ideal gas TC lamda_0, residual TC lambda_r and critical TC enhancement lambda_c.
 Sometimes the residual TC is again split into two parts.

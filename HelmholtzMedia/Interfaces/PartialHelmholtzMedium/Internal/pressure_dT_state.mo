@@ -14,5 +14,5 @@ annotation (
   Inline=false,
   LateInline=true,
   inverse(d=density_pT_state(p=p, T=T, state=state)),
-  derivative(noDerivative=state)=pressure_dT_der);
+  derivative(noDerivative=state)=pressure_dT_state_der);
 end pressure_dT_state;

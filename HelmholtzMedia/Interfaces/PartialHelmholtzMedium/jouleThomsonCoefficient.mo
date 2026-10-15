@@ -3,6 +3,6 @@ function jouleThomsonCoefficient "returns Joule-Thomson-Coefficient (dT/dp)@h=co
   input ThermodynamicState state;
   output DerTemperatureByPressure mu;
 algorithm
-  mu := Internal.jouleThomsonCoefficient_cache(state=state, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
+  mu := Internal.jouleThomsonCoefficient_cache(d=state.d, T=state.T, phase=state.phase, cache=Internal.setHelmholtzCache(d=state.d, T=state.T, phase=state.phase));
 annotation (Inline=true);
 end jouleThomsonCoefficient;

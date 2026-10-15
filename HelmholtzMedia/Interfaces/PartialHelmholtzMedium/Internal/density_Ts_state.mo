@@ -10,5 +10,5 @@ algorithm
 annotation (
   Inline=false,
   LateInline=true,
-  derivative(noDerivative=state)=density_Ts_der);
+  derivative(noDerivative=state)=density_Ts_state_der);
 end density_Ts_state;

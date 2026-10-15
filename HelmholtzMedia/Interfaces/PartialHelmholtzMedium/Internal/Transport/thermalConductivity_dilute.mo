@@ -1,7 +1,8 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.Transport;
 function thermalConductivity_dilute
   "Return thermal conductivity dilute (i.e. density-independent) contribution"
-  input ThermodynamicState state;
+  input Density d "density";
+  input Temperature T "temperature";
   output ThermalConductivity lambda_0;
 
 protected
@@ -27,8 +28,8 @@ algorithm
   // initialize output
   lambda_0 := 0;
 
-  // Modelica.Utilities.Streams.print("thermalConductivity_dilute: d = " + String(state.d) + " and T = " + String(state.T));
-  tau := state.T/T_red_0;
+  // Modelica.Utilities.Streams.print("thermalConductivity_dilute: d = " + String(d) + " and T = " + String(T));
+  tau := T/T_red_0;
 
   // numerator terms, check last numerator exponent
   if (A_num[nDilute_num,2]>-90) then
@@ -40,7 +41,7 @@ algorithm
       // Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 99");
       // used by CO2
       // remember: RefProp uses molar units and g/mol, divide by MolarMass
-      f := EoS.setHelmholtzDerivs(d=state.d,T=state.T, order=2);
+      f := EoS.setHelmholtzDerivs(d=d,T=T, order=2);
       cint := EoS.cp0(f)*f.MM -2.5*f.R_s*f.MM;
       cint := 1.0 + A_num[nDilute_num, 1]*cint;
       lambda_0 := lambda_0*cint;
@@ -54,9 +55,9 @@ algorithm
       // Modelica.Utilities.Streams.print("thermalConductivity_dilute: flag 96");
       // used by Pentane, Isopentane
       // remember: RefProp uses molar units and g/mol!
-      f := EoS.setHelmholtzDerivs(d=state.d,T=state.T, order=2);
+      f := EoS.setHelmholtzDerivs(d=d,T=T, order=2);
       cint := EoS.cp0(f) /f.R_s-2.5;
-      eta_0 := dynamicViscosity_dilute(state);
+      eta_0 := dynamicViscosity_dilute(d=d, T=T);
       lambda_0 := (lambda_0*cint+15.0/4.0)*f.R_s*eta_0/kilo;
     end if;
   end if;
@@ -72,4 +73,5 @@ algorithm
   lambda_0 := lambda_0/denom*lambda_red_0;
   // Modelica.Utilities.Streams.print(" lambda_0 = " + String(lambda_0));
 
+  annotation (smoothOrder=2);
 end thermalConductivity_dilute;

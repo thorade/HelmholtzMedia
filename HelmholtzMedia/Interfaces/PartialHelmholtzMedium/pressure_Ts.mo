@@ -11,6 +11,7 @@ algorithm
   p := Internal.pressure_Ts_state(T=T, s=s, state=setState_Ts(T=T, s=s, phase=phase));
 
 annotation (
+  derivative=Internal.pressure_Ts_der,
   inverse(s=specificEntropy_pT(p=p, T=T, phase=phase),
           T=temperature_ps(p=p, s=s, phase=phase)));
 end pressure_Ts;

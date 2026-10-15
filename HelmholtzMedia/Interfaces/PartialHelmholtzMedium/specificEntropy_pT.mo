@@ -10,6 +10,7 @@ algorithm
   s := Internal.specificEntropy_pT_state(p=p, T=T, state=setState_pTX(p=p, T=T, phase=phase));
 
 annotation (
+  derivative=Internal.specificEntropy_pT_der,
   inverse(T=temperature_ps(p=p, s=s, phase=phase),
           p=pressure_Ts(T=T, s=s, phase=phase)));
 end specificEntropy_pT;

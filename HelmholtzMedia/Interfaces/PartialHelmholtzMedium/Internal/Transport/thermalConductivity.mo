@@ -1,24 +1,26 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.Transport;
 function thermalConductivity "Return thermal conductivity"
-  input ThermodynamicState state;
+  input Density d "density";
+  input Temperature T "temperature";
+  input FixedPhase phase=0 "phase of the state: 1 single phase, 2 two-phase (only for the warning)";
   output ThermalConductivity lambda;
 
 protected
   ThermalConductivityModel thermalConductivityModel=thermalConductivityCoefficients.thermalConductivityModel;
 
 algorithm
-  assert(state.phase <> 2, "thermalConductivity warning: property not defined in two-phase region", level=AssertionLevel.warning);
+  assert(phase <> 2, "thermalConductivity warning: property not defined in two-phase region", level=AssertionLevel.warning);
 
   if (thermalConductivityModel == ThermalConductivityModel.TC0) then
     // hardcoded models return full thermal conductivity in one equation
-    lambda :=thermalConductivity_background(state);
+    lambda :=thermalConductivity_background(d=d, T=T);
   else
     // composite models
     assert(size(thermalConductivityCoefficients.lambda_0_num_coeffs, 1) > 0, "thermalConductivity: no thermal conductivity correlation available for " + mediumName);
-    lambda :=thermalConductivity_dilute(state) + thermalConductivity_background(state) + thermalConductivity_critical(state);
+    lambda :=thermalConductivity_dilute(d=d, T=T) + thermalConductivity_background(d=d, T=T) + thermalConductivity_critical(d=d, T=T);
   end if;
 
-  annotation (Documentation(info="<html>
+  annotation (smoothOrder=2, Documentation(info="<html>
   <p>
 The thermal conductivity (TC) is split into three parts: ideal gas TC lamda_0, residual TC lambda_r and critical TC enhancement lambda_c.
 Sometimes the residual TC is again split into two parts.

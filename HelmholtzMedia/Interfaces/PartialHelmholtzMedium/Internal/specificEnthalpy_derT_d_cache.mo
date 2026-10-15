@@ -1,7 +1,9 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal;
 function specificEnthalpy_derT_d_cache "returns enthalpy derivative (dh/dT)@d=const (computed from the shared auxiliary properties, see specificEnthalpy_derT_d)"
-  input ThermodynamicState state;
-  input HelmholtzCache cache;
+  input Density d "density of the state";
+  input Temperature T "temperature of the state";
+  input FixedPhase phase "phase of the state: 1 single phase, 2 two-phase";
+  input HelmholtzCache cache "see setHelmholtzCache(d, T, phase)";
   output DerEnthalpyByTemperature dhTd;
 protected
   MassFraction x "vapour quality";
@@ -14,10 +16,10 @@ protected
   DerVolumeByTemperature dvT_vap;
   DerFractionByTemperature dxTv;
 algorithm
-  if state.phase==1 then
+  if phase==1 then
     dhTd := EoS.dhTd(cache.f);
-  elseif state.phase==2 then
-    x := (1/state.d - 1/cache.sat.liq.d)/(1/cache.sat.vap.d - 1/cache.sat.liq.d);
+  elseif phase==2 then
+    x := (1/d - 1/cache.sat.liq.d)/(1/cache.sat.vap.d - 1/cache.sat.liq.d);
     dpT := (cache.sat.vap.s-cache.sat.liq.s)/(1.0/cache.sat.vap.d-1.0/cache.sat.liq.d);
     dhT_liq := EoS.dhTd(cache.fl)-EoS.dhdT(cache.fl)*EoS.dpTd(cache.fl)/EoS.dpdT(cache.fl) + EoS.dhdT(cache.fl)/EoS.dpdT(cache.fl)*dpT;
     dhT_vap := EoS.dhTd(cache.fv)-EoS.dhdT(cache.fv)*EoS.dpTd(cache.fv)/EoS.dpdT(cache.fv) + EoS.dhdT(cache.fv)/EoS.dpdT(cache.fv)*dpT;
@@ -30,4 +32,5 @@ algorithm
   else
     assert(false, "specificEnthalpy_derT_d error: phase is neither 1 nor 2");
   end if;
+  annotation (derivative(noDerivative=cache)=specificEnthalpy_derT_d_cache_der);
 end specificEnthalpy_derT_d_cache;

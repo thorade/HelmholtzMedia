@@ -10,5 +10,5 @@ algorithm
 annotation (
   Inline=false,
   LateInline=true,
-  derivative(noDerivative=state)=pressure_Ts_der);
+  derivative(noDerivative=state)=pressure_Ts_state_der);
 end pressure_Ts_state;

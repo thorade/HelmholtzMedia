@@ -11,5 +11,6 @@ algorithm
   h := Internal.specificEnthalpy_pd_state(p=p, d=d, state=setState_pd(p=p, d=d, phase=phase));
 
 annotation (
+  derivative=Internal.specificEnthalpy_pd_der,
   inverse(d=density_ph(p=p, h=h, phase=phase)));
 end specificEnthalpy_pd;

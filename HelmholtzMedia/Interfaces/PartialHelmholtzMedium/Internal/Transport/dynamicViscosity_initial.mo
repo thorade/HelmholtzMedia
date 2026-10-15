@@ -1,21 +1,18 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.Transport;
 function dynamicViscosity_initial
   "Returns dynamic Viscosity initial contribution"
-  input ThermodynamicState state;
+  input Density d "density";
+  input Temperature T "temperature";
+  input DynamicViscosity eta_0 "dilute contribution, see dynamicViscosity_dilute (used by VS1)";
   output DynamicViscosity eta_1;
 
 protected
   DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
-  CollisionIntegralModel collisionIntegralModel=dynamicViscosityCoefficients.collisionIntegralModel;
 
-  Temperature T_crit=fluidConstants[1].criticalTemperature;
-  Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
-  Temperature T_red_residual=dynamicViscosityCoefficients.reducingTemperature_residual;
   Real T_star "reduced temperature";
-  Real tau "reduced temperature";
 
   MolarMass MM = fluidConstants[1].molarMass;
-  Real dm=state.d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
+  Real dm=d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
   //Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
 
   Real[size(dynamicViscosityCoefficients.b, 1),2] b=dynamicViscosityCoefficients.b;
@@ -36,12 +33,12 @@ algorithm
       or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)
       or  (dynamicViscosityModel == DynamicViscosityModel.VS4)) then
     // use the second viscosity virial coefficient B according to Rainwater and Friend theory
-    T_star := (state.T/dynamicViscosityCoefficients.epsilon_kappa);
+    T_star := (T/dynamicViscosityCoefficients.epsilon_kappa);
     B_star := sum(b[i, 1]*T_star^b[i, 2] for i in 1:size(b, 1));
     B := B_star*0.6022137*sigma^3;
-    eta_1 := dynamicViscosity_dilute(state)*B*dm;
+    eta_1 := eta_0*B*dm;
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
-    eta_1 := dm * (b[1,1] + b[2,1]*(b[3,1]-log(state.T/b[4,1]))^2);
+    eta_1 := dm * (b[1,1] + b[2,1]*(b[3,1]-log(T/b[4,1]))^2);
   else
     assert(false, "unknown dynamicViscosityModel");
   end if;
@@ -49,10 +46,9 @@ algorithm
 
   /* // following lines are for debugging only
   Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("        T = " + String(state.T));
+  Modelica.Utilities.Streams.print("        T = " + String(T));
   Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
-  Modelica.Utilities.Streams.print("      tau = " + String(tau));
-  Modelica.Utilities.Streams.print("        d = " + String(state.d));
+  Modelica.Utilities.Streams.print("        d = " + String(d));
   Modelica.Utilities.Streams.print("       dm = " + String(dm));
   Modelica.Utilities.Streams.print("===========================================");
   Modelica.Utilities.Streams.print("   B_star = " + String(B_star));
@@ -61,7 +57,7 @@ algorithm
   Modelica.Utilities.Streams.print("===========================================");
   */
 
-  annotation (Documentation(info="<html>
+  annotation (smoothOrder=2, Documentation(info="<html>
 <p>
 This model is identical to the RefProp VS1 or VS2 model.
 

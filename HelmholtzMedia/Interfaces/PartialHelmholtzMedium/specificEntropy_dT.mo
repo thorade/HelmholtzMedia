@@ -11,5 +11,6 @@ algorithm
   s := Internal.specificEntropy_dT_state(d=d, T=T, state=setState_dTX(d=d, T=T, phase=phase));
 
 annotation (
+  derivative=Internal.specificEntropy_dT_der,
   inverse(d=density_Ts(T=T, s=s, phase=phase)));
 end specificEntropy_dT;
