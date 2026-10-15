@@ -48,7 +48,6 @@ algorithm
   Modelica.Utilities.Streams.print("===========================================");
   Modelica.Utilities.Streams.print("        T = " + String(T));
   Modelica.Utilities.Streams.print("   T_star = " + String(T_star));
-  Modelica.Utilities.Streams.print("      tau = " + String(tau));
   Modelica.Utilities.Streams.print("        d = " + String(d));
   Modelica.Utilities.Streams.print("       dm = " + String(dm));
   Modelica.Utilities.Streams.print("===========================================");
