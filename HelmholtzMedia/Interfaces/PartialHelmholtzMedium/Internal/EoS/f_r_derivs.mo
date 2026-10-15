@@ -20,11 +20,13 @@ protected
   constant Integer nBwr = size(helmholtzCoefficients.residualBwr,1);
   constant Integer nGauss = size(helmholtzCoefficients.residualGauss,1);
   constant Integer nNonAna = size(helmholtzCoefficients.residualNonAnalytical,1);
+  constant Integer nAssoc = size(helmholtzCoefficients.residualAssociating,1);
 
   constant Real[nPoly,3] p = helmholtzCoefficients.residualPoly;
   constant Real[nBwr,4] b = helmholtzCoefficients.residualBwr;
   constant Real[nGauss,9] g = helmholtzCoefficients.residualGauss;
   constant Real[nNonAna,12] a = helmholtzCoefficients.residualNonAnalytical;
+  constant Real[nAssoc,8] s = helmholtzCoefficients.residualAssociating;
   constant Real gaussExponentDeviation = sum(abs(g[i,4] - 2) + abs(g[i,5] - 2) for i in 1:nGauss)
     "zero if all Gaussian terms use the exponent 2 (evaluated at translation, no cost at run time)";
 
@@ -41,6 +43,14 @@ protected
   Real x "c*delta^c (exponential terms)";
   Real Rd "2*eta*(2*delta^2-eps*delta) (Gaussian terms)";
   Real Rt "2*beta*(2*tau^2-gamma*tau) (Gaussian terms)";
+  Real y "tau-gamma (associating terms)";
+  Real Q "beta*(tau-gamma)^2 + b (associating terms)";
+  Real G1 "d(1/Q)/dtau (associating terms)";
+  Real G2 "d2(1/Q)/dtau2 (associating terms)";
+  Real G3 "d3(1/Q)/dtau3 (associating terms)";
+  Real L0 "d(log of the tau part)/dtau (associating terms)";
+  Real L1 "dL0/dtau (associating terms)";
+  Real L2 "d2L0/dtau2 (associating terms)";
 
   // non-analytical terms
   Real u "delta-1";
@@ -205,6 +215,44 @@ algorithm
     end if;
   end for;
 
+  // associating terms n*delta^d*tau^t*exp(eta*(delta-eps)^2 + 1/(beta*(tau-gamma)^2 + b)) (Gao et al. 2023);
+  // the delta part is the same as in the Gaussian terms, the tau part phi = tau^t*exp(1/Q) has
+  // phi'/phi = L0, phi''/phi = L1 + L0^2, phi'''/phi = L2 + 3*L0*L1 + L0^3
+  for i in 1:nAssoc loop
+    y := tau - s[i,6];
+    Q := s[i,5]*y^2 + s[i,8];
+    k := s[i,1]*exp(s[i,3]*lnd + s[i,2]*lnt + s[i,4]*(del - s[i,7])^2 + 1/Q);
+    r := r + k;
+    if order >= 1 then
+      G1 := -2*s[i,5]*y/Q^2;
+      L0 := s[i,2]/tau + G1;
+      D1 := s[i,3] + 2*s[i,4]*del*(del - s[i,7]);
+      T1 := tau*L0;
+      rd := rd + k*D1;
+      rt := rt + k*T1;
+      if order >= 2 then
+        G2 := -2*s[i,5]/Q^2 + 8*s[i,5]^2*y^2/Q^3;
+        L1 := -s[i,2]/tau^2 + G2;
+        Rd := 2*s[i,4]*(2*del^2 - s[i,7]*del);
+        D2 := D1*(D1 - 1) + Rd;
+        T2 := tau^2*(L1 + L0^2);
+        rdd := rdd + k*D2;
+        rtt := rtt + k*T2;
+        rtd := rtd + k*D1*T1;
+        if order >= 3 then
+          G3 := 24*s[i,5]^2*y/Q^3 - 48*s[i,5]^3*y^3/Q^4;
+          L2 := 2*s[i,2]/tau^3 + G3;
+          D3 := D1*D2 + (2*D1 - 1)*Rd + 2*s[i,4]*(4*del^2 - s[i,7]*del) - 2*D2;
+          T3 := tau^3*(L2 + 3*L0*L1 + L0^3);
+          rddd := rddd + k*D3;
+          rttt := rttt + k*T3;
+          rttd := rttd + k*T2*D1;
+          rtdd := rtdd + k*D2*T1;
+        end if;
+      end if;
+    end if;
+  end for;
+
   // divide by delta^m*tau^n
   rd := rd/del;
   rdd := rdd/del^2;
@@ -323,6 +371,7 @@ This factored form also avoids the cancellation of fully expanded derivative exp
 <p>
 The Gaussian terms are implemented with the exponent 2 only (columns 4 and 5 of residualGauss); an assert checks this.
 The non-analytical terms (Span and Wagner 1996, used for carbon dioxide) are included up to third order.
+The associating terms of Gao et al. (2023, ammonia) are included up to third order; their delta part is the same as for the Gaussian terms.
 </p>
 <p>
 The factors of the polynomial, exponential and Gaussian terms were verified symbolically (sympy);

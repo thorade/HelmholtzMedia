@@ -1,3 +1,4 @@
+AmmoniaTestModel
 ButaneTestModel_dT
 ButaneTestModel_dT_component_ph
 ButaneTestModel_ph
@@ -10,6 +11,7 @@ IsobutaneTestModel
 IsopentaneTestModel
 PentaneTestModel
 PropaneTestModel
+PropyleneTestModel
 R134aTestModel
 R134aTestModel2
 R134a_ASHRAE_TestModel_ph
