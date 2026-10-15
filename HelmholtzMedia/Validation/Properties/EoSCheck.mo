@@ -8,6 +8,7 @@ partial model EoSCheck "Single-phase and saturation properties against check val
   parameter Real d[size(T, 1)];
   parameter Real p[size(T, 1)];
   parameter Real cv[size(T, 1)];
+  parameter Real cp[size(T, 1)];
   parameter Real w[size(T, 1)];
   parameter Real h[size(T, 1)];
   parameter Real s[size(T, 1)];
@@ -50,6 +51,7 @@ algorithm
       Modelica.Utilities.Streams.print("T=" + String(T[i]) + " d=" + String(d[i]), fileName);
       nFailed := nFailed + check("p", Medium.pressure(state), p[i], tol*abs(p[i]), fileName);
       nFailed := nFailed + check("cv", Medium.specificHeatCapacityCv(state), cv[i], tol*abs(cv[i]), fileName);
+      nFailed := nFailed + check("cp", Medium.specificHeatCapacityCp(state), cp[i], tol*abs(cp[i]), fileName);
       nFailed := nFailed + check("w", Medium.velocityOfSound(state), w[i], tol*abs(w[i]), fileName);
       nFailed := nFailed + check("h", Medium.specificEnthalpy(state), h[i], tol*(abs(h[i]) + 1e5), fileName);
       nFailed := nFailed + check("s", Medium.specificEntropy(state), s[i], tol*(abs(s[i]) + 1e2), fileName);
@@ -70,10 +72,10 @@ algorithm
 
   annotation (Documentation(info="<html>
 <p>
-Base model: evaluates pressure, isochoric heat capacity, speed of sound, enthalpy and entropy at single-phase states (T, d)
+Base model: evaluates pressure, isochoric and isobaric heat capacity, speed of sound, enthalpy and entropy at single-phase states (T, d)
 and the saturation properties at given temperatures, compares them with check values and writes the results to
 <code>eosCheck_&lt;mediumName&gt;.txt</code>. Since the check values were computed with a different gas constant
-(the one of the original equation of state), the tolerance is relative (default 1e-5).
+(the one of the original equation of state) or are given with 7 significant digits, the tolerance is relative (default 1e-5).
 </p>
 </html>"));
 end EoSCheck;

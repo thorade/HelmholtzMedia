@@ -40,8 +40,8 @@ package Ammonia "Ammonia (R-717) with IIR reference state"
     hasAcentricFactor=true,
        acentricFactor=0.256,
     triplePointTemperature=195.49,
-    triplePointPressure=6054.38,
-    normalBoilingPoint=239.832,
+    triplePointPressure=6053.39,
+    normalBoilingPoint=239.834,
     meltingPoint=195.49) "Fluid Constants";
 
   final constant EoSLimits
@@ -49,7 +49,7 @@ package Ammonia "Ammonia (R-717) with IIR reference state"
     TMIN=fluidConstantsAmmonia.triplePointTemperature,
     TMAX=725,
     DMIN=Modelica.Constants.eps,
-    DMAX=52.43*17.03052 "52.43 mol/l",
+    DMAX=53.13*17.03052 "53.13 mol/l",
     PMIN=Modelica.Constants.small,
     PMAX=1000e6,
     HMIN=-200e3,
@@ -178,39 +178,38 @@ package Ammonia "Ammonia (R-717) with IIR reference state"
   final constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients
   ancillaryCoefficientsAmmonia(
     T_crit=405.56,
-    p_crit=11365e3,
+    p_crit=11.3634e6,
     d_crit=13.696*17.03052,
     pressureSaturationModel=PressureSaturationModel.PS5,
     pressureSaturation=[
-      -7.2257,     1.0;
-       1.4263,     1.5;
-      -0.59642,    2.0;
-      -2.798,      3.6;
-      -3.7869,    15.5],
+      -7.3128,     1.0;
+       3.8888,     1.5;
+      -2.9908,     1.6;
+      -2.8636,     3.7] "Gao et al. (2023), Eq. (20)",
     densityLiquidModel=DensityLiquidModel.DL1,
     densityLiquid=[
-       2.4470,     0.384;
-       5.8341,     1.65;
-     -25.944,      2.2;
-      53.383,      2.75;
-     -54.411,      3.35;
-      22.771,      4.0],
+       0.051236,   0.07;
+       3.7925,     0.46;
+      -3.5929,     0.77;
+       4.6409,     1.05;
+      -1.9893,     1.25;
+       1.5978,     8.0] "Gao et al. (2023), Eq. (21)",
     densityVaporModel=DensityVaporModel.DV3,
     densityVapor=[
-      -0.053296,   0.14;
-      -3.4589,     0.44;
-      -6.7572,     1.314;
-     -17.260,      3.225;
-     -43.120,      6.4;
-    -115.18,      14.0],
+      -0.089966,   0.112;
+      -3.8722,     0.473;
+      -8.1183,     1.5;
+     -25.293,      3.875;
+     -54.279,      8.0;
+    -400.83,      20.0] "Gao et al. (2023), Eq. (22)",
     pressureMeltingModel=PressureMeltingModel.ML1,
     T_reducing=195.49,
-    p_reducing=1000e3,
+    p_reducing=1e6,
     pressureMelting1=[
-       0.0060615,  0.0],
+       0.00605339-516.613763,   0.0;
+       516.613763,              4.4] "Gao et al. (2023), Eq. (25), Simon-Glatzel, solid phase I (up to 217.35 K and 307 MPa)",
     pressureMelting2=fill(0.0, 0, 2),
-    pressureMelting3=[
-       2533.125,   1.0])
+    pressureMelting3=fill(0.0, 0, 2))
   "Coefficients for the ancillary equations (PS5, DL1, DV3, ML1)";
 
   annotation (Documentation(info="<html>
@@ -222,8 +221,8 @@ Note that the REFPROP default for ammonia is different (u = 0 and s = 0 for the 
 <p>
 The equation of state of Gao et al. (2023) contains two associating terms
 n*delta^d*tau^t*exp(eta*(delta-epsilon)^2 + 1/(beta*(tau-gamma)^2 + b)), see <code>residualAssociating</code>.
-The ancillary equations (vapour pressure, saturated densities) are those of Gao et al. as given in REFPROP 10,
-the melting line is that of Haar and Gallagher (1978).
+The ancillary equations (vapour pressure, saturated densities, Eqs. (20)-(22)) and the melting curve of solid phase I
+(Simon-Glatzel form, Eq. (25), valid up to 217.35 K and 307 MPa) are those of Gao et al. (2023).
 </p>
 
 <dl>
@@ -246,11 +245,6 @@ the melting line is that of Haar and Gallagher (1978).
 <dd> <b>Recommended Correlations for the Surface Tension of Common Fluids</b><br />
      J. Phys. Chem. Ref. Data, 41:043105, 2012.<br />
      DOI: <a href=\"https://doi.org/10.1063/1.4768782\">10.1063/1.4768782</a>
-</dd>
-<dt> Haar, L. and Gallagher, J.S.</dt>
-<dd> <b>Thermodynamic Properties of Ammonia</b><br />
-     J. Phys. Chem. Ref. Data, 7:635-792, 1978.<br />
-     DOI: <a href=\"https://doi.org/10.1063/1.555579\">10.1063/1.555579</a>
 </dd>
 <dt> Lemmon, E.W., Bell, I.H., Huber, M.L. and McLinden, M.O.</dt>
 <dd> <b>NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties - REFPROP, Version 10.0</b><br />
