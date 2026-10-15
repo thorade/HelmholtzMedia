@@ -1,7 +1,8 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.Transport;
 function thermalConductivity_background
   "Return thermal conductivity background/residual  contribution"
-  input ThermodynamicState state;
+  input Density d "density";
+  input Temperature T "temperature";
   output ThermalConductivity lambda_b;
 
 protected
@@ -20,8 +21,6 @@ protected
   Real lambda_red_background=thermalConductivityCoefficients.reducingThermalConductivity_background;
 
   // helium (Hands and Arp 1981), only used for TC0
-  Temperature T;
-  Density d;
   Real lambda_0;
   Real lambda_e;
   Real lambda_c;
@@ -57,8 +56,6 @@ algorithm
     // hardcoded models, use mediumName to distinguish further
     if mediumName == "helium" then
       // Hands and Arp (1981) as implemented in REFPROP 10 (TC7 in HELIUM.FLD); d in kg/m3, lambda in W/(m K)
-      T := state.T;
-      d := state.d;
       lambda_0 := 2.7870034e-3*T^0.7034007057*exp(3.739232544/T - 2.620316969e1/T^2 + 5.982252246e1/T^3 - 4.926397634e1/T^4);
       lambda_e := (c[1] + c[2]*T + c[3]*T^(1/3) + c[4]*T^(2/3))*d
                 + (c[5] + c[6]*T^(1/3) + c[7]*T^(2/3))*d^3
@@ -83,7 +80,7 @@ algorithm
           K_Tbar := W*K_T + (1 - W)*K_Tprime;
         end if;
         // the factors 3.4685233e-17 and 3.726229668 are taken from REFPROP (converted to SI units)
-        lambda_c := 3.4685233e-17*3.726229668*sqrt(K_Tbar)*T^2/d/dynamicViscosity(state)*dpdT_d^2
+        lambda_c := 3.4685233e-17*3.726229668*sqrt(K_Tbar)*T^2/d/dynamicViscosity(d=d, T=T)*dpdT_d^2
                     *exp(-18.66*DeltaT^2 - 4.25*DeltaRho^4);
       end if;
       lambda_b := lambda_0 + lambda_e + lambda_c;
@@ -91,8 +88,8 @@ algorithm
       assert(false, "thermalConductivity: no hardcoded TC0 model for " + mediumName);
     end if;
   elseif (thermalConductivityModel == ThermalConductivityModel.TC1) then
-    tau := state.T/T_red_background;
-    delta := state.d/d_red_background;
+    tau := T/T_red_background;
+    delta := d/d_red_background;
     lambda_b := sum((B[i, 1]*tau^B[i, 2])*(delta)^B[i, 3] for i in 1:nBackground);
     lambda_b := lambda_b*lambda_red_background;
   elseif (thermalConductivityModel == ThermalConductivityModel.TC2) then
@@ -103,12 +100,12 @@ algorithm
 
   /* // following lines are for debugging only
   Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("        d = " + String(state.d) + " and T = " + String(state.T));
+  Modelica.Utilities.Streams.print("        d = " + String(d) + " and T = " + String(T));
   Modelica.Utilities.Streams.print(" lambda_b = " + String(lambda_b));
   Modelica.Utilities.Streams.print("===========================================");
   */
 
-  annotation (Documentation(info="<html>
+  annotation (smoothOrder=2, Documentation(info="<html>
   <p>
 The thermal conductivity (TC) is split into three parts: ideal gas TC lamda_0, residual TC lambda_r and critical TC enhancement lambda_c.
 Sometimes the residual TC is again split into two parts.

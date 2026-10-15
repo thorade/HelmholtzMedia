@@ -1,7 +1,8 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.Transport;
 function dynamicViscosity_residual
   "Returns dynamic Viscosity residual contribution"
-  input ThermodynamicState state;
+  input Density d "density";
+  input Temperature T "temperature";
   output DynamicViscosity eta_r;
 
 protected
@@ -15,9 +16,9 @@ protected
   Real tau "reduced temperature";
 
   MolarMass MM = fluidConstants[1].molarMass;
-  Real dm=state.d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
+  Real dm=d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
   //Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
-  Real d_gcm=state.d/1000 "density in g/cm3";
+  Real d_gcm=d/1000 "density in g/cm3";
 
   Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
   Density d_red_residual=MM/dynamicViscosityCoefficients.reducingMolarVolume_residual;
@@ -60,19 +61,19 @@ algorithm
   if (dynamicViscosityModel == DynamicViscosityModel.VS0) then
     // hardcoded models, use mediumName to distinguish further
     if mediumName == "helium" then
-      x := if (state.T<=300.0E0) then log(state.T) else 5.703782474656201;
+      x := if (T<=300.0E0) then log(T) else 5.703782474656201;
       B := -47.5295259E0/x + 87.6799309E0 - 42.0741589E0*x + 8.33128289E0*x^2 - 0.589252385E0*x^3;
       C :=  547.309267E0/x - 904.870586E0 + 431.404928E0*x - 81.4504854E0*x^2 + 5.37008433E0*x^3;
       D := -1684.39324E0/x + 3331.08630E0 - 1632.19172E0*x + 308.804413E0*x^2 - 20.2936367E0*x^3;
       eta_e  := exp(min(100, B*d_gcm + C*d_gcm^2 + D*d_gcm^3));
       eta_0a := exp(-0.135311743E0/x + 1.00347841E0 + 1.20654649E0*x - 0.149564551E0*x^2 + 0.0125208416E0*x^3);
-      if (state.T < 100.0E0) then
+      if (T < 100.0E0) then
         eta_r := eta_0a*eta_e;
       else
-        eta_0b := 196.0E0*state.T^0.71938E0*exp(12.451E0/state.T - 295.67E0/state.T^2 - 4.1249E0);
-        if (state.T <=110.0E0) then
+        eta_0b := 196.0E0*T^0.71938E0*exp(12.451E0/T - 295.67E0/T^2 - 4.1249E0);
+        if (T <=110.0E0) then
           //linear interpolation between T=100...110 K
-          eta_0 := eta_0a + (eta_0b-eta_0a)*(state.T-100.0E0)/10.0E0;
+          eta_0 := eta_0a + (eta_0b-eta_0a)*(T-100.0E0)/10.0E0;
         else
           // above 110K use eta_0b
           eta_0 := eta_0b;
@@ -88,10 +89,10 @@ algorithm
       or  (dynamicViscosityModel == DynamicViscosityModel.VS1_alternative)) then
     // use the reduced close-packed density delta_0,
     // a simple polynominal, a rational polynominal and an exponential term
-    tau := state.T/T_red_residual;
-    delta := state.d/d_red_residual;
+    tau := T/T_red_residual;
+    delta := d/d_red_residual;
     if (abs(d_red_residual - 1) > 0.001) then
-      delta_exp := state.d/d_crit;
+      delta_exp := d/d_crit;
     else
       delta_exp := delta;
     end if;
@@ -135,11 +136,11 @@ algorithm
     // exponential terms not yet implemented!!
 
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS2) then
-    G := c[1,1] + c[2,1]/state.T;
+    G := c[1,1] + c[2,1]/T;
   //H := sqrt(dm)*(dm-dm_crit)/dm_crit;
     H := sqrt(dm)*(dm- c[8,1])/c[8,1];
-    F := G + (c[3,1] + c[4,1]*state.T^(-3/2))*dm^0.1
-           + (c[5,1] + c[6,1]/state.T + c[7,1]/state.T^2)*H;
+    F := G + (c[3,1] + c[4,1]*T^(-3/2))*dm^0.1
+           + (c[5,1] + c[6,1]/T + c[7,1]/T^2)*H;
     eta_r :=exp(F) - exp(G);
 
   elseif (dynamicViscosityModel == DynamicViscosityModel.VS4) then
@@ -151,9 +152,9 @@ algorithm
 
   /* // following lines are for debugging only
   Modelica.Utilities.Streams.print("===========================================");
-  Modelica.Utilities.Streams.print("        T = " + String(state.T));
+  Modelica.Utilities.Streams.print("        T = " + String(T));
   Modelica.Utilities.Streams.print("      tau = " + String(tau));
-  Modelica.Utilities.Streams.print("        d = " + String(state.d));
+  Modelica.Utilities.Streams.print("        d = " + String(d));
   Modelica.Utilities.Streams.print("       dm = " + String(dm));
   Modelica.Utilities.Streams.print("    d_gcm = " + String(d_gcm));
   Modelica.Utilities.Streams.print("    delta = " + String(delta));
@@ -165,7 +166,7 @@ algorithm
   Modelica.Utilities.Streams.print("===========================================");
   */
 
-  annotation (Documentation(info="<html>
+  annotation (smoothOrder=2, Documentation(info="<html>
 <p>
 This model is identical to the RefProp VS1 or VS2 model.
 

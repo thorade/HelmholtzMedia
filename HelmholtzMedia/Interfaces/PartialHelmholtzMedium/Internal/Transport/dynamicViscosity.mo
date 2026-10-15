@@ -1,6 +1,8 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.Transport;
 function dynamicViscosity "Returns dynamic Viscosity"
-  input ThermodynamicState state;
+  input Density d "density";
+  input Temperature T "temperature";
+  input FixedPhase phase=0 "phase of the state: 1 single phase, 2 two-phase (only for the warning)";
   output DynamicViscosity eta;
 
 protected
@@ -8,20 +10,20 @@ protected
   constant Real micro=1e-6;
 
 algorithm
-  // assert(state.phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
+  assert(phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
 
   if (dynamicViscosityModel == DynamicViscosityModel.VS0) then
     // hardcoded models return full viscosity in one equation
-    eta := dynamicViscosity_residual(state);
+    eta := dynamicViscosity_residual(d=d, T=T);
   else
     // composite models
     assert(size(dynamicViscosityCoefficients.CET, 1) > 0, "dynamicViscosity: no viscosity correlation available for " + mediumName);
-    eta := dynamicViscosity_dilute(state) + dynamicViscosity_initial(state) + dynamicViscosity_residual(state);
+    eta := dynamicViscosity_dilute(d=d, T=T) + dynamicViscosity_initial(d=d, T=T) + dynamicViscosity_residual(d=d, T=T);
   end if;
   // RefProp results are in µPa*s where µ means micro or 1E-6 but SI default is Pa*s
   eta := micro*eta;
 
-  annotation (Documentation(info="<html>
+  annotation (smoothOrder=2, Documentation(info="<html>
 <p>
 This model is identical to the RefProp VS1 or VS2 model.
 

@@ -1505,16 +1505,16 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   "Returns dynamic Viscosity"
     // inherits input state and output eta
   algorithm
-    assert(state.phase <> 2, "dynamicViscosity warning: property not defined in two-phase region", level=AssertionLevel.warning);
-    eta := Internal.Transport.dynamicViscosity(state);
+    eta := Internal.Transport.dynamicViscosity(d=state.d, T=state.T, phase=state.phase);
+    annotation (Inline=true);
   end dynamicViscosity;
 
   redeclare replaceable function extends thermalConductivity
   "Return thermal conductivity"
     // inherits input state and output lambda
   algorithm
-    assert(state.phase <> 2, "thermalConductivity warning: property not defined in two-phase region", level=AssertionLevel.warning);
-    lambda := Internal.Transport.thermalConductivity(state);
+    lambda := Internal.Transport.thermalConductivity(d=state.d, T=state.T, phase=state.phase);
+    annotation (Inline=true);
   end thermalConductivity;
 
   redeclare replaceable function extends surfaceTension
