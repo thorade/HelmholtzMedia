@@ -194,7 +194,9 @@ The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, 
 <b>No viscosity correlation is available:</b> REFPROP 10 computes the viscosity of propylene with an extended corresponding
 states model (propane reference fluid), which is not implemented in HelmholtzMedia; <code>dynamicViscosity</code> raises an error.
 Since the critical enhancement of the thermal conductivity requires the viscosity, <code>thermalConductivity</code>
-returns the dilute gas and background contributions only (the critical enhancement is about 5&nbsp;% at 350 K and 385 kg/m3).
+returns the dilute gas and background contributions only: compared with REFPROP 10, it is too low by tenths of a percent
+in the liquid and gas, by 5.7&nbsp;% at 350 K and 385 kg/m3 and by up to tens of percent near the critical point
+(36&nbsp;% at 370 K and 230 kg/m3). The transport properties of propylene will be completed later.
 </p>
 <p>
 The ancillary equations (vapour pressure, saturated densities) are those of Lemmon et al. as given in REFPROP 10,

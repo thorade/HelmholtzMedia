@@ -17,14 +17,15 @@ Numbers in brackets refer to the [list of references](#references) below.
 | [Isopentane](HelmholtzMedia/HelmholtzFluids/Isopentane/package.mo) | NBP | [20] | n.d. | n.d. | [15] |
 | [Pentane](HelmholtzMedia/HelmholtzFluids/Pentane/package.mo) | NBP | [21] | n.d. | n.d. | [15] |
 | [Propane](HelmholtzMedia/HelmholtzFluids/Propane/package.mo) | IIR | [22] | [23] | [24] | [15] |
-| [Propylene](HelmholtzMedia/HelmholtzFluids/Propylene/package.mo) | IIR | [36] | – | [37] | [15] |
+| [Propylene](HelmholtzMedia/HelmholtzFluids/Propylene/package.mo) | IIR | [36] | –¹ | [37]¹ | [15] |
 | [R134a](HelmholtzMedia/HelmholtzFluids/R134a/package.mo) | IIR | [25] | [26] | [27] | [15] |
 | [R134a_ASHRAE](HelmholtzMedia/HelmholtzFluids/R134a_ASHRAE/package.mo) | ASHRAE | [25] | [26] | [27] | [15] |
 | [R134a_NBP](HelmholtzMedia/HelmholtzFluids/R134a_NBP/package.mo) | NBP | [25] | [26] | [27] | [15] |
 | [R32](HelmholtzMedia/HelmholtzFluids/R32/package.mo) | IIR | [28] | [29] | [30] | [15] |
 
 – not available (calling the function raises an error)  
-n.d. implemented, but the source of the coefficients is not documented
+n.d. implemented, but the source of the coefficients is not documented  
+¹ Propylene: the transport properties are not yet included and will be added later. There is no viscosity correlation; the thermal conductivity contains only the dilute gas and background contributions (the critical enhancement needs the viscosity), so it is too low by up to tens of percent near the critical point.
 
 **Reference states** (enthalpy h and entropy s of the saturated liquid):
 
@@ -78,4 +79,4 @@ Where the original publication uses a different reference state, the ideal-gas c
 34. S. A. Monogenidou, M. J. Assael and M. L. Huber. Reference Correlation for the Viscosity of Ammonia from the Triple Point to 725 K and up to 50 MPa. *J. Phys. Chem. Ref. Data*, 47(2):023102, 2018. doi:[10.1063/1.5036724](https://doi.org/10.1063/1.5036724)
 35. S. A. Monogenidou, M. J. Assael and M. L. Huber. Reference Correlation for the Thermal Conductivity of Ammonia from the Triple-Point Temperature to 680 K and Pressures up to 80 MPa. *J. Phys. Chem. Ref. Data*, 47(4):043101, 2018. doi:[10.1063/1.5053087](https://doi.org/10.1063/1.5053087)
 36. E. W. Lemmon, U. Overhoff, M. O. McLinden and W. Wagner. A Reference Equation of State for the Thermodynamic Properties of Propene for Temperatures from the Melting Line to 575 K and Pressures up to 1000 MPa, to be submitted to *J. Phys. Chem. Ref. Data*; coefficients as implemented in REFPROP 10 [32].
-37. M. J. Assael, A. Koutian, M. L. Huber and R. A. Perkins. Reference Correlations of the Thermal Conductivity of Ethene and Propene. *J. Phys. Chem. Ref. Data*, 45(3):033104, 2016. doi:[10.1063/1.4958984](https://doi.org/10.1063/1.4958984). Without viscosity, the critical enhancement is not computed.
+37. M. J. Assael, A. Koutian, M. L. Huber and R. A. Perkins. Reference Correlations of the Thermal Conductivity of Ethene and Propene. *J. Phys. Chem. Ref. Data*, 45(3):033104, 2016. doi:[10.1063/1.4958984](https://doi.org/10.1063/1.4958984).
