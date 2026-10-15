@@ -1,16 +1,15 @@
 within HelmholtzMedia.Interfaces.PartialHelmholtzMedium.Internal.Transport;
 function surfaceTension "Return surface tension sigma in the two phase region"
-    input SaturationProperties sat;
-    output SurfaceTension sigma;
+  input SaturationProperties sat;
+  output SurfaceTension sigma;
 
 protected
   Temperature T_crit=fluidConstants[1].criticalTemperature;
   Real[size(surfaceTensionCoefficients.coeffs, 1)] a=surfaceTensionCoefficients.coeffs[:, 1];
   Real[size(surfaceTensionCoefficients.coeffs, 1)] n=surfaceTensionCoefficients.coeffs[:, 2];
-  Real X "reduced temperature difference";
+  Real X=(T_crit - sat.Tsat)/T_crit "reduced temperature difference";
 
 algorithm
-  X := (T_crit - sat.Tsat)/T_crit;
   sigma := sum(a[i]*X^n[i] for i in 1:size(a, 1));
 
   annotation (Documentation(info="<html>
