@@ -1,4 +1,4 @@
-Copyright (c) 2009-2015, Matthis Thorade
+Copyright (c) 2009-2026, Matthis Thorade
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
