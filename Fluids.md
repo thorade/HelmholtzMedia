@@ -6,6 +6,7 @@ Numbers in brackets refer to the [list of references](#references) below.
 
 | Fluid | Reference state | Equation of state | Viscosity | Thermal conductivity | Surface tension |
 |---|---|---|---|---|---|
+| [Ammonia](HelmholtzMedia/HelmholtzFluids/Ammonia/package.mo) | IIR | [33] | [34] | [35] | [15] |
 | [Butane](HelmholtzMedia/HelmholtzFluids/Butane/package.mo) | IIR | [1] | [2] | [3] | [15] |
 | [Carbondioxide](HelmholtzMedia/HelmholtzFluids/Carbondioxide/package.mo) | IIR | [4] | [5] | [6] | [15] |
 | [Carbondioxide_Short](HelmholtzMedia/HelmholtzFluids/Carbondioxide_Short/package.mo) | IIR | [7] | [5] | [6] | [15] |
@@ -16,6 +17,7 @@ Numbers in brackets refer to the [list of references](#references) below.
 | [Isopentane](HelmholtzMedia/HelmholtzFluids/Isopentane/package.mo) | NBP | [20] | n.d. | n.d. | [15] |
 | [Pentane](HelmholtzMedia/HelmholtzFluids/Pentane/package.mo) | NBP | [21] | n.d. | n.d. | [15] |
 | [Propane](HelmholtzMedia/HelmholtzFluids/Propane/package.mo) | IIR | [22] | [23] | [24] | [15] |
+| [Propylene](HelmholtzMedia/HelmholtzFluids/Propylene/package.mo) | IIR | [36] | – | [37] | [15] |
 | [R134a](HelmholtzMedia/HelmholtzFluids/R134a/package.mo) | IIR | [25] | [26] | [27] | [15] |
 | [R134a_ASHRAE](HelmholtzMedia/HelmholtzFluids/R134a_ASHRAE/package.mo) | ASHRAE | [25] | [26] | [27] | [15] |
 | [R134a_NBP](HelmholtzMedia/HelmholtzFluids/R134a_NBP/package.mo) | NBP | [25] | [26] | [27] | [15] |
@@ -72,3 +74,8 @@ Where the original publication uses a different reference state, the ideal-gas c
 30. R. A. Perkins and M. L. Huber. Thermal conductivity correlation for R-32, unpublished (2005), as implemented in REFPROP 10 [32]; functional form of [24].
 31. G. A. Olchowy and J. V. Sengers. A Simplified Representation for the Thermal Conductivity of Fluids in the Critical Region. *Int. J. Thermophys.*, 10(2):417–426, 1989. doi:[10.1007/BF01133538](https://doi.org/10.1007/BF01133538)
 32. E. W. Lemmon, I. H. Bell, M. L. Huber and M. O. McLinden. NIST Standard Reference Database 23: Reference Fluid Thermodynamic and Transport Properties – REFPROP, Version 10.0. National Institute of Standards and Technology, 2018. doi:[10.18434/T4/1502528](https://doi.org/10.18434/T4/1502528)
+33. K. Gao, J. Wu, I. H. Bell, A. H. Harvey and E. W. Lemmon. A Reference Equation of State with an Associating Term for the Thermodynamic Properties of Ammonia. *J. Phys. Chem. Ref. Data*, 52(1):013102, 2023. doi:[10.1063/5.0128269](https://doi.org/10.1063/5.0128269)
+34. S. A. Monogenidou, M. J. Assael and M. L. Huber. Reference Correlation for the Viscosity of Ammonia from the Triple Point to 725 K and up to 50 MPa. *J. Phys. Chem. Ref. Data*, 47(2):023102, 2018. doi:[10.1063/1.5036724](https://doi.org/10.1063/1.5036724)
+35. S. A. Monogenidou, M. J. Assael and M. L. Huber. Reference Correlation for the Thermal Conductivity of Ammonia from the Triple-Point Temperature to 680 K and Pressures up to 80 MPa. *J. Phys. Chem. Ref. Data*, 47(4):043101, 2018. doi:[10.1063/1.5053087](https://doi.org/10.1063/1.5053087)
+36. E. W. Lemmon, U. Overhoff, M. O. McLinden and W. Wagner. A Reference Equation of State for the Thermodynamic Properties of Propene for Temperatures from the Melting Line to 575 K and Pressures up to 1000 MPa, to be submitted to *J. Phys. Chem. Ref. Data*; coefficients as implemented in REFPROP 10 [32].
+37. M. J. Assael, A. Koutian, M. L. Huber and R. A. Perkins. Reference Correlations of the Thermal Conductivity of Ethene and Propene. *J. Phys. Chem. Ref. Data*, 45(3):033104, 2016. doi:[10.1063/1.4958984](https://doi.org/10.1063/1.4958984). Without viscosity, the critical enhancement is not computed.

@@ -1,6 +1,7 @@
 CheckDerivativeAnnotations
 CheckDerivativeAnnotationsTwoPhase
 CheckDerivativeAnnotationsAllCases
+CheckDerivativeAnnotationsAmmonia
 CheckDerivativeAnnotationsButane
 CheckDerivativeAnnotationsHelium
 CheckDerivativeAnnotationsR134a
@@ -8,6 +9,7 @@ CheckDerivativeAnnotationsPentane
 CheckDerivativeAnnotationsR32
 CheckDerivativeSetState
 CheckDerivativeSetStateAllCases
+CheckDerivativeSetStateAmmonia
 CheckDerivativeSetStateButane
 CheckDerivativeSetStateHelium
 CheckDerivativeSetStateR134a
@@ -21,5 +23,6 @@ Derivatives_Helmholtz_Multiplied
 Derivatives_SaturationBoundary
 Derivatives_SinglePhase
 Derivatives_TwoPhase
+HelmholtzDerivsAssociating
 HelmholtzDerivsNonAnalytical
 EndStates

@@ -1,9 +1,14 @@
 acentricFactor
+EoSAmmonia
+EoSCheck
 EoSHelium
+EoSPropylene
 idealGasLimit
 LimitsProbe
 MaxwellLoop
 prettyPrintCoefficients
 ReferenceState
 ThermoSurface
+TransportAmmonia
+TransportPropylene
 TransportR32

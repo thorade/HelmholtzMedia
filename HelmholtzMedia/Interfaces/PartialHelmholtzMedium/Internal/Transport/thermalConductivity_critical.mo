@@ -20,6 +20,8 @@ protected
   Real Gamma_0=thermalConductivityCoefficients.Gamma_0;
   Real q_D=1/thermalConductivityCoefficients.qd_inverse;
   Temperature T_ref=thermalConductivityCoefficients.T_ref;
+  constant Boolean hasViscosity=(dynamicViscosityCoefficients.dynamicViscosityModel == DynamicViscosityModel.VS0)
+    or (size(dynamicViscosityCoefficients.CET, 1) > 0) "the critical enhancement needs the viscosity";
 
   // interim variables for critical enhancement
   constant Real pi=Modelica.Constants.pi;
@@ -44,7 +46,9 @@ algorithm
   lambda_c := 0;
 
   // critical enhancement by the simplified crossover model by Olchowy and Sengers
-  if ((T > T_ref) or (d < d_crit/100)) then
+  if not hasViscosity then
+    lambda_c := 0; // no viscosity correlation available (e.g. propylene): no critical enhancement
+  elseif ((T > T_ref) or (d < d_crit/100)) then
     lambda_c := 0; // far away from critical point
   else
     // use critical values from EoS to calculate chi, Omega and lambda_c

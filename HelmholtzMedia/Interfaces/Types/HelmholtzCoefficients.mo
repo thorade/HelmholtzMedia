@@ -18,6 +18,8 @@ record HelmholtzCoefficients
   constant Real[:,4] residualBwr = fill(0.0, 0, 4);
   constant Real[:,9] residualGauss = fill(0.0, 0, 9);
   constant Real[:,12] residualNonAnalytical = fill(0.0, 0, 12);
+  constant Real[:,8] residualAssociating = fill(0.0, 0, 8)
+    "associating terms n*delta^d*tau^t*exp(eta*(delta-epsilon)^2 + 1/(beta*(tau-gamma)^2 + b)), columns <n, t, d, eta, beta, gamma, epsilon, b> (Gao et al. 2023, ammonia)";
 
   Boolean useLineSearch=false;
 end HelmholtzCoefficients;
