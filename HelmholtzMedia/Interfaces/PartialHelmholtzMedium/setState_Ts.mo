@@ -60,7 +60,7 @@ algorithm
         f := Internal.EoS.setHelmholtzDerivs(T=T, d=sat.vap.d, order=1);
         sat.vap.s := Internal.EoS.s(f);
 
-        if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
+        if ((s > sat.liq.s - 0.02*(sat.vap.s - sat.liq.s)) and (s < sat.vap.s + 0.02*(sat.vap.s - sat.liq.s))) then
           // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
           sat := setSat_T(T=T);
         end if;

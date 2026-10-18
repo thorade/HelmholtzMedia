@@ -791,7 +791,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           f := Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=1);
           sat.vap.h := Internal.EoS.h(f);
 
-          if ((h > sat.liq.h - abs(0.02*sat.liq.h)) and (h < sat.vap.h + abs(0.02*sat.vap.h))) then
+          if ((h > sat.liq.h - 0.02*(sat.vap.h - sat.liq.h)) and (h < sat.vap.h + 0.02*(sat.vap.h - sat.liq.h))) then
             // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
             sat := setSat_p(p=p);
           end if;
@@ -1102,7 +1102,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           f := Internal.EoS.setHelmholtzDerivs(d=sat.vap.d, T=sat.Tsat, phase=1, order=1);
           sat.vap.s := Internal.EoS.s(f);
 
-          if ((s > sat.liq.s - abs(0.05*sat.liq.s)) and (s < sat.vap.s + abs(0.05*sat.vap.s))) then
+          if ((s > sat.liq.s - 0.02*(sat.vap.s - sat.liq.s)) and (s < sat.vap.s + 0.02*(sat.vap.s - sat.liq.s))) then
             // Modelica.Utilities.Streams.print("two-phase state or close to it, get saturation properties from EoS", "printlog.txt");
             sat := setSat_p(p=p);
           end if;
