@@ -44,7 +44,7 @@ algorithm
     end if;
     S := 0;
     for i in 1:size(a, 1) loop
-      S := S + a[i, 1]*T_star^a[i, 2];
+      S := S + a[i, 1]*T_star^integer(a[i, 2]);
     end for;
     Omega := exp(S);
   elseif (collisionIntegralModel == CollisionIntegralModel.CI2) then
