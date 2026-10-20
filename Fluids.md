@@ -12,12 +12,12 @@ Numbers in brackets refer to the [list of references](#references) below.
 | [Carbondioxide_Short](HelmholtzMedia/HelmholtzFluids/Carbondioxide_Short/package.mo) | IIR | [7] | [5] | [6] | [15] |
 | [Ethanol](HelmholtzMedia/HelmholtzFluids/Ethanol/package.mo) | NBP | [8] | [9] | [10] | [11] |
 | [Helium](HelmholtzMedia/HelmholtzFluids/Helium/package.mo) | NBP | [12] | [13] | [14] | [15] |
-| [Hexamethyldisiloxane](HelmholtzMedia/HelmholtzFluids/Hexamethyldisiloxane/package.mo) | NBP | [16] | – | – | [17] |
+| [Hexamethyldisiloxane](HelmholtzMedia/HelmholtzFluids/Hexamethyldisiloxane/package.mo) | NBP | [16] | [38]² | [39]² | [17] |
 | [Isobutane](HelmholtzMedia/HelmholtzFluids/Isobutane/package.mo) | IIR | [1] | [18] | [19] | [15] |
 | [Isopentane](HelmholtzMedia/HelmholtzFluids/Isopentane/package.mo) | NBP | [20] | n.d. | n.d. | [15] |
 | [Pentane](HelmholtzMedia/HelmholtzFluids/Pentane/package.mo) | NBP | [21] | n.d. | n.d. | [15] |
 | [Propane](HelmholtzMedia/HelmholtzFluids/Propane/package.mo) | IIR | [22] | [23] | [24] | [15] |
-| [Propylene](HelmholtzMedia/HelmholtzFluids/Propylene/package.mo) | IIR | [36] | –¹ | [37]¹ | [15] |
+| [Propylene](HelmholtzMedia/HelmholtzFluids/Propylene/package.mo) | IIR | [36] | [38]¹ | [37] | [15] |
 | [R134a](HelmholtzMedia/HelmholtzFluids/R134a/package.mo) | IIR | [25] | [26] | [27] | [15] |
 | [R134a_ASHRAE](HelmholtzMedia/HelmholtzFluids/R134a_ASHRAE/package.mo) | ASHRAE | [25] | [26] | [27] | [15] |
 | [R134a_NBP](HelmholtzMedia/HelmholtzFluids/R134a_NBP/package.mo) | NBP | [25] | [26] | [27] | [15] |
@@ -25,7 +25,8 @@ Numbers in brackets refer to the [list of references](#references) below.
 
 – not available (calling the function raises an error)  
 n.d. implemented, but the source of the coefficients is not documented  
-¹ Propylene: the transport properties are not yet included and will be added later. There is no viscosity correlation; the thermal conductivity contains only the dilute gas and background contributions (the critical enhancement needs the viscosity), so it is too low by up to tens of percent near the critical point.
+¹ Residual entropy scaling (RES) with the fluid-specific parameters of [38], since no dedicated viscosity correlation exists.  
+² Residual entropy scaling (RES) with the fluid-specific parameters of [38] and [39].
 
 **Reference states** (enthalpy h and entropy s of the saturated liquid):
 
@@ -58,7 +59,7 @@ Where the original publication uses a different reference state, the ideal-gas c
 13. V. D. Arp, R. D. McCarty and D. G. Friend. Thermophysical Properties of Helium-4 from 0.8 to 1500 K with Pressures to 2000 MPa. *NIST Technical Note 1334 (revised)*, 1998. [PDF](https://nvlpubs.nist.gov/nistpubs/Legacy/TN/nbstechnicalnote1334.pdf)
 14. B. A. Hands and V. D. Arp. A Correlation of Thermal Conductivity Data for Helium. *Cryogenics*, 21(12):697–703, 1981. doi:[10.1016/0011-2275(81)90211-3](https://doi.org/10.1016/0011-2275(81)90211-3)
 15. A. Mulero, I. Cachadiña and M. I. Parra. Recommended Correlations for the Surface Tension of Common Fluids. *J. Phys. Chem. Ref. Data*, 41(4):043105, 2012. doi:[10.1063/1.4768782](https://doi.org/10.1063/1.4768782)
-16. P. Colonna, N. R. Nannan, A. Guardone and E. W. Lemmon. Multiparameter Equations of State for Selected Siloxanes. *Fluid Phase Equilib.*, 244(2):193–211, 2006. doi:[10.1016/j.fluid.2006.04.015](https://doi.org/10.1016/j.fluid.2006.04.015)
+16. M. Thol, F. H. Dubberke, G. Rutkai, T. Windmann, A. Köster, R. Span and J. Vrabec. Fundamental Equation of State Correlation for Hexamethyldisiloxane Based on Experimental and Molecular Simulation Data. *Fluid Phase Equilib.*, 418:133–151, 2016. doi:[10.1016/j.fluid.2015.09.047](https://doi.org/10.1016/j.fluid.2015.09.047)
 17. A. Mulero and I. Cachadiña. Recommended Correlations for the Surface Tension of Several Fluids Included in the REFPROP Program. *J. Phys. Chem. Ref. Data*, 43(2):023104, 2014. doi:[10.1063/1.4878755](https://doi.org/10.1063/1.4878755)
 18. E. Vogel, C. Küchenmeister and E. Bich. Viscosity Correlation for Isobutane over Wide Ranges of the Fluid Region. *Int. J. Thermophys.*, 21(2):343–356, 2000. doi:[10.1023/A:1006623310780](https://doi.org/10.1023/A:1006623310780)
 19. R. A. Perkins. Measurement and Correlation of the Thermal Conductivity of Isobutane from 114 K to 600 K at Pressures to 70 MPa. *J. Chem. Eng. Data*, 47(5):1272–1279, 2002. doi:[10.1021/je010121u](https://doi.org/10.1021/je010121u)
@@ -80,3 +81,5 @@ Where the original publication uses a different reference state, the ideal-gas c
 35. S. A. Monogenidou, M. J. Assael and M. L. Huber. Reference Correlation for the Thermal Conductivity of Ammonia from the Triple-Point Temperature to 680 K and Pressures up to 80 MPa. *J. Phys. Chem. Ref. Data*, 47(4):043101, 2018. doi:[10.1063/1.5053087](https://doi.org/10.1063/1.5053087)
 36. E. W. Lemmon, U. Overhoff, M. O. McLinden and W. Wagner. A Reference Equation of State for the Thermodynamic Properties of Propene for Temperatures from the Melting Line to 575 K and Pressures up to 1000 MPa, to be submitted to *J. Phys. Chem. Ref. Data*; coefficients as implemented in REFPROP 10 [32].
 37. M. J. Assael, A. Koutian, M. L. Huber and R. A. Perkins. Reference Correlations of the Thermal Conductivity of Ethene and Propene. *J. Phys. Chem. Ref. Data*, 45(3):033104, 2016. doi:[10.1063/1.4958984](https://doi.org/10.1063/1.4958984).
+38. V. Martinek, I. H. Bell, R. Herzog, M. Richter and X. Yang. Entropy Scaling of Viscosity IV – Application to 124 Industrially Important Fluids. *J. Chem. Eng. Data*, 2025.
+39. Z. Li, Y. Duan and X. Yang. Linking Thermal Conductivity to Equations of State Using the Residual Entropy Scaling Theory. *Ind. Eng. Chem. Res.*, 63(42):18160–18175, 2024.

@@ -16,6 +16,9 @@ algorithm
   if (dynamicViscosityModel == DynamicViscosityModel.VS0) then
     // hardcoded models return full viscosity in one equation
     eta := dynamicViscosity_residual(d=d, T=T);
+  elseif (dynamicViscosityModel == DynamicViscosityModel.RES) then
+    // residual entropy scaling: dilute gas and residual contribution
+    eta := dynamicViscosity_RES(d=d, T=T);
   else
     // composite models
     assert(size(dynamicViscosityCoefficients.CET, 1) > 0, "dynamicViscosity: no viscosity correlation available for " + mediumName);
