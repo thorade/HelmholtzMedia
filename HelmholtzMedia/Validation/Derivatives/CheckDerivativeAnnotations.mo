@@ -24,7 +24,7 @@ model CheckDerivativeAnnotations
     elseif endStates==EndStates.PhaseChange then Medium.setState_pT(p=sat0.psat, T=1.05*sat0.Tsat)
     elseif endStates==EndStates.LiquidNearSaturation then Medium.setState_pT(p=sat0.psat, T=(1 - dT_sat)*sat0.Tsat)
     elseif endStates==EndStates.VapourNearSaturation then Medium.setState_pT(p=sat0.psat, T=1.1*sat0.Tsat)
-    else Medium.setState_pT(p=1.5*Medium.fluidConstants[1].criticalPressure, T=1.3*Medium.fluidConstants[1].criticalTemperature);
+    else Medium.setState_pT(p=1.5*Medium.fluidConstants[1].criticalPressure, T=min(1.3*Medium.fluidConstants[1].criticalTemperature, Medium.fluidLimits.TMAX));
   constant String names[22]={"density_ph","temperature_ph","specificEntropy_ph","density_ps","temperature_ps","specificEnthalpy_ps",
     "pressure_dT","specificEnthalpy_dT","specificEntropy_dT","pressure_Ts","density_Ts","temperature_pd","specificEnthalpy_pd",
     "density_pT","specificEnthalpy_pT","specificEntropy_pT",
@@ -97,7 +97,7 @@ compared to the function value. The deviation is relative to the value of each p
 All inputs vary linearly between the end states s0 and s1, selected by <code>endStates</code>:
 </p>
 <ul>
-<li>SinglePhase: supercritical, 1.1 p_crit, 1.05 T_crit to 1.5 p_crit, 1.3 T_crit.</li>
+<li>SinglePhase: supercritical, 1.1 p_crit, 1.05 T_crit to 1.5 p_crit, 1.3 T_crit (at most TMAX of the fluid limits).</li>
 <li>TwoPhase: two-phase states at 0.5 p_crit (vapour quality 0.3) and 0.6 p_crit (vapour quality 0.7).</li>
 <li>PhaseChange: at 0.5 p_crit from subcooled liquid (0.95 T_sat) through the two-phase region to superheated
 vapour (1.05 T_sat); the derivatives jump at the phase boundaries.</li>

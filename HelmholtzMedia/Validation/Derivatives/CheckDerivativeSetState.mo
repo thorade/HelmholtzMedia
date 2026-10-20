@@ -21,7 +21,7 @@ model CheckDerivativeSetState
     elseif endStates==EndStates.PhaseChange then Medium.setState_pT(p=sat0.psat, T=1.05*sat0.Tsat)
     elseif endStates==EndStates.LiquidNearSaturation then Medium.setState_pT(p=sat0.psat, T=(1 - dT_sat)*sat0.Tsat)
     elseif endStates==EndStates.VapourNearSaturation then Medium.setState_pT(p=sat0.psat, T=1.1*sat0.Tsat)
-    else Medium.setState_pT(p=1.5*Medium.fluidConstants[1].criticalPressure, T=1.3*Medium.fluidConstants[1].criticalTemperature);
+    else Medium.setState_pT(p=1.5*Medium.fluidConstants[1].criticalPressure, T=min(1.3*Medium.fluidConstants[1].criticalTemperature, Medium.fluidLimits.TMAX));
   constant Integer n=43 "number of tested expressions";
   constant String names[n]={
     "phX.temperature","phX.density","phX.specificInternalEnergy","phX.specificEntropy",
