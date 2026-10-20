@@ -1,6 +1,7 @@
 Ammonia
 Butane
 Carbondioxide
+Carbondioxide_RES
 Carbondioxide_Short
 Ethanol
 Helium
@@ -9,8 +10,11 @@ Isobutane
 Isopentane
 Pentane
 Propane
+Propane_RES
 Propylene
 R134a
+R134a_RES
 R134a_ASHRAE
 R134a_NBP
 R32
+R32_RES
