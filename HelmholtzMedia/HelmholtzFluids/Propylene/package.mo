@@ -26,8 +26,8 @@ package Propylene "Propylene (propene, R-1270) with IIR reference state"
        criticalTemperature=364.211,
        criticalPressure=4554987.6609,
        criticalMolarVolume=0.04207974/229.62914118 "molar mass/critical density",
-       HCRIT0=531088.842,
-       SCRIT0=1985.73678,
+       HCRIT0=531088.84217721,
+       SCRIT0=1985.73677832773,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=0.366,
@@ -53,9 +53,9 @@ package Propylene "Propylene (propene, R-1270) with IIR reference state"
     PMIN=Modelica.Constants.small,
     PMAX=1000e6,
     HMIN=-250e3,
-    HMAX=1500e3,
-    SMIN=-1500,
-    SMAX=7000) "Helmholtz EoS Limits";
+    HMAX=2100e3,
+    SMIN=-2550,
+    SMAX=11500) "Helmholtz EoS Limits";
 
   final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsPropylene(

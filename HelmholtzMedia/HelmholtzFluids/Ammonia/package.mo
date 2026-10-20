@@ -26,8 +26,8 @@ package Ammonia "Ammonia (R-717) with IIR reference state"
        criticalTemperature=405.56,
        criticalPressure=11363395.0144,
        criticalMolarVolume=0.01703052/233.25000192 "molar mass/critical density",
-       HCRIT0=1102127.53,
-       SCRIT0=3511.6783,
+       HCRIT0=1102127.52753527,
+       SCRIT0=3511.67829559319,
     hasIdealGasHeatCapacity=false,
     hasDipoleMoment=true,
        dipoleMoment=1.47,
@@ -49,13 +49,13 @@ package Ammonia "Ammonia (R-717) with IIR reference state"
     TMIN=fluidConstantsAmmonia.triplePointTemperature,
     TMAX=725,
     DMIN=Modelica.Constants.eps,
-    DMAX=53.13*17.03052 "53.13 mol/l",
+    DMAX=915 "d(TMIN, PMAX) = 912.4 kg/m3",
     PMIN=Modelica.Constants.small,
     PMAX=1000e6,
     HMIN=-200e3,
     HMAX=3000e3,
-    SMIN=-600,
-    SMAX=15000) "Helmholtz EoS Limits";
+    SMIN=-1700,
+    SMAX=26000) "Helmholtz EoS Limits";
 
   final constant HelmholtzMedia.Interfaces.Types.HelmholtzCoefficients
   helmholtzCoefficientsAmmonia(
