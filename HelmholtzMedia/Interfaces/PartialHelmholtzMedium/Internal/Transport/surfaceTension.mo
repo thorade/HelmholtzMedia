@@ -7,7 +7,7 @@ protected
   Temperature T_crit=fluidConstants[1].criticalTemperature;
   Real[size(surfaceTensionCoefficients.coeffs, 1)] a=surfaceTensionCoefficients.coeffs[:, 1];
   Real[size(surfaceTensionCoefficients.coeffs, 1)] n=surfaceTensionCoefficients.coeffs[:, 2];
-  Real X=(T_crit - sat.Tsat)/T_crit "reduced temperature difference";
+  Real X=max((T_crit - sat.Tsat)/T_crit, 0) "reduced temperature difference";
 
 algorithm
   sigma := sum(a[i]*X^n[i] for i in 1:size(a, 1));
