@@ -30,4 +30,10 @@ record DynamicViscosityCoefficients
   constant Real[:,5] de_po = fill(0.0, 0, 5) "denominator of rational poly";
   // constant Real[:,5] nu_ex = fill(0.0, 0, 5) "  numerator of exponential";
   // constant Real[:,5] de_ex = fill(0.0, 0, 5) "denominator of exponential";
+  // residual entropy scaling (RES)
+  constant Real[:] RES_dilute = fill(0.0, 0)
+    "RES dilute gas viscosity in micro Pa s: eta_0 = RES_dilute[1]*T^4 + RES_dilute[2]*T^3 + ... + RES_dilute[5] (T in K)";
+  constant Real[3] RES_n = zeros(3)
+    "RES coefficients: ln(eta_r_plus + 1) = n1*x^1.8 + n2*x^2.4 + n3*x^2.8 with x = s_plus/RES_xi";
+  constant Real RES_xi = 1 "RES scaling factor of the reduced residual entropy";
 end DynamicViscosityCoefficients;

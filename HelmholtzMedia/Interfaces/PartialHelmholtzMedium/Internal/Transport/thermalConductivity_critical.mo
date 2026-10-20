@@ -21,6 +21,7 @@ protected
   Real q_D=1/thermalConductivityCoefficients.qd_inverse;
   Temperature T_ref=thermalConductivityCoefficients.T_ref;
   constant Boolean hasViscosity=(dynamicViscosityCoefficients.dynamicViscosityModel == DynamicViscosityModel.VS0)
+    or (dynamicViscosityCoefficients.dynamicViscosityModel == DynamicViscosityModel.RES)
     or (size(dynamicViscosityCoefficients.CET, 1) > 0) "the critical enhancement needs the viscosity";
 
   // interim variables for critical enhancement

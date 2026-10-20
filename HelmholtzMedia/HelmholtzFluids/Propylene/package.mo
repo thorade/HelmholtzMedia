@@ -34,7 +34,7 @@ package Propylene "Propylene (propene, R-1270) with IIR reference state"
     hasFundamentalEquation=true,
     hasLiquidHeatCapacity=true,
     hasSolidHeatCapacity=false,
-    hasAccurateViscosityData=false,
+    hasAccurateViscosityData=true,
     hasAccurateConductivityData=true,
     hasVapourPressureCurve=true,
     hasAcentricFactor=true,
@@ -137,12 +137,15 @@ package Propylene "Propylene (propene, R-1270) with IIR reference state"
 
   final constant HelmholtzMedia.Interfaces.Types.DynamicViscosityCoefficients
   dynamicViscosityCoefficientsPropylene(
-    dynamicViscosityModel=DynamicViscosityModel.VS1,
+    dynamicViscosityModel=DynamicViscosityModel.RES,
     collisionIntegralModel=CollisionIntegralModel.CI1,
     sigma=0.4678 "Lennard-Jones size parameter [nm] (from the ECS model of REFPROP 10, not used)",
     epsilon_kappa=298.9 "Lennard-Jones energy parameter [K] (from the ECS model of REFPROP 10, not used)",
-    CET=fill(0.0, 0, 2) "no viscosity correlation available")
-  "No viscosity correlation available (REFPROP 10 uses extended corresponding states)";
+    RES_dilute={2.473506e-11, -5.135163e-08, 2.867238e-05, 2.288568e-02, 3.506650e-01}
+      "dilute gas viscosity in micro Pa s, fitted from 87.953 K to 1000 K",
+    RES_n={0.511568, -0.269974, 0.067762} "fluid-specific RES parameters",
+    RES_xi=1)
+  "Viscosity from residual entropy scaling (Martinek et al. 2025, fluid-specific parameters)";
 
   final constant HelmholtzMedia.Interfaces.Types.SurfaceTensionCoefficients
   surfaceTensionCoefficientsPropylene(
@@ -191,12 +194,10 @@ These are the coefficients for propylene (propene, R-1270).
 The reference state is set to IIR (saturated liquid at 0 &deg;C: h = 200 kJ/kg, s = 1 kJ/(kg K)), the REFPROP default.
 </p>
 <p>
-<b>No viscosity correlation is available:</b> REFPROP 10 computes the viscosity of propylene with an extended corresponding
-states model (propane reference fluid), which is not implemented in HelmholtzMedia; <code>dynamicViscosity</code> raises an error.
-Since the critical enhancement of the thermal conductivity requires the viscosity, <code>thermalConductivity</code>
-returns the dilute gas and background contributions only: compared with REFPROP 10, it is too low by tenths of a percent
-in the liquid and gas, by 5.7&nbsp;% at 350 K and 385 kg/m3 and by up to tens of percent near the critical point
-(36&nbsp;% at 370 K and 230 kg/m3). The transport properties of propylene will be completed later.
+<b>Viscosity:</b> there is no dedicated viscosity correlation for propylene (REFPROP 10 uses an extended corresponding
+states model with propane as reference fluid). The viscosity is computed by residual entropy scaling (RES) with the
+fluid-specific parameters of Martinek et al. (2025), which were fitted to experimental data with the same equation of state.
+<b>Thermal conductivity:</b> correlation of Assael et al. (2016), including the critical enhancement, which uses the RES viscosity.
 </p>
 <p>
 The ancillary equations (vapour pressure, saturated densities) are those of Lemmon et al. as given in REFPROP 10,
@@ -207,6 +208,10 @@ the melting line is that of Reeves et al. (1964) with the triple point pressure 
 <dt> Lemmon, E.W., Overhoff, U., McLinden, M.O. and Wagner, W.</dt>
 <dd> <b>A Reference Equation of State for the Thermodynamic Properties of Propene for Temperatures from the Melting Line to 575 K and Pressures up to 1000 MPa</b><br />
      to be submitted to J. Phys. Chem. Ref. Data; coefficients as implemented in REFPROP 10.
+</dd>
+<dt> Martinek, V., Bell, I.H., Herzog, R., Richter, M. and Yang, X.</dt>
+<dd> <b>Entropy Scaling of Viscosity IV - Application to 124 Industrially Important Fluids</b><br />
+     J. Chem. Eng. Data, 2025.
 </dd>
 <dt> Assael, M.J., Koutian, A., Huber, M.L. and Perkins, R.A.</dt>
 <dd> <b>Reference Correlations of the Thermal Conductivity of Ethene and Propene</b><br />

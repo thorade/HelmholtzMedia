@@ -26,4 +26,10 @@ record ThermalConductivityCoefficients
   constant Real Gamma_0 "amplitude";
   constant Real qd_inverse "modified effective cutoff parameter";
   constant Temperature T_ref(min=1,max=3e3) "reference temperature";
+  // residual entropy scaling (RES)
+  constant Real[:] RES_dilute = fill(0.0, 0)
+    "RES dilute gas thermal conductivity in W/(m K): lambda_0 = RES_dilute[1]*T^4 + RES_dilute[2]*T^3 + ... + RES_dilute[5] (T in K)";
+  constant Real[4] RES_n = zeros(4)
+    "RES coefficients: lambda_r_plus = n1*x + n2*x^1.5 + n3*x^2 + n4*x^2.5 with x = s_plus/RES_xi";
+  constant Real RES_xi = 1 "RES scaling factor of the reduced residual entropy";
 end ThermalConductivityCoefficients;

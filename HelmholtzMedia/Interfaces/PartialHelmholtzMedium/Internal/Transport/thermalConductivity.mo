@@ -14,6 +14,9 @@ algorithm
   if (thermalConductivityModel == ThermalConductivityModel.TC0) then
     // hardcoded models return full thermal conductivity in one equation
     lambda :=thermalConductivity_background(d=d, T=T);
+  elseif (thermalConductivityModel == ThermalConductivityModel.RES) then
+    // residual entropy scaling: dilute gas and residual contribution, plus critical enhancement
+    lambda := thermalConductivity_RES(d=d, T=T) + thermalConductivity_critical(d=d, T=T);
   else
     // composite models
     assert(size(thermalConductivityCoefficients.lambda_0_num_coeffs, 1) > 0, "thermalConductivity: no thermal conductivity correlation available for " + mediumName);
