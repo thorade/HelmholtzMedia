@@ -1,4 +1,6 @@
-setSat_parameter
+setSat_p_internal
+setSat_T
+setSat_forward_backward
 SinglePhase_setState
 State_dT_parameter
 State_pd_parameter
@@ -7,5 +9,3 @@ State_ps_parameter
 State_pT_parameter
 State_pT_parameter_Transport
 State_Ts_parameter
-setSat_parameter_1
-setSat_parameter_2

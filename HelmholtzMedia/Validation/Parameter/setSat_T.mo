@@ -1,14 +1,10 @@
 within HelmholtzMedia.Validation.Parameter;
-
-model setSat_parameter_1
+model setSat_T
   replaceable package Medium = .HelmholtzMedia.HelmholtzFluids.Propane;
 
   Medium.SaturationProperties sat;
 
-  parameter Medium.Temperature T_input= 0.7*Tcrit;
-
-protected
-  constant Medium.Temperature Tcrit=Medium.fluidConstants[1].criticalTemperature;
+  parameter Medium.Temperature T_input= 273.15;
 
 equation
   // forward
@@ -18,4 +14,4 @@ equation
       StopTime=2,
       Interval=1,
       Tolerance=1e-07));
-end setSat_parameter_1;
+end setSat_T;

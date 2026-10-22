@@ -1,5 +1,5 @@
 within HelmholtzMedia.Validation.Parameter;
-model setSat_parameter
+model setSat_forward_backward
   replaceable package Medium = HelmholtzFluids.Carbondioxide_Short;
 
   Medium.SaturationProperties sat;
@@ -7,7 +7,7 @@ model setSat_parameter
   Medium.SaturationProperties sat_dl;
   Medium.SaturationProperties sat_dv;
 
-  parameter Medium.Temperature T_input= Tcrit - 0.1;
+  parameter Medium.Temperature T_input= 0.7*Tcrit;
 
 protected
   constant Medium.Temperature Tmin=Medium.fluidLimits.TMIN;
@@ -26,4 +26,4 @@ equation
       StopTime=2,
       Interval=1,
       Tolerance=1e-07));
-end setSat_parameter;
+end setSat_forward_backward;
