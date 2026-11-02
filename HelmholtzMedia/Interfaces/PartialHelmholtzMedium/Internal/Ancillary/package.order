@@ -7,6 +7,7 @@ saturationTemperature_d
 meltingTemperature_p
 saturationTemperature_h_liq
 saturationTemperature_s_liq
+temperature_ph_liq
 density_pT_Soave
 temperature_pd_Waals
 pressure_dT_Waals
