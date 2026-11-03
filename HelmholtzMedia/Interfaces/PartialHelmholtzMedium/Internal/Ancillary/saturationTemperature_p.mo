@@ -13,9 +13,9 @@ protected
   constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
   constant AbsolutePressure p_crit=ancillaryCoefficients.p_crit;
 
-  Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
-  Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
-  Real[nPressureSaturation] theta=ancillaryCoefficients.pressureSaturation[:, 2];
+  constant Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
+  constant Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
+  constant Real[nPressureSaturation] theta=ancillaryCoefficients.pressureSaturation[:, 2];
 
   Real RES_p;
   Real dpdT;

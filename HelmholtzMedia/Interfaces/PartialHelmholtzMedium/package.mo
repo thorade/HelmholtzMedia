@@ -438,10 +438,6 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   "Return thermodynamic state as function of (d, T)"
 
   protected
-    constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
-    "specific gas constant";
-    constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
 
@@ -543,15 +539,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   "Return thermodynamic state as function of (p, T)"
 
   protected
-    constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
-    "specific gas constant";
-    constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-    constant Density d_reducing=helmholtzCoefficients.d_reducing "reducing density of the EoS";
     constant Temperature T_reducing=helmholtzCoefficients.T_reducing "reducing temperature of the EoS";
-    constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
-    constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     // constant Real Z_crit=1/(d_crit*R*T_crit/p_crit);
 
     Internal.EoS.HelmholtzDerivs f(T=T,tau=T_reducing/T);
@@ -563,7 +552,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Density d_old "d_iter of the previous iteration step";
     AbsolutePressure RES_p;
     DerPressureByDensity dpdT "(dp/dd)@T=const";
-    Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
+    constant Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
     constant Real tolerance=1e-9 "relativ tolerance for RES_p";
     Integer iter = 0;
     constant Integer iter_max=200;
@@ -692,8 +681,6 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real delta "reduced density";
-    Real tau "inverse reduced temperature";
 
     constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
@@ -727,7 +714,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Integer iter_max = 50 "first attempt; the second attempt gets 200";
     Real lambda(min=1e-3,max=1) = 1 "convergence speed, default=1";
 
-    Boolean useLineSearch=helmholtzCoefficients.useLineSearch;
+    constant Boolean useLineSearch=helmholtzCoefficients.useLineSearch;
     Integer iterLineSearch = 0;
     Real RSS_ls;
     Real lambda_ls;
@@ -1026,8 +1013,6 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real delta "reduced density";
-    Real tau "inverse reduced temperature";
 
     constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
@@ -1054,12 +1039,6 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Real grad[2] "gradient vector";
     Real slope;
 
-    Internal.EoS.HelmholtzDerivs f_med;
-    Real[2] RES_med "residual function vector";
-    Real[2] xy;
-    Real[2] xy_old;
-    Real[2] xy_med;
-    Real[2,2] Jacobian_med "Jacobian matrix";
 
     constant Real tolerance=1e-18 "tolerance for RSS of the scaled residuals";
     constant SpecificEntropy s_scale=R_s "scale for the entropy residual";
@@ -1068,7 +1047,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Integer iter_max = 200;
     Real lambda(min=1e-3,max=1) = 1 "convergence speed, default=1";
 
-    Boolean useLineSearch=helmholtzCoefficients.useLineSearch;
+    constant Boolean useLineSearch=helmholtzCoefficients.useLineSearch;
     Integer iterLineSearch = 0;
     Real RSS_ls;
     Real lambda_ls;
@@ -1533,7 +1512,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       // inherits input saturationProperties sat and output SurfaceTension sigma
   protected
     Temperature T_trip=fluidConstants[1].triplePointTemperature;
-    Temperature T_crit=fluidConstants[1].criticalTemperature;
+    constant Temperature T_crit=fluidConstants[1].criticalTemperature;
   algorithm
     assert(sat.Tsat >= T_trip, "surfaceTension error: Temperature is lower than triple-point temperature");
     assert(sat.Tsat <= T_crit, "surfaceTension error: Temperature is higher than critical temperature");

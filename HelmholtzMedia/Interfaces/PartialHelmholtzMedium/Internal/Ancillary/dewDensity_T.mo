@@ -6,16 +6,16 @@ function dewDensity_T
   output Modelica.Units.SI.Density dvap;
 
 protected
-  DensityVaporModel densityVaporModel=ancillaryCoefficients.densityVaporModel;
-  Density d_crit=ancillaryCoefficients.d_crit;
+  constant DensityVaporModel densityVaporModel=ancillaryCoefficients.densityVaporModel;
+  constant Density d_crit=ancillaryCoefficients.d_crit;
   Real delta "reduced density";
-  Temperature T_crit=ancillaryCoefficients.T_crit;
+  constant Temperature T_crit=ancillaryCoefficients.T_crit;
   Real T_theta;
   Real tau=T_crit/T "inverse reduced temperature";
 
-  Integer nDvap=size(ancillaryCoefficients.densityVapor, 1);
-  Real[nDvap] n=ancillaryCoefficients.densityVapor[:, 1];
-  Real[nDvap] theta=ancillaryCoefficients.densityVapor[:, 2];
+  constant Integer nDvap=size(ancillaryCoefficients.densityVapor, 1);
+  constant Real[nDvap] n=ancillaryCoefficients.densityVapor[:, 1];
+  constant Real[nDvap] theta=ancillaryCoefficients.densityVapor[:, 2];
 
 algorithm
   if (densityVaporModel == DensityVaporModel.DV1) then

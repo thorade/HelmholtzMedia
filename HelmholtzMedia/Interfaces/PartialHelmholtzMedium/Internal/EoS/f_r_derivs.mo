@@ -30,9 +30,9 @@ protected
   constant Real gaussExponentDeviation = sum(abs(g[i,4] - 2) + abs(g[i,5] - 2) for i in 1:nGauss)
     "zero if all Gaussian terms use the exponent 2 (evaluated at translation, no cost at run time)";
 
-  Real del "reduced density, protected against zero";
-  Real lnd "log(delta)";
-  Real lnt "log(tau)";
+  Real del=max(delta, Modelica.Constants.small) "reduced density, protected against zero";
+  Real lnd=log(del) "log(delta)";
+  Real lnt=log(tau) "log(tau)";
   Real k "value of the current term";
   Real D1 "delta*d(term)/ddelta / term";
   Real D2 "delta^2*d2(term)/ddelta2 / term";
@@ -126,9 +126,6 @@ algorithm
   rttd := 0;
   rtdd := 0;
   rddd := 0;
-  del := max(delta, Modelica.Constants.small);
-  lnd := log(del);
-  lnt := log(tau);
 
   // polynomial terms n*delta^d*tau^t
   for i in 1:nPoly loop

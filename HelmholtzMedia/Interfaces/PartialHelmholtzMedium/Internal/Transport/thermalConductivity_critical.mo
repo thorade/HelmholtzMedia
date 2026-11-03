@@ -6,20 +6,18 @@ function thermalConductivity_critical
   output ThermalConductivity lambda_c;
 
 protected
-  MolarMass MM = fluidConstants[1].molarMass;
-  Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-  AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
+  constant MolarMass MM = fluidConstants[1].molarMass;
+  constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+  constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
 
   // coeffs for critical enhancement
-  Real nu=thermalConductivityCoefficients.nu;
-  Real gamma=thermalConductivityCoefficients.gamma;
-  Real R0=thermalConductivityCoefficients.R0;
-  Real z=thermalConductivityCoefficients.z;
-  Real c=thermalConductivityCoefficients.c;
-  Real xi_0=thermalConductivityCoefficients.xi_0;
-  Real Gamma_0=thermalConductivityCoefficients.Gamma_0;
-  Real q_D=1/thermalConductivityCoefficients.qd_inverse;
-  Temperature T_ref=thermalConductivityCoefficients.T_ref;
+  constant Real nu=thermalConductivityCoefficients.nu;
+  constant Real gamma=thermalConductivityCoefficients.gamma;
+  constant Real R0=thermalConductivityCoefficients.R0;
+  constant Real xi_0=thermalConductivityCoefficients.xi_0;
+  constant Real Gamma_0=thermalConductivityCoefficients.Gamma_0;
+  constant Real q_D=1/thermalConductivityCoefficients.qd_inverse;
+  constant Temperature T_ref=thermalConductivityCoefficients.T_ref;
   constant Boolean hasViscosity=(dynamicViscosityCoefficients.dynamicViscosityModel == DynamicViscosityModel.VS0)
     or (dynamicViscosityCoefficients.dynamicViscosityModel == DynamicViscosityModel.RES)
     or (size(dynamicViscosityCoefficients.CET, 1) > 0) "the critical enhancement needs the viscosity";

@@ -11,14 +11,10 @@ protected
   constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
     "specific gas constant";
   constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-  constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
   constant Density d_reducing=helmholtzCoefficients.d_reducing "reducing density of the EoS";
-  constant Temperature T_reducing=helmholtzCoefficients.T_reducing "reducing temperature of the EoS";
   constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
   constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
-  constant Density dv_trip = Internal.Ancillary.dewDensity_T(T_trip);
-  constant Density dl_trip = Internal.Ancillary.bubbleDensity_T(T_trip);
 
   Internal.EoS.HelmholtzDerivs f(d=d, delta = d/d_reducing);
   SaturationProperties sat;
@@ -32,7 +28,7 @@ protected
   AbsolutePressure RES_max;
   AbsolutePressure RES_p;
   DerPressureByTemperature dpTd "(dp/dT)@d=const";
-  Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
+  constant Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
   constant Real tolerance=1e-9 "relative tolerance for RES_p";
   Integer iter = 0;
   constant Integer iter_max = 200;

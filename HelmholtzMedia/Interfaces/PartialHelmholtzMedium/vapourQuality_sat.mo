@@ -6,8 +6,8 @@ function vapourQuality_sat "returns the vapour quality"
   output MassFraction x;
 
 protected
-  Temperature T_trip=fluidConstants[1].triplePointTemperature;
-  Temperature T_crit=fluidConstants[1].criticalTemperature;
+  constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
+  constant Temperature T_crit=fluidConstants[1].criticalTemperature;
 
 algorithm
   assert(state.T >= T_trip, "vapourQuality warning: Temperature is lower than triple-point temperature", level=AssertionLevel.warning);
