@@ -6,7 +6,7 @@ function dynamicViscosity "Returns dynamic Viscosity"
   output DynamicViscosity eta;
 
 protected
-  DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
+  constant DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
   constant Real micro=1e-6;
   DynamicViscosity eta_0 "dilute contribution, also needed by the initial density contribution";
 

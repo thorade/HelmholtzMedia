@@ -5,18 +5,18 @@ function meltingPressure_T
   output AbsolutePressure p_melt;
 
 protected
-  PressureMeltingModel pressureMeltingModel=ancillaryCoefficients.pressureMeltingModel;
-  Temperature T_reducing=ancillaryCoefficients.T_reducing;
-  AbsolutePressure p_reducing=ancillaryCoefficients.p_reducing;
+  constant PressureMeltingModel pressureMeltingModel=ancillaryCoefficients.pressureMeltingModel;
+  constant Temperature T_reducing=ancillaryCoefficients.T_reducing;
+  constant AbsolutePressure p_reducing=ancillaryCoefficients.p_reducing;
 
-  Integer nPressureMelting1=size(ancillaryCoefficients.pressureMelting1, 1);
-  Real[nPressureMelting1,2] n1=ancillaryCoefficients.pressureMelting1;
+  constant Integer nPressureMelting1=size(ancillaryCoefficients.pressureMelting1, 1);
+  constant Real[nPressureMelting1,2] n1=ancillaryCoefficients.pressureMelting1;
 
-  Integer nPressureMelting2=size(ancillaryCoefficients.pressureMelting2, 1);
-  Real[nPressureMelting2,2] n2=ancillaryCoefficients.pressureMelting2;
+  constant Integer nPressureMelting2=size(ancillaryCoefficients.pressureMelting2, 1);
+  constant Real[nPressureMelting2,2] n2=ancillaryCoefficients.pressureMelting2;
 
-  Integer nPressureMelting3=size(ancillaryCoefficients.pressureMelting3, 1);
-  Real[nPressureMelting3,2] n3=ancillaryCoefficients.pressureMelting3;
+  constant Integer nPressureMelting3=size(ancillaryCoefficients.pressureMelting3, 1);
+  constant Real[nPressureMelting3,2] n3=ancillaryCoefficients.pressureMelting3;
 
   Real Tr=max((T/T_reducing), Modelica.Constants.small)
     "reduced temperature";

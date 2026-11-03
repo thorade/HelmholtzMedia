@@ -20,16 +20,16 @@ protected
   constant Real Omega_a = 1/(9*(2^(1/3) - 1));
   constant Real Omega_b = (2^(1/3) - 1)/3;
   Real a = Omega_a*R_s^2*T_crit^2/p_crit*(1 + m*(1 - sqrt(T/T_crit)))^2;
-  Real b = Omega_b*R_s*T_crit/p_crit;
+  constant Real b = Omega_b*R_s*T_crit/p_crit;
   Real A = a*p/(R_s^2*T^2);
   Real B = b*p/(R_s*T);
 
   // cubic in the compressibility factor: Z^3 + a2*Z^2 + a1*Z + a0 = 0;
   // the constant term is proportional to p^2, the polynomial stays well-conditioned at low pressure
-  Real a2 = -1;
+  constant Real a2 = -1;
   Real a1 = A - B - B^2;
   Real a0 = -A*B;
-  Real x_infl = -a2/3 "inflection point";
+  constant Real x_infl = -a2/3 "inflection point";
   Real D = a2^2 - 3*a1 "the cubic has a maximum and a minimum if D>0";
   Real x "first root";
   Real fx;

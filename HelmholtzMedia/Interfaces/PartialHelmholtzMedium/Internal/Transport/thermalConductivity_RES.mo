@@ -9,10 +9,10 @@ protected
   constant Real k_B=Modelica.Constants.k;
   constant Real N_A=Modelica.Constants.N_A;
   constant Real s_plus_min=1e-10 "below this value the residual contribution is neglected (dilute gas)";
-  MolarMass MM=fluidConstants[1].molarMass;
-  Real[size(thermalConductivityCoefficients.RES_dilute, 1)] c=thermalConductivityCoefficients.RES_dilute;
-  Real[4] n=thermalConductivityCoefficients.RES_n;
-  Real xi=thermalConductivityCoefficients.RES_xi;
+  constant MolarMass MM=fluidConstants[1].molarMass;
+  constant Real[size(thermalConductivityCoefficients.RES_dilute, 1)] c=thermalConductivityCoefficients.RES_dilute;
+  constant Real[4] n=thermalConductivityCoefficients.RES_n;
+  constant Real xi=thermalConductivityCoefficients.RES_xi;
   EoS.HelmholtzDerivs f;
   Real s_plus "reduced residual entropy -s_r/R";
   Real x "scaled reduced residual entropy";

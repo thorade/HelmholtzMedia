@@ -6,28 +6,28 @@ function dynamicViscosity_residual
   output DynamicViscosity eta_r;
 
 protected
-  DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
+  constant DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
 
-  Temperature T_red_residual=dynamicViscosityCoefficients.reducingTemperature_residual;
+  constant Temperature T_red_residual=dynamicViscosityCoefficients.reducingTemperature_residual;
   Real tau "reduced temperature";
 
-  MolarMass MM = fluidConstants[1].molarMass;
+  constant MolarMass MM = fluidConstants[1].molarMass;
   Real dm=d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
   //Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
   Real d_gcm=d/1000 "density in g/cm3";
 
-  Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
-  Density d_red_residual=MM/dynamicViscosityCoefficients.reducingMolarVolume_residual;
+  constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
+  constant Density d_red_residual=MM/dynamicViscosityCoefficients.reducingMolarVolume_residual;
   Real delta=0 "reduced density";
   Real delta_exp=0 "reduced density in exponential term";
   Real delta_0=0 "close packed density";
 
-  Real[size(dynamicViscosityCoefficients.c, 1),1] c=dynamicViscosityCoefficients.c;
+  constant Real[size(dynamicViscosityCoefficients.c, 1),1] c=dynamicViscosityCoefficients.c;
 
-  Real[size(dynamicViscosityCoefficients.g, 1),2] g=dynamicViscosityCoefficients.g;
-  Real[size(dynamicViscosityCoefficients.e, 1),5] e=dynamicViscosityCoefficients.e;
-  Real[size(dynamicViscosityCoefficients.nu_po, 1),5] nu_po=dynamicViscosityCoefficients.nu_po;
-  Real[size(dynamicViscosityCoefficients.de_po, 1),5] de_po=dynamicViscosityCoefficients.de_po;
+  constant Real[size(dynamicViscosityCoefficients.g, 1),2] g=dynamicViscosityCoefficients.g;
+  constant Real[size(dynamicViscosityCoefficients.e, 1),5] e=dynamicViscosityCoefficients.e;
+  constant Real[size(dynamicViscosityCoefficients.nu_po, 1),5] nu_po=dynamicViscosityCoefficients.nu_po;
+  constant Real[size(dynamicViscosityCoefficients.de_po, 1),5] de_po=dynamicViscosityCoefficients.de_po;
   // Real[size(dynamicViscosityCoefficients.nu_ex,1),5] nu_ex=dynamicViscosityCoefficients.nu_ex;
   // Real[size(dynamicViscosityCoefficients.de_ex,1),5] de_ex=dynamicViscosityCoefficients.de_ex;
 
@@ -47,7 +47,7 @@ protected
   Real eta_0a=0 "RefProp temporary variable";
   Real eta_0b=0 "RefProp temporary variable";
 
-  Real eta_red_residual=dynamicViscosityCoefficients.reducingViscosity_residual;
+  constant Real eta_red_residual=dynamicViscosityCoefficients.reducingViscosity_residual;
 
 algorithm
   // residual contribution

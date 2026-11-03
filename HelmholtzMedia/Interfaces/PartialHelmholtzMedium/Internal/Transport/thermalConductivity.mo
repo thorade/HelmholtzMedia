@@ -6,7 +6,7 @@ function thermalConductivity "Return thermal conductivity"
   output ThermalConductivity lambda;
 
 protected
-  ThermalConductivityModel thermalConductivityModel=thermalConductivityCoefficients.thermalConductivityModel;
+  constant ThermalConductivityModel thermalConductivityModel=thermalConductivityCoefficients.thermalConductivityModel;
 
 algorithm
   assert(phase <> 2, "thermalConductivity warning: property not defined in two-phase region", level=AssertionLevel.warning);

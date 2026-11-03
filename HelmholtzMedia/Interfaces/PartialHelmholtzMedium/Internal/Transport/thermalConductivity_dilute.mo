@@ -6,16 +6,16 @@ function thermalConductivity_dilute
   output ThermalConductivity lambda_0;
 
 protected
-  Temperature T_red_0=thermalConductivityCoefficients.reducingTemperature_0;
+  constant Temperature T_red_0=thermalConductivityCoefficients.reducingTemperature_0;
   Real tau "reduced temperature";
 
   // coeffs for dilute contribution
-  Integer nDilute_num = size(thermalConductivityCoefficients.lambda_0_num_coeffs,1);
-  Real[nDilute_num, 2] A_num= thermalConductivityCoefficients.lambda_0_num_coeffs;
-  Integer nDilute_den = size(thermalConductivityCoefficients.lambda_0_den_coeffs,1);
-  Real[nDilute_den, 2] A_den= thermalConductivityCoefficients.lambda_0_den_coeffs;
+  constant Integer nDilute_num = size(thermalConductivityCoefficients.lambda_0_num_coeffs,1);
+  constant Real[nDilute_num, 2] A_num= thermalConductivityCoefficients.lambda_0_num_coeffs;
+  constant Integer nDilute_den = size(thermalConductivityCoefficients.lambda_0_den_coeffs,1);
+  constant Real[nDilute_den, 2] A_den= thermalConductivityCoefficients.lambda_0_den_coeffs;
   Real denom= 1;
-  Real lambda_red_0=thermalConductivityCoefficients.reducingThermalConductivity_0;
+  constant Real lambda_red_0=thermalConductivityCoefficients.reducingThermalConductivity_0;
 
   // interim variables for flagged algorithms
   constant Real eps = Modelica.Constants.eps;

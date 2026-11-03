@@ -4,9 +4,9 @@ function surfaceTension "Return surface tension sigma in the two phase region"
   output SurfaceTension sigma;
 
 protected
-  Temperature T_crit=fluidConstants[1].criticalTemperature;
-  Real[size(surfaceTensionCoefficients.coeffs, 1)] a=surfaceTensionCoefficients.coeffs[:, 1];
-  Real[size(surfaceTensionCoefficients.coeffs, 1)] n=surfaceTensionCoefficients.coeffs[:, 2];
+  constant Temperature T_crit=fluidConstants[1].criticalTemperature;
+  constant Real[size(surfaceTensionCoefficients.coeffs, 1)] a=surfaceTensionCoefficients.coeffs[:, 1];
+  constant Real[size(surfaceTensionCoefficients.coeffs, 1)] n=surfaceTensionCoefficients.coeffs[:, 2];
   Real X=max((T_crit - sat.Tsat)/T_crit, 0) "reduced temperature difference";
 
 algorithm

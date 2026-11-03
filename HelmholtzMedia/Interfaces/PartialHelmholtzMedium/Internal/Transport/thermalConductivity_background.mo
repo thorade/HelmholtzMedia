@@ -6,18 +6,18 @@ function thermalConductivity_background
   output ThermalConductivity lambda_b;
 
 protected
-  ThermalConductivityModel thermalConductivityModel=thermalConductivityCoefficients.thermalConductivityModel;
-  MolarMass MM = fluidConstants[1].molarMass;
-  Density d_red_background=fluidConstants[1].molarMass/thermalConductivityCoefficients.reducingMolarVolume_background;
+  constant ThermalConductivityModel thermalConductivityModel=thermalConductivityCoefficients.thermalConductivityModel;
+  constant MolarMass MM = fluidConstants[1].molarMass;
+  constant Density d_red_background=fluidConstants[1].molarMass/thermalConductivityCoefficients.reducingMolarVolume_background;
   Real delta "reduced density";
-  Temperature T_red_background=thermalConductivityCoefficients.reducingTemperature_background;
+  constant Temperature T_red_background=thermalConductivityCoefficients.reducingTemperature_background;
   Real tau "reduced temperature";
 
   // coeffs for background contribution
-  Integer nBackground = size(thermalConductivityCoefficients.lambda_b_coeffs, 1);
-  Real[nBackground, 4] B= thermalConductivityCoefficients.lambda_b_coeffs;
+  constant Integer nBackground = size(thermalConductivityCoefficients.lambda_b_coeffs, 1);
+  constant Real[nBackground, 4] B= thermalConductivityCoefficients.lambda_b_coeffs;
 
-  Real lambda_red_background=thermalConductivityCoefficients.reducingThermalConductivity_background;
+  constant Real lambda_red_background=thermalConductivityCoefficients.reducingThermalConductivity_background;
 
   // helium (Hands and Arp 1981), only used for TC0
   Real lambda_0;

@@ -6,26 +6,26 @@ function dynamicViscosity_dilute
   output DynamicViscosity eta_0;
 
 protected
-  DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
-  CollisionIntegralModel collisionIntegralModel=dynamicViscosityCoefficients.collisionIntegralModel;
+  constant DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
+  constant CollisionIntegralModel collisionIntegralModel=dynamicViscosityCoefficients.collisionIntegralModel;
 
-  Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
+  constant Temperature T_red_0=dynamicViscosityCoefficients.reducingTemperature_0;
   Real T_star "reduced temperature";
   Real tau "reduced temperature";
 
-  MolarMass MM = fluidConstants[1].molarMass;
+  constant MolarMass MM = fluidConstants[1].molarMass;
   Real dm=d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
   //Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
 
-  Real[size(dynamicViscosityCoefficients.a, 1),2] a=dynamicViscosityCoefficients.a;
-  Real[size(dynamicViscosityCoefficients.CET, 1),2] CET=dynamicViscosityCoefficients.CET; // Chapman-Enskog-Term
-  Real[size(dynamicViscosityCoefficients.CET_den, 1),2] CET_den=dynamicViscosityCoefficients.CET_den;
+  constant Real[size(dynamicViscosityCoefficients.a, 1),2] a=dynamicViscosityCoefficients.a;
+  constant Real[size(dynamicViscosityCoefficients.CET, 1),2] CET=dynamicViscosityCoefficients.CET; // Chapman-Enskog-Term
+  constant Real[size(dynamicViscosityCoefficients.CET_den, 1),2] CET_den=dynamicViscosityCoefficients.CET_den;
   Real Omega=0 "reduced effective cross section / Omega collision integral";
   Real S "sum (collision integral or numerator)";
   Real S_den "sum (denominator)";
-  Real sigma=dynamicViscosityCoefficients.sigma;
+  constant Real sigma=dynamicViscosityCoefficients.sigma;
 
-  Real eta_red_0=dynamicViscosityCoefficients.reducingViscosity_0;
+  constant Real eta_red_0=dynamicViscosityCoefficients.reducingViscosity_0;
 
 algorithm
   // dilute contribution

@@ -11,10 +11,10 @@ protected
   constant Real micro=1e-6;
   constant Temperature T_unit=1;
   constant Real s_plus_min=1e-10 "below this value the residual contribution is neglected (dilute gas)";
-  MolarMass MM=fluidConstants[1].molarMass;
-  Real[size(dynamicViscosityCoefficients.RES_dilute, 1)] c=dynamicViscosityCoefficients.RES_dilute;
-  Real[3] n=dynamicViscosityCoefficients.RES_n;
-  Real xi=dynamicViscosityCoefficients.RES_xi;
+  constant MolarMass MM=fluidConstants[1].molarMass;
+  constant Real[size(dynamicViscosityCoefficients.RES_dilute, 1)] c=dynamicViscosityCoefficients.RES_dilute;
+  constant Real[3] n=dynamicViscosityCoefficients.RES_n;
+  constant Real xi=dynamicViscosityCoefficients.RES_xi;
   EoS.HelmholtzDerivs f;
   Real s_plus "reduced residual entropy -s_r/R";
   Real x "scaled reduced residual entropy";

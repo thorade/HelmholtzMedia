@@ -7,20 +7,20 @@ function dynamicViscosity_initial
   output DynamicViscosity eta_1;
 
 protected
-  DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
+  constant DynamicViscosityModel dynamicViscosityModel=dynamicViscosityCoefficients.dynamicViscosityModel;
 
   Real T_star "reduced temperature";
 
-  MolarMass MM = fluidConstants[1].molarMass;
+  constant MolarMass MM = fluidConstants[1].molarMass;
   Real dm=d/(1000*MM) "molar density in mol/l";     // 1 m3=1000 l
   //Real dm_crit=d_crit/(1000*MM) "molar density in mol/l"; // 1 m3=1000 l
 
-  Real[size(dynamicViscosityCoefficients.b, 1),2] b=dynamicViscosityCoefficients.b;
+  constant Real[size(dynamicViscosityCoefficients.b, 1),2] b=dynamicViscosityCoefficients.b;
   Real B_star=0 "reduced second viscosity virial coefficient";
   Real B=0 "second viscosity virial coefficient, l/mol";
-  Real sigma=dynamicViscosityCoefficients.sigma;
+  constant Real sigma=dynamicViscosityCoefficients.sigma;
 
-  Real eta_red_1=dynamicViscosityCoefficients.reducingViscosity_1;
+  constant Real eta_red_1=dynamicViscosityCoefficients.reducingViscosity_1;
 
 algorithm
   // inital density contribution

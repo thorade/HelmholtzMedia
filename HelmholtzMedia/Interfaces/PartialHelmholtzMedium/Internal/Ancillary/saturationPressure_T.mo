@@ -10,9 +10,9 @@ protected
   Real T_theta=max((1 - T/T_crit), Modelica.Constants.small);
   constant AbsolutePressure p_crit=ancillaryCoefficients.p_crit;
 
-  Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
-  Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
-  Real[nPressureSaturation] theta=ancillaryCoefficients.pressureSaturation[:, 2];
+  constant Integer nPressureSaturation=size(ancillaryCoefficients.pressureSaturation, 1);
+  constant Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
+  constant Real[nPressureSaturation] theta=ancillaryCoefficients.pressureSaturation[:, 2];
 
   constant Real eps=1e-9;
 

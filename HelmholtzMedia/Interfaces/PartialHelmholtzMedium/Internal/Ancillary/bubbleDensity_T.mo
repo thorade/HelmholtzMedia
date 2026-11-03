@@ -6,16 +6,16 @@ function bubbleDensity_T
   output Modelica.Units.SI.Density dliq;
 
 protected
-  DensityLiquidModel densityLiquidModel=ancillaryCoefficients.densityLiquidModel;
-  Density d_crit=ancillaryCoefficients.d_crit;
+  constant DensityLiquidModel densityLiquidModel=ancillaryCoefficients.densityLiquidModel;
+  constant Density d_crit=ancillaryCoefficients.d_crit;
   Real delta "reduced density";
-  Temperature T_crit=ancillaryCoefficients.T_crit;
+  constant Temperature T_crit=ancillaryCoefficients.T_crit;
   Real T_theta;
   Real tau=T_crit/T "inverse reduced temperature";
 
-  Integer nDliq=size(ancillaryCoefficients.densityLiquid, 1);
-  Real[nDliq] n=ancillaryCoefficients.densityLiquid[:, 1];
-  Real[nDliq] theta=ancillaryCoefficients.densityLiquid[:, 2];
+  constant Integer nDliq=size(ancillaryCoefficients.densityLiquid, 1);
+  constant Real[nDliq] n=ancillaryCoefficients.densityLiquid[:, 1];
+  constant Real[nDliq] theta=ancillaryCoefficients.densityLiquid[:, 2];
 
 algorithm
   if (densityLiquidModel == DensityLiquidModel.DL1) then
