@@ -13,8 +13,8 @@ protected
   constant Real[size(thermalConductivityCoefficients.RES_dilute, 1)] c=thermalConductivityCoefficients.RES_dilute;
   constant Real[4] n=thermalConductivityCoefficients.RES_n;
   constant Real xi=thermalConductivityCoefficients.RES_xi;
-  EoS.HelmholtzDerivs f;
-  Real s_plus "reduced residual entropy -s_r/R";
+  EoS.HelmholtzDerivs f=EoS.setHelmholtzDerivs(d=d, T=T, order=1, includeIdeal=false);
+  Real s_plus=f.r - f.tau*f.rt "reduced residual entropy -s_r/R";
   Real x "scaled reduced residual entropy";
   constant Temperature T_unit=1;
   constant ThermalConductivity lambda_unit=1;
@@ -30,8 +30,6 @@ algorithm
   end for;
 
   // residual contribution
-  f := EoS.setHelmholtzDerivs(d=d, T=T, order=1, includeIdeal=false);
-  s_plus := f.r - f.tau*f.rt;
   if (s_plus > s_plus_min) then
     x := s_plus/xi;
     lambda_plus := n[1]*x + n[2]*x^1.5 + n[3]*x^2 + n[4]*x^2.5;

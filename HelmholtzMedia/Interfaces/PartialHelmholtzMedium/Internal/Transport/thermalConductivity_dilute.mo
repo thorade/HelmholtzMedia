@@ -7,7 +7,7 @@ function thermalConductivity_dilute
 
 protected
   constant Temperature T_red_0=thermalConductivityCoefficients.reducingTemperature_0;
-  Real tau "reduced temperature";
+  Real tau=T/T_red_0 "reduced temperature";
 
   // coeffs for dilute contribution
   constant Integer nDilute_num = size(thermalConductivityCoefficients.lambda_0_num_coeffs,1);
@@ -29,7 +29,6 @@ algorithm
   lambda_0 := 0;
 
   // Modelica.Utilities.Streams.print("thermalConductivity_dilute: d = " + String(d) + " and T = " + String(T));
-  tau := T/T_red_0;
 
   // numerator terms, check last numerator exponent
   if (A_num[nDilute_num,2]>-90) then
