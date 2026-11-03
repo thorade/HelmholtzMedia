@@ -438,10 +438,6 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   "Return thermodynamic state as function of (d, T)"
 
   protected
-    constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
-    "specific gas constant";
-    constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
     constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
 
@@ -543,15 +539,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
   "Return thermodynamic state as function of (p, T)"
 
   protected
-    constant MolarMass MM = fluidConstants[1].molarMass;
-    constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
-    "specific gas constant";
-    constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-    constant Density d_reducing=helmholtzCoefficients.d_reducing "reducing density of the EoS";
     constant Temperature T_reducing=helmholtzCoefficients.T_reducing "reducing temperature of the EoS";
-    constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
-    constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
     // constant Real Z_crit=1/(d_crit*R*T_crit/p_crit);
 
     Internal.EoS.HelmholtzDerivs f(T=T,tau=T_reducing/T);
@@ -692,8 +681,6 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real delta "reduced density";
-    Real tau "inverse reduced temperature";
 
     constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
@@ -1026,8 +1013,6 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     "specific gas constant";
     constant Density d_crit=MM/fluidConstants[1].criticalMolarVolume;
     constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-    Real delta "reduced density";
-    Real tau "inverse reduced temperature";
 
     constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
     constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
@@ -1054,12 +1039,6 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Real grad[2] "gradient vector";
     Real slope;
 
-    Internal.EoS.HelmholtzDerivs f_med;
-    Real[2] RES_med "residual function vector";
-    Real[2] xy;
-    Real[2] xy_old;
-    Real[2] xy_med;
-    Real[2,2] Jacobian_med "Jacobian matrix";
 
     constant Real tolerance=1e-18 "tolerance for RSS of the scaled residuals";
     constant SpecificEntropy s_scale=R_s "scale for the entropy residual";

@@ -14,7 +14,6 @@ protected
   constant Real[nPressureSaturation] n=ancillaryCoefficients.pressureSaturation[:, 1];
   constant Real[nPressureSaturation] theta=ancillaryCoefficients.pressureSaturation[:, 2];
 
-  constant Real eps=1e-9;
 
 algorithm
   if T > T_crit then

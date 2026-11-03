@@ -7,7 +7,6 @@ function thermalConductivity_background
 
 protected
   constant ThermalConductivityModel thermalConductivityModel=thermalConductivityCoefficients.thermalConductivityModel;
-  constant MolarMass MM = fluidConstants[1].molarMass;
   constant Density d_red_background=fluidConstants[1].molarMass/thermalConductivityCoefficients.reducingMolarVolume_background;
   Real delta "reduced density";
   constant Temperature T_red_background=thermalConductivityCoefficients.reducingTemperature_background;

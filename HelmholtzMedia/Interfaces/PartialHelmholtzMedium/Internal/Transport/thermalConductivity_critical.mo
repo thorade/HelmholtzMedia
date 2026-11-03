@@ -14,8 +14,6 @@ protected
   constant Real nu=thermalConductivityCoefficients.nu;
   constant Real gamma=thermalConductivityCoefficients.gamma;
   constant Real R0=thermalConductivityCoefficients.R0;
-  constant Real z=thermalConductivityCoefficients.z;
-  constant Real c=thermalConductivityCoefficients.c;
   constant Real xi_0=thermalConductivityCoefficients.xi_0;
   constant Real Gamma_0=thermalConductivityCoefficients.Gamma_0;
   constant Real q_D=1/thermalConductivityCoefficients.qd_inverse;

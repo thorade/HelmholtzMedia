@@ -8,13 +8,10 @@ protected
   SaturationProperties sat "the saturation state (computed again)";
   EoS.HelmholtzDerivs fl "Helmholtz derivatives at the saturated liquid";
   EoS.HelmholtzDerivs fv "Helmholtz derivatives at the saturated vapour";
-  Real Tsat_der "time derivative of the saturation temperature";
   Real dl_der "time derivative of the liquid density";
   Real dv_der "time derivative of the vapour density";
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
   constant Temperature T_crit=fluidConstants[1].criticalTemperature;
-  constant AbsolutePressure p_trip=fluidConstants[1].triplePointPressure;
-  constant AbsolutePressure p_crit=fluidConstants[1].criticalPressure;
   Real vl "specific volume of saturated liquid";
   Real vv "specific volume of saturated vapour";
   Real hl "specific enthalpy of saturated liquid";

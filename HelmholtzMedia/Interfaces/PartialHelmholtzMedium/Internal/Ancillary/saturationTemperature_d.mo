@@ -6,9 +6,6 @@ function saturationTemperature_d
   output Modelica.Units.SI.Temperature T;
 
 protected
-  constant MolarMass MM = fluidConstants[1].molarMass;
-  constant SpecificHeatCapacity R_s=Modelica.Constants.R/MM
-    "specific gas constant";
   constant Density d_crit=ancillaryCoefficients.d_crit;
 
   constant Temperature T_trip=fluidConstants[1].triplePointTemperature;
