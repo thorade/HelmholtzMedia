@@ -20,8 +20,10 @@ protected
   // RKS: Redlich-Kwong-Soave, same constants as in density_pT_Soave
   constant Real omega = fluidConstants[1].acentricFactor;
   constant Real m = 0.480 + 1.574*omega - 0.176*omega^2;
-  constant Real a_crit = 0.42747*R_s^2*T_crit^2/p_crit;
-  constant Real b = 0.08664*R_s*T_crit/p_crit;
+  constant Real Omega_a = 1/(9*(2^(1/3) - 1));
+  constant Real Omega_b = (2^(1/3) - 1)/3;
+  constant Real a_crit = Omega_a*R_s^2*T_crit^2/p_crit;
+  constant Real b = Omega_b*R_s*T_crit/p_crit;
 
   constant Real tolerance=1e-4 "relative tolerance of T (start value only)";
   constant Integer iter_max=20;
