@@ -8,7 +8,7 @@ function temperature_ps_der "time derivative of temperature_ps, derivative annot
   input Real s_der "time derivative of s";
   output Real T_der "time derivative of temperature_ps";
 algorithm
-  T_der := temperature_ps_state_der(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase), p_der=p_der, s_der=s_der);
+  T_der := temperature_ps_state_der(p=p, s=s, state=setState_psX(p=p, s=s, X=fill(0, 0), phase=phase), p_der=p_der, s_der=s_der);
   annotation (Inline=true, Documentation(info="<html>
 <p>
 Inlined, so that the call of setState_ps is shared with the one in temperature_ps (same scalar arguments).

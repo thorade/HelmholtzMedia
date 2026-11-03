@@ -8,7 +8,7 @@ function specificEnthalpy_pT_der "time derivative of specificEnthalpy_pT, deriva
   input Real T_der "time derivative of T";
   output Real h_der "time derivative of specificEnthalpy_pT";
 algorithm
-  h_der := specificEnthalpy_pT_state_der(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase), p_der=p_der, T_der=T_der);
+  h_der := specificEnthalpy_pT_state_der(p=p, T=T, state=setState_pTX(p=p, T=T, X=fill(0, 0), phase=phase), p_der=p_der, T_der=T_der);
   annotation (Inline=true, Documentation(info="<html>
 <p>
 Inlined, so that the call of setState_pT is shared with the one in specificEnthalpy_pT (same scalar arguments).

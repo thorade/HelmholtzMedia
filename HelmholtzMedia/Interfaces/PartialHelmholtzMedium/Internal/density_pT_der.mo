@@ -8,7 +8,7 @@ function density_pT_der "time derivative of density_pT, derivative annotation of
   input Real T_der "time derivative of T";
   output Real d_der "time derivative of density_pT";
 algorithm
-  d_der := density_pT_state_der(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase), p_der=p_der, T_der=T_der);
+  d_der := density_pT_state_der(p=p, T=T, state=setState_pTX(p=p, T=T, X=fill(0, 0), phase=phase), p_der=p_der, T_der=T_der);
   annotation (Inline=true, Documentation(info="<html>
 <p>
 Inlined, so that the call of setState_pT is shared with the one in density_pT (same scalar arguments).
