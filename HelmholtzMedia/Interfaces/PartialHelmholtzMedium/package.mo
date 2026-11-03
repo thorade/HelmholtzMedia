@@ -68,6 +68,9 @@ partial package PartialHelmholtzMedium
     SpecificEntropy s;
     parameter InputChoice componentInputChoice=inputChoice
     "Choice of input variables for property computations";
+  protected
+    Real phaseReal "state.phase as Real, computed from the shared state in a continuous equation";
+  public
 
   equation
     MM = fluidConstants[1].molarMass;
@@ -83,22 +86,30 @@ partial package PartialHelmholtzMedium
     // and in the inlined derivative functions. Dymola merges only textually identical calls, so the state used here
     // and in der(d) is solved once. The wrapper (e.g. temperature_ph) remains a call and solves the state again.
     // The state must not be a separate variable: index reduction would then require its derivative.
+    // state.phase is taken from the same state: phaseReal is computed in a continuous equation, where Dymola reuses
+    // the state solve (a function call inside the relation itself would be evaluated again). The comparison of the
+    // Real phaseReal with 1.5 makes a change of phase an event.
+    // sat is not used in these equations, so it is only computed where it is needed (e.g. for outputs).
     if (componentInputChoice == InputChoice.ph) then
       d = Internal.density_ph_state(p=p, h=h, state=setState_phX(p=p, h=h, X=fill(0, 0), phase=0));
       T = temperature_ph(p=p, h=h);
       s = Internal.specificEntropy_ph_state(p=p, h=h, state=setState_phX(p=p, h=h, X=fill(0, 0), phase=0));
+      phaseReal = Internal.phase_state(state=setState_phX(p=p, h=h, X=fill(0, 0), phase=0));
     elseif (componentInputChoice == InputChoice.ps) then
       d = Internal.density_ps_state(p=p, s=s, state=setState_psX(p=p, s=s, X=fill(0, 0), phase=0));
       T = temperature_ps(p=p, s=s);
       h = Internal.specificEnthalpy_ps_state(p=p, s=s, state=setState_psX(p=p, s=s, X=fill(0, 0), phase=0));
+      phaseReal = Internal.phase_state(state=setState_psX(p=p, s=s, X=fill(0, 0), phase=0));
     elseif (componentInputChoice == InputChoice.pT) then
       d = Internal.density_pT_state(p=p, T=T, state=setState_pTX(p=p, T=T, X=fill(0, 0), phase=0));
       h = specificEnthalpy_pT(p=p, T=T);
       s = Internal.specificEntropy_pT_state(p=p, T=T, state=setState_pTX(p=p, T=T, X=fill(0, 0), phase=0));
+      phaseReal = Internal.phase_state(state=setState_pTX(p=p, T=T, X=fill(0, 0), phase=0));
     elseif (componentInputChoice == InputChoice.dT) then
       p = pressure_dT(d=d, T=T);
       h = Internal.specificEnthalpy_dT_state(d=d, T=T, state=setState_dTX(d=d, T=T, X=fill(0, 0), phase=0));
       s = Internal.specificEntropy_dT_state(d=d, T=T, state=setState_dTX(d=d, T=T, X=fill(0, 0), phase=0));
+      phaseReal = Internal.phase_state(state=setState_dTX(d=d, T=T, X=fill(0, 0), phase=0));
     else
       assert(false, "Invalid choice for basePropertiesInput");
     end if;
@@ -116,7 +127,7 @@ partial package PartialHelmholtzMedium
     state.h = h;
     state.s = s;
     state.u = u;
-    state.phase = if ((p < fluidConstants[1].criticalPressure) and (p > fluidConstants[1].triplePointPressure) and (h > sat.liq.h) and (h < sat.vap.h)) then 2 else 1;
+    state.phase = if phaseReal > 1.5 then 2 else 1;
 
   end BaseProperties;
 
