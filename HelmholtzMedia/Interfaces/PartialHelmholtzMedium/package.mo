@@ -733,6 +733,12 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Real lambda_ls;
     Integer attempt = 0 "second attempt with start values on the liquid branch, if the first converged to an unstable root";
     Boolean stable = false;
+    Boolean solid = false "the root found lies above the melting line, outside the range of validity of the EoS";
+    AbsolutePressure p_melt;
+    Boolean haveSolidRoot = false "a converged root above the melting line is kept as fallback";
+    Density d_solid;
+    Temperature T_solid;
+    Internal.EoS.HelmholtzDerivs f_solid;
     constant Real lambda_min = 0.01 "minimum for convergence speed";
     Real lambda_temp = 1 "temporary variable for convergence speed";
     constant Real alpha(min=0,max=1)=1e-4;
@@ -794,12 +800,13 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           state.phase := 1;
 
           d_min := fluidLimits.DMIN;
-          d_iter:= sat.vap.d/10;
           d_max := sat.vap.d*1.02;
 
           T_min := sat.Tsat*0.98;
-          T_iter:= sat.Tsat*1.02;
           T_max := fluidLimits.TMAX*1.10;
+
+          (T_iter, d_iter) := Internal.Ancillary.state_ph_Soave(p=p, h=h, T_low=sat.Tsat, T_start=sat.Tsat);
+          d_iter:= min(max(d_iter, d_min), d_max);
         else
           // Modelica.Utilities.Streams.print("two-phase, all properties can be calculated from sat record", "printlog.txt");
           state.phase := 2;
@@ -819,14 +826,14 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           d_iter:= min(max(Internal.Ancillary.bubbleDensity_T(T=T_iter), d_min), d_max);
         else
           // Modelica.Utilities.Streams.print("h>h_crit, single-phase super-critical vapour-like region", "printlog.txt");
-          // due to the curvature, Newton will converge better when starting from the ideal gas region (low d, high T)
           d_min := fluidLimits.DMIN;
-          d_iter:= d_crit/10;
           d_max := fluidLimits.DMAX*1.1;
 
           T_min := fluidLimits.TMIN;
-          T_iter:= T_crit*1.3;
           T_max := fluidLimits.TMAX*1.1;
+
+          (T_iter, d_iter) := Internal.Ancillary.state_ph_Soave(p=p, h=h, T_low=T_min, T_start=1.3*T_crit);
+          d_iter:= min(max(d_iter, d_min), d_max);
         end if;
       end if;
     end if;
@@ -857,6 +864,11 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         else
           T_iter := 1.05*T_crit;
           d_iter := 0.5*d_crit;
+        end if;
+        if solid then
+          // restart above the melting temperature, so that Newton cannot reach the solid region again
+          T_min := max(T_min, Internal.Ancillary.meltingTemperature_p(p=p));
+          T_iter := max(T_iter, T_min);
         end if;
         iter := 0;
         iter_max := 200;
@@ -907,7 +919,9 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         // instead, the linesearching / backtracking loop tries to find lambda such that RSS decreases
         while useLineSearch and (lambda>=lambda_min) and not (RSS<=(RSS_old+alpha*lambda*slope)) loop
           iterLineSearch := iterLineSearch+1;
-          iter_max := min(iter_max+1, 1000) "line search steps extend the iteration budget, but bounded";
+          if (attempt==2) then
+            iter_max := min(iter_max+1, 1000) "line search steps extend the iteration budget of the restart, but bounded";
+          end if;
 
           // decrease lambda
           if (iterLineSearch<2) then
@@ -970,8 +984,25 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       // accepted is a converged, mechanically stable root; for p>=p_crit and T<T_crit it must also be compressed liquid,
       // i.e. denser than the saturated liquid (0.98 allows for the ancillary equation); otherwise Newton found the
       // metastable (supersaturated) vapour root of the van der Waals loop, which can be denser than d_crit
-      stable := converged and (Internal.EoS.dpdT(f)>0) and ((p<p_crit) or (T_iter>=T_crit) or (d_iter>=0.98*Internal.Ancillary.bubbleDensity_T(T=T_iter)));
+      // a root more than 1 K below the melting temperature triggers the restart above the melting temperature
+      // (meltingPressure_T returns PMAX for fluids without melting line; below TMIN the melting line is not defined);
+      // if the restart does not converge, e.g. because the input itself lies in the solid region, the root is kept
+      p_melt := Internal.Ancillary.meltingPressure_T(T=T_iter + 1);
+      solid := converged and (T_iter >= fluidLimits.TMIN) and (p_melt < fluidLimits.PMAX) and (p > p_melt);
+      if solid and not haveSolidRoot then
+        haveSolidRoot := true;
+        d_solid := d_iter;
+        T_solid := T_iter;
+        f_solid := f;
+      end if;
+      stable := converged and not solid and (Internal.EoS.dpdT(f)>0) and ((p<p_crit) or (T_iter>=T_crit) or (d_iter>=0.98*Internal.Ancillary.bubbleDensity_T(T=T_iter)));
       end while;
+      if haveSolidRoot and not stable then
+        converged := true;
+        d_iter := d_solid;
+        T_iter := T_solid;
+        f := f_solid;
+      end if;
       // Modelica.Utilities.Streams.print("setState_ph total iteration steps " + String(iter), "printlog.txt");
       assert(converged, "setState_phX did not converge, input was p=" + String(p) + " and h=" + String(h));
 

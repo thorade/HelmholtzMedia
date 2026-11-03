@@ -205,7 +205,7 @@ extends Interfaces.PartialHelmholtzMedium(
       -134.89,  20.0],
     pressureMeltingModel=PressureMeltingModel.ML1,
     T_reducing=85.525,
-    p_reducing=0.00017,
+    p_reducing=0.00017205,
     pressureMelting1=[
       -4230000000000.0, 0;
        4230000000001.0, 1.283],

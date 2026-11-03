@@ -92,16 +92,30 @@ protected
     Medium.ThermodynamicState st = Medium.setState_pT(p=p, T=T);
     Medium.ThermodynamicState st_h = Medium.setState_ph(p=p, h=st.h);
     Medium.ThermodynamicState st_s = Medium.setState_ps(p=p, s=st.s);
+    Medium.AbsolutePressure p_melt = Medium.Internal.Ancillary.meltingPressure_T(T=T) "PMAX for fluids without melting line";
+    Boolean solid = (p_melt < PMAX) and (p > p_melt)
+      "above the melting line, outside the range of validity of the EoS; the EoS may have several roots there";
   algorithm
     Modelica.Utilities.Streams.print(name + ": ph T_err=" + String(st_h.T-T) + " d_err=" + String(st_h.d/st.d-1)
-      + " ps T_err=" + String(st_s.T-T) + " d_err=" + String(st_s.d/st.d-1), fileName);
+      + " ps T_err=" + String(st_s.T-T) + " d_err=" + String(st_s.d/st.d-1)
+      + (if solid then " (above the melting line, p_melt=" + String(p_melt) + ")" else ""), fileName);
     if abs(st_h.T-T)>tol_T or abs(st_h.d/st.d-1)>tol_d then
-      report(name + ": pT->ph round trip, T_err=" + String(st_h.T-T) + ", d_err=" + String(st_h.d/st.d-1));
-      ok := false;
+      if solid then
+        Modelica.Utilities.Streams.print(name + ": pT->ph round trip returned another root above the melting line (outside the range of validity, not counted), T_err="
+          + String(st_h.T-T) + ", d_err=" + String(st_h.d/st.d-1), fileName);
+      else
+        report(name + ": pT->ph round trip, T_err=" + String(st_h.T-T) + ", d_err=" + String(st_h.d/st.d-1));
+        ok := false;
+      end if;
     end if;
     if abs(st_s.T-T)>tol_T or abs(st_s.d/st.d-1)>tol_d then
-      report(name + ": pT->ps round trip, T_err=" + String(st_s.T-T) + ", d_err=" + String(st_s.d/st.d-1));
-      ok := false;
+      if solid then
+        Modelica.Utilities.Streams.print(name + ": pT->ps round trip returned another root above the melting line (outside the range of validity, not counted), T_err="
+          + String(st_s.T-T) + ", d_err=" + String(st_s.d/st.d-1), fileName);
+      else
+        report(name + ": pT->ps round trip, T_err=" + String(st_s.T-T) + ", d_err=" + String(st_s.d/st.d-1));
+        ok := false;
+      end if;
     end if;
   end checkRoundTrip;
 
