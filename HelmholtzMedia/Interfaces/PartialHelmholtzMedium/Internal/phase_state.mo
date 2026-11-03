@@ -5,7 +5,7 @@ function phase_state "returns the phase of a state as Real (1 single phase, 2 tw
   output Real phase "1 single phase, 2 two-phase";
 algorithm
   phase := state.phase;
-  annotation (Inline=false, LateInline=true, Documentation(info="<html>
+  annotation (Inline=false, LateInline=true, derivative(noDerivative=state)=phase_state_der, Documentation(info="<html>
 <p>
 Used in BaseProperties for state.phase. Like density_ph_state etc., it receives the state as a visible argument and
 is not inlined, so that Dymola reuses the state solve of BaseProperties instead of solving the state again.
