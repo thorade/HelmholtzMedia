@@ -8,7 +8,7 @@ function temperature_ph_der "time derivative of temperature_ph, derivative annot
   input Real h_der "time derivative of h";
   output Real T_der "time derivative of temperature_ph";
 algorithm
-  T_der := temperature_ph_state_der(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase), p_der=p_der, h_der=h_der);
+  T_der := temperature_ph_state_der(p=p, h=h, state=setState_phX(p=p, h=h, X=fill(0, 0), phase=phase), p_der=p_der, h_der=h_der);
   annotation (Inline=true, Documentation(info="<html>
 <p>
 Inlined, so that the call of setState_ph is shared with the one in temperature_ph (same scalar arguments).

@@ -8,7 +8,7 @@ function specificEntropy_ph_der "time derivative of specificEntropy_ph, derivati
   input Real h_der "time derivative of h";
   output Real s_der "time derivative of specificEntropy_ph";
 algorithm
-  s_der := specificEntropy_ph_state_der(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase), p_der=p_der, h_der=h_der);
+  s_der := specificEntropy_ph_state_der(p=p, h=h, state=setState_phX(p=p, h=h, X=fill(0, 0), phase=phase), p_der=p_der, h_der=h_der);
   annotation (Inline=true, Documentation(info="<html>
 <p>
 Inlined, so that the call of setState_ph is shared with the one in specificEntropy_ph (same scalar arguments).

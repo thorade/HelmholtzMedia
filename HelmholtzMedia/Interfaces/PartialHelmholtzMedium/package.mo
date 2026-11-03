@@ -79,23 +79,26 @@ partial package PartialHelmholtzMedium
     // hidden inside density_ph etc. is not merged.) One property per input choice keeps the wrapper function
     // (temperature_ph, specificEnthalpy_pT, pressure_dT), whose inverse annotation is needed when that property
     // is given instead of the input variable (e.g. p and T fixed at a boundary with input choice ph).
+    // All paths call setState_phX(p=p, h=h, X=fill(0, 0), phase=...) etc. with identical text: here, in the wrappers
+    // and in the inlined derivative functions. Dymola merges only textually identical calls, so the state used here
+    // and in der(d) is solved once. The wrapper (e.g. temperature_ph) remains a call and solves the state again.
     // The state must not be a separate variable: index reduction would then require its derivative.
     if (componentInputChoice == InputChoice.ph) then
-      d = Internal.density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h));
+      d = Internal.density_ph_state(p=p, h=h, state=setState_phX(p=p, h=h, X=fill(0, 0), phase=0));
       T = temperature_ph(p=p, h=h);
-      s = Internal.specificEntropy_ph_state(p=p, h=h, state=setState_ph(p=p, h=h));
+      s = Internal.specificEntropy_ph_state(p=p, h=h, state=setState_phX(p=p, h=h, X=fill(0, 0), phase=0));
     elseif (componentInputChoice == InputChoice.ps) then
-      d = Internal.density_ps_state(p=p, s=s, state=setState_ps(p=p, s=s));
+      d = Internal.density_ps_state(p=p, s=s, state=setState_psX(p=p, s=s, X=fill(0, 0), phase=0));
       T = temperature_ps(p=p, s=s);
-      h = Internal.specificEnthalpy_ps_state(p=p, s=s, state=setState_ps(p=p, s=s));
+      h = Internal.specificEnthalpy_ps_state(p=p, s=s, state=setState_psX(p=p, s=s, X=fill(0, 0), phase=0));
     elseif (componentInputChoice == InputChoice.pT) then
-      d = Internal.density_pT_state(p=p, T=T, state=setState_pT(p=p, T=T));
+      d = Internal.density_pT_state(p=p, T=T, state=setState_pTX(p=p, T=T, X=fill(0, 0), phase=0));
       h = specificEnthalpy_pT(p=p, T=T);
-      s = Internal.specificEntropy_pT_state(p=p, T=T, state=setState_pT(p=p, T=T));
+      s = Internal.specificEntropy_pT_state(p=p, T=T, state=setState_pTX(p=p, T=T, X=fill(0, 0), phase=0));
     elseif (componentInputChoice == InputChoice.dT) then
       p = pressure_dT(d=d, T=T);
-      h = Internal.specificEnthalpy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T));
-      s = Internal.specificEntropy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T));
+      h = Internal.specificEnthalpy_dT_state(d=d, T=T, state=setState_dTX(d=d, T=T, X=fill(0, 0), phase=0));
+      s = Internal.specificEntropy_dT_state(d=d, T=T, state=setState_dTX(d=d, T=T, X=fill(0, 0), phase=0));
     else
       assert(false, "Invalid choice for basePropertiesInput");
     end if;
@@ -1649,7 +1652,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output Density d "density";
 
   algorithm
-    d := Internal.density_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
+    d := Internal.density_ph_state(p=p, h=h, state=setState_phX(p=p, h=h, X=fill(0, 0), phase=phase));
 
   annotation (
     derivative=Internal.density_ph_der,
@@ -1679,7 +1682,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output Temperature T "Temperature";
 
   algorithm
-    T := Internal.temperature_ph_state(p=p, h=h, state=setState_ph(p=p, h=h, phase=phase));
+    T := Internal.temperature_ph_state(p=p, h=h, state=setState_phX(p=p, h=h, X=fill(0, 0), phase=phase));
 
   annotation (
     derivative=Internal.temperature_ph_der,
@@ -1695,7 +1698,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output Density d "Density";
 
   algorithm
-    d := Internal.density_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
+    d := Internal.density_pT_state(p=p, T=T, state=setState_pTX(p=p, T=T, X=fill(0, 0), phase=phase));
 
   annotation (
     derivative=Internal.density_pT_der,
@@ -1727,7 +1730,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output SpecificEnthalpy h "specific enthalpy";
 
   algorithm
-    h := Internal.specificEnthalpy_pT_state(p=p, T=T, state=setState_pT(p=p, T=T, phase=phase));
+    h := Internal.specificEnthalpy_pT_state(p=p, T=T, state=setState_pTX(p=p, T=T, X=fill(0, 0), phase=phase));
 
   annotation (
     derivative=Internal.specificEnthalpy_pT_der,
@@ -1743,7 +1746,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output AbsolutePressure p "pressure";
 
   algorithm
-    p := Internal.pressure_dT_state(d=d, T=T, state=setState_dT(d=d, T=T, phase=phase));
+    p := Internal.pressure_dT_state(d=d, T=T, state=setState_dTX(d=d, T=T, X=fill(0, 0), phase=phase));
 
   annotation (
     derivative=Internal.pressure_dT_der,
@@ -1760,11 +1763,10 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output SpecificEnthalpy h "Specific Enthalpy";
 
   algorithm
-    h := Internal.specificEnthalpy_dT_state(d=d, T=T, state=setState_dT(d=d, T=T, phase=phase));
+    h := Internal.specificEnthalpy_dT_state(d=d, T=T, state=setState_dTX(d=d, T=T, X=fill(0, 0), phase=phase));
 
   annotation (
-    derivative=Internal.specificEnthalpy_dT_der,
-    Inline=true);
+    derivative=Internal.specificEnthalpy_dT_der);
   end specificEnthalpy_dT;
 
   redeclare function temperature_ps "returns temperature for given p and s"
@@ -1776,7 +1778,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output Temperature T "Temperature";
 
   algorithm
-    T := Internal.temperature_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
+    T := Internal.temperature_ps_state(p=p, s=s, state=setState_psX(p=p, s=s, X=fill(0, 0), phase=phase));
 
   annotation (
     derivative=Internal.temperature_ps_der,
@@ -1794,7 +1796,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     output SpecificEnthalpy h "specific enthalpy";
 
   algorithm
-    h := Internal.specificEnthalpy_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
+    h := Internal.specificEnthalpy_ps_state(p=p, s=s, state=setState_psX(p=p, s=s, X=fill(0, 0), phase=phase));
 
   annotation (
     derivative=Internal.specificEnthalpy_ps_der,
@@ -1808,7 +1810,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
     output Density d "Density";
   algorithm
-    d := Internal.density_ps_state(p=p, s=s, state=setState_ps(p=p, s=s, phase=phase));
+    d := Internal.density_ps_state(p=p, s=s, state=setState_psX(p=p, s=s, X=fill(0, 0), phase=phase));
   annotation (derivative=Internal.density_ps_der);
   end density_ps;
 end PartialHelmholtzMedium;
