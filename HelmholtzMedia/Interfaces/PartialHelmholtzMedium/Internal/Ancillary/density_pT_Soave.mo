@@ -16,8 +16,11 @@ protected
   // RKS: Redlich-Kwong-Soave (see Soave 1972)
   constant Real omega = fluidConstants[1].acentricFactor;
   constant Real m = 0.480 + 1.574*omega - 0.176*omega^2;
-  Real a = 0.42747*R_s^2*T_crit^2/p_crit*(1 + m*(1 - sqrt(T/T_crit)))^2;
-  Real b = 0.08664*R_s*T_crit/p_crit;
+  // critical-point constants of RKS from their closed forms (Omega_a = 0.4274802..., Omega_b = 0.0866403...)
+  constant Real Omega_a = 1/(9*(2^(1/3) - 1));
+  constant Real Omega_b = (2^(1/3) - 1)/3;
+  Real a = Omega_a*R_s^2*T_crit^2/p_crit*(1 + m*(1 - sqrt(T/T_crit)))^2;
+  Real b = Omega_b*R_s*T_crit/p_crit;
   Real A = a*p/(R_s^2*T^2);
   Real B = b*p/(R_s*T);
 

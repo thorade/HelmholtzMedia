@@ -168,7 +168,7 @@ package Isopentane "Isopentane"
       -0.15164E+03,      16.6],
     pressureMeltingModel=PressureMeltingModel.ML1,
     T_reducing=112.65,
-    p_reducing=0.84e-4,
+    p_reducing=0.8952e-4,
     pressureMelting1=[
       -7127700000000.0,       0;
        7127700000001.0,       1.563],

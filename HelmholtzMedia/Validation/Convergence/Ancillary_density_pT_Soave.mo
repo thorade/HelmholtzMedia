@@ -19,7 +19,7 @@ protected
   constant Medium.AbsolutePressure PMAX = Medium.fluidLimits.PMAX;
   constant Medium.AbsolutePressure p_low = 1e-6;
   constant Medium.SpecificHeatCapacity R_s = Modelica.Constants.R/Medium.fluidConstants[1].molarMass;
-  constant Medium.Density d_cov = p_crit/(0.08664*R_s*T_crit) "inverse RKS covolume 1/b";
+  constant Medium.Density d_cov = p_crit/((2^(1/3) - 1)/3*R_s*T_crit) "inverse RKS covolume 1/b";
   final constant String fileName = "soave.txt";
   Medium.Temperature T;
   Medium.AbsolutePressure p;

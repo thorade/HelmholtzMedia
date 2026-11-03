@@ -562,8 +562,6 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Density d_iter;
     Density d_old "d_iter of the previous iteration step";
     AbsolutePressure RES_p;
-    AbsolutePressure RES_min;
-    AbsolutePressure RES_max;
     DerPressureByDensity dpdT "(dp/dd)@T=const";
     Real gamma(min=0.1,max=1) = 1 "convergence speed, default=1";
     constant Real tolerance=1e-9 "relativ tolerance for RES_p";
@@ -595,7 +593,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         // Modelica.Utilities.Streams.print("single-phase liquid region", "printlog.txt");
         d_min  := 0.98*sat.liq.d;
         d_max  := 1.10*fluidLimits.DMAX;
-        d_iter := 1.10*sat.liq.d;
+        d_iter := sat.liq.d;
         // d_iter := Internal.Ancillary.density_pT_Soave(T=T, p=p, psat=sat.psat);
         // d_iter := 1/(R*T_crit/p_crit*Z_crit^(1+min(0,1-T/T_crit)^(2/7))) "Rackett";
       elseif (p < sat.psat) then
@@ -622,32 +620,15 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     d_iter := max(d_iter, d_min);
     d_iter := min(d_iter, d_max);
 
-    // Modelica.Utilities.Streams.print("initialize bisection", "printlog.txt");
-    // min
-    if (d_min <= fluidLimits.DMIN) then
-      // ideal-gas limit: p(d->0,T)=0, so RES_min=-p exactly;
-      // avoids evaluating the EoS at d=fluidLimits.DMIN (Modelica.Constants.small), which returns NaN
-      RES_min := -p;
-    else
-      f := Internal.EoS.setHelmholtzDerivs(d=d_min, T=T, order=1, includeIdeal=false);
-      RES_min := Internal.EoS.p(f) - p;
-    end if;
-    // max
-    f := Internal.EoS.setHelmholtzDerivs(d=d_max, T=T, order=1, includeIdeal=false);
-    RES_max := Internal.EoS.p(f) - p;
-    // iter
     f := Internal.EoS.setHelmholtzDerivs(d=d_iter, T=T, order=2, includeIdeal=false);
     RES_p := Internal.EoS.p(f) - p;
 
-    assert((RES_min*RES_max<0), "setState_pTX: d_min and d_max did not bracket the root", level=AssertionLevel.warning);
-    // thighten the bounds
-    // opposite sign brackets the root
-    if (RES_p*RES_min<0) then
+    // tighten the bounds: in the single-phase region p increases with d,
+    // so the sign of RES_p tells on which side of d_iter the root is
+    if (RES_p>0) then
       d_max := d_iter;
-      RES_max := RES_p;
-    elseif (RES_p*RES_max<0) then
+    else
       d_min := d_iter;
-      RES_min := RES_p;
     end if;
 
     while (iter<iter_max) and not converged loop
@@ -675,14 +656,11 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       f := Internal.EoS.setHelmholtzDerivs(d=d_iter, T=T, order=2, includeIdeal=false);
       RES_p := Internal.EoS.p(f) - p;
 
-      // thighten the bounds
-      // opposite sign brackets the root
-      if (RES_p*RES_min<0) then
+      // tighten the bounds
+      if (RES_p>0) then
         d_max := d_iter;
-        RES_max := RES_p;
-      elseif (RES_p*RES_max<0) then
+      else
         d_min := d_iter;
-        RES_min := RES_p;
       end if;
       // Modelica.Utilities.Streams.print("d_min=" + String(d_min) + ", d_max=" + String(d_max) + " and d_iter=" + String(d_iter), "printlog.txt");
 
@@ -697,7 +675,8 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     state.p := p;
     state.T := T;
     state.d := d_iter;
-    f := Internal.EoS.setHelmholtzDerivs(d=state.d, T=state.T, order=1);
+    // f holds the residual part at d_iter from the last Newton step, add the ideal part for h, s and u
+    (f.i, f.it, f.itt, f.ittt) := Internal.EoS.f_i_derivs(delta=f.delta, tau=f.tau, order=1);
     state.s := Internal.EoS.s(f=f);
     state.h := Internal.EoS.h(f=f);
     state.u := Internal.EoS.u(f=f);
@@ -745,7 +724,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     constant SpecificEnthalpy h_scale=R_s*T_crit "scale for the enthalpy residual";
     Boolean converged = false "true once residuals or Newton step are within tolerance";
     Integer iter = 0;
-    Integer iter_max = 200;
+    Integer iter_max = 50 "first attempt; the second attempt gets 200";
     Real lambda(min=1e-3,max=1) = 1 "convergence speed, default=1";
 
     Boolean useLineSearch=helmholtzCoefficients.useLineSearch;
@@ -754,6 +733,12 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     Real lambda_ls;
     Integer attempt = 0 "second attempt with start values on the liquid branch, if the first converged to an unstable root";
     Boolean stable = false;
+    Boolean solid = false "the root found lies above the melting line, outside the range of validity of the EoS";
+    AbsolutePressure p_melt;
+    Boolean haveSolidRoot = false "a converged root above the melting line is kept as fallback";
+    Density d_solid;
+    Temperature T_solid;
+    Internal.EoS.HelmholtzDerivs f_solid;
     constant Real lambda_min = 0.01 "minimum for convergence speed";
     Real lambda_temp = 1 "temporary variable for convergence speed";
     constant Real alpha(min=0,max=1)=1e-4;
@@ -776,7 +761,7 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
     else
       if (p < p_crit) then
         // two-phase possible, check region
-        if (p>0.98*p_crit) or (p<300*p_trip) then
+        if (p>0.95*p_crit) or (p<2*p_trip) then
           // Modelica.Utilities.Streams.print("close to critical or triple point, get saturation properties from EoS", "printlog.txt");
           sat := setSat_p(p=p);
         else
@@ -803,23 +788,25 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
           state.phase := 1;
 
           d_min := sat.liq.d*0.98;
-          d_iter:= sat.liq.d*1.02;
           d_max := fluidLimits.DMAX*1.10;
 
           T_min := fluidLimits.TMIN*0.99;
-          T_iter:= sat.Tsat*0.98;
           T_max := sat.Tsat*1.02;
+
+          T_iter:= min(Internal.Ancillary.temperature_ph_liq(p=p, h=h), sat.Tsat);
+          d_iter:= max(Internal.Ancillary.bubbleDensity_T(T=T_iter), d_min);
         elseif (h > sat.vap.h) then
           // Modelica.Utilities.Streams.print("single phase vapor", "printlog.txt");
           state.phase := 1;
 
           d_min := fluidLimits.DMIN;
-          d_iter:= sat.vap.d/10;
           d_max := sat.vap.d*1.02;
 
           T_min := sat.Tsat*0.98;
-          T_iter:= sat.Tsat*1.02;
           T_max := fluidLimits.TMAX*1.10;
+
+          (T_iter, d_iter) := Internal.Ancillary.state_ph_Soave(p=p, h=h, T_low=sat.Tsat, T_start=sat.Tsat);
+          d_iter:= min(max(d_iter, d_min), d_max);
         else
           // Modelica.Utilities.Streams.print("two-phase, all properties can be calculated from sat record", "printlog.txt");
           state.phase := 2;
@@ -831,22 +818,22 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         if (h<=h_crit) then
           // Modelica.Utilities.Streams.print("h<=h_crit, single-phase super-critical liquid-like region", "printlog.txt");
           d_min := d_crit*0.99;
-          d_iter:= fluidLimits.DMAX*0.85;
           d_max := fluidLimits.DMAX*1.1;
 
           T_min := fluidLimits.TMIN;
-          T_max := 1.25*Internal.Ancillary.saturationTemperature_h_liq(h=h);
-          T_iter:= (1*T_min + 5*T_max/1.25)/6;
+          T_iter:= min(Internal.Ancillary.temperature_ph_liq(p=p, h=h), T_crit);
+          T_max := fluidLimits.TMAX;
+          d_iter:= min(max(Internal.Ancillary.bubbleDensity_T(T=T_iter), d_min), d_max);
         else
           // Modelica.Utilities.Streams.print("h>h_crit, single-phase super-critical vapour-like region", "printlog.txt");
-          // due to the curvature, Newton will converge better when starting from the ideal gas region (low d, high T)
           d_min := fluidLimits.DMIN;
-          d_iter:= d_crit/10;
           d_max := fluidLimits.DMAX*1.1;
 
           T_min := fluidLimits.TMIN;
-          T_iter:= T_crit*1.3;
           T_max := fluidLimits.TMAX*1.1;
+
+          (T_iter, d_iter) := Internal.Ancillary.state_ph_Soave(p=p, h=h, T_low=T_min, T_start=1.3*T_crit);
+          d_iter:= min(max(d_iter, d_min), d_max);
         end if;
       end if;
     end if;
@@ -877,6 +864,11 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         else
           T_iter := 1.05*T_crit;
           d_iter := 0.5*d_crit;
+        end if;
+        if solid then
+          // restart above the melting temperature, so that Newton cannot reach the solid region again
+          T_min := max(T_min, Internal.Ancillary.meltingTemperature_p(p=p));
+          T_iter := max(T_iter, T_min);
         end if;
         iter := 0;
         iter_max := 200;
@@ -927,7 +919,9 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
         // instead, the linesearching / backtracking loop tries to find lambda such that RSS decreases
         while useLineSearch and (lambda>=lambda_min) and not (RSS<=(RSS_old+alpha*lambda*slope)) loop
           iterLineSearch := iterLineSearch+1;
-          iter_max := min(iter_max+1, 1000) "line search steps extend the iteration budget, but bounded";
+          if (attempt==2) then
+            iter_max := min(iter_max+1, 1000) "line search steps extend the iteration budget of the restart, but bounded";
+          end if;
 
           // decrease lambda
           if (iterLineSearch<2) then
@@ -990,8 +984,25 @@ starting at T=0.9*T_crit, where each step is predicted with the local critical e
       // accepted is a converged, mechanically stable root; for p>=p_crit and T<T_crit it must also be compressed liquid,
       // i.e. denser than the saturated liquid (0.98 allows for the ancillary equation); otherwise Newton found the
       // metastable (supersaturated) vapour root of the van der Waals loop, which can be denser than d_crit
-      stable := converged and (Internal.EoS.dpdT(f)>0) and ((p<p_crit) or (T_iter>=T_crit) or (d_iter>=0.98*Internal.Ancillary.bubbleDensity_T(T=T_iter)));
+      // a root more than 1 K below the melting temperature triggers the restart above the melting temperature
+      // (meltingPressure_T returns PMAX for fluids without melting line; below TMIN the melting line is not defined);
+      // if the restart does not converge, e.g. because the input itself lies in the solid region, the root is kept
+      p_melt := Internal.Ancillary.meltingPressure_T(T=T_iter + 1);
+      solid := converged and (T_iter >= fluidLimits.TMIN) and (p_melt < fluidLimits.PMAX) and (p > p_melt);
+      if solid and not haveSolidRoot then
+        haveSolidRoot := true;
+        d_solid := d_iter;
+        T_solid := T_iter;
+        f_solid := f;
+      end if;
+      stable := converged and not solid and (Internal.EoS.dpdT(f)>0) and ((p<p_crit) or (T_iter>=T_crit) or (d_iter>=0.98*Internal.Ancillary.bubbleDensity_T(T=T_iter)));
       end while;
+      if haveSolidRoot and not stable then
+        converged := true;
+        d_iter := d_solid;
+        T_iter := T_solid;
+        f := f_solid;
+      end if;
       // Modelica.Utilities.Streams.print("setState_ph total iteration steps " + String(iter), "printlog.txt");
       assert(converged, "setState_phX did not converge, input was p=" + String(p) + " and h=" + String(h));
 

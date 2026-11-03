@@ -214,9 +214,10 @@ final constant HelmholtzMedia.Interfaces.Types.AncillaryCoefficients
     T_reducing=216.592,
     p_reducing=0.51795e6,
     pressureMelting1=[
+       1,           0],
+    pressureMelting2=[
        1955.5390,   1;
        2055.4593,   2],
-    pressureMelting2=fill(0.0, 0, 2),
     pressureMelting3=fill(0.0, 0, 2))
   "Coefficients for the ancillary equations (PS5, DL4, DV4, ML1)";
 
