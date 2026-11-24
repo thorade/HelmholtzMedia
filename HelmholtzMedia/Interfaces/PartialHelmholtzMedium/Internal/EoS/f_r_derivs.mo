@@ -41,7 +41,8 @@ protected
   Real T2 "tau^2*d2(term)/dtau2 / term";
   Real T3 "tau^3*d3(term)/dtau3 / term";
   Real x "c*delta^c (exponential terms)";
-  Real Rd "2*eta*(2*delta^2-eps*delta) (Gaussian terms)";
+  Real R1 "2*eta*delta*(delta-eps) (Gaussian and associating terms)";
+  Real Rd "2*eta*(2*delta^2-eps*delta) (Gaussian and associating terms)";
   Real Rt "2*beta*(2*tau^2-gamma*tau) (Gaussian terms)";
   Real y "tau-gamma (associating terms)";
   Real Q "beta*(tau-gamma)^2 + b (associating terms)";
@@ -116,6 +117,9 @@ algorithm
   // The sums are accumulated as delta^m*tau^n*(d^(m+n) f_r / ddelta^m dtau^n), which for each term is
   // the term value k times factors D_m (delta part) and T_n (tau part); the powers delta^d*tau^t are computed
   // once per term as exp(d*log(delta) + t*log(tau)). The division by delta^m*tau^n follows at the end.
+  // D2 and D3 are written as the integer part d*(d-1) resp. d*(d-1)*(d-2) plus polynomials in the small quantities
+  // c*delta^c (exponential terms) and 2*eta*delta*(delta-eps) (Gaussian and associating terms). Computed from D1 instead
+  // (e.g. D1*(D1-1)), they lose all digits at low density, where the division by delta^m amplifies the error (issue #11).
   r := 0;
   rd := 0;
   rdd := 0;
@@ -166,13 +170,14 @@ algorithm
       rd := rd + k*D1;
       rt := rt + k*T1;
       if order >= 2 then
-        D2 := D1*(D1 - 1) - b[i,4]*x;
+        D2 := b[i,3]*(b[i,3] - 1) - x*(2*b[i,3] - 1 + b[i,4] - x);
         T2 := T1*(T1 - 1);
         rdd := rdd + k*D2;
         rtt := rtt + k*T2;
         rtd := rtd + k*D1*T1;
         if order >= 3 then
-          D3 := D1*D2 - 2*D1*b[i,4]*x + b[i,4]*x - b[i,4]^2*x - 2*D2;
+          D3 := b[i,3]*(b[i,3] - 1)*(b[i,3] - 2) - x*(3*b[i,3]^2 - 6*b[i,3] + 2 + 3*b[i,4]*(b[i,3] - 1) + b[i,4]^2)
+            + x^2*(3*(b[i,3] - 1 + b[i,4]) - x);
           T3 := T2*(T1 - 2);
           rddd := rddd + k*D3;
           rttt := rttt + k*T3;
@@ -188,20 +193,22 @@ algorithm
     k := g[i,1]*exp(g[i,3]*lnd + g[i,2]*lnt + g[i,6]*(del - g[i,9])^2 + g[i,7]*(tau - g[i,8])^2);
     r := r + k;
     if order >= 1 then
-      D1 := g[i,3] + 2*g[i,6]*del*(del - g[i,9]);
+      R1 := 2*g[i,6]*del*(del - g[i,9]);
+      D1 := g[i,3] + R1;
       T1 := g[i,2] + 2*g[i,7]*tau*(tau - g[i,8]);
       rd := rd + k*D1;
       rt := rt + k*T1;
       if order >= 2 then
         Rd := 2*g[i,6]*(2*del^2 - g[i,9]*del);
         Rt := 2*g[i,7]*(2*tau^2 - g[i,8]*tau);
-        D2 := D1*(D1 - 1) + Rd;
+        D2 := g[i,3]*(g[i,3] - 1) + R1*(2*g[i,3] - 1 + R1) + Rd;
         T2 := T1*(T1 - 1) + Rt;
         rdd := rdd + k*D2;
         rtt := rtt + k*T2;
         rtd := rtd + k*D1*T1;
         if order >= 3 then
-          D3 := D1*D2 + (2*D1 - 1)*Rd + 2*g[i,6]*(4*del^2 - g[i,9]*del) - 2*D2;
+          D3 := g[i,3]*(g[i,3] - 1)*(g[i,3] - 2) + R1*(3*g[i,3]^2 - 6*g[i,3] + 2 + R1*(3*g[i,3] - 3 + R1))
+            + Rd*(3*g[i,3] - 3 + 3*R1) + 2*g[i,6]*(4*del^2 - g[i,9]*del);
           T3 := T1*T2 + (2*T1 - 1)*Rt + 2*g[i,7]*(4*tau^2 - g[i,8]*tau) - 2*T2;
           rddd := rddd + k*D3;
           rttt := rttt + k*T3;
@@ -223,7 +230,8 @@ algorithm
     if order >= 1 then
       G1 := -2*s[i,5]*y/Q^2;
       L0 := s[i,2]/tau + G1;
-      D1 := s[i,3] + 2*s[i,4]*del*(del - s[i,7]);
+      R1 := 2*s[i,4]*del*(del - s[i,7]);
+      D1 := s[i,3] + R1;
       T1 := tau*L0;
       rd := rd + k*D1;
       rt := rt + k*T1;
@@ -231,7 +239,7 @@ algorithm
         G2 := -2*s[i,5]/Q^2 + 8*s[i,5]^2*y^2/Q^3;
         L1 := -s[i,2]/tau^2 + G2;
         Rd := 2*s[i,4]*(2*del^2 - s[i,7]*del);
-        D2 := D1*(D1 - 1) + Rd;
+        D2 := s[i,3]*(s[i,3] - 1) + R1*(2*s[i,3] - 1 + R1) + Rd;
         T2 := tau^2*(L1 + L0^2);
         rdd := rdd + k*D2;
         rtt := rtt + k*T2;
@@ -239,7 +247,8 @@ algorithm
         if order >= 3 then
           G3 := 24*s[i,5]^2*y/Q^3 - 48*s[i,5]^3*y^3/Q^4;
           L2 := 2*s[i,2]/tau^3 + G3;
-          D3 := D1*D2 + (2*D1 - 1)*Rd + 2*s[i,4]*(4*del^2 - s[i,7]*del) - 2*D2;
+          D3 := s[i,3]*(s[i,3] - 1)*(s[i,3] - 2) + R1*(3*s[i,3]^2 - 6*s[i,3] + 2 + R1*(3*s[i,3] - 3 + R1))
+            + Rd*(3*s[i,3] - 3 + 3*R1) + 2*s[i,4]*(4*del^2 - s[i,7]*del);
           T3 := tau^3*(L2 + 3*L0*L1 + L0^3);
           rddd := rddd + k*D3;
           rttt := rttt + k*T3;
@@ -364,6 +373,14 @@ computed in a single loop over all terms. Each term is evaluated only once: the 
 exponential factors are computed with one call of exp per term (two for the exponential terms), and all derivatives
 follow from multiplying the term value with factors D_m and T_n that depend only on d, t, c, eta, beta, gamma and epsilon.
 This factored form also avoids the cancellation of fully expanded derivative expressions.
+</p>
+<p>
+In the factors D_2 and D_3, the integer parts d(d-1) and d(d-1)(d-2) are separated from the parts that vanish with
+the density, i.e. polynomials in c&middot;delta^c (exponential terms) and 2&eta;delta(delta-&epsilon;) (Gaussian and associating terms).
+Computing D_2 = D_1(D_1-1) - ... instead loses all digits at low density: the small parts are recovered from D_1 - 1 with an
+absolute error of about 1e-16, which the final division by delta^2 resp. delta^3 amplifies. With the separated form,
+the second and third density derivatives stay accurate in the ideal-gas limit (helium at 298 K, against 60-digit reference values:
+relative errors below 1e-14 resp. 1e-10 down to delta = 3e-11; see Validation.Properties.idealGasLimit).
 </p>
 <p>
 The Gaussian terms are implemented with the exponent 2 only (columns 4 and 5 of residualGauss); an assert checks this.
